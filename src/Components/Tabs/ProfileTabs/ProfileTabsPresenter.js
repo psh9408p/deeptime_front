@@ -1,25 +1,25 @@
-import React from "react"
-import styled from "styled-components"
-import Popup from "reactjs-popup"
-import SchoolTab from "./SchoolTab"
-import AcademyTab from "./AcademyTab"
-import ReadingRoomTab from "./ReadingRoomTab"
-import Input from "../../Input"
-import Select from "../../Select"
-import PopupButton from "../../../Components/Buttons/PopupButton"
-import FatText from "../../FatText"
-import { toast } from "react-toastify"
-import PopButton from "../../Buttons/PopButton"
+import React from 'react';
+import styled from 'styled-components';
+import Popup from 'reactjs-popup';
+import SchoolTab from './SchoolTab';
+import AcademyTab from './AcademyTab';
+import ReadingRoomTab from './ReadingRoomTab';
+import Input from '../../Input';
+import Select from '../../Select';
+import PopupButton from '../../Buttons/PopupButton';
+import FatText from '../../FatText';
+import { toast } from 'react-toastify';
+import PopButton from '../../Buttons/PopButton';
 
 const Regist = styled.div`
   width: 100%;
-`
+`;
 
 const PopupDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   margin: 15px 0px;
-`
+`;
 
 const PopupCustom = styled(Popup)`
   &-content {
@@ -29,7 +29,7 @@ const PopupCustom = styled(Popup)`
     justify-content: center;
     align-items: center;
   }
-`
+`;
 
 const PBody = styled.div`
   form {
@@ -38,7 +38,7 @@ const PBody = styled.div`
     width: 600px;
     padding: 20px 20px;
   }
-`
+`;
 
 const SelectDiv = styled.div`
   display: inline-flex;
@@ -58,35 +58,35 @@ const SelectDiv = styled.div`
     font-weight: 600;
     padding-left: 15px;
   }
-`
+`;
 
 const SmallInput = styled(Input)`
   width: 200px;
   margin-bottom: 7px;
   margin-right: 15px;
-`
+`;
 
 const LargeInput = styled(Input)`
   max-width: 600px;
   margin-bottom: 7px;
-`
+`;
 
 const PTitle = styled(FatText)`
   font-size: 18px;
   text-align: center;
   margin-bottom: 30px;
-`
+`;
 
 const ButtonDiv = styled.div`
   display: flex;
   justify-content: center;
-`
+`;
 
 const openSearchURL = () => {
   const url =
-    "https://s.search.naver.com/n/csearch/content/eprender.nhn?where=nexearch&pkid=252&q=%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&key=address_kor"
-  window.open(url, "_blank")
-}
+    'https://s.search.naver.com/n/csearch/content/eprender.nhn?where=nexearch&pkid=252&q=%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&key=address_kor';
+  window.open(url, '_blank');
+};
 
 export default ({
   pageIndex,
@@ -123,19 +123,29 @@ export default ({
     return (
       <Regist>
         <PopupDiv>
-          <PopupCustom trigger={<PopButton text={"학교 추가"} />} modal>
+          <PopupCustom trigger={<PopButton text={'학교 추가'} />} modal>
             {(close) => (
               <PBody>
                 <form onSubmit={onSubmitSchool}>
-                  <PTitle text={"학교 정보"} />
-                  <SmallInput placeholder={"학교명 (예: 아이엠고등학교)"} {...schoolName} />
+                  <PTitle text={'학교 정보'} />
+                  <SmallInput
+                    placeholder={'학교명 (예: 아이엠고등학교)'}
+                    {...schoolName}
+                  />
                   <div>
-                    <SmallInput placeholder={"우편번호 (예: 12345)"} {...schoolZipCode} />
-                    <PopButton type={"button"} onClick={openSearchURL} text={"주소검색"} />
+                    <SmallInput
+                      placeholder={'우편번호 (예: 12345)'}
+                      {...schoolZipCode}
+                    />
+                    <PopButton
+                      type={'button'}
+                      onClick={openSearchURL}
+                      text={'주소검색'}
+                    />
                   </div>
                   <LargeInput
                     placeholder={
-                      "도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동, 아이엠고등학교))"
+                      '도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동, 아이엠고등학교))'
                     }
                     {...schoolAddress}
                   />
@@ -144,14 +154,14 @@ export default ({
                     <Select {...schoolLevel} />
                   </SelectDiv>
                   <ButtonDiv>
-                    <PopupButton text={"등록"} />
+                    <PopupButton text={'등록'} />
                     <PopupButton
                       type="button"
                       onClick={() => {
-                        close()
-                        clearSchool()
+                        close();
+                        clearSchool();
                       }}
-                      text={"닫기"}
+                      text={'닫기'}
                     />
                   </ButtonDiv>
                 </form>
@@ -174,31 +184,43 @@ export default ({
           />
         ))}
       </Regist>
-    )
+    );
   } else if (pageIndex === 1) {
-    if (loginPosition !== "manager_academy") {
-      toast.error("사용 권한이 없습니다.")
-      return <></>
+    if (loginPosition !== 'manager_academy') {
+      toast.error('사용 권한이 없습니다.');
+      return <></>;
     } else {
       return (
         <Regist>
           <PopupDiv>
-            <PopupCustom trigger={<PopButton text={"학원 추가"} />} modal>
+            <PopupCustom trigger={<PopButton text={'학원 추가'} />} modal>
               {(close) => (
                 <PBody>
                   <form onSubmit={onSubmitAcademy}>
-                    <PTitle text={"학원 정보"} />
-                    <SmallInput placeholder={"학원명 (예: 아이엠학원)"} {...academyName} />
+                    <PTitle text={'학원 정보'} />
+                    <SmallInput
+                      placeholder={'학원명 (예: 아이엠학원)'}
+                      {...academyName}
+                    />
                     <div>
-                      <SmallInput placeholder={"우편번호 (예: 12345)"} {...academyZipCode} />
-                      <PopButton type={"button"} onClick={openSearchURL} text={"주소검색"} />
+                      <SmallInput
+                        placeholder={'우편번호 (예: 12345)'}
+                        {...academyZipCode}
+                      />
+                      <PopButton
+                        type={'button'}
+                        onClick={openSearchURL}
+                        text={'주소검색'}
+                      />
                     </div>
                     <LargeInput
-                      placeholder={"도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동))"}
+                      placeholder={
+                        '도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동))'
+                      }
                       {...academyAddress}
                     />
                     <LargeInput
-                      placeholder={"상세주소 (예: 채움빌딩 203호)"}
+                      placeholder={'상세주소 (예: 채움빌딩 203호)'}
                       {...academyDetailAddress}
                     />
                     <SelectDiv>
@@ -206,14 +228,14 @@ export default ({
                       <Select {...academyKind} />
                     </SelectDiv>
                     <ButtonDiv>
-                      <PopupButton text={"등록"} />
+                      <PopupButton text={'등록'} />
                       <PopupButton
                         type="button"
                         onClick={() => {
-                          close()
-                          clearAcademy()
+                          close();
+                          clearAcademy();
                         }}
-                        text={"닫기"}
+                        text={'닫기'}
                       />
                     </ButtonDiv>
                   </form>
@@ -237,32 +259,44 @@ export default ({
             />
           ))}
         </Regist>
-      )
+      );
     }
   } else if (pageIndex === 2) {
-    if (loginPosition !== "manager_readingRoom") {
-      toast.error("사용 권한이 없습니다.")
-      return <></>
+    if (loginPosition !== 'manager_readingRoom') {
+      toast.error('사용 권한이 없습니다.');
+      return <></>;
     } else {
       return (
         <Regist>
           <PopupDiv>
-            <PopupCustom trigger={<PopButton text={"독서실 추가"} />} modal>
+            <PopupCustom trigger={<PopButton text={'독서실 추가'} />} modal>
               {(close) => (
                 <PBody>
                   <form onSubmit={onSubmitReadingRoom}>
-                    <PTitle text={"독서실 정보"} />
-                    <SmallInput placeholder={"독서실명 (예: 아이엠독서실)"} {...readingRoomName} />
+                    <PTitle text={'독서실 정보'} />
+                    <SmallInput
+                      placeholder={'독서실명 (예: 아이엠독서실)'}
+                      {...readingRoomName}
+                    />
                     <div>
-                      <SmallInput placeholder={"우편번호 (예: 12345)"} {...readingRoomZipCode} />
-                      <PopButton type={"button"} onClick={openSearchURL} text={"주소검색"} />
+                      <SmallInput
+                        placeholder={'우편번호 (예: 12345)'}
+                        {...readingRoomZipCode}
+                      />
+                      <PopButton
+                        type={'button'}
+                        onClick={openSearchURL}
+                        text={'주소검색'}
+                      />
                     </div>
                     <LargeInput
-                      placeholder={"도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동))"}
+                      placeholder={
+                        '도로명 주소 (예: 서울특별시 강남구 봉은사로72길 13-4 (삼성동))'
+                      }
                       {...readingRoomAddress}
                     />
                     <LargeInput
-                      placeholder={"상세주소 (예: 채움빌딩 203호)"}
+                      placeholder={'상세주소 (예: 채움빌딩 203호)'}
                       {...readingRoomDetailAddress}
                     />
                     <SelectDiv>
@@ -270,14 +304,14 @@ export default ({
                       <Select {...readingRoomKind} />
                     </SelectDiv>
                     <ButtonDiv>
-                      <PopupButton text={"등록"} />
+                      <PopupButton text={'등록'} />
                       <PopupButton
                         type="button"
                         onClick={() => {
-                          close()
-                          clearReadingRoom()
+                          close();
+                          clearReadingRoom();
                         }}
-                        text={"닫기"}
+                        text={'닫기'}
                       />
                     </ButtonDiv>
                   </form>
@@ -301,7 +335,7 @@ export default ({
             />
           ))}
         </Regist>
-      )
+      );
     }
   }
-}
+};

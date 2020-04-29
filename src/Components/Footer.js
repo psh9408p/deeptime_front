@@ -9,6 +9,7 @@ const Footer = styled.footer`
   font-weight: 600;
   font-size: 12px;
   margin: 50px 0px;
+  padding: 0px 30px;
 `
 
 const List = styled.ul`

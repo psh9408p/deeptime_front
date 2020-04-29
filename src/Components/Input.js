@@ -1,6 +1,6 @@
-import React from "react"
-import PropTypes from "prop-types"
-import styled from "styled-components"
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 const Container = styled.input`
   border: 0;
@@ -10,14 +10,14 @@ const Container = styled.input`
   height: 35px;
   font-size: 12px;
   padding: 0px 15px;
-`
+`;
 
 const Input = ({
   placeholder,
   required = true, // 꼭 입력해야한다는 뜻인거 같음
   value,
   onChange,
-  type = "text",
+  type = 'text',
   className,
 }) => (
   <Container
@@ -28,7 +28,7 @@ const Input = ({
     onChange={onChange}
     type={type}
   />
-)
+);
 
 Input.propTypes = {
   placeholder: PropTypes.string.isRequired,
@@ -36,6 +36,6 @@ Input.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   type: PropTypes.string,
-}
+};
 
-export default Input
+export default Input;

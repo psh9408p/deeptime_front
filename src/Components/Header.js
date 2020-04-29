@@ -24,7 +24,6 @@ const Header = styled.header`
 
 const HeaderWrapper = styled.div`
   width: 100%;
-  /* max-width: ${(props) => props.theme.maxWidth}; */
   padding: 0px 40px;
   display: flex;
   justify-content: center;
