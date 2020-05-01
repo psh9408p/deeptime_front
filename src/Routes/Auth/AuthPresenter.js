@@ -90,7 +90,7 @@ const LoginPositionDiv = styled.div`
   }
 `;
 
-const PhoneDiv = styled.div`
+const VerficationInputDiv = styled.div`
   width: 100%;
   display: flex;
 `;
@@ -130,9 +130,13 @@ const ButtonDiv = styled.div`
   margin-top: 20px;
 `;
 
-const PhoneInputDiv = styled.div`
+const VerifiInputDiv = styled.div`
   display: flex;
   margin-bottom: 7px;
+`;
+
+const EmailInputDiv = styled.div`
+  display: flex;
 `;
 
 export default ({
@@ -142,6 +146,7 @@ export default ({
   firstName,
   lastName,
   email,
+  emailKey,
   phoneNumber,
   phoneKey,
   setAction,
@@ -149,6 +154,8 @@ export default ({
   secret,
   sPhoneOnClick,
   cPhoneOnClick,
+  sEmailOnClick,
+  cEmailOnClick,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -204,15 +211,56 @@ export default ({
             <form onSubmit={onSubmit}>
               <Input placeholder={'성 (예: 홍)'} {...lastName} />
               <Input placeholder={'이름 (예: 길동)'} {...firstName} />
-              <Input
-                placeholder={'Email (예: IAM@google.com)'}
-                {...email}
-                type="email"
-              />
-              <Input placeholder={'닉네임 (10글자 이내)'} {...username} />
-              <PhoneDiv>
+              <VerficationInputDiv>
                 <Input
-                  placeholder={'휴대폰 번호 (인증 버튼 클릭 ▶)'}
+                  placeholder={'Email [인증 버튼 클릭 ▶]'}
+                  value={email.value}
+                />
+                <PopupCustom
+                  trigger={
+                    <PopButton_auth text={'Email 인증'} type={'button'} />
+                  }
+                  modal
+                >
+                  {(close) => (
+                    <PBody>
+                      <PTitle text={'Email 인증'} />
+                      <EmailInputDiv>
+                        <Input
+                          placeholder={'Email (iam@google.com)'}
+                          {...email}
+                          type="email"
+                        />
+                        <PopButton_auth
+                          type={'button'}
+                          onClick={sEmailOnClick}
+                          text={'인증번호 발송'}
+                        />
+                      </EmailInputDiv>
+                      <SmallInput placeholder={'인증번호 입력'} {...emailKey} />
+                      <ButtonDiv>
+                        <PopupButton
+                          type="button"
+                          text={'인증'}
+                          onClick={cEmailOnClick}
+                        />
+                        <PopupButton
+                          type="button"
+                          onClick={() => {
+                            close();
+                            emailKey.setValue(``);
+                          }}
+                          text={'닫기'}
+                        />
+                      </ButtonDiv>
+                    </PBody>
+                  )}
+                </PopupCustom>
+              </VerficationInputDiv>
+              <Input placeholder={'닉네임 (10글자 이내)'} {...username} />
+              <VerficationInputDiv>
+                <Input
+                  placeholder={'휴대폰 번호 [인증 버튼 클릭 ▶]'}
                   value={phoneNumber.value}
                 />
                 <PopupCustom
@@ -224,7 +272,7 @@ export default ({
                   {(close) => (
                     <PBody>
                       <PTitle text={'휴대폰 인증'} />
-                      <PhoneInputDiv>
+                      <VerifiInputDiv>
                         <PhoneInput
                           country={'kr'}
                           value={phoneNumber.value}
@@ -235,7 +283,7 @@ export default ({
                           onClick={sPhoneOnClick}
                           text={'인증번호 발송'}
                         />
-                      </PhoneInputDiv>
+                      </VerifiInputDiv>
                       <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
                       <ButtonDiv>
                         <PopupButton
@@ -255,7 +303,7 @@ export default ({
                     </PBody>
                   )}
                 </PopupCustom>
-              </PhoneDiv>
+              </VerficationInputDiv>
               <LoginPositionDiv>
                 <span>사용 권한</span>
                 <Select {...loginPosition} />

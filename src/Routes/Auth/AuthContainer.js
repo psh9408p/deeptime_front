@@ -10,6 +10,8 @@ import {
   LOCAL_LOG_IN,
   S_PHONE_VERIFICATION,
   C_PHONE_VERIFICATION,
+  S_EMAIL_VERIFICATION,
+  C_EMAIL_VERIFICATION,
 } from './AuthQueries';
 import { toast } from 'react-toastify';
 
@@ -28,8 +30,9 @@ export default () => {
   const lastName = useInput('');
   const secret = useInput('');
   const email = useInput('');
+  const emailKey = useInput('');
   const phoneNumber = useInput('');
-  const phoneKey = useInput(``);
+  const phoneKey = useInput('');
   const requestSecretMutation = useMutation(LOG_IN, {
     variables: { email: email.value },
   });
@@ -61,6 +64,17 @@ export default () => {
       key: phoneKey.value,
     },
   });
+  const sEmailVerificationMutation = useMutation(S_EMAIL_VERIFICATION, {
+    variables: {
+      emailAdress: email.value,
+    },
+  });
+  const cEmailVerificationMutation = useMutation(C_EMAIL_VERIFICATION, {
+    variables: {
+      emailAdress: email.value,
+      key: emailKey.value,
+    },
+  });
 
   const sPhoneOnClick = async () => {
     try {
@@ -79,13 +93,41 @@ export default () => {
     }
   };
 
-  const cPhoneOnClick = async (e) => {
-    e.preventDefault();
+  const cPhoneOnClick = async () => {
     try {
       toast.info('인증번호 확인 중...');
       await cPhoneVerificationMutation();
       phoneKey.setValue('');
       toast.success('휴대폰 인증이 완료됐습니다.');
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      toast.error(realText[1]);
+    }
+  };
+
+  const sEmailOnClick = async () => {
+    try {
+      toast.info('인증번호 요청 중...');
+      const {
+        data: { startEmailVerification },
+      } = await sEmailVerificationMutation();
+      if (!startEmailVerification) {
+        toast.error('인증번호를 요청할 수 없습니다.');
+      } else {
+        toast.success('해당 Email로 인증번호를 발송했습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      toast.error(realText[1]);
+    }
+  };
+
+  const cEmailOnClick = async () => {
+    try {
+      toast.info('인증번호 확인 중...');
+      await cEmailVerificationMutation();
+      emailKey.setValue('');
+      toast.success('Email 인증이 완료됐습니다.');
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       toast.error(realText[1]);
@@ -188,12 +230,15 @@ export default () => {
       firstName={firstName}
       lastName={lastName}
       email={email}
+      emailKey={emailKey}
       phoneNumber={phoneNumber}
       phoneKey={phoneKey}
       secret={secret}
       onSubmit={onSubmit}
       sPhoneOnClick={sPhoneOnClick}
       cPhoneOnClick={cPhoneOnClick}
+      sEmailOnClick={sEmailOnClick}
+      cEmailOnClick={cEmailOnClick}
     />
   );
 };

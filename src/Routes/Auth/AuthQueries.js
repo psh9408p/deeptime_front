@@ -49,3 +49,15 @@ export const C_PHONE_VERIFICATION = gql`
     completePhoneVerification(phoneNumber: $phoneNumber, key: $key)
   }
 `;
+
+export const S_EMAIL_VERIFICATION = gql`
+  mutation startEmailVerification($emailAdress: String!) {
+    startEmailVerification(emailAdress: $emailAdress)
+  }
+`;
+
+export const C_EMAIL_VERIFICATION = gql`
+  mutation completeEmailVerification($emailAdress: String!, $key: String!) {
+    completeEmailVerification(emailAdress: $emailAdress, key: $key)
+  }
+`;
