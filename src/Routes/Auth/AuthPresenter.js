@@ -1,11 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import Input from '../../Components/Input';
+import CheckBox from '../../Components/CheckBox';
 import Button from '../../Components/Buttons/Button';
 import PopButton_auth from '../../Components/Buttons/PopButton_auth';
 import PopButton from '../../Components/Buttons/PopButton';
 import PopupButton from '../../Components/Buttons/PopupButton';
+import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import FatText from '../../Components/FatText';
 import Select from '../../Components/Select';
 import { GoogleLogin } from 'react-google-login';
@@ -39,7 +42,7 @@ const StateChanger = styled(Box)`
   padding: 20px 0px;
 `;
 
-const Link = styled.span`
+const SignLink = styled.span`
   color: ${(props) => props.theme.blueColor};
   cursor: pointer;
 `;
@@ -72,13 +75,14 @@ const LogoBox = styled.div`
   padding: 0px 85px 30px;
 `;
 
-const LoginPositionDiv = styled.div`
+const SelectDiv = styled.div`
   display: inline-flex;
   border: 0;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.theme.bgColor};
   height: 35px;
+  margin-bottom: 7px;
   font-size: 12px;
   width: 100%;
   span {
@@ -139,9 +143,44 @@ const EmailInputDiv = styled.div`
   display: flex;
 `;
 
+const NameInputDiv = styled.div`
+  display: flex;
+  input {
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+`;
+
+const AllCheckDiv = styled.div`
+  display: flex;
+`;
+
+const CheckLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const CheckLabel2 = styled.label`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+`;
+
+const TermButton = styled.button`
+  border: none;
+  background: none;
+  color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  padding: 0;
+`;
+
 export default ({
   action,
-  loginPosition,
+  studyGroup,
   username,
   firstName,
   lastName,
@@ -152,10 +191,22 @@ export default ({
   setAction,
   onSubmit,
   secret,
+  password,
+  password2,
   sPhoneOnClick,
   cPhoneOnClick,
   sEmailOnClick,
   cEmailOnClick,
+  myAddress1,
+  myAddress2,
+  allTerm,
+  tos,
+  top,
+  marketing,
+  onChangeAllTerm,
+  onChangeTop,
+  onChangeTos,
+  onChangeMarketing,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -185,11 +236,11 @@ export default ({
   return (
     <Wrapper>
       <Form>
-        <LogoBox>
-          <Logo />
-        </LogoBox>
         {action === 'logIn' && (
           <>
+            <LogoBox>
+              <Logo />
+            </LogoBox>
             <Helmet>
               <title>로그인 | SLOG-IAM</title>
             </Helmet>
@@ -209,8 +260,11 @@ export default ({
               <title>회원가입 | SLOG-IAM</title>
             </Helmet>
             <form onSubmit={onSubmit}>
-              <Input placeholder={'성 (예: 홍)'} {...lastName} />
-              <Input placeholder={'이름 (예: 길동)'} {...firstName} />
+              <NameInputDiv>
+                <Input placeholder={'성 (예: 홍)'} {...lastName} />
+                <Input placeholder={'이름 (예: 길동)'} {...firstName} />
+              </NameInputDiv>
+              <Input placeholder={'닉네임 (10글자 이내)'} {...username} />
               <VerficationInputDiv>
                 <Input
                   placeholder={'Email [인증 버튼 클릭 ▶]'}
@@ -257,7 +311,6 @@ export default ({
                   )}
                 </PopupCustom>
               </VerficationInputDiv>
-              <Input placeholder={'닉네임 (10글자 이내)'} {...username} />
               <VerficationInputDiv>
                 <Input
                   placeholder={'휴대폰 번호 [인증 버튼 클릭 ▶]'}
@@ -304,10 +357,107 @@ export default ({
                   )}
                 </PopupCustom>
               </VerficationInputDiv>
-              <LoginPositionDiv>
-                <span>사용 권한</span>
-                <Select {...loginPosition} />
-              </LoginPositionDiv>
+              <SelectDiv>
+                <span>학습 그룹</span>
+                <Select {...studyGroup} />
+              </SelectDiv>
+              <SelectDiv>
+                <span>주소</span>
+                <Select {...myAddress1} />
+                <Select {...myAddress2} />
+              </SelectDiv>
+              <Input
+                placeholder={'비밀번호 (예: ABCD1234)'}
+                type="password"
+                {...password}
+              />
+              {password.errorChk && (
+                <div style={{ color: 'red', marginBottom: '7px' }}>
+                  비밀번호는 6글자 이상이어야 합니다
+                </div>
+              )}
+              <Input
+                placeholder={'비밀번호 확인 (예: ABCD1234)'}
+                type="password"
+                {...password2}
+              />
+              {password2.errorChk && (
+                <div style={{ color: 'red', marginBottom: '7px' }}>
+                  비밀번호가 일치하지 않습니다
+                </div>
+              )}{' '}
+              <AllCheckDiv>
+                <CheckBox
+                  id="allTermChk"
+                  checked={allTerm}
+                  onChange={onChangeAllTerm}
+                />
+                <CheckLabel htmlFor="allTermChk">
+                  <FatText text={'만 14세 이상이며, 약관에 모두 동의합니다'} />
+                  <PopupCustom
+                    trigger={
+                      <TermButton type="button">
+                        (약관 및 세부사항 선택)
+                      </TermButton>
+                    }
+                    modal
+                  >
+                    {(close) => (
+                      <PBody>
+                        <PTitle text={'약관 및 세부사항 선택'} />
+                        <AllCheckDiv>
+                          <CheckBox
+                            id="tosChk"
+                            checked={tos}
+                            onChange={onChangeTos}
+                          />
+                          <CheckLabel2 htmlFor="tosChk">
+                            <Link target="_blank" to="/tos" replace>
+                              이용 약관
+                            </Link>
+                            &nbsp;동의
+                            <span style={{ color: 'red' }}>&nbsp;(필수)</span>
+                          </CheckLabel2>
+                        </AllCheckDiv>
+                        <AllCheckDiv>
+                          <CheckBox
+                            id="topChk"
+                            checked={top}
+                            onChange={onChangeTop}
+                          />
+                          <CheckLabel2 htmlFor="topChk">
+                            <Link target="_blank" to="/top" replace>
+                              개인정보 취급방침
+                            </Link>
+                            &nbsp;동의
+                            <span style={{ color: 'red' }}>&nbsp;(필수)</span>
+                          </CheckLabel2>
+                        </AllCheckDiv>
+                        <AllCheckDiv>
+                          <CheckBox
+                            id="marketingChk"
+                            checked={marketing}
+                            onChange={onChangeMarketing}
+                          />
+                          <CheckLabel2 htmlFor="marketingChk">
+                            마케팅 수신 동의
+                            <span style={{ color: 'gray' }}>&nbsp;(선택)</span>
+                          </CheckLabel2>
+                        </AllCheckDiv>
+                        <ButtonDiv>
+                          <PopupButton_solo
+                            type="button"
+                            onClick={() => {
+                              close();
+                            }}
+                            text={'닫기'}
+                          />
+                        </ButtonDiv>
+                      </PBody>
+                    )}
+                  </PopupCustom>
+                </CheckLabel>
+              </AllCheckDiv>
               <JoinButtonDiv>
                 <Button text={'가입'} />
               </JoinButtonDiv>
@@ -365,12 +515,12 @@ export default ({
           {action === 'logIn' ? (
             <>
               아직 계정이 없으신가요?{' '}
-              <Link onClick={() => setAction('signUp')}>회원가입</Link>
+              <SignLink onClick={() => setAction('signUp')}>회원가입</SignLink>
             </>
           ) : (
             <>
               이미 계정이 있으신가요?{' '}
-              <Link onClick={() => setAction('logIn')}>로그인</Link>
+              <SignLink onClick={() => setAction('logIn')}>로그인</SignLink>
             </>
           )}
         </StateChanger>

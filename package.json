@@ -74,7 +74,10 @@
       "no-else-return": 0,
       "react/require-default-props": 0,
       "no-console": 0,
-      "react/jsx-curly-newline": 0
+      "react/jsx-curly-newline": 0,
+      "import/prefer-default-export": 0,
+      "react/jsx-wrap-multilines": 0,
+      "no-alert": 0
     },
     "env": {
       "browser": true

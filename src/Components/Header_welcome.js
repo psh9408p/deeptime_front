@@ -1,7 +1,7 @@
-import React from "react"
-import styled from "styled-components"
-import { Link, withRouter } from "react-router-dom"
-import { Logo, Shutter } from "./Icons"
+import React from 'react';
+import styled from 'styled-components';
+import { Link, withRouter } from 'react-router-dom';
+import { Logo, Shutter } from './Icons';
 
 const Header = styled.header`
   width: 100%;
@@ -17,7 +17,7 @@ const Header = styled.header`
   align-items: center;
   padding: 10px 0px;
   z-index: 2;
-`
+`;
 
 const HeaderWrapper = styled.div`
   width: 100%;
@@ -25,7 +25,7 @@ const HeaderWrapper = styled.div`
   padding: 0px 40px;
   display: flex;
   justify-content: center;
-`
+`;
 
 const HeaderColumn = styled.div`
   width: 33%;
@@ -42,14 +42,14 @@ const HeaderColumn = styled.div`
     justify-content: flex-end;
     display: inline-flex;
   }
-`
+`;
 
 const AiBox = styled.div`
   display: inline-flex;
   align-items: center;
   padding: 10px 15px;
   height: 100%;
-`
+`;
 
 const HeaderLink = styled(Link)`
   cursor: pointer;
@@ -67,7 +67,7 @@ const HeaderLink = styled(Link)`
     border-radius: 3px;
     padding: 0px 10px;
   }
-`
+`;
 
 const WelcomeLink = styled(Link)`
   cursor: pointer;
@@ -84,12 +84,12 @@ const WelcomeLink = styled(Link)`
   &:first-child {
     font-size: 18px;
   }
-`
+`;
 
 const IamText = styled.div`
   font-size: 18px;
   margin: 0px 8px 0px 10px;
-`
+`;
 
 export default withRouter(() => {
   return (
@@ -127,5 +127,5 @@ export default withRouter(() => {
         </HeaderColumn>
       </HeaderWrapper>
     </Header>
-  )
-})
+  );
+});

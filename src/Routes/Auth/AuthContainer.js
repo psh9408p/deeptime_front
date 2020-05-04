@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AuthPresenter from './AuthPresenter';
 import useInput from '../../Hooks/useInput';
 import useSelect from '../../Hooks/useSelect';
+import useSelect_dynamic from '../../Hooks/useSelect_dynamic';
 import { useMutation } from 'react-apollo-hooks';
 import {
   LOG_IN,
@@ -14,18 +15,35 @@ import {
   C_EMAIL_VERIFICATION,
 } from './AuthQueries';
 import { toast } from 'react-toastify';
+import {
+  studyOption,
+  address1,
+  address2_total,
+} from '../../Components/LongArray';
 
 export default () => {
-  const maxLen = (value) => value.length <= 10;
+  const maxLen_10 = (value) => value.length <= 10;
+  const minLen_6 = (value) => value.length < 6 && value.length > 0;
   // const maxLen_nonHyphen = (value) =>
   //   value.length <= 11 && !value.includes('-');
 
   const [action, setAction] = useState('logIn');
-  const loginPosition = useSelect(
-    ['[일반]학생', '[학교]관리자', '[학원]관리자', '[독서실]관리자'],
-    ['student', 'manager_school', 'manager_academy', 'manager_readingRoom'],
+  const [allTerm, setAllTerm] = useState(false);
+  const [tos, setTos] = useState(false);
+  const [top, setTop] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+  const studyGroup = useSelect(studyOption, studyOption);
+  const myAddress1 = useSelect(address1, address1);
+  const myAddress2 = useSelect_dynamic(
+    address2_total,
+    address2_total,
+    myAddress1.optionList,
+    myAddress1.option,
   );
-  const username = useInput('', maxLen);
+  const username = useInput('', maxLen_10);
+  const password = useInput('', '', minLen_6);
+  const passChk = (value) => value !== password.value;
+  const password2 = useInput('', '', passChk);
   const firstName = useInput('');
   const lastName = useInput('');
   const secret = useInput('');
@@ -38,12 +56,16 @@ export default () => {
   });
   const createAccountMutation = useMutation(CREATE_ACCOUNT, {
     variables: {
-      loginPosition: loginPosition.option,
+      username: username.value,
       email: email.value,
       phoneNumber: phoneNumber.value,
-      username: username.value,
       firstName: firstName.value,
       lastName: lastName.value,
+      password: password.value,
+      address1: myAddress1.option,
+      address2: myAddress2.option,
+      termsOfMarketing: marketing,
+      studyGroup: studyGroup.option,
     },
   });
   const confirmSecretMutation = useMutation(CONFIRM_SECRET, {
@@ -75,6 +97,25 @@ export default () => {
       key: emailKey.value,
     },
   });
+
+  const onChangeAllTerm = (e) => {
+    setAllTerm(e.target.checked);
+    setTos(e.target.checked);
+    setTop(e.target.checked);
+    setMarketing(e.target.checked);
+  };
+
+  const onChangeTos = (e) => {
+    setTos(e.target.checked);
+  };
+
+  const onChangeTop = (e) => {
+    setTop(e.target.checked);
+  };
+
+  const onChangeMarketing = (e) => {
+    setMarketing(e.target.checked);
+  };
 
   const sPhoneOnClick = async () => {
     try {
@@ -168,34 +209,34 @@ export default () => {
         toast.error('이메일을 입력하세요.');
       }
     } else if (action === 'signUp') {
-      if (
-        email.value !== '' &&
-        username.value !== '' &&
-        firstName.value !== '' &&
-        lastName.value !== ''
-      ) {
-        try {
-          const {
-            data: { createAccount },
-          } = await createAccountMutation();
-          if (!createAccount) {
-            toast.error('계정을 만들 수 없습니다.');
-          } else {
-            toast.success(
-              <div>
-                계정이 만들어졌습니다.
-                <br />
-                로그인을 시도하세요.
-              </div>,
-            );
-            setTimeout(() => setAction('logIn'), 3000);
+      if (tos === true && top === true) {
+        if (password.errorChk === false && password2.errorChk === false) {
+          try {
+            toast.info('새로운 계정 등록 중...');
+            const {
+              data: { createAccount },
+            } = await createAccountMutation();
+            if (!createAccount) {
+              alert('계정을 만들 수 없습니다.');
+            } else {
+              toast.success(
+                <div>
+                  계정이 만들어졌습니다.
+                  <br />
+                  로그인을 시도하세요.
+                </div>,
+              );
+              setTimeout(() => setAction('logIn'), 3000);
+            }
+          } catch (e) {
+            const realText = e.message.split('GraphQL error: ');
+            alert(realText[1]);
           }
-        } catch (e) {
-          const realText = e.message.split('GraphQL error: ');
-          toast.error(realText[1]);
+        } else {
+          alert('비밀번호를 다시 확인하세요.');
         }
       } else {
-        toast.error('모든 항목을 입력하세요.');
+        alert('필수 약관에 동의하세요.');
       }
     } else if (action === 'confirm') {
       if (secret.value !== '') {
@@ -225,7 +266,7 @@ export default () => {
     <AuthPresenter
       setAction={setAction}
       action={action}
-      loginPosition={loginPosition}
+      studyGroup={studyGroup}
       username={username}
       firstName={firstName}
       lastName={lastName}
@@ -234,11 +275,23 @@ export default () => {
       phoneNumber={phoneNumber}
       phoneKey={phoneKey}
       secret={secret}
+      password={password}
+      password2={password2}
       onSubmit={onSubmit}
       sPhoneOnClick={sPhoneOnClick}
       cPhoneOnClick={cPhoneOnClick}
       sEmailOnClick={sEmailOnClick}
       cEmailOnClick={cEmailOnClick}
+      myAddress1={myAddress1}
+      myAddress2={myAddress2}
+      allTerm={allTerm}
+      tos={tos}
+      top={top}
+      marketing={marketing}
+      onChangeAllTerm={onChangeAllTerm}
+      onChangeTop={onChangeTop}
+      onChangeTos={onChangeTos}
+      onChangeMarketing={onChangeMarketing}
     />
   );
 };

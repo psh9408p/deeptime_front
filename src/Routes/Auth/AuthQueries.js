@@ -8,20 +8,28 @@ export const LOG_IN = gql`
 
 export const CREATE_ACCOUNT = gql`
   mutation createAccount(
-    $phoneNumber: String!
-    $loginPosition: String!
     $username: String!
     $email: String!
-    $firstName: String
-    $lastName: String
+    $phoneNumber: String!
+    $firstName: String!
+    $lastName: String!
+    $password: String!
+    $address1: String!
+    $address2: String!
+    $termsOfMarketing: Boolean!
+    $studyGroup: String!
   ) {
     createAccount(
-      phoneNumber: $phoneNumber
-      loginPosition: $loginPosition
       username: $username
       email: $email
+      phoneNumber: $phoneNumber
       firstName: $firstName
       lastName: $lastName
+      password: $password
+      address1: $address1
+      address2: $address2
+      termsOfMarketing: $termsOfMarketing
+      studyGroup: $studyGroup
     )
   }
 `;
