@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Input from '../../Components/Input';
 import CheckBox from '../../Components/CheckBox';
 import Button from '../../Components/Buttons/Button';
+import Button_gray from '../../Components/Buttons/Button_gray';
 import PopButton_auth from '../../Components/Buttons/PopButton_auth';
 import PopButton from '../../Components/Buttons/PopButton';
 import PopupButton from '../../Components/Buttons/PopupButton';
@@ -63,6 +64,10 @@ const Form = styled(Box)`
       }
     }
   }
+`;
+
+const LoginButtonDiv = styled.div`
+  margin-top: 10px;
 `;
 
 const JoinButtonDiv = styled.div`
@@ -178,6 +183,16 @@ const TermButton = styled.button`
   padding: 0;
 `;
 
+const BottomDiv = styled.div`
+  &:not(:last-child) {
+    margin-bottom: 7px;
+  }
+`;
+
+const GapDiv = styled.div`
+  height: 7px;
+`;
+
 export default ({
   action,
   studyGroup,
@@ -190,7 +205,6 @@ export default ({
   phoneKey,
   setAction,
   onSubmit,
-  secret,
   password,
   password2,
   sPhoneOnClick,
@@ -207,6 +221,7 @@ export default ({
   onChangeTop,
   onChangeTos,
   onChangeMarketing,
+  sPhoneOnClick_findEmail,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -250,7 +265,14 @@ export default ({
                 {...email}
                 type="email"
               />
-              <Button text={'로그인'} />
+              <Input
+                placeholder={'비밀번호 (예: ABCD1234)'}
+                {...password}
+                type="password"
+              />
+              <LoginButtonDiv>
+                <Button text={'로그인'} />
+              </LoginButtonDiv>
             </form>
           </>
         )}
@@ -498,33 +520,90 @@ export default ({
             />
           </>
         )}
-        {action === 'confirm' && (
+        {action === 'findEmail' && (
           <>
-            <Helmet>
-              <title>비밀번호 확인 | SLOG-IAM</title>
-            </Helmet>
+            <LogoBox>
+              <Logo />
+            </LogoBox>
             <form onSubmit={onSubmit}>
-              <Input placeholder="비밀번호" required {...secret} />
-              <Button text={'확인'} />
+              <VerifiInputDiv>
+                <PhoneInput
+                  country={'kr'}
+                  value={phoneNumber.value}
+                  onChange={(phone) => phoneNumber.setValue(phone)}
+                />
+              </VerifiInputDiv>
+              <Button_gray
+                onClick={sPhoneOnClick_findEmail}
+                text={'인증번호 (재)발송'}
+              />
+              <GapDiv />
+              <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
+              <ButtonDiv>
+                <Button text={'인증 (Email 찾기)'} />
+              </ButtonDiv>
+            </form>
+          </>
+        )}
+        {action === 'findPassword' && (
+          <>
+            <LogoBox>
+              <Logo />
+            </LogoBox>
+            비번찾자
+            <form onSubmit={onSubmit}>
+              <Input
+                placeholder={'Email (예: IAM@google.com)'}
+                {...email}
+                type="email"
+              />
+              <Input
+                placeholder={'비밀번호 (예: ABCD1234)'}
+                {...password}
+                type="password"
+              />
+              <LoginButtonDiv>
+                <Button text={'로그인'} />
+              </LoginButtonDiv>
             </form>
           </>
         )}
       </Form>
-      {action !== 'confirm' && (
-        <StateChanger>
-          {action === 'logIn' ? (
-            <>
-              아직 계정이 없으신가요?{' '}
+      <StateChanger>
+        {action === 'logIn' ? (
+          <>
+            <BottomDiv>
+              아직 계정이 없으신가요?&nbsp;
               <SignLink onClick={() => setAction('signUp')}>회원가입</SignLink>
-            </>
-          ) : (
-            <>
-              이미 계정이 있으신가요?{' '}
-              <SignLink onClick={() => setAction('logIn')}>로그인</SignLink>
-            </>
-          )}
-        </StateChanger>
-      )}
+            </BottomDiv>
+            <BottomDiv>
+              Email이 기억나지 않습니까?&nbsp;
+              <SignLink onClick={() => setAction('findEmail')}>
+                Email 찾기
+              </SignLink>
+            </BottomDiv>
+            <BottomDiv>
+              비밀번호가 기억나지 않습니까?&nbsp;
+              <SignLink onClick={() => setAction('findPassword')}>
+                비밀번호 찾기
+              </SignLink>
+            </BottomDiv>
+          </>
+        ) : (
+          <>
+            이미 계정이 있으신가요?{' '}
+            <SignLink
+              onClick={() => {
+                setAction('logIn');
+                phoneNumber.setValue('');
+                phoneKey.setValue('');
+              }}
+            >
+              로그인
+            </SignLink>
+          </>
+        )}
+      </StateChanger>
     </Wrapper>
   );
 };

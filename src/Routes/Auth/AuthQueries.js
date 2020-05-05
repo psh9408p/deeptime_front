@@ -1,11 +1,5 @@
 import { gql } from 'apollo-boost';
 
-export const LOG_IN = gql`
-  mutation requestSecret($email: String!) {
-    requestSecret(email: $email)
-  }
-`;
-
 export const CREATE_ACCOUNT = gql`
   mutation createAccount(
     $username: String!
@@ -34,9 +28,9 @@ export const CREATE_ACCOUNT = gql`
   }
 `;
 
-export const CONFIRM_SECRET = gql`
-  mutation confirmSecret($secret: String!, $email: String!) {
-    confirmSecret(secret: $secret, email: $email)
+export const REQUEST_LOGIN = gql`
+  mutation requestLogin($email: String!, $password: String!) {
+    requestLogin(email: $email, password: $password)
   }
 `;
 
@@ -67,5 +61,17 @@ export const S_EMAIL_VERIFICATION = gql`
 export const C_EMAIL_VERIFICATION = gql`
   mutation completeEmailVerification($emailAdress: String!, $key: String!) {
     completeEmailVerification(emailAdress: $emailAdress, key: $key)
+  }
+`;
+
+export const S_PHONE_FINDEMAIL = gql`
+  mutation startPhoneFindEmail($phoneNumber: String!) {
+    startPhoneFindEmail(phoneNumber: $phoneNumber)
+  }
+`;
+
+export const C_PHONE_FINDEMAIL = gql`
+  mutation completePhoneFindEmail($phoneNumber: String!, $key: String!) {
+    completePhoneFindEmail(phoneNumber: $phoneNumber, key: $key)
   }
 `;
