@@ -222,6 +222,8 @@ export default ({
   onChangeTos,
   onChangeMarketing,
   sPhoneOnClick_findEmail,
+  allClear,
+  sEmailOnClick_findPassword,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -535,7 +537,7 @@ export default ({
               </VerifiInputDiv>
               <Button_gray
                 onClick={sPhoneOnClick_findEmail}
-                text={'인증번호 (재)발송'}
+                text={'휴대폰으로 인증번호 (재)발송'}
               />
               <GapDiv />
               <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
@@ -550,21 +552,23 @@ export default ({
             <LogoBox>
               <Logo />
             </LogoBox>
-            비번찾자
             <form onSubmit={onSubmit}>
-              <Input
-                placeholder={'Email (예: IAM@google.com)'}
-                {...email}
-                type="email"
+              <VerifiInputDiv>
+                <Input
+                  placeholder={'Email (iam@google.com)'}
+                  {...email}
+                  type="email"
+                />
+              </VerifiInputDiv>
+              <Button_gray
+                onClick={sEmailOnClick_findPassword}
+                text={'Email로 인증번호 (재)발송'}
               />
-              <Input
-                placeholder={'비밀번호 (예: ABCD1234)'}
-                {...password}
-                type="password"
-              />
-              <LoginButtonDiv>
-                <Button text={'로그인'} />
-              </LoginButtonDiv>
+              <GapDiv />
+              <SmallInput placeholder={'인증번호 입력'} {...emailKey} />
+              <ButtonDiv>
+                <Button text={'인증 (비밀번호 찾기)'} />
+              </ButtonDiv>
             </form>
           </>
         )}
@@ -574,17 +578,34 @@ export default ({
           <>
             <BottomDiv>
               아직 계정이 없으신가요?&nbsp;
-              <SignLink onClick={() => setAction('signUp')}>회원가입</SignLink>
+              <SignLink
+                onClick={() => {
+                  setAction('signUp');
+                  allClear();
+                }}
+              >
+                회원가입
+              </SignLink>
             </BottomDiv>
             <BottomDiv>
               Email이 기억나지 않습니까?&nbsp;
-              <SignLink onClick={() => setAction('findEmail')}>
+              <SignLink
+                onClick={() => {
+                  setAction('findEmail');
+                  allClear();
+                }}
+              >
                 Email 찾기
               </SignLink>
             </BottomDiv>
             <BottomDiv>
               비밀번호가 기억나지 않습니까?&nbsp;
-              <SignLink onClick={() => setAction('findPassword')}>
+              <SignLink
+                onClick={() => {
+                  setAction('findPassword');
+                  allClear();
+                }}
+              >
                 비밀번호 찾기
               </SignLink>
             </BottomDiv>
@@ -595,8 +616,7 @@ export default ({
             <SignLink
               onClick={() => {
                 setAction('logIn');
-                phoneNumber.setValue('');
-                phoneKey.setValue('');
+                allClear();
               }}
             >
               로그인

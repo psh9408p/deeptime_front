@@ -75,3 +75,15 @@ export const C_PHONE_FINDEMAIL = gql`
     completePhoneFindEmail(phoneNumber: $phoneNumber, key: $key)
   }
 `;
+
+export const S_EMAIL_FINDPASSWORD = gql`
+  mutation startEmailFindPassword($emailAdress: String!) {
+    startEmailFindPassword(emailAdress: $emailAdress)
+  }
+`;
+
+export const C_EMAIL_FINDPASSWORD = gql`
+  mutation completeEmailFindPassword($emailAdress: String!, $key: String!) {
+    completeEmailFindPassword(emailAdress: $emailAdress, key: $key)
+  }
+`;

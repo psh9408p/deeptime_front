@@ -14,6 +14,8 @@ import {
   C_EMAIL_VERIFICATION,
   S_PHONE_FINDEMAIL,
   C_PHONE_FINDEMAIL,
+  S_EMAIL_FINDPASSWORD,
+  C_EMAIL_FINDPASSWORD,
 } from './AuthQueries';
 import { toast } from 'react-toastify';
 import {
@@ -102,6 +104,17 @@ export default () => {
       key: phoneKey.value,
     },
   });
+  const sEmailFindPasswordMutation = useMutation(S_EMAIL_FINDPASSWORD, {
+    variables: {
+      emailAdress: email.value,
+    },
+  });
+  const cEmailFindPasswordMutation = useMutation(C_EMAIL_FINDPASSWORD, {
+    variables: {
+      emailAdress: email.value,
+      key: emailKey.value,
+    },
+  });
 
   const onChangeAllTerm = (e) => {
     setAllTerm(e.target.checked);
@@ -120,6 +133,18 @@ export default () => {
 
   const onChangeMarketing = (e) => {
     setMarketing(e.target.checked);
+  };
+
+  const allClear = () => {
+    firstName.setValue('');
+    lastName.setValue('');
+    username.setValue('');
+    email.setValue('');
+    phoneNumber.setValue('');
+    password.setValue('');
+    password2.setValue('');
+    emailKey.setValue('');
+    phoneKey.setValue('');
   };
 
   const sPhoneOnClick = async () => {
@@ -197,6 +222,23 @@ export default () => {
     }
   };
 
+  const sEmailOnClick_findPassword = async () => {
+    try {
+      toast.info('인증번호 요청 중...');
+      const {
+        data: { startEmailFindPassword },
+      } = await sEmailFindPasswordMutation();
+      if (!startEmailFindPassword) {
+        alert('인증번호를 요청할 수 없습니다.');
+      } else {
+        toast.success('해당 Email로 인증번호를 발송했습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (action === 'logIn') {
@@ -237,7 +279,7 @@ export default () => {
                 </div>,
               );
               password.setValue('');
-              setTimeout(() => setAction('logIn'), 3000);
+              setAction('logIn');
             }
           } catch (e) {
             const realText = e.message.split('GraphQL error: ');
@@ -260,6 +302,19 @@ export default () => {
         phoneKey.setValue('');
         setAction('logIn');
         alert('휴대폰 인증이 완료됐습니다.\n로그인을 시도하세요.');
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+      }
+    } else if (action === 'findPassword') {
+      try {
+        toast.info('인증번호 확인 중...');
+        await cEmailFindPasswordMutation();
+        emailKey.setValue('');
+        setAction('logIn');
+        alert(
+          '해당 Email로 임시 비밀번호가 발급됐습니다.\n비밀번호 확인 후 로그인을 시도하세요.',
+        );
       } catch (e) {
         const realText = e.message.split('GraphQL error: ');
         alert(realText[1]);
@@ -297,6 +352,8 @@ export default () => {
       onChangeTos={onChangeTos}
       onChangeMarketing={onChangeMarketing}
       sPhoneOnClick_findEmail={sPhoneOnClick_findEmail}
+      allClear={allClear}
+      sEmailOnClick_findPassword={sEmailOnClick_findPassword}
     />
   );
 };
