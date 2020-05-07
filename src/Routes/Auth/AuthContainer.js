@@ -170,9 +170,11 @@ export default () => {
       await cPhoneVerificationMutation();
       phoneKey.setValue('');
       toast.success('휴대폰 인증이 완료됐습니다.');
+      return true;
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
     }
   };
 
@@ -199,9 +201,11 @@ export default () => {
       await cEmailVerificationMutation();
       emailKey.setValue('');
       toast.success('Email 인증이 완료됐습니다.');
+      return true;
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
     }
   };
 

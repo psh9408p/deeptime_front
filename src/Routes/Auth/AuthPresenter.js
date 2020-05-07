@@ -320,7 +320,12 @@ export default ({
                         <PopupButton
                           type="button"
                           text={'인증'}
-                          onClick={cEmailOnClick}
+                          onClick={async () => {
+                            const fucResult = await cEmailOnClick();
+                            if (fucResult) {
+                              close();
+                            }
+                          }}
                         />
                         <PopupButton
                           type="button"
@@ -366,7 +371,12 @@ export default ({
                         <PopupButton
                           type="button"
                           text={'인증'}
-                          onClick={cPhoneOnClick}
+                          onClick={async () => {
+                            const fucResult = await cPhoneOnClick();
+                            if (fucResult) {
+                              close();
+                            }
+                          }}
                         />
                         <PopupButton
                           type="button"
