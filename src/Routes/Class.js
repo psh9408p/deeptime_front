@@ -1,18 +1,18 @@
-import React from "react"
-import styled from "styled-components"
-import useTabs from "../Hooks/useTabs"
-import ClassTabs from "../Components/Tabs/ClassTabs"
+import React from 'react';
+import styled from 'styled-components';
+import useTabs from '../Hooks/useTabs';
+import ClassTabs from './Tabs/ClassTabs';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const Tabs = styled.div`
   display: flex;
   justify-content: center;
-`
+`;
 
 const ClassButton = styled.button`
   width: 100px;
@@ -27,12 +27,12 @@ const ClassButton = styled.button`
   &:not(:last-child) {
     margin-right: 60px;
   }
-`
+`;
 
 export default ({ Mydata, MyRefetch }) => {
-  MyRefetch()
-  const classTabContents = ["클래스 통계", "나의 클래스", "클래스 스케줄"]
-  const classTabs = useTabs(0, classTabContents)
+  MyRefetch();
+  const classTabContents = ['클래스 통계', '나의 클래스', '클래스 스케줄'];
+  const classTabs = useTabs(0, classTabContents);
 
   return (
     <Wrapper>
@@ -52,5 +52,5 @@ export default ({ Mydata, MyRefetch }) => {
         pageIndexChange={classTabs.changeItem}
       />
     </Wrapper>
-  )
-}
+  );
+};

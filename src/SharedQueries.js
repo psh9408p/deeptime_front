@@ -1,4 +1,4 @@
-import { gql } from "apollo-boost"
+import { gql } from 'apollo-boost';
 
 export const ME = gql`
   query me {
@@ -20,15 +20,7 @@ export const ME = gql`
         attendanceStatus
         absenceReason
       }
-      schools {
-        id
-        name
-      }
       academies {
-        id
-        name
-      }
-      readingRooms {
         id
         name
       }
@@ -37,23 +29,11 @@ export const ME = gql`
         name
         organizationName
         bio
-        grade
-        floor
-        maxRow
-        maxColumn
-        school {
-          id
-          name
-        }
         academy {
-          id
-          name
-        }
-        readingRoom {
           id
           name
         }
       }
     }
   }
-`
+`;

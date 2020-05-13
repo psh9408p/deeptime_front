@@ -1,10 +1,10 @@
-import React from "react"
-import styled from "styled-components"
-import { Link, withRouter } from "react-router-dom"
-import { Logo, Shutter, User } from "./Icons"
-import Avatar from "./Avatar"
-import { useQuery } from "react-apollo-hooks"
-import { ME } from "../SharedQueries"
+import React from 'react';
+import styled from 'styled-components';
+import { Link, withRouter } from 'react-router-dom';
+import { Logo, Shutter, User } from './Icons';
+import Avatar from './Avatar';
+import { useQuery } from 'react-apollo-hooks';
+import { ME } from '../SharedQueries';
 
 const Header = styled.header`
   width: 100%;
@@ -20,14 +20,14 @@ const Header = styled.header`
   align-items: center;
   padding: 10px 0px;
   z-index: 2;
-`
+`;
 
 const HeaderWrapper = styled.div`
   width: 100%;
   padding: 0px 40px;
   display: flex;
   justify-content: center;
-`
+`;
 
 const HeaderColumn = styled.div`
   width: 33%;
@@ -44,7 +44,7 @@ const HeaderColumn = styled.div`
     justify-content: flex-end;
     display: inline-flex;
   }
-`
+`;
 
 const AiBox = styled.div`
   display: inline-flex;
@@ -53,7 +53,7 @@ const AiBox = styled.div`
   height: 100%;
   border: 1px solid ${(props) => props.theme.classicBlue};
   border-radius: 3px;
-`
+`;
 
 const HeaderLink = styled(Link)`
   cursor: pointer;
@@ -66,17 +66,17 @@ const HeaderLink = styled(Link)`
   font-size: 16px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
-`
+`;
 
 const AiHeaderLink = styled(HeaderLink)`
   color: ${(props) => props.theme.classicBlue};
   &:nth-child(2) {
     margin-left: 15px;
   }
-`
+`;
 
 export default withRouter(() => {
-  const { data } = useQuery(ME)
+  const { data } = useQuery(ME);
   return (
     <Header>
       <HeaderWrapper>
@@ -86,7 +86,7 @@ export default withRouter(() => {
           </Link>
         </HeaderColumn>
         <HeaderColumn>
-          {data.me && data.me.loginPosition === "student" && (
+          {data.me && data.me.loginPosition === 'student' && (
             <AiBox>
               <Shutter />
               <AiHeaderLink to="/study" replace>
@@ -97,7 +97,7 @@ export default withRouter(() => {
               </AiHeaderLink>
             </AiBox>
           )}
-          {data.me && data.me.loginPosition.includes("manager") && (
+          {data.me && data.me.loginPosition.includes('manager') && (
             <AiBox>
               <Shutter />
               <AiHeaderLink to="/attendance" replace>
@@ -112,23 +112,11 @@ export default withRouter(() => {
             </AiBox>
           )}
         </HeaderColumn>
-        {data.me && data.me.loginPosition.includes("manager") && (
+        {data.me && data.me.loginPosition.includes('manager') && (
           <HeaderColumn>
-            {data.me && data.me.loginPosition === "manager_school" && (
-              <HeaderLink to="/" replace>
-                학교
-              </HeaderLink>
-            )}
-            {data.me && data.me.loginPosition === "manager_academy" && (
-              <HeaderLink to="/" replace>
-                학원
-              </HeaderLink>
-            )}
-            {data.me && data.me.loginPosition === "manager_readingRoom" && (
-              <HeaderLink to="/" replace>
-                독서실
-              </HeaderLink>
-            )}
+            <HeaderLink to="/" replace>
+              학원
+            </HeaderLink>
             <HeaderLink to="/class" replace>
               클래스
             </HeaderLink>
@@ -146,7 +134,7 @@ export default withRouter(() => {
             )}
           </HeaderColumn>
         )}
-        {data.me && data.me.loginPosition === "student" && (
+        {data.me && data.me.loginPosition === 'student' && (
           <HeaderColumn>
             {!data.me ? (
               <HeaderLink to="/#">
@@ -161,5 +149,5 @@ export default withRouter(() => {
         )}
       </HeaderWrapper>
     </Header>
-  )
-})
+  );
+});

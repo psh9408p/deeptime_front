@@ -7,7 +7,7 @@ import Attendance from '../Routes/Attendance';
 import Attendance_student from '../Routes/Attendance_student';
 import Supervision from '../Routes/Supervision';
 import Marking from '../Routes/Marking';
-import Organization from '../Routes/Organization';
+import Academy from '../Routes/Academy';
 import Class from '../Routes/Class';
 import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
@@ -57,7 +57,7 @@ const LoggedInRoutes = () => {
           <Route path="/attendance" component={Attendance} />
           <Route path="/supervision" component={Supervision} />
           <Route path="/marking" component={Marking} />
-          <Route exact path="/" component={Organization} />
+          <Route exact path="/" component={Academy} />
           <Route
             path="/class"
             component={() => <Class Mydata={Mydata} MyRefetch={MyRefetch} />}

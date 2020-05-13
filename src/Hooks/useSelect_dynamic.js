@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default (
   options_dynamic,
@@ -12,8 +12,8 @@ export default (
 
   const [option, setOption] = useState(values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
-  const optionList = options;
-  const valueList = values;
+  let optionList = options;
+  let valueList = values;
 
   const onChange = (e) => {
     const {
@@ -26,6 +26,15 @@ export default (
   const optionIndexSet = (num) => {
     setOptionIndex(num);
   };
+
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    setOption(values[0]);
+  }, [selectedIndex]);
 
   return {
     option,

@@ -106,7 +106,7 @@ const VerficationInputDiv = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 600px !important;
+    width: 500px !important;
     height: 250px !important;
     display: flex;
     justify-content: center;
@@ -117,8 +117,8 @@ const PopupCustom = styled(Popup)`
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
-  width: 600px;
-  padding: 20px 100px;
+  width: 500px;
+  padding: 20px 50px;
 `;
 
 const PTitle = styled(FatText)`
@@ -298,6 +298,7 @@ export default ({
                   trigger={
                     <PopButton_auth text={'Email 인증'} type={'button'} />
                   }
+                  closeOnDocumentClick={false}
                   modal
                 >
                   {(close) => (
@@ -349,6 +350,7 @@ export default ({
                   trigger={
                     <PopButton_auth text={'휴대폰 인증'} type={'button'} />
                   }
+                  closeOnDocumentClick={false}
                   modal
                 >
                   {(close) => (
@@ -393,12 +395,12 @@ export default ({
               </VerficationInputDiv>
               <SelectDiv>
                 <span>학습 그룹</span>
-                <Select {...studyGroup} />
+                <Select {...studyGroup} id={'studyGroup_id'} />
               </SelectDiv>
               <SelectDiv>
                 <span>주소</span>
-                <Select {...myAddress1} />
-                <Select {...myAddress2} />
+                <Select {...myAddress1} id={'myAddress1_id'} />
+                <Select {...myAddress2} id={'myAddress2_id'} />
               </SelectDiv>
               <Input
                 placeholder={'비밀번호 (예: ABCD1234)'}
@@ -434,6 +436,7 @@ export default ({
                         (약관 및 세부사항 선택)
                       </TermButton>
                     }
+                    closeOnDocumentClick={false}
                     modal
                   >
                     {(close) => (

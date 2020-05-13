@@ -1,18 +1,18 @@
-import React from "react"
-import styled from "styled-components"
-import useTabs from "../Hooks/useTabs"
-import StudentTabs from "../Components/Tabs/StudentTabs"
+import React from 'react';
+import styled from 'styled-components';
+import useTabs from '../Hooks/useTabs';
+import StudentTabs from './Tabs/StudentTabs';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const Tabs = styled.div`
   display: flex;
   justify-content: center;
-`
+`;
 
 const ProfileButton = styled.button`
   width: 100px;
@@ -27,17 +27,20 @@ const ProfileButton = styled.button`
   &:not(:last-child) {
     margin-right: 60px;
   }
-`
+`;
 
 export default ({ Mydata, MyRefetch }) => {
-  MyRefetch()
-  const profileTabContents = ["학생 관리", "좌석 배정"]
-  const profileTabs = useTabs(0, profileTabContents)
+  MyRefetch();
+  const profileTabContents = ['학생 관리', '좌석 배정'];
+  const profileTabs = useTabs(0, profileTabContents);
   return (
     <Wrapper>
       <Tabs>
         {profileTabs.content.map((section, index) => (
-          <ProfileButton key={index} onClick={() => profileTabs.changeItem(index)}>
+          <ProfileButton
+            key={index}
+            onClick={() => profileTabs.changeItem(index)}
+          >
             {section}
           </ProfileButton>
         ))}
@@ -52,5 +55,5 @@ export default ({ Mydata, MyRefetch }) => {
         classList={Mydata.me.classes}
       />
     </Wrapper>
-  )
-}
+  );
+};

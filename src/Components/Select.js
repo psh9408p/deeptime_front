@@ -1,19 +1,36 @@
-import React from "react"
-import styled from "styled-components"
+import React, { useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import selectChange from './SelectChange';
+import PropTypes from 'prop-types';
 
 const Container = styled.select`
   width: 100%;
   height: 100%;
-`
+`;
 
-const Select = ({ optionList, option, onChange, id }) => (
-  <Container id={id} onChange={onChange}>
-    {optionList.map((address, key) => (
-      <option key={key} value={key}>
-        {address}
-      </option>
-    ))}
-  </Container>
-)
+const Select = ({ optionList, option, onChange, id }) => {
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    selectChange(id, optionList.indexOf(option));
+  }, [option]);
 
-export default Select
+  return (
+    <Container id={id} onChange={onChange}>
+      {optionList.map((address, key) => (
+        <option key={key} value={key}>
+          {address}
+        </option>
+      ))}
+    </Container>
+  );
+};
+
+Select.propTypes = {
+  id: PropTypes.string.isRequired,
+};
+
+export default Select;

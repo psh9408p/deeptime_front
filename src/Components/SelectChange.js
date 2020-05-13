@@ -1,5 +1,5 @@
 const selectChange = (getId, num) => {
-  document.getElementById(getId).value = num
-}
+  document.getElementById(getId).value = num;
+};
 
-export default selectChange
+export default selectChange;

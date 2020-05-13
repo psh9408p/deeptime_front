@@ -141,6 +141,8 @@ export default () => {
     username.setValue('');
     email.setValue('');
     phoneNumber.setValue('');
+    myAddress1.setOption(address1[0]);
+    myAddress2.setOption(address2_total[0][0]);
     password.setValue('');
     password2.setValue('');
     emailKey.setValue('');

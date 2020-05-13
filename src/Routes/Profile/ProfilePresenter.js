@@ -1,21 +1,21 @@
-import React from "react"
-import styled from "styled-components"
-import { Helmet } from "rl-react-helmet"
-import Loader from "../../Components/Loader"
-import Avatar from "../../Components/Avatar"
-import FatText from "../../Components/FatText"
-import FollowButton from "../../Components/FollowButton"
-import Button from "../../Components/Buttons/Button"
-import ProfileTabs from "../../Components/Tabs/ProfileTabs"
+import React from 'react';
+import styled from 'styled-components';
+import { Helmet } from 'rl-react-helmet';
+import Loader from '../../Components/Loader';
+import Avatar from '../../Components/Avatar';
+import FatText from '../../Components/FatText';
+import FollowButton from '../../Components/FollowButton';
+import Button from '../../Components/Buttons/Button';
+import ProfileTabs from '../Tabs/ProfileTabs';
 
 const Wrapper = styled.div`
   min-height: 100vh;
-`
+`;
 
 const LoaderWrapper = styled.div`
   min-height: 100vh;
   padding: 100px 0;
-`
+`;
 
 const Header = styled.header`
   display: flex;
@@ -23,38 +23,38 @@ const Header = styled.header`
   justify-content: space-around;
   width: 80%;
   margin: 40px auto;
-`
+`;
 
-const HeaderColumn = styled.div``
+const HeaderColumn = styled.div``;
 
 const UsernameRow = styled.div`
   display: flex;
   align-items: center;
   min-width: 400px;
-`
+`;
 
 const Username = styled.span`
   font-size: 26px;
   display: block;
   margin-right: 25px;
-`
+`;
 
 const Counts = styled.ul`
   display: flex;
   margin: 15px 0px;
-`
+`;
 
 const Count = styled.li`
   font-size: 16px;
   &:not(:last-child) {
     margin-right: 10px;
   }
-`
+`;
 
-const NameEmail = styled.div`
+const SubInfoDiv = styled.div`
   display: flex;
   margin-bottom: 15px;
-`
+`;
 
 const FatBox = styled(FatText)`
   margin-right: 20px;
@@ -62,17 +62,17 @@ const FatBox = styled(FatText)`
   &:last-child {
     color: #7f8c8d;
   }
-`
+`;
 
 const Bio = styled.p`
   margin: 10px 0px;
-`
+`;
 
 const Tabs = styled.div`
   border-top: 1px solid #e6e6e6;
   display: flex;
   justify-content: center;
-`
+`;
 const ProfileButton = styled.button`
   width: 100px;
   border: 0;
@@ -86,11 +86,11 @@ const ProfileButton = styled.button`
   &:not(:last-child) {
     margin-right: 60px;
   }
-`
+`;
 
 const ButtonWrap = styled.div`
   width: 150px;
-`
+`;
 
 export default ({ loading, data, logOut, profileTabs }) => {
   if (loading === true) {
@@ -98,7 +98,7 @@ export default ({ loading, data, logOut, profileTabs }) => {
       <LoaderWrapper>
         <Loader />
       </LoaderWrapper>
-    )
+    );
   } else if (!loading && data && data.seeUser) {
     const {
       seeUser: {
@@ -110,15 +110,12 @@ export default ({ loading, data, logOut, profileTabs }) => {
         isSelf,
         bio,
         email,
-        schoolsCount,
         academiesCount,
-        readingRoomsCount,
         classesCount,
-        readingRoomClassesCount,
         studentsCount,
         loginPosition,
       },
-    } = data
+    } = data;
     return (
       <Wrapper>
         <Helmet>
@@ -130,7 +127,7 @@ export default ({ loading, data, logOut, profileTabs }) => {
           </HeaderColumn>
           <HeaderColumn>
             <UsernameRow>
-              <Username>{username}</Username>{" "}
+              <Username>{username}</Username>{' '}
               <ButtonWrap>
                 {isSelf ? (
                   <Button onClick={logOut} text="로그아웃" />
@@ -141,56 +138,38 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </UsernameRow>
             <Counts>
               <Count>
-                <FatText text={String(schoolsCount)} /> 학교
+                <FatText text={String(academiesCount)} /> 학원
               </Count>
-              {loginPosition === "manager_academy" && (
-                <>
-                  <Count>
-                    <FatText text={String(academiesCount)} /> 학원
-                  </Count>
-                  <Count>
-                    <FatText text={String(classesCount)} /> 클래스
-                  </Count>
-                </>
-              )}
-              {loginPosition === "manager_readingRoom" && (
-                <>
-                  <Count>
-                    <FatText text={String(readingRoomsCount)} /> 독서실
-                  </Count>
-                  <Count>
-                    <FatText text={String(readingRoomClassesCount)} /> 클래스
-                  </Count>
-                </>
-              )}
+              <Count>
+                <FatText text={String(classesCount)} /> 클래스
+              </Count>
               <Count>
                 <FatText text={String(studentsCount)} /> 학생
               </Count>
             </Counts>
-            <NameEmail>
+            <SubInfoDiv>
               <FatBox text={fullName} />
               <FatBox text={email} />
-            </NameEmail>
+            </SubInfoDiv>
             <Bio>{bio}</Bio>
           </HeaderColumn>
         </Header>
         <Tabs>
           {profileTabs.content.map((section, index) => (
-            <ProfileButton key={index} onClick={() => profileTabs.changeItem(index)}>
+            <ProfileButton
+              key={index}
+              onClick={() => profileTabs.changeItem(index)}
+            >
               {section}
             </ProfileButton>
           ))}
         </Tabs>
-        <ProfileTabs
-          pageIndex={profileTabs.currentIndex}
-          isSelf={isSelf}
-          loginPosition={loginPosition}
-        />
+        <ProfileTabs pageIndex={profileTabs.currentIndex} />
       </Wrapper>
-    )
+    );
   }
-  return null
-}
+  return null;
+};
 
 // const Posts = styled.div`
 //   display: grid;
