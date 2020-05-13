@@ -115,7 +115,7 @@ export default withRouter(() => {
         {data.me && data.me.loginPosition.includes('manager') && (
           <HeaderColumn>
             <HeaderLink to="/" replace>
-              학원(테스트용)
+              학원
             </HeaderLink>
             <HeaderLink to="/class" replace>
               클래스

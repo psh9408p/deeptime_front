@@ -52,6 +52,7 @@ const LoggedInRoutes = () => {
         </Switch>
       );
     } else {
+      // MyRefetch();
       return (
         <Switch>
           <Route path="/attendance" component={Attendance} />

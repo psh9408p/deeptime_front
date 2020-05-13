@@ -8,14 +8,14 @@ const Container = styled.select`
   height: 100%;
 `;
 
-const Select = ({ optionList, option, onChange, id }) => {
+const Select = ({ optionList, valueList, option, onChange, id }) => {
   const isFirstRun = useRef(true);
   useEffect(() => {
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
     }
-    selectChange(id, optionList.indexOf(option));
+    selectChange(id, valueList.indexOf(option));
   }, [option]);
 
   return (

@@ -125,9 +125,12 @@ export default ({
   onSubmitAcademy,
   clearAcademy,
 }) => {
+  academyRefetch();
   if (pageIndex === 0) {
     if (academyData[0] === undefined) {
-      toast.error('학원 등록 후 통계 정보를 볼 수 있습니다.');
+      alert(
+        '학원 등록 후 통계 정보를 볼 수 있습니다.\n나의 학원으로 이동합니다.',
+      );
       pageIndexChange(1);
       return <></>;
     } else {

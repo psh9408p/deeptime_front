@@ -1,2 +1,2 @@
-import ClassTab from "./ClassTab"
-export default ClassTab
+import ClassTabContainer from './ClassTabContainer';
+export default ClassTabContainer;

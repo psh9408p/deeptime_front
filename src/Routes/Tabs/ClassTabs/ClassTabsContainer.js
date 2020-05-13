@@ -7,18 +7,12 @@ import Loader from '../../../Components/Loader';
 import useInput from '../../../Hooks/useInput';
 import { toast } from 'react-toastify';
 import useSelect from '../../../Hooks/useSelect';
-import selectChange from '../../../Components/SelectChange';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-const ClassTabsContainer = ({
-  pageIndex,
-  pageIndexChange,
-  loginPosition,
-  academyList,
-}) => {
+export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
   const maxLen = (value) => value.length <= 40;
 
   const className = useInput('');
@@ -28,6 +22,7 @@ const ClassTabsContainer = ({
     academyList.map((List) => List.id),
   );
 
+  console.log('a', className.value, classBio.value);
   const {
     data: classData,
     loading: classLoading,
@@ -35,23 +30,14 @@ const ClassTabsContainer = ({
   } = useQuery(MY_CLASS);
   const addClassMutation = useMutation(ADD_CLASS);
 
-  let academyValue = '';
-  if (myAcademyList.valueList[0]) {
-    academyValue = myAcademyList.valueList[0];
-  }
-
-  const clearClass = () => {
+  const clearClass = async () => {
     className.setValue('');
     classBio.setValue('');
-    myAcademyList.setOption(academyValue);
-    selectChange('modifyAcademy', 0);
+    myAcademyList.setOption(myAcademyList.valueList[0]);
   };
 
   const onSubmitClass = async (e) => {
     e.preventDefault();
-    let academyMuValue =
-      myAcademyList.option !== undefined ? myAcademyList.option : '';
-
     try {
       toast.info('새로운 클래스를 등록 중...');
       const {
@@ -60,14 +46,14 @@ const ClassTabsContainer = ({
         variables: {
           name: className.value,
           bio: classBio.value,
-          academyId: academyMuValue,
+          academyId: myAcademyList.option,
         },
       });
       if (!addClass) {
         toast.error('클래스를 등록할 수 없습니다.');
       } else {
-        clearClass();
         await classRefetch();
+        await clearClass();
         toast.success('새로운 클래스가 등록되었습니다.');
       }
     } catch (e) {
@@ -99,5 +85,3 @@ const ClassTabsContainer = ({
     );
   }
 };
-
-export default ClassTabsContainer;

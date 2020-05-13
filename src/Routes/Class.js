@@ -30,7 +30,7 @@ const ClassButton = styled.button`
 `;
 
 export default ({ Mydata, MyRefetch }) => {
-  MyRefetch();
+  // MyRefetch();
   const classTabContents = ['클래스 통계', '나의 클래스', '클래스 스케줄'];
   const classTabs = useTabs(0, classTabContents);
 
@@ -46,9 +46,7 @@ export default ({ Mydata, MyRefetch }) => {
       <ClassTabs
         pageIndex={classTabs.currentIndex}
         loginPosition={Mydata.me.loginPosition}
-        schoolList={Mydata.me.schools}
         academyList={Mydata.me.academies}
-        readingRoomList={Mydata.me.readingRooms}
         pageIndexChange={classTabs.changeItem}
       />
     </Wrapper>

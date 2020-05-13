@@ -205,13 +205,7 @@ const AcademyPresenter = ({
                       placeholder={'학원명 (예: 아이엠학원)'}
                       {...academyName}
                     />
-                    <LoadButton
-                      type="button"
-                      onClick={async () => {
-                        await loadValue();
-                        loadValue();
-                      }}
-                    >
+                    <LoadButton type="button" onClick={loadValue}>
                       기존정보 불러오기
                     </LoadButton>
                   </div>
@@ -257,11 +251,11 @@ const AcademyPresenter = ({
           <EditButton
             type="button"
             onClick={async () => {
-              toast.info(`'${academy.name}'를 관리 목록에서 삭제 중...`);
+              toast.info(`'${academy.name}'(을)를 관리 목록에서 삭제 중...`);
               await deleteAcademyMutation();
               await academyRefetch();
               toast.success(
-                `'${academy.name}'가 관리 목록에서 삭제되었습니다.`,
+                `'${academy.name}'(이)가 관리 목록에서 삭제되었습니다.`,
               );
             }}
             text="삭제"

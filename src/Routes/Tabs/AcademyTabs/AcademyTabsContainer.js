@@ -66,8 +66,8 @@ export default ({ pageIndex, pageIndexChange }) => {
       if (!addAcademy) {
         alert('학원을 등록할 수 없습니다.');
       } else {
-        clearAcademy();
         await academyRefetch();
+        await clearAcademy();
         toast.success('새로운 학원이 등록되었습니다.');
       }
     } catch (e) {

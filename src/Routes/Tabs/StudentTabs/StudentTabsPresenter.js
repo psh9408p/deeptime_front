@@ -114,6 +114,7 @@ export default ({
   onSubmitConSeat,
   clearSeatForm,
 }) => {
+  studentRefetch();
   if (pageIndex === 0) {
     return (
       <Regist>
