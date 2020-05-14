@@ -12,7 +12,14 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
+export default ({
+  pageIndex,
+  pageIndexChange,
+  academyList,
+  academyRefetch,
+}) => {
+  academyRefetch();
+
   const maxLen = (value) => value.length <= 40;
 
   const className = useInput('');
@@ -22,7 +29,6 @@ export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
     academyList.map((List) => List.id),
   );
 
-  console.log('a', className.value, classBio.value);
   const {
     data: classData,
     loading: classLoading,
@@ -36,8 +42,7 @@ export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
     myAcademyList.setOption(myAcademyList.valueList[0]);
   };
 
-  const onSubmitClass = async (e) => {
-    e.preventDefault();
+  const onSubmitClass = async () => {
     try {
       toast.info('새로운 클래스를 등록 중...');
       const {
@@ -55,10 +60,12 @@ export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
         await classRefetch();
         await clearClass();
         toast.success('새로운 클래스가 등록되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       toast.error(realText[1]);
+      return false;
     }
   };
 
@@ -73,7 +80,6 @@ export default ({ pageIndex, pageIndexChange, loginPosition, academyList }) => {
       <ClassTabsPresenter
         pageIndex={pageIndex}
         pageIndexChange={pageIndexChange}
-        loginPosition={loginPosition}
         className={className}
         classBio={classBio}
         classData={classData}

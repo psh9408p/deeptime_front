@@ -12,7 +12,6 @@ export default ({
   classBio,
   clearClass,
 }) => {
-  console.log('d', className.value, classBio.value);
   const deleteClassMutation = useMutation(DELETE_CLASS, {
     variables: { id: classRoom.id },
   });
@@ -26,8 +25,7 @@ export default ({
     },
   });
 
-  const onSubmit = async (e) => {
-    // e.preventDefault();
+  const onSubmit = async () => {
     try {
       toast.info('정보 수정중...');
       const {

@@ -889,7 +889,7 @@ export default ({
             </TitleGraphText_2>
           </TitleGraph>
           <ClassSelect>
-            <Select {...myClassList} />
+            <Select {...myClassList} id={'myClassList_id_study'} />
           </ClassSelect>
           <StudentBox>
             <LightBio>

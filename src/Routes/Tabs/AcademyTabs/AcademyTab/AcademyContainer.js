@@ -30,8 +30,7 @@ export default ({
     },
   });
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async () => {
     toast.info('정보 수정중...');
     const {
       data: { editAcademy },
@@ -42,6 +41,7 @@ export default ({
       await academyRefetch();
       await clearAcademy();
       toast.success('정보가 수정되었습니다.');
+      return true;
     }
   };
 

@@ -362,7 +362,7 @@ export default ({
           {startRange}~{endRange}
         </DateRangeWrap>
         <SelectDiv>
-          <Select {...myClassList} />
+          <Select {...myClassList} id={'myClassList_id_schedule'} />
         </SelectDiv>
       </PanelWrap>
       <TUICalendar

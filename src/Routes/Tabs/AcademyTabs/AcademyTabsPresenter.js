@@ -147,7 +147,14 @@ export default ({
           >
             {(close) => (
               <PBody>
-                <form onSubmit={onSubmitAcademy}>
+                <form
+                  onSubmit={async () => {
+                    const fucResult = await onSubmitAcademy();
+                    if (fucResult) {
+                      close();
+                    }
+                  }}
+                >
                   <PTitle text={'학원 정보'} />
                   <SmallInput
                     placeholder={'학원명 (예: 아이엠학원)'}

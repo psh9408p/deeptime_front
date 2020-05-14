@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
 import { Logo, Shutter, User } from './Icons';
@@ -75,8 +75,33 @@ const AiHeaderLink = styled(HeaderLink)`
   }
 `;
 
+const PotalButton = styled.button`
+  cursor: pointer;
+  margin: 0px 30px 0px 15px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 16px;
+  color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  background: none;
+  border: 0;
+`;
+
 export default withRouter(() => {
+  const [potal, setPotal] = useState();
+
   const { data } = useQuery(ME);
+
+  const onClickPotal_student = () => {
+    const detect_window = window.open(
+      window.location.origin + '/#/study',
+      'detect',
+      'channelmode=yes,fullscreen=yes,resizable=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no',
+    );
+    setPotal(detect_window);
+  };
+
   return (
     <Header>
       <HeaderWrapper>
@@ -89,9 +114,9 @@ export default withRouter(() => {
           {data.me && data.me.loginPosition === 'student' && (
             <AiBox>
               <Shutter />
-              <AiHeaderLink to="/study" replace>
+              <PotalButton type="button" onClick={onClickPotal_student}>
                 학습
-              </AiHeaderLink>
+              </PotalButton>
               <AiHeaderLink to="/" replace>
                 출석
               </AiHeaderLink>

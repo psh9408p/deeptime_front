@@ -1,7 +1,23 @@
 import React from 'react';
+import { useQuery } from 'react-apollo-hooks';
 import styled from 'styled-components';
 import useTabs from '../Hooks/useTabs';
 import ClassTabs from './Tabs/ClassTabs';
+import Loader from '../Components/Loader';
+import { gql } from 'apollo-boost';
+
+const MY_ACADEMY = gql`
+  query myAcademy {
+    myAcademy {
+      id
+      name
+    }
+  }
+`;
+
+const LoaderWrapper = styled.div`
+  margin: 100px 0px;
+`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,26 +45,42 @@ const ClassButton = styled.button`
   }
 `;
 
-export default ({ Mydata, MyRefetch }) => {
-  // MyRefetch();
+export default () => {
   const classTabContents = ['클래스 통계', '나의 클래스', '클래스 스케줄'];
   const classTabs = useTabs(0, classTabContents);
 
-  return (
-    <Wrapper>
-      <Tabs>
-        {classTabs.content.map((section, index) => (
-          <ClassButton key={index} onClick={() => classTabs.changeItem(index)}>
-            {section}
-          </ClassButton>
-        ))}
-      </Tabs>
-      <ClassTabs
-        pageIndex={classTabs.currentIndex}
-        loginPosition={Mydata.me.loginPosition}
-        academyList={Mydata.me.academies}
-        pageIndexChange={classTabs.changeItem}
-      />
-    </Wrapper>
-  );
+  const {
+    data: academyData,
+    loading: academyLoading,
+    refetch: academyRefetch,
+  } = useQuery(MY_ACADEMY);
+
+  if (academyLoading === true) {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
+    );
+  } else if (!academyLoading && academyData && academyData.myAcademy) {
+    return (
+      <Wrapper>
+        <Tabs>
+          {classTabs.content.map((section, index) => (
+            <ClassButton
+              key={index}
+              onClick={() => classTabs.changeItem(index)}
+            >
+              {section}
+            </ClassButton>
+          ))}
+        </Tabs>
+        <ClassTabs
+          pageIndex={classTabs.currentIndex}
+          pageIndexChange={classTabs.changeItem}
+          academyList={academyData.myAcademy}
+          academyRefetch={academyRefetch}
+        />
+      </Wrapper>
+    );
+  }
 };

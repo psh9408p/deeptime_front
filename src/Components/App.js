@@ -6,6 +6,7 @@ import { useQuery } from 'react-apollo-hooks';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyles from '../Styles/GlobalStyles';
+import GlobalStyles_potal from '../Styles/GlobalStyles_potal';
 import Theme from '../Styles/Theme';
 import Routes from './Routes';
 import Footer from './Footer';
@@ -27,16 +28,24 @@ export default () => {
   const {
     data: { isLoggedIn },
   } = useQuery(QUERY);
+  console.log(window.location.hash);
   return (
     <ThemeProvider theme={Theme}>
       <>
-        <GlobalStyles />
+        {window.location.hash !== '#/study' ? (
+          <GlobalStyles />
+        ) : (
+          <GlobalStyles_potal />
+        )}
         <Router>
           <>
-            {isLoggedIn ? <Header /> : <Header_welcome />}
+            {isLoggedIn === true && window.location.hash !== '#/study' && (
+              <Header />
+            )}
+            {isLoggedIn === false && <Header_welcome />}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
-              <Footer />
+              {window.location.hash !== '#/study' && <Footer />}
             </Wrapper>
           </>
         </Router>

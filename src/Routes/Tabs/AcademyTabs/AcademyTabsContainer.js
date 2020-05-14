@@ -56,8 +56,7 @@ export default ({ pageIndex, pageIndexChange }) => {
     academyKind.setOption(kindArray[0]);
   };
 
-  const onSubmitAcademy = async (e) => {
-    e.preventDefault();
+  const onSubmitAcademy = async () => {
     try {
       toast.info('새로운 학원을 등록 중...');
       const {
@@ -69,10 +68,12 @@ export default ({ pageIndex, pageIndexChange }) => {
         await academyRefetch();
         await clearAcademy();
         toast.success('새로운 학원이 등록되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
     }
   };
 

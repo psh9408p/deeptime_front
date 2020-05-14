@@ -168,7 +168,6 @@ export default ({
   onSubmit,
   loadValue,
 }) => {
-  console.log('e', className.value, classBio.value);
   return (
     <ClassRow>
       <HeaderColumn>

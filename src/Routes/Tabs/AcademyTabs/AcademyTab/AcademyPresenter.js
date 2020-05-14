@@ -198,7 +198,14 @@ const AcademyPresenter = ({
           >
             {(close) => (
               <PBody>
-                <form onSubmit={onSubmit}>
+                <form
+                  onSubmit={async () => {
+                    const fucResult = await onSubmit();
+                    if (fucResult) {
+                      close();
+                    }
+                  }}
+                >
                   <PTitle text={'학원 정보'} />
                   <div>
                     <SmallInput

@@ -52,17 +52,13 @@ const LoggedInRoutes = () => {
         </Switch>
       );
     } else {
-      // MyRefetch();
       return (
         <Switch>
           <Route path="/attendance" component={Attendance} />
           <Route path="/supervision" component={Supervision} />
           <Route path="/marking" component={Marking} />
           <Route exact path="/" component={Academy} />
-          <Route
-            path="/class"
-            component={() => <Class Mydata={Mydata} MyRefetch={MyRefetch} />}
-          />
+          <Route path="/class" component={Class} />
           <Route
             path="/student"
             component={() => <Student Mydata={Mydata} MyRefetch={MyRefetch} />}

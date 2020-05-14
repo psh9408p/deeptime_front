@@ -20,6 +20,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
+  max-width: 935px;
   margin-top: 20px;
 `;
 
@@ -313,7 +314,6 @@ export default ({
   myClassList,
   classList,
   selectClass,
-  loginPosition,
   StaTabs,
   selectDate,
   setSelectDate,
@@ -560,15 +560,7 @@ export default ({
       </BigBox>
       <BigBox>
         <Title>
-          {loginPosition === 'manager_school' && (
-            <ClassName>{selectClass.school.name}</ClassName>
-          )}
-          {loginPosition === 'manager_academy' && (
-            <ClassName>{selectClass.academy.name}</ClassName>
-          )}
-          {loginPosition === 'manager_readingRoom' && (
-            <ClassName>{selectClass.readingRoom.name}</ClassName>
-          )}
+          <ClassName>{selectClass.academy.name}</ClassName>
           <ClassName>{selectClass.name}</ClassName>
         </Title>
         <TitleGraph>
@@ -590,7 +582,7 @@ export default ({
           </TitleGraphText_2>
         </TitleGraph>
         <ClassSelect>
-          <Select {...myClassList} />
+          <Select {...myClassList} id={'myClassList_id_sta'} />
         </ClassSelect>
         <StudentBox>
           <LightBio>

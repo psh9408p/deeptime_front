@@ -95,7 +95,6 @@ const ClassRowWrap = styled.div`
 export default ({
   pageIndex,
   pageIndexChange,
-  loginPosition,
   className,
   classBio,
   classData,
@@ -104,9 +103,7 @@ export default ({
   onSubmitClass,
   classRefetch,
 }) => {
-  console.log('b', className.value, classBio.value);
   classRefetch();
-  console.log('c', className.value, classBio.value);
   if (pageIndex === 0) {
     if (classData.myClass[0] === undefined) {
       alert(
@@ -115,13 +112,7 @@ export default ({
       pageIndexChange(1);
       return <></>;
     } else {
-      return <></>;
-      // return (
-      //   <ClassStatistics
-      //     classList={classData.myClass}
-      //     loginPosition={loginPosition}
-      //   />
-      // );
+      return <ClassStatistics classList={classData.myClass} />;
     }
   } else if (pageIndex === 1) {
     return (
@@ -140,7 +131,14 @@ export default ({
               } else {
                 return (
                   <PBody>
-                    <form onSubmit={onSubmitClass}>
+                    <form
+                      onSubmit={async () => {
+                        const fucResult = await onSubmitClass();
+                        if (fucResult) {
+                          close();
+                        }
+                      }}
+                    >
                       <PTitle text={'클래스 정보'} />
                       <InputWrapper>
                         <SmallInput
