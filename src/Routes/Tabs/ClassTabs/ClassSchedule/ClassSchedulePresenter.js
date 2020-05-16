@@ -11,10 +11,12 @@ import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import Select from '../../../../Components/Select';
+import Button from '../../../../Components/Buttons/Button';
 import { toast } from 'react-toastify';
 
 const Wrapper = styled.div`
   width: 100%;
+  max-width: 1400px;
   position: relative;
 `;
 
@@ -50,17 +52,17 @@ const ControlButton = styled.button`
   }
   &:nth-child(2) {
     width: 30px;
-    background: white
-      url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Previous_icon.png')
+    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Previous_icon.png')
       no-repeat;
+    background-color: white;
     background-position: center center;
     background-size: 15px;
   }
   &:nth-child(3) {
     width: 30px;
-    background: white
-      url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Next_icon.png')
+    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Next_icon.png')
       no-repeat;
+    background-color: white;
     background-position: center center;
     background-size: 15px;
     margin-right: 10px;
@@ -89,7 +91,14 @@ const SelectDiv = styled.div`
   min-width: 200px;
   margin-left: auto;
 `;
+
+const SaveButtonDiv = styled.div`
+  width: 80px;
+  margin-right: 10px;
+`;
+
 let updateVar = { scheduleId: '' };
+let newScheduleArray = [];
 
 export default ({
   cal,
@@ -99,9 +108,7 @@ export default ({
   setEndRange,
   myClassList,
   classRoom,
-  addScheduleMutation,
-  updateScheduleMutation,
-  deleteScheduleMutation,
+  saveScheduleMutation,
   scheduleList,
   scheduleLoading,
   scheduleRefetch,
@@ -119,7 +126,6 @@ export default ({
   ];
 
   if (scheduleLoading === false) {
-    // console.log(scheduleList)
     schedules = scheduleList.map((List) => {
       let category = 'time';
       if (List.isAllDay === true) {
@@ -173,130 +179,153 @@ export default ({
     // console.log(e)
   }, []);
 
-  const onBeforeCreateSchedule = useCallback(
-    async (scheduleData) => {
-      // console.log(scheduleData)
-      toast.info('스케줄 추가 중...');
-      try {
-        const {
-          data: { addSchedule },
-        } = await addScheduleMutation({
-          variables: {
-            isAllDay: scheduleData.isAllDay,
-            title: scheduleData.title,
-            location: scheduleData.location,
-            state: scheduleData.state,
-            start: scheduleData.start._date,
-            end: scheduleData.end._date,
-            classId: classRoom[myClassList.option].id,
-          },
-        });
-        if (!addSchedule) {
-          toast.error('스케줄을 추가할 수 없습니다.');
-        } else {
-          await scheduleRefetch();
-          toast.success('스케줄이 추가되었습니다.');
-        }
-      } catch (e) {
-        const realText = e.message.split('GraphQL error: ');
-        toast.error(realText[1]);
+  const onClickScheduleSave = async () => {
+    try {
+      toast.info('스케줄 변경사항 저장 중...');
+      const {
+        data: { saveSchedule },
+      } = await saveScheduleMutation({
+        variables: {
+          scheduleArray: newScheduleArray,
+        },
+      });
+      if (!saveSchedule) {
+        alert('스케줄을 변경할 수 없습니다.');
+      } else {
+        await scheduleRefetch();
+        newScheduleArray = [];
+        toast.success(
+          `"${
+            myClassList.optionList[myClassList.optionIndex]
+          }"의 변경된 스케줄이 저장되었습니다.`,
+        );
       }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
 
-      // const schedule = {
-      //   id: newScheduleId,
-      //   title: scheduleData.title,
-      //   isAllDay: scheduleData.isAllDay,
-      //   start: scheduleData.start,
-      //   end: scheduleData.end,
-      //   category: scheduleData.isAllDay ? "allday" : "time",
-      //   dueDateClass: "",
-      //   location: scheduleData.location,
-      //   raw: {
-      //     class: scheduleData.raw["class"],
-      //   },
-      //   state: scheduleData.state,
-      //   calendarId: classRoom[myClassList.option].id,
-      // }
+  const onBeforeCreateSchedule = useCallback(
+    (scheduleData) => {
+      const generateId =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
 
-      // cal.current.calendarInst.createSchedules([schedule])
+      const schedule = {
+        id: generateId,
+        title: scheduleData.title,
+        isAllDay: scheduleData.isAllDay,
+        start: scheduleData.start,
+        end: scheduleData.end,
+        category: scheduleData.isAllDay ? 'allday' : 'time',
+        dueDateClass: '',
+        location: scheduleData.location,
+        raw: {
+          class: scheduleData.raw['class'],
+        },
+        state: scheduleData.state,
+        calendarId: classRoom[myClassList.option].id,
+      };
+
+      const schedule_tmp = {
+        id: generateId,
+        isAllDay: scheduleData.isAllDay,
+        title: scheduleData.title,
+        location: scheduleData.location,
+        state: scheduleData.state,
+        start: scheduleData.start._date,
+        end: scheduleData.end._date,
+        classId: classRoom[myClassList.option].id,
+        option: 'create',
+      };
+
+      newScheduleArray.push(schedule_tmp);
+      cal.current.calendarInst.createSchedules([schedule]);
     },
     [myClassList.option],
   );
 
   const onBeforeDeleteSchedule = useCallback(async (res) => {
-    // console.log("c", res)
+    // console.log('c', res.schedule);
 
-    toast.info('스케줄 삭제 중...');
-    try {
-      const {
-        data: { deleteSchedule },
-      } = await deleteScheduleMutation({
-        variables: {
-          scheduleId: res.schedule.id,
-        },
-      });
-      if (!deleteSchedule) {
-        toast.error('스케줄을 삭제할 수 없습니다.');
-      } else {
-        await scheduleRefetch();
-        toast.success('스케줄이 삭제되었습니다.');
-      }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      toast.error(realText[1]);
+    const schedule_tmp = {
+      id: res.schedule.id,
+      isAllDay: res.schedule.isAllDay,
+      title: res.schedule.title,
+      location: res.schedule.location,
+      state: res.schedule.state,
+      start: res.schedule.start._date,
+      end: res.schedule.end._date,
+      classId: classRoom[myClassList.option].id,
+      option: 'delete',
+    };
+
+    const checkExist = (a) => a.id === res.schedule.id;
+    const checkIndex = newScheduleArray.findIndex(checkExist);
+    if (checkIndex === -1) {
+      newScheduleArray.push(schedule_tmp);
+    } else {
+      newScheduleArray.splice(checkIndex, 1);
     }
 
-    // const { id, calendarId } = res.schedule
-    // cal.current.calendarInst.deleteSchedule(id, calendarId)
+    cal.current.calendarInst.deleteSchedule(
+      res.schedule.id,
+      classRoom[myClassList.option].id,
+    );
   }, []);
 
-  const onBeforeUpdateSchedule = useCallback(async (e) => {
-    // console.log(e.changes)
+  const onBeforeUpdateSchedule = useCallback(async (res) => {
+    // console.log(res.changes);
 
-    updateVar.scheduleId = e.schedule.id;
-    if (e.changes.start !== undefined && e.changes.end !== undefined) {
+    if (res.changes.start !== undefined && res.changes.end !== undefined) {
       const dateSumVar = {
-        start: e.changes.start._date,
-        end: e.changes.end._date,
+        start: res.changes.start._date,
+        end: res.changes.end._date,
       };
       const dateRmVar = { start: '', end: '' };
-      ObjectUnassign(e.changes, dateRmVar);
-      Object.assign(e.changes, dateSumVar);
-    } else if (e.changes.start !== undefined) {
-      const dateSumVar = { start: e.changes.start._date };
+      ObjectUnassign(res.changes, dateRmVar);
+      Object.assign(res.changes, dateSumVar);
+    } else if (res.changes.start !== undefined) {
+      const dateSumVar = { start: res.changes.start._date };
       const dateRmVar = { start: '' };
-      ObjectUnassign(e.changes, dateRmVar);
-      Object.assign(e.changes, dateSumVar);
-    } else if (e.changes.end !== undefined) {
-      const dateSumVar = { end: e.changes.end._date };
+      ObjectUnassign(res.changes, dateRmVar);
+      Object.assign(res.changes, dateSumVar);
+    } else if (res.changes.end !== undefined) {
+      const dateSumVar = { end: res.changes.end._date };
       const dateRmVar = { end: '' };
-      ObjectUnassign(e.changes, dateRmVar);
-      Object.assign(e.changes, dateSumVar);
+      ObjectUnassign(res.changes, dateRmVar);
+      Object.assign(res.changes, dateSumVar);
     }
 
-    Object.assign(updateVar, e.changes);
+    const schedule_tmp = {
+      id: res.schedule.id,
+      isAllDay: res.schedule.isAllDay,
+      title: res.schedule.title,
+      location: res.schedule.location,
+      state: res.schedule.state,
+      start: res.schedule.start._date,
+      end: res.schedule.end._date,
+      classId: classRoom[myClassList.option].id,
+      option: 'update',
+    };
+    Object.assign(schedule_tmp, res.changes);
 
-    toast.info('스케줄 수정 중...');
-    try {
-      const {
-        data: { updateSchedule },
-      } = await updateScheduleMutation({
-        variables: updateVar,
-      });
-      if (!updateSchedule) {
-        toast.error('스케줄을 수정할 수 없습니다.');
-      } else {
-        await scheduleRefetch();
-        toast.success('스케줄이 수정되었습니다.');
-      }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      toast.error(realText[1]);
+    const checkExist = (a) => a.id === res.schedule.id;
+    const checkIndex = newScheduleArray.findIndex(checkExist);
+    if (checkIndex === -1) {
+      newScheduleArray.push(schedule_tmp);
+    } else {
+      newScheduleArray.splice(checkIndex, 1);
+      newScheduleArray.push(schedule_tmp);
     }
-    updateVar = { scheduleId: '' }; // 초기화
 
-    // const { schedule, changes } = e
-    // cal.current.calendarInst.updateSchedule(schedule.id, schedule.calendarId, changes)
+    const { schedule, changes } = res;
+    cal.current.calendarInst.updateSchedule(
+      schedule.id,
+      schedule.calendarId,
+      changes,
+    );
   }, []);
 
   function _getFormattedTime(time) {
@@ -362,6 +391,9 @@ export default ({
           {startRange}~{endRange}
         </DateRangeWrap>
         <SelectDiv>
+          <SaveButtonDiv>
+            <Button text={'저장'} onClick={onClickScheduleSave} />
+          </SaveButtonDiv>
           <Select {...myClassList} id={'myClassList_id_schedule'} />
         </SelectDiv>
       </PanelWrap>
