@@ -144,122 +144,49 @@ export default ({
   studentRefetch,
   pageIndexChange,
   studentEmail,
-  studentEmail_seat,
-  mySchoolList,
-  myAcademyList,
-  myReadingRoomList,
   myClassList,
   clearStudent,
-  loginPosition,
 }) => {
-  let organizaionId = '';
-  let classId = '';
-  if (loginPosition === 'manager_school') {
-    organizaionId = student.schools[0].id;
-    classId = student.classesOfSchool[0].id;
-  } else if (loginPosition === 'manager_academy') {
-    organizaionId = student.academies[0].id;
-    classId = student.classesOfAcademy[0].id;
-  } else if (loginPosition === 'manager_readingRoom') {
-    organizaionId = student.readingRooms[0].id;
-    classId = student.classesOfReadingRoom[0].id;
-  }
-
-  const deleteStudentMutation = useMutation(DELETE_STUDENT, {
-    variables: { email: student.email, organizaionId, classId },
-  });
-  const disconSeatMutation = useMutation(DISCON_SEAT, {
-    variables: { email: student.email },
-  });
-  const editStudentMutation = useMutation(EDIT_STUDENT);
+  // const deleteStudentMutation = useMutation(DELETE_STUDENT, {
+  //   variables: { email: student.email, organizaionId, classId },
+  // });
+  // const disconSeatMutation = useMutation(DISCON_SEAT, {
+  //   variables: { email: student.email },
+  // });
+  // const editStudentMutation = useMutation(EDIT_STUDENT);
 
   const onSubmit = async (e) => {
-    e.preventDefault();
-    let schoolMuValue = '';
-    let academyMuValue = '';
-    let readingRoomMuValue = '';
-    let classMuValue = '';
-    if (loginPosition === 'manager_school') {
-      schoolMuValue =
-        mySchoolList.option !== undefined ? mySchoolList.option : '';
-    } else if (loginPosition === 'manager_academy') {
-      academyMuValue =
-        myAcademyList.option !== undefined ? myAcademyList.option : '';
-    } else if (loginPosition === 'manager_readingRoom') {
-      readingRoomMuValue =
-        myReadingRoomList.option !== undefined ? myReadingRoomList.option : '';
-    }
-    classMuValue = myClassList.option !== undefined ? myClassList.option : '';
-
-    try {
-      toast.info('정보 수정중...');
-      const {
-        data: { editStudent },
-      } = await editStudentMutation({
-        variables: {
-          email: studentEmail.value,
-          schoolId: schoolMuValue,
-          academyId: academyMuValue,
-          readingRoomId: readingRoomMuValue,
-          classId: classMuValue,
-          loginPosition,
-        },
-      });
-      if (!editStudent) {
-        toast.error('정보를 수정할 수 없습니다.');
-      } else {
-        await studentRefetch();
-        await clearStudent();
-        toast.success('정보가 수정되었습니다.');
-      }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      toast.error(realText[1]);
-    }
+    // e.preventDefault();
+    // try {
+    //   toast.info('정보 수정중...');
+    //   const {
+    //     data: { editStudent },
+    //   } = await editStudentMutation({
+    //     variables: {
+    //       email: studentEmail.value,
+    //       schoolId: schoolMuValue,
+    //       academyId: academyMuValue,
+    //       readingRoomId: readingRoomMuValue,
+    //       classId: classMuValue,
+    //       loginPosition,
+    //     },
+    //   });
+    //   if (!editStudent) {
+    //     toast.error('정보를 수정할 수 없습니다.');
+    //   } else {
+    //     await studentRefetch();
+    //     await clearStudent();
+    //     toast.success('정보가 수정되었습니다.');
+    //   }
+    // } catch (e) {
+    //   const realText = e.message.split('GraphQL error: ');
+    //   toast.error(realText[1]);
+    // }
   };
 
   const loadValue = async () => {
     studentEmail.setValue(`${student.email}`);
-    if (loginPosition === 'manager_school') {
-      mySchoolList.setOption(`${student.schools[0].id}`);
-      selectChange(
-        'modifySchool',
-        mySchoolList.optionList.indexOf(`${student.schools[0].name}`),
-      );
-      myClassList.setOption(`${student.classesOfSchool[0].id}`);
-      selectChange(
-        'modifyClass',
-        myClassList.optionList.indexOf(
-          `${student.classesOfSchool[0].name}(${student.schools[0].name})`,
-        ),
-      );
-    } else if (loginPosition === 'manager_academy') {
-      myAcademyList.setOption(`${student.academies[0].id}`);
-      selectChange(
-        'modifyAcademy',
-        myAcademyList.optionList.indexOf(`${student.academies[0].name}`),
-      );
-      myClassList.setOption(`${student.classesOfAcademy[0].id}`);
-      selectChange(
-        'modifyClass',
-        myClassList.optionList.indexOf(
-          `${student.classesOfAcademy[0].name}(${student.academies[0].name})`,
-        ),
-      );
-    } else if (loginPosition === 'manager_readingRoom') {
-      myReadingRoomList.setOption(`${student.readingRooms[0].id}`);
-      selectChange(
-        'modifyReadingRoom',
-        myReadingRoomList.optionList.indexOf(`${student.readingRooms[0].name}`),
-      );
-      myClassList.setOption(`${student.classesOfReadingRoom[0].id}`);
-      selectChange(
-        'modifyClass',
-        myClassList.optionList.indexOf(
-          `${student.classesOfReadingRoom[0].name}(${student.readingRooms[0].name})`,
-        ),
-      );
-    }
+    myClassList.setOption(`${student.classesOfSchool[0].id}`);
   };
   return (
     <StudentRow>
@@ -288,26 +215,8 @@ export default ({
                       기존정보 불러오기
                     </LoadButton>
                   </InputWrapper>
-                  {loginPosition === 'manager_school' && (
-                    <SelectDiv>
-                      <span>학교 :</span>
-                      <Select {...mySchoolList} id={'modifySchool'} />
-                    </SelectDiv>
-                  )}
-                  {loginPosition === 'manager_academy' && (
-                    <SelectDiv>
-                      <span>학원 :</span>
-                      <Select {...myAcademyList} id={'modifyAcademy'} />
-                    </SelectDiv>
-                  )}
-                  {loginPosition === 'manager_readingRoom' && (
-                    <SelectDiv>
-                      <span>독서실 :</span>
-                      <Select {...myReadingRoomList} id={'modifyReadingRoom'} />
-                    </SelectDiv>
-                  )}
                   <SelectDiv>
-                    <span>클래스 :</span>
+                    <span>클래스</span>
                     <Select {...myClassList} id={'modifyClass'} />
                   </SelectDiv>
                   <ButtonDiv>
@@ -331,8 +240,8 @@ export default ({
               toast.info(
                 `'${student.fullName}'(을)를 관리 목록에서 삭제 중...`,
               );
-              await deleteStudentMutation();
-              await disconSeatMutation();
+              // await deleteStudentMutation();
+              // await disconSeatMutation();
               await studentRefetch();
               toast.success(
                 `'${student.fullName}'(이)가 관리 목록에서 삭제되었습니다.`,
@@ -340,7 +249,7 @@ export default ({
             }}
             text="삭제"
           />
-          <EditButton
+          {/* <EditButton
             type="button"
             onClick={async () => {
               toast.info(`좌석 배정 화면으로 이동합니다.`);
@@ -348,8 +257,8 @@ export default ({
               await studentEmail_seat.setValue(student.email);
             }}
             text="좌석 배정"
-          />
-          <EditButton
+          /> */}
+          {/* <EditButton
             type="button"
             onClick={async () => {
               toast.info(`'${student.fullName}'의 좌석을 초기화 중...`);
@@ -358,51 +267,20 @@ export default ({
               toast.success(`'${student.fullName}'의 좌석이 초기화되었습니다.`);
             }}
             text="좌석 초기화"
-          />
+          /> */}
         </NameRow>
         <Info>
           <DetailInfo>
             <FatText text="학교: " />
             {student.schools[0] && student.schools[0].name}
           </DetailInfo>
-          {loginPosition === 'manager_academy' && (
-            <DetailInfo>
-              <FatText text="학원: " />
-              {student.academies[0] && student.academies[0].name}
-            </DetailInfo>
-          )}
-          {loginPosition === 'manager_readingRoom' && (
-            <DetailInfo>
-              <FatText text="독서실: " />
-              {student.readingRooms[0] && student.readingRooms[0].name}
-            </DetailInfo>
-          )}
           <DetailInfo>
-            <FatText text="클래스: " />
-            {loginPosition === 'manager_school' &&
-              student.classesOfSchool[0].name}
-            {loginPosition === 'manager_academy' &&
-              student.classesOfAcademy[0].name}
-            {loginPosition === 'manager_readingRoom' &&
-              student.classesOfReadingRoom[0].name}
+            <FatText text="학원: " />
+            {student.academies[0] && student.academies[0].name}
           </DetailInfo>
           <DetailInfo>
-            <FatText text="좌석: " />
-            {loginPosition === 'manager_school' &&
-              student.seatOfSchool[0] &&
-              `${String(student.seatOfSchool[0].row)} 행 ${String(
-                student.seatOfSchool[0].column,
-              )} 열`}
-            {loginPosition === 'manager_academy' &&
-              student.seatOfAcademy[0] &&
-              `${String(student.seatOfAcademy[0].row)} 행 ${String(
-                student.seatOfAcademy[0].column,
-              )} 열`}
-            {loginPosition === 'manager_readingRoom' &&
-              student.seatOfReadingRoom[0] &&
-              `${String(student.seatOfReadingRoom[0].row)} 행 ${String(
-                student.seatOfReadingRoom[0].column,
-              )} 열`}
+            <FatText text="클래스: " />
+            {student.classesOfAcademy[0].name}
           </DetailInfo>
         </Info>
       </HeaderColumn>

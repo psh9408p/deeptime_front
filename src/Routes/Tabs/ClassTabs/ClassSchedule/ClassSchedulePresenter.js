@@ -5,7 +5,6 @@ import Loader from '../../../../Components/Loader';
 import ObjectUnassign from '../../../../Components/ObjectUnassign';
 
 import TUICalendar from '@toast-ui/react-calendar';
-import { ISchedule, ICalendarInfo } from 'tui-calendar';
 
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
@@ -113,8 +112,8 @@ export default ({
   scheduleLoading,
   scheduleRefetch,
 }) => {
-  let schedules: ISchedule[] = [1, 2, 3];
-  const calendars: ICalendarInfo[] = [
+  let schedules = [1, 2, 3];
+  const calendars = [
     {
       id: classRoom[myClassList.option].id,
       name: classRoom[myClassList.option].name,

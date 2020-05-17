@@ -59,10 +59,7 @@ const LoggedInRoutes = () => {
           <Route path="/marking" component={Marking} />
           <Route exact path="/" component={Academy} />
           <Route path="/class" component={Class} />
-          <Route
-            path="/student"
-            component={() => <Student Mydata={Mydata} MyRefetch={MyRefetch} />}
-          />
+          <Route path="/student" component={Student} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>

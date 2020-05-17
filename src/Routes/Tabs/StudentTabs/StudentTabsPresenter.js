@@ -19,13 +19,13 @@ const Regist = styled.div`
 const PopupDiv = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin: 15px 0px;
+  margin: 15px 30px;
 `;
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 800px !important;
-    height: 400px !important;
+    width: 600px !important;
+    height: 300px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,21 +98,13 @@ const SeatRegistBody = styled.div`
 export default ({
   pageIndex,
   pageIndexChange,
-  loginPosition,
   studentData,
   studentRefetch,
   studentEmail,
-  studentEmail_seat,
   confirmStudent,
-  mySchoolList,
-  myAcademyList,
-  myReadingRoomList,
   myClassList,
   clearStudent,
   onSubmitStudent,
-  seatId,
-  onSubmitConSeat,
-  clearSeatForm,
 }) => {
   studentRefetch();
   if (pageIndex === 0) {
@@ -140,26 +132,8 @@ export default ({
                       text={'유효성 확인'}
                     />
                   </InputWrapper>
-                  {loginPosition === 'manager_school' && (
-                    <SelectDiv>
-                      <span>학교 :</span>
-                      <Select {...mySchoolList} id={'modifySchool'} />
-                    </SelectDiv>
-                  )}
-                  {loginPosition === 'manager_academy' && (
-                    <SelectDiv>
-                      <span>학원 :</span>
-                      <Select {...myAcademyList} id={'modifyAcademy'} />
-                    </SelectDiv>
-                  )}
-                  {loginPosition === 'manager_readingRoom' && (
-                    <SelectDiv>
-                      <span>독서실 :</span>
-                      <Select {...myReadingRoomList} id={'modifyReadingRoom'} />
-                    </SelectDiv>
-                  )}
                   <SelectDiv>
-                    <span>클래스 :</span>
+                    <span>클래스</span>
                     <Select {...myClassList} id={'modifyClass'} />
                   </SelectDiv>
                   <ButtonDiv>
@@ -186,55 +160,49 @@ export default ({
             studentRefetch={studentRefetch}
             pageIndexChange={pageIndexChange}
             studentEmail={studentEmail}
-            studentEmail_seat={studentEmail_seat}
-            mySchoolList={mySchoolList}
-            myAcademyList={myAcademyList}
-            myReadingRoomList={myReadingRoomList}
             myClassList={myClassList}
             clearStudent={clearStudent}
-            loginPosition={loginPosition}
           />
         ))}
       </Regist>
     );
   } else if (pageIndex === 1) {
-    return (
-      <>
-        <SeatRegistBody>
-          <form onSubmit={onSubmitConSeat}>
-            <InputWrapper>
-              <SmallInput
-                placeholder={'Email (예: IAM@google.com)'}
-                {...studentEmail_seat}
-                type="email"
-              />
-            </InputWrapper>
-            <InputWrapper>
-              <SmallInput
-                placeholder={'좌석 고유번호 (예: ck7zyxuxa01la07989elhkghf)'}
-                {...seatId}
-              />
-            </InputWrapper>
-            <ButtonDiv>
-              <PopupButton text={'좌석 배정'} />
-              <PopupButton
-                type="button"
-                onClick={() => {
-                  clearSeatForm();
-                }}
-                text={'지우기'}
-              />
-            </ButtonDiv>
-          </form>
-        </SeatRegistBody>
-        <CopyToClipboard
-          text="ck7zyxuxa01la07989elhkghf"
-          onCopy={() => toast.success('좌석 고유번호가 복사됐습니다.')}
-        >
-          <SeatBox text={'1행 1열'} />
-        </CopyToClipboard>
-        <SelectSeatTab />
-      </>
-    );
+    return '준비중';
+    // <>
+    //   <SeatRegistBody>
+    //     <form onSubmit={onSubmitConSeat}>
+    //       <InputWrapper>
+    //         <SmallInput
+    //           placeholder={'Email (예: IAM@google.com)'}
+    //           {...studentEmail_seat}
+    //           type="email"
+    //         />
+    //       </InputWrapper>
+    //       <InputWrapper>
+    //         <SmallInput
+    //           placeholder={'좌석 고유번호 (예: ck7zyxuxa01la07989elhkghf)'}
+    //           {...seatId}
+    //         />
+    //       </InputWrapper>
+    //       <ButtonDiv>
+    //         <PopupButton text={'좌석 배정'} />
+    //         <PopupButton
+    //           type="button"
+    //           onClick={() => {
+    //             clearSeatForm();
+    //           }}
+    //           text={'지우기'}
+    //         />
+    //       </ButtonDiv>
+    //     </form>
+    //   </SeatRegistBody>
+    //   <CopyToClipboard
+    //     text="ck7zyxuxa01la07989elhkghf"
+    //     onCopy={() => toast.success('좌석 고유번호가 복사됐습니다.')}
+    //   >
+    //     <SeatBox text={'1행 1열'} />
+    //   </CopyToClipboard>
+    //   <SelectSeatTab />
+    // </>
   }
 };
