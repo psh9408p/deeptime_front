@@ -97,7 +97,7 @@ export default withRouter(() => {
     const detect_window = window.open(
       window.location.origin + '/#/study',
       'detect',
-      'channelmode=yes,fullscreen=yes,resizable=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no',
+      'height=361,width=481,fullscreen=yes,resizable=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no',
     );
     setPotal(detect_window);
   };
