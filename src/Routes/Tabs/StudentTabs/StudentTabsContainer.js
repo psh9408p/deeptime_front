@@ -63,20 +63,14 @@ const StudentTabsContainer = ({ pageIndex, pageIndexChange, classList }) => {
           localStorage.setItem('email_confirm', 'Confirm');
         }
       } catch (e) {
-        alert(
-          <div>
-            확인이 불가능합니다.
-            <br />
-            다시 시도하세요.
-          </div>,
-        );
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
       }
     } else {
       alert('이메일을 입력하세요.');
     }
   };
-  const onSubmitStudent = async (e) => {
-    e.preventDefault();
+  const onSubmitStudent = async () => {
     const email_confirm = localStorage.getItem('email_confirm');
     if (email_confirm === 'None') {
       alert('먼저 Email 유효성을 확인하세요.');
@@ -95,14 +89,16 @@ const StudentTabsContainer = ({ pageIndex, pageIndexChange, classList }) => {
         if (!addStudent) {
           alert('학생을 등록할 수 없습니다.');
         } else {
-          clearStudent();
           await studentRefetch();
           toast.success('새로운 학생이 등록되었습니다.');
           localStorage.setItem('email_confirm', 'None');
+          clearStudent();
+          return true;
         }
       } catch (e) {
         const realText = e.message.split('GraphQL error: ');
         alert(realText[1]);
+        return false;
       }
     }
   };
@@ -150,6 +146,7 @@ const StudentTabsContainer = ({ pageIndex, pageIndexChange, classList }) => {
         myClassList={myClassList}
         clearStudent={clearStudent}
         onSubmitStudent={onSubmitStudent}
+        classList={classList}
       />
     );
   }

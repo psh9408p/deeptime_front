@@ -6,16 +6,14 @@ export const SAVE_SCHEDULE = gql`
   }
 `;
 
-export const SCHEDULE_OF_CLASS = gql`
-  query scheduleOfClass($classId: String!) {
-    scheduleOfClass(classId: $classId) {
-      id
-      isAllDay
-      title
-      location
-      state
-      start
-      end
-    }
+export const ADD_SUBJECT = gql`
+  mutation addSubject($name: String!, $bgColor: String!, $classId: String!) {
+    addSubject(name: $name, bgColor: $bgColor, classId: $classId)
+  }
+`;
+
+export const DELETE_SUBJECT = gql`
+  mutation deleteSubject($subjectId: String!) {
+    deleteSubject(subjectId: $subjectId)
   }
 `;

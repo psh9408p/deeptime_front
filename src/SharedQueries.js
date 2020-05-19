@@ -27,7 +27,6 @@ export const ME = gql`
       classes {
         id
         name
-        organizationName
         bio
         academy {
           id

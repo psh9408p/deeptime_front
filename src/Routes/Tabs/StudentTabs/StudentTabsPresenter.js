@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Popup from 'reactjs-popup';
 import PopButton from '../../../Components/Buttons/PopButton';
@@ -7,10 +7,6 @@ import Input from '../../../Components/Input';
 import FatText from '../../../Components/FatText';
 import Select from '../../../Components/Select';
 import PopupButton from '../../../Components/Buttons/PopupButton';
-import SeatBox from '../../../Components/Buttons/SeatBox';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { toast } from 'react-toastify';
-import SelectSeatTab from './SelectSeatTab';
 
 const Regist = styled.div`
   width: 100%;
@@ -95,6 +91,11 @@ const SeatRegistBody = styled.div`
   margin: 10px 0px;
 `;
 
+const StudentRowWrap = styled.div`
+  width: 100%;
+  padding: 0px 30px;
+`;
+
 export default ({
   pageIndex,
   pageIndexChange,
@@ -105,67 +106,91 @@ export default ({
   myClassList,
   clearStudent,
   onSubmitStudent,
+  classList,
 }) => {
   studentRefetch();
   if (pageIndex === 0) {
-    return (
-      <Regist>
-        <PopupDiv>
-          <PopupCustom
-            trigger={<PopButton text={'학생 추가'} />}
-            closeOnDocumentClick={false}
-            modal
-          >
-            {(close) => (
-              <PBody>
-                <form onSubmit={onSubmitStudent}>
-                  <PTitle text={'학생 정보'} />
-                  <InputWrapper>
-                    <SmallInput
-                      placeholder={'학생 Email (예: IAM@google.com)'}
-                      {...studentEmail}
-                      type="email"
-                    />
-                    <PopButton
-                      type={'button'}
-                      onClick={confirmStudent}
-                      text={'유효성 확인'}
-                    />
-                  </InputWrapper>
-                  <SelectDiv>
-                    <span>클래스</span>
-                    <Select {...myClassList} id={'modifyClass'} />
-                  </SelectDiv>
-                  <ButtonDiv>
-                    <PopupButton text={'등록'} />
-                    <PopupButton
-                      type="button"
-                      onClick={() => {
+    if (classList[0] === undefined) {
+      const isFirstRun = useRef(true);
+      useEffect(() => {
+        if (isFirstRun.current) {
+          alert('클래스 등록 후 학생 기능을 사용할 수 있습니다.');
+          isFirstRun.current = false;
+          return;
+        }
+      }, []);
+      return <></>;
+    } else {
+      return (
+        <Regist>
+          <PopupDiv>
+            <PopupCustom
+              trigger={<PopButton text={'학생 추가'} />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <form
+                    onSubmit={async () => {
+                      const fucResult = await onSubmitStudent();
+                      if (fucResult) {
                         close();
-                        clearStudent();
-                        localStorage.setItem('email_confirm', 'None');
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
-                </form>
-              </PBody>
-            )}
-          </PopupCustom>
-        </PopupDiv>
-        {studentData.myStudent.map((student, index) => (
-          <StudentTab
-            key={index}
-            student={student}
-            studentRefetch={studentRefetch}
-            pageIndexChange={pageIndexChange}
-            studentEmail={studentEmail}
-            myClassList={myClassList}
-            clearStudent={clearStudent}
-          />
-        ))}
-      </Regist>
-    );
+                      }
+                    }}
+                  >
+                    <PTitle text={'학생 정보'} />
+                    <InputWrapper>
+                      <SmallInput
+                        placeholder={'학생 Email (예: IAM@google.com)'}
+                        {...studentEmail}
+                        type="email"
+                      />
+                      <PopButton
+                        type={'button'}
+                        onClick={confirmStudent}
+                        text={'유효성 확인'}
+                      />
+                    </InputWrapper>
+                    <SelectDiv>
+                      <span>클래스</span>
+                      <Select {...myClassList} id={'modifyClass'} />
+                    </SelectDiv>
+                    <ButtonDiv>
+                      <PopupButton text={'등록'} />
+                      <PopupButton
+                        type="button"
+                        onClick={() => {
+                          close();
+                          clearStudent();
+                          localStorage.setItem('email_confirm', 'None');
+                        }}
+                        text={'닫기'}
+                      />
+                    </ButtonDiv>
+                  </form>
+                </PBody>
+              )}
+            </PopupCustom>
+          </PopupDiv>
+          <StudentRowWrap>
+            {studentData.myStudent.map((student, index) => (
+              <StudentTab
+                key={index}
+                student={student}
+                studentRefetch={studentRefetch}
+                pageIndexChange={pageIndexChange}
+                studentEmail={studentEmail}
+                myClassList={myClassList}
+                clearStudent={clearStudent}
+                classList={classList}
+              />
+            ))}
+          </StudentRowWrap>
+          )
+        </Regist>
+      );
+    }
   } else if (pageIndex === 1) {
     return '준비중';
     // <>

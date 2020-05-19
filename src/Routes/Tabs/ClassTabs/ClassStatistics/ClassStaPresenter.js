@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Select from '../../../../Components/Select';
 import { useQuery } from 'react-apollo-hooks';
 import { STUDENT_OF_CLASS } from './ClassStaQueries';
@@ -16,6 +16,7 @@ import ReactTooltip from 'react-tooltip';
 import DatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import Input_100 from '../../../../Components/Input_100';
 
 const Wrapper = styled.div`
   display: flex;
@@ -39,6 +40,7 @@ const BigBox = styled.div`
     border-radius: ${(props) => props.theme.borderRadius};
     width: 70%;
     height: 1095px;
+    position: relative;
   }
   &:last-child {
     background-color: ${(props) => props.theme.bgColor};
@@ -291,6 +293,49 @@ const StudentTooltip = styled.span`
   line-height: 1.5;
 `;
 
+const DatePickDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+const RefreshDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  span {
+    font-weight: 600;
+  }
+`;
+
+const RefreshInputWrap = styled.div`
+  width: 70px;
+  height: 30px;
+`;
+
+const Animation = keyframes`
+    0%{
+        opacity:0
+    }
+    50%{
+        opacity:1
+    }
+    100%{
+        opacity:0;
+    }
+`;
+
+const IngSpan = styled.span`
+  animation: ${Animation} 1s linear infinite;
+  color: red;
+  width: 50px;
+  font-weight: 600;
+`;
+
 let taskArray = new Array(24).fill(0);
 let taskArray_schedule = [];
 let taskArray_scheduleT = [];
@@ -319,6 +364,7 @@ export default ({
   setSelectDate,
   scheduleList,
   scheduleLoading,
+  refreshTerm,
 }) => {
   const {
     data: studentData,
@@ -326,7 +372,7 @@ export default ({
     refetch: studentRefetch,
     networkStatus,
   } = useQuery(STUDENT_OF_CLASS, {
-    pollInterval: 10000,
+    pollInterval: Number(refreshTerm.value) * 1000,
     variables: { classId: classList[myClassList.option].id },
     notifyOnNetworkStatusChange: true,
   });
@@ -469,7 +515,6 @@ export default ({
     todaySchedule_calculate();
     graph_calculate();
   }
-
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
     return (
       <DatePickButton ref={ref} onClick={onClick}>
@@ -497,11 +542,22 @@ export default ({
         scheduleLoading === false ? (
           <>
             <StatisRow>
-              <DatePicker
-                selected={selectDate}
-                onChange={(date) => setSelectDate(date)}
-                customInput={<CustomInput />}
-              />
+              <DatePickDiv>
+                <DatePicker
+                  selected={selectDate}
+                  onChange={(date) => setSelectDate(date)}
+                  customInput={<CustomInput />}
+                />
+              </DatePickDiv>
+              <RefreshDiv>
+                <span>자동 새로고침:&nbsp;</span>
+                <RefreshInputWrap>
+                  <Input_100 {...refreshTerm} type={'number'} />
+                </RefreshInputWrap>
+                <span>(Sec)&nbsp;</span>
+                {studentLoading === false && <IngSpan></IngSpan>}
+                {studentLoading === true && <IngSpan>ing...</IngSpan>}
+              </RefreshDiv>
             </StatisRow>
             <StatisRow>
               {StaTabs.content.map((section, index) => (
@@ -557,6 +613,11 @@ export default ({
             <Loader />
           </LoaderWrapper>
         )}
+        {/* {studentLoading === true && (
+          <LoaderWrapper2>
+            <Loader />
+          </LoaderWrapper2>
+        )} */}
       </BigBox>
       <BigBox>
         <Title>

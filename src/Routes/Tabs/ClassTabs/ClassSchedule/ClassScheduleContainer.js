@@ -1,27 +1,28 @@
 import React, { useRef, useState } from 'react';
 import ClassSchedulePresenter from './ClassSchedulePresenter';
 import useSelect from '../../../../Hooks/useSelect';
-import { useMutation, useQuery } from 'react-apollo-hooks';
-import { SAVE_SCHEDULE, SCHEDULE_OF_CLASS } from './ClassScheduleQueries';
+import useInput from '../../../../Hooks/useInput';
+import { useMutation } from 'react-apollo-hooks';
+import {
+  SAVE_SCHEDULE,
+  ADD_SUBJECT,
+  DELETE_SUBJECT,
+} from './ClassScheduleQueries';
 
-export default ({ classRoom }) => {
+export default ({ classRoom, classRefetch }) => {
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
+  const subjectName = useInput('');
 
   const myClassList = useSelect(
-    classRoom.map((List) => `${List.name}(${List.organizationName})`),
+    classRoom.map((List) => `${List.name}(${List.academy.name})`),
     classRoom.map((_, index) => index),
   );
 
   const saveScheduleMutation = useMutation(SAVE_SCHEDULE);
-  const {
-    data: scheduleData,
-    loading: scheduleLoading,
-    refetch: scheduleRefetch,
-  } = useQuery(SCHEDULE_OF_CLASS, {
-    variables: { classId: classRoom[myClassList.option].id },
-  });
+  const addSubjectMutation = useMutation(ADD_SUBJECT);
+  const deleteSubjectMutation = useMutation(DELETE_SUBJECT);
 
   return (
     <ClassSchedulePresenter
@@ -33,9 +34,7 @@ export default ({ classRoom }) => {
       myClassList={myClassList}
       classRoom={classRoom}
       saveScheduleMutation={saveScheduleMutation}
-      scheduleList={scheduleData.scheduleOfClass}
-      scheduleLoading={scheduleLoading}
-      scheduleRefetch={scheduleRefetch}
+      classRefetch={classRefetch}
     />
   );
 };

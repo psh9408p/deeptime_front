@@ -6,6 +6,9 @@ export const MY_STUDENT = gql`
       fullName
       avatar
       email
+      studyGroup
+      address1
+      address2
       schools {
         id
         name

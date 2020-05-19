@@ -61,8 +61,8 @@ const DetailInfo = styled.li`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 800px !important;
-    height: 400px !important;
+    width: 600px !important;
+    height: 300px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -146,47 +146,54 @@ export default ({
   studentEmail,
   myClassList,
   clearStudent,
+  classList,
 }) => {
-  // const deleteStudentMutation = useMutation(DELETE_STUDENT, {
-  //   variables: { email: student.email, organizaionId, classId },
-  // });
+  if (student.classesOfAcademy[0] === undefined) {
+    return null;
+  }
+
+  const deleteStudentMutation = useMutation(DELETE_STUDENT, {
+    variables: {
+      email: student.email,
+      academyId: student.academies[0].id,
+      classId: student.classesOfAcademy[0].id,
+    },
+  });
   // const disconSeatMutation = useMutation(DISCON_SEAT, {
   //   variables: { email: student.email },
   // });
-  // const editStudentMutation = useMutation(EDIT_STUDENT);
+  const editStudentMutation = useMutation(EDIT_STUDENT);
 
-  const onSubmit = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   toast.info('정보 수정중...');
-    //   const {
-    //     data: { editStudent },
-    //   } = await editStudentMutation({
-    //     variables: {
-    //       email: studentEmail.value,
-    //       schoolId: schoolMuValue,
-    //       academyId: academyMuValue,
-    //       readingRoomId: readingRoomMuValue,
-    //       classId: classMuValue,
-    //       loginPosition,
-    //     },
-    //   });
-    //   if (!editStudent) {
-    //     toast.error('정보를 수정할 수 없습니다.');
-    //   } else {
-    //     await studentRefetch();
-    //     await clearStudent();
-    //     toast.success('정보가 수정되었습니다.');
-    //   }
-    // } catch (e) {
-    //   const realText = e.message.split('GraphQL error: ');
-    //   toast.error(realText[1]);
-    // }
+  const onSubmit = async () => {
+    try {
+      toast.info('정보 수정중...');
+      const {
+        data: { editStudent },
+      } = await editStudentMutation({
+        variables: {
+          email: studentEmail.value,
+          academyId: classList[myClassList.optionIndex].academy.id,
+          classId: myClassList.option,
+        },
+      });
+      if (!editStudent) {
+        alert('정보를 수정할 수 없습니다.');
+      } else {
+        await studentRefetch();
+        await clearStudent();
+        toast.success('정보가 수정되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
   };
 
   const loadValue = async () => {
     studentEmail.setValue(`${student.email}`);
-    myClassList.setOption(`${student.classesOfSchool[0].id}`);
+    myClassList.setOption(`${student.classesOfAcademy[0].id}`);
   };
   return (
     <StudentRow>
@@ -203,7 +210,14 @@ export default ({
           >
             {(close) => (
               <PBody>
-                <form onSubmit={onSubmit}>
+                <form
+                  onSubmit={async () => {
+                    const fucResult = await onSubmit();
+                    if (fucResult) {
+                      close();
+                    }
+                  }}
+                >
                   <PTitle text={'학생 정보'} />
                   <InputWrapper>
                     <SmallInput
@@ -240,7 +254,7 @@ export default ({
               toast.info(
                 `'${student.fullName}'(을)를 관리 목록에서 삭제 중...`,
               );
-              // await deleteStudentMutation();
+              await deleteStudentMutation();
               // await disconSeatMutation();
               await studentRefetch();
               toast.success(
@@ -275,12 +289,17 @@ export default ({
             {student.schools[0] && student.schools[0].name}
           </DetailInfo>
           <DetailInfo>
-            <FatText text="학원: " />
-            {student.academies[0] && student.academies[0].name}
+            <FatText text="학원(클래스): " />
+            {student.academies[0] && student.academies[0].name}(
+            {student.classesOfAcademy[0].name})
           </DetailInfo>
           <DetailInfo>
-            <FatText text="클래스: " />
-            {student.classesOfAcademy[0].name}
+            <FatText text="학습 그룹: " />
+            {student.studyGroup}
+          </DetailInfo>
+          <DetailInfo>
+            <FatText text="주소: " />
+            {student.address1} {student.address2}
           </DetailInfo>
         </Info>
       </HeaderColumn>

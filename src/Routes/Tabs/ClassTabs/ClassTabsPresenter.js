@@ -195,7 +195,12 @@ export default ({
       pageIndexChange(1);
       return <></>;
     } else {
-      return <ClassSchedule classRoom={classData.myClass} />;
+      return (
+        <ClassSchedule
+          classRoom={classData.myClass}
+          classRefetch={classRefetch}
+        />
+      );
     }
   }
 };

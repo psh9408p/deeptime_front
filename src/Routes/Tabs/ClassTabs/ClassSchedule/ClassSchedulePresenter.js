@@ -1,33 +1,25 @@
 import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import Loader from '../../../../Components/Loader';
 import ObjectUnassign from '../../../../Components/ObjectUnassign';
-
+import Popup from 'reactjs-popup';
 import TUICalendar from '@toast-ui/react-calendar';
-
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import Select from '../../../../Components/Select';
-import Button from '../../../../Components/Buttons/Button';
+import Button_blue from '../../../../Components/Buttons/Button_blue';
+import Button_gray from '../../../../Components/Buttons/Button_gray';
+import Button_red from '../../../../Components/Buttons/Button_red';
+import PopupButton from '../../../../Components/Buttons/PopupButton';
+import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
+import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1400px;
   position: relative;
-`;
-
-const LoaderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  height: 70%;
-  width: 100%;
 `;
 
 const ControlButton = styled.button`
@@ -74,7 +66,7 @@ const PanelWrap = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin: 15px 0px;
+  margin: 15px 0px 5px 0px;
 `;
 
 const DateRangeWrap = styled.div`
@@ -96,8 +88,47 @@ const SaveButtonDiv = styled.div`
   margin-right: 10px;
 `;
 
-let updateVar = { scheduleId: '' };
+const SubjectButtonDiv = styled.div`
+  width: 160px;
+  margin-right: 10px;
+`;
+
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 600px !important;
+    height: 300px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const PBody = styled.div`
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    padding: 20px 20px;
+  }
+`;
+
+const PTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const InputWrapper = styled.div`
+  margin-bottom: 10px;
+`;
+
 let newScheduleArray = [];
+let schedules = [];
 
 export default ({
   cal,
@@ -108,43 +139,39 @@ export default ({
   myClassList,
   classRoom,
   saveScheduleMutation,
-  scheduleList,
-  scheduleLoading,
-  scheduleRefetch,
+  classRefetch,
 }) => {
-  let schedules = [1, 2, 3];
-  const calendars = [
-    {
-      id: classRoom[myClassList.option].id,
-      name: classRoom[myClassList.option].name,
-      color: '#ffffff',
-      bgColor: '#0F4C82',
-      dragBgColor: '#0F4C82',
-      borderColor: '#0F4C82',
-    },
-  ];
+  const calendars = [classRoom[myClassList.option].subjects];
+  //  [
+  //   {
+  //     id: classRoom[myClassList.option].id,
+  //     name: classRoom[myClassList.option].name,
+  //     color: 'white',
+  //     bgColor: '#0F4C82',
+  //     dragBgColor: '#0F4C82',
+  //     borderColor: '#0F4C82',
+  //   },
+  // ];
 
-  if (scheduleLoading === false) {
-    schedules = scheduleList.map((List) => {
-      let category = 'time';
-      if (List.isAllDay === true) {
-        category = 'allday';
-      }
+  schedules = classRoom[myClassList.option].schedules.map((List) => {
+    let category = 'time';
+    if (List.isAllDay === true) {
+      category = 'allday';
+    }
 
-      const schedule_tmp = {
-        calendarId: classRoom[myClassList.option].id,
-        isAllDay: List.isAllDay,
-        category,
-        location: List.location,
-        isVisible: true,
-        title: List.title,
-        id: List.id,
-        start: new Date(List.start),
-        end: new Date(List.end),
-      };
-      return schedule_tmp;
-    });
-  }
+    const schedule_tmp = {
+      calendarId: classRoom[myClassList.option].id,
+      isAllDay: List.isAllDay,
+      category,
+      location: List.location,
+      isVisible: true,
+      title: List.title,
+      id: List.id,
+      start: new Date(List.start),
+      end: new Date(List.end),
+    };
+    return schedule_tmp;
+  });
 
   const handleClickNextButton = () => {
     const calendarInstance = cal.current.getInstance();
@@ -191,7 +218,7 @@ export default ({
       if (!saveSchedule) {
         alert('스케줄을 변경할 수 없습니다.');
       } else {
-        await scheduleRefetch();
+        await classRefetch();
         newScheduleArray = [];
         toast.success(
           `"${
@@ -365,6 +392,12 @@ export default ({
       // console.log(schedule)
       return _getTimeTemplate(schedule, false);
     },
+    popupStateFree: function () {
+      return '자습';
+    },
+    popupStateBusy: function () {
+      return '강의';
+    },
   };
 
   useEffect(() => {
@@ -390,8 +423,45 @@ export default ({
           {startRange}~{endRange}
         </DateRangeWrap>
         <SelectDiv>
+          <SubjectButtonDiv>
+            <PopupCustom
+              trigger={<PopButton_100 text={'과목 추가'} />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <form
+                    onSubmit={async () => {
+                      // const fucResult = await onSubmit();
+                      // if (fucResult) {
+                      //   close();
+                      // }
+                    }}
+                  >
+                    <PTitle text={'클래스 정보'} />
+                    <InputWrapper></InputWrapper>
+                    <ButtonDiv>
+                      <PopupButton text={'수정'} />
+                      <PopupButton
+                        type="button"
+                        onClick={() => {
+                          close();
+                          // clearClass();
+                        }}
+                        text={'닫기'}
+                      />
+                    </ButtonDiv>
+                  </form>
+                </PBody>
+              )}
+            </PopupCustom>
+          </SubjectButtonDiv>
+          <SubjectButtonDiv>
+            <PopButton_100 text={'과목 제거'} />
+          </SubjectButtonDiv>
           <SaveButtonDiv>
-            <Button text={'저장'} onClick={onClickScheduleSave} />
+            <Button_blue text={'저장'} onClick={onClickScheduleSave} />
           </SaveButtonDiv>
           <Select {...myClassList} id={'myClassList_id_schedule'} />
         </SelectDiv>
@@ -412,11 +482,6 @@ export default ({
         onBeforeDeleteSchedule={onBeforeDeleteSchedule}
         onBeforeUpdateSchedule={onBeforeUpdateSchedule}
       />
-      {scheduleLoading === true && (
-        <LoaderWrapper>
-          <Loader />
-        </LoaderWrapper>
-      )}
     </Wrapper>
   );
 };
