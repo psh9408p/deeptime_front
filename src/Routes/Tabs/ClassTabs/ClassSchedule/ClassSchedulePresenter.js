@@ -9,12 +9,14 @@ import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import Select from '../../../../Components/Select';
 import Button_blue from '../../../../Components/Buttons/Button_blue';
-import Button_gray from '../../../../Components/Buttons/Button_gray';
 import Button_red from '../../../../Components/Buttons/Button_red';
+import Input from '../../../../Components/Input';
 import PopupButton from '../../../../Components/Buttons/PopupButton';
 import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
 import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
+import { SwatchesPicker } from 'react-color';
+import useSelect from '../../../../Hooks/useSelect';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -96,7 +98,27 @@ const SubjectButtonDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 600px !important;
-    height: 300px !important;
+    height: 500px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const PopupCustom2 = styled(Popup)`
+  &-content {
+    width: 600px !important;
+    height: 550px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const PopupCustom3 = styled(Popup)`
+  &-content {
+    width: 500px !important;
+    height: 250px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -124,7 +146,44 @@ const ButtonDiv = styled.div`
 `;
 
 const InputWrapper = styled.div`
+  margin-bottom: 20px;
+`;
+
+const ColorWrapper = styled.div`
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SubTitle = styled(FatText)`
+  font-size: 14px;
+  text-align: center;
   margin-bottom: 10px;
+`;
+
+const SelectWrapDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SelectWrapper = styled.div`
+  width: 50%;
+  height: 35px;
+  margin-bottom: 30px;
+`;
+
+const SelectWrapper2 = styled.div`
+  width: 50%;
+  height: 35px;
+  margin-bottom: 10px;
+`;
+
+const RedButtonWrap = styled.div`
+  width: 120px;
+  margin: 0px 0px 10px 10px;
 `;
 
 let newScheduleArray = [];
@@ -140,19 +199,111 @@ export default ({
   classRoom,
   saveScheduleMutation,
   classRefetch,
+  subjectList,
+  subjectName,
+  subjectColor,
+  setSubjectColor,
+  handleChangeComplete,
+  addSubjectMutation,
+  editSubjectMutation,
+  deleteSubjectMutation,
+  subjectRefetch,
 }) => {
-  const calendars = [classRoom[myClassList.option].subjects];
-  //  [
-  //   {
-  //     id: classRoom[myClassList.option].id,
-  //     name: classRoom[myClassList.option].name,
-  //     color: 'white',
-  //     bgColor: '#0F4C82',
-  //     dragBgColor: '#0F4C82',
-  //     borderColor: '#0F4C82',
-  //   },
-  // ];
+  const mySubjectList = useSelect(
+    subjectList.map((List) => `${List.name}`),
+    subjectList.map((List) => `${List.id}`),
+  );
 
+  const subjectClear = () => {
+    subjectName.setValue('');
+    setSubjectColor(`#0F4C82`);
+    mySubjectList.setOption(mySubjectList.valueList[0]);
+  };
+
+  const subjectLoad = () => {
+    subjectName.setValue(subjectList[mySubjectList.optionIndex].name);
+    setSubjectColor(subjectList[mySubjectList.optionIndex].bgColor);
+  };
+
+  const onSubmitAdd = async () => {
+    try {
+      toast.info('새로운 과목을 추가 중...');
+      const {
+        data: { addSubject },
+      } = await addSubjectMutation({
+        variables: {
+          name: subjectName.value,
+          bgColor: subjectColor,
+        },
+      });
+      if (!addSubject) {
+        alert('과목을 추가할 수 없습니다.');
+      } else {
+        await subjectRefetch();
+        await subjectClear();
+        toast.success('새로운 과목이 추가되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
+  const onSubmitEdit = async () => {
+    try {
+      toast.info('새로운 과목을 수정 중...');
+      const {
+        data: { editSubject },
+      } = await editSubjectMutation({
+        variables: {
+          subjectId: mySubjectList.option,
+          name: subjectName.value,
+          bgColor: subjectColor,
+        },
+      });
+      if (!editSubject) {
+        alert('과목을 수정할 수 없습니다.');
+      } else {
+        await subjectRefetch();
+        await subjectClear();
+        toast.success('기존 과목이 수정되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
+  const onSubmitDelete = async () => {
+    try {
+      toast.info('새로운 과목을 제거 중...');
+      const {
+        data: { deleteSubject },
+      } = await deleteSubjectMutation({
+        variables: {
+          subjectId: mySubjectList.option,
+        },
+      });
+      if (!deleteSubject) {
+        alert('과목을 제거할 수 없습니다.');
+      } else {
+        await subjectRefetch();
+        await subjectClear();
+        toast.success('새로운 과목이 제거되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
+  const calendars = subjectList;
   schedules = classRoom[myClassList.option].schedules.map((List) => {
     let category = 'time';
     if (List.isAllDay === true) {
@@ -220,11 +371,7 @@ export default ({
       } else {
         await classRefetch();
         newScheduleArray = [];
-        toast.success(
-          `"${
-            myClassList.optionList[myClassList.optionIndex]
-          }"의 변경된 스케줄이 저장되었습니다.`,
-        );
+        toast.success('변경된 스케줄이 저장되었습니다.');
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
@@ -433,21 +580,33 @@ export default ({
                 <PBody>
                   <form
                     onSubmit={async () => {
-                      // const fucResult = await onSubmit();
-                      // if (fucResult) {
-                      //   close();
-                      // }
+                      const fucResult = await onSubmitAdd();
+                      if (fucResult) {
+                        close();
+                      }
                     }}
                   >
-                    <PTitle text={'클래스 정보'} />
-                    <InputWrapper></InputWrapper>
+                    <PTitle text={'과목 추가'} />
+                    <InputWrapper>
+                      <Input
+                        placeholder={'과목 이름 (예: 수학 or 영어)'}
+                        {...subjectName}
+                      />
+                    </InputWrapper>
+                    <ColorWrapper>
+                      <SubTitle text={'과목 색상 선택'} />
+                      <SwatchesPicker
+                        color={subjectColor}
+                        onChangeComplete={handleChangeComplete}
+                      />
+                    </ColorWrapper>
                     <ButtonDiv>
-                      <PopupButton text={'수정'} />
+                      <PopupButton text={'추가'} />
                       <PopupButton
                         type="button"
                         onClick={() => {
                           close();
-                          // clearClass();
+                          subjectClear();
                         }}
                         text={'닫기'}
                       />
@@ -458,7 +617,101 @@ export default ({
             </PopupCustom>
           </SubjectButtonDiv>
           <SubjectButtonDiv>
-            <PopButton_100 text={'과목 제거'} />
+            <PopupCustom2
+              trigger={<PopButton_100 text={'과목 수정'} />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <form
+                    onSubmit={async () => {
+                      const fucResult = await onSubmitEdit();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                  >
+                    <PTitle text={'과목 수정'} />
+                    <SelectWrapDiv>
+                      <SubTitle text={`수정할 과목:　`} />
+                      <SelectWrapper2>
+                        <Select {...mySubjectList} id={'mySubject_id'} />
+                      </SelectWrapper2>
+                      <RedButtonWrap>
+                        <Button_red
+                          type={'button'}
+                          text={'기존정보 불러오기'}
+                          onClick={subjectLoad}
+                        />
+                      </RedButtonWrap>
+                    </SelectWrapDiv>
+                    <InputWrapper>
+                      <Input
+                        placeholder={'과목의 새로운 이름 (예: 수학 or 영어)'}
+                        {...subjectName}
+                      />
+                    </InputWrapper>
+                    <ColorWrapper>
+                      <SubTitle text={'과목 색상 선택'} />
+                      <SwatchesPicker
+                        color={subjectColor}
+                        onChangeComplete={handleChangeComplete}
+                      />
+                    </ColorWrapper>
+                    <ButtonDiv>
+                      <PopupButton text={'수정'} />
+                      <PopupButton
+                        type="button"
+                        onClick={() => {
+                          subjectClear();
+                          close();
+                        }}
+                        text={'닫기'}
+                      />
+                    </ButtonDiv>
+                  </form>
+                </PBody>
+              )}
+            </PopupCustom2>
+          </SubjectButtonDiv>
+          <SubjectButtonDiv>
+            <PopupCustom3
+              trigger={<PopButton_100 text={'과목 제거'} />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <form
+                    onSubmit={async () => {
+                      const fucResult = await onSubmitDelete();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                  >
+                    <PTitle text={'과목 제거'} />
+                    <SelectWrapDiv>
+                      <SelectWrapper>
+                        <Select {...mySubjectList} id={'mySubject_id'} />
+                      </SelectWrapper>
+                    </SelectWrapDiv>
+                    <ButtonDiv>
+                      <PopupButton text={'제거'} />
+                      <PopupButton
+                        type="button"
+                        onClick={() => {
+                          close();
+                          subjectClear();
+                        }}
+                        text={'닫기'}
+                      />
+                    </ButtonDiv>
+                  </form>
+                </PBody>
+              )}
+            </PopupCustom3>
           </SubjectButtonDiv>
           <SaveButtonDiv>
             <Button_blue text={'저장'} onClick={onClickScheduleSave} />

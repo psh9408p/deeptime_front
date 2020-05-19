@@ -28,7 +28,6 @@ export default () => {
   const {
     data: { isLoggedIn },
   } = useQuery(QUERY);
-  console.log(window.location.hash);
   return (
     <ThemeProvider theme={Theme}>
       <>

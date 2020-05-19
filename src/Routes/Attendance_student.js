@@ -351,7 +351,7 @@ export default ({ Mydata, MyRefetch }) => {
         </ButtonWrap>
         <ButtonWrap>
           <Button_red
-            type="button"
+            type={'button'}
             text={'오늘 학습 끝~!'}
             onClick={func_endAttendance}
           />

@@ -20,14 +20,6 @@ export const MY_CLASS = gql`
         start
         end
       }
-      subjects {
-        id
-        name
-        color
-        bgColor
-        dragBgColor
-        borderColor
-      }
     }
   }
 `;

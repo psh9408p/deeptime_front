@@ -55,7 +55,7 @@ export default ({
         },
       });
       if (!addClass) {
-        toast.error('클래스를 등록할 수 없습니다.');
+        alert('클래스를 등록할 수 없습니다.');
       } else {
         await classRefetch();
         await clearClass();
@@ -64,7 +64,7 @@ export default ({
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
-      toast.error(realText[1]);
+      alert(realText[1]);
       return false;
     }
   };
