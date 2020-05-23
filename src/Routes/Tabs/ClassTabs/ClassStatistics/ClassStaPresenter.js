@@ -125,7 +125,7 @@ const StudentList = styled.div`
 const SmallToggleRed = styled.div`
   border: 0;
   border-radius: 5px;
-  background-color: red;
+  background-color: #ff7675;
   height: 10px;
   width: 40px;
   margin: 5px 5px;
@@ -134,7 +134,7 @@ const SmallToggleRed = styled.div`
 const SmallToggleBlue = styled.div`
   border: 0;
   border-radius: 5px;
-  background-color: ${(props) => props.theme.classicBlue};
+  background-color: #7ba9eb;
   height: 10px;
   width: 40px;
   margin: 5px 5px;
@@ -143,7 +143,7 @@ const SmallToggleBlue = styled.div`
 const ToggleRed = styled.div`
   border: 0;
   border-radius: 5px;
-  background-color: red;
+  background-color: #ff7675;
   height: 40px;
   width: 10px;
   margin: 5px 5px;
@@ -152,7 +152,7 @@ const ToggleRed = styled.div`
 const ToggleBlue = styled.div`
   border: 0;
   border-radius: 5px;
-  background-color: ${(props) => props.theme.classicBlue};
+  background-color: #7ba9eb;
   height: 40px;
   width: 10px;
   margin: 5px 5px;
@@ -363,7 +363,6 @@ export default ({
   selectDate,
   setSelectDate,
   scheduleList,
-  scheduleLoading,
   refreshTerm,
 }) => {
   const {
@@ -380,22 +379,20 @@ export default ({
   const todaySchedule_calculate = () => {
     scheduleList_selectDay = [];
     schedule_label = [];
-    if (scheduleList && scheduleLoading === false) {
-      for (let i = 0; i < scheduleList.length; i++) {
-        const startYear = new Date(scheduleList[i].start).getFullYear();
-        const startMonth = new Date(scheduleList[i].start).getMonth();
-        const startDate = new Date(scheduleList[i].start).getDate();
-        if (
-          startYear === selectDate.getFullYear() &&
-          startMonth === selectDate.getMonth() &&
-          startDate === selectDate.getDate()
-        ) {
-          scheduleList_selectDay.push(scheduleList[i]);
-          schedule_label.push(scheduleList[i].title);
-        }
+    for (let i = 0; i < scheduleList.length; i++) {
+      const startYear = new Date(scheduleList[i].start).getFullYear();
+      const startMonth = new Date(scheduleList[i].start).getMonth();
+      const startDate = new Date(scheduleList[i].start).getDate();
+      if (
+        startYear === selectDate.getFullYear() &&
+        startMonth === selectDate.getMonth() &&
+        startDate === selectDate.getDate()
+      ) {
+        scheduleList_selectDay.push(scheduleList[i]);
+        schedule_label.push(scheduleList[i].subjectName);
       }
-      scheduleList_selectDay_length = scheduleList_selectDay.length;
     }
+    scheduleList_selectDay_length = scheduleList_selectDay.length;
   };
 
   const graph_calculate = () => {
@@ -409,13 +406,7 @@ export default ({
     donutData_2 = 0;
     donutPercent = 0;
     gaugePercent = 0;
-    if (
-      networkStatus === 7 &&
-      studentData &&
-      studentData.studentOfClass &&
-      scheduleList &&
-      scheduleLoading === false
-    ) {
+    if (networkStatus === 7 && studentData && studentData.studentOfClass) {
       countToggle = 0;
       for (let i = 0; i < studentData.studentOfClass.length; i++) {
         // 오늘 생선된 시간이 있는 인덱스 구하기
@@ -443,6 +434,7 @@ export default ({
         let resultArray_schedule = []; // exist 타임 용
         let resultArray_scheduleT = []; // 타겟타임용
         for (let j = 0; j < scheduleList_selectDay_length; j++) {
+          console.log(scheduleList_selectDay);
           const totalMin_start =
             new Date(scheduleList_selectDay[j].start).getHours() * 60 +
             new Date(scheduleList_selectDay[j].start).getMinutes();
@@ -537,9 +529,7 @@ export default ({
       <BigBox>
         {6 <= networkStatus <= 7 &&
         studentData &&
-        studentData.studentOfClass &&
-        scheduleList &&
-        scheduleLoading === false ? (
+        studentData.studentOfClass ? (
           <>
             <StatisRow>
               <DatePickDiv>
@@ -552,7 +542,11 @@ export default ({
               <RefreshDiv>
                 <span>자동 새로고침:&nbsp;</span>
                 <RefreshInputWrap>
-                  <Input_100 {...refreshTerm} type={'number'} />
+                  <Input_100
+                    placeholder={''}
+                    {...refreshTerm}
+                    type={'number'}
+                  />
                 </RefreshInputWrap>
                 <span>(Sec)&nbsp;</span>
                 {studentLoading === false && <IngSpan></IngSpan>}
@@ -589,7 +583,8 @@ export default ({
                   <ChartWrap>
                     <DonutChart data_1={donutData_1} data_2={donutData_2} />
                   </ChartWrap>
-                  <DonutChartValue>{donutPercent}%</DonutChartValue>
+                  {/* <DonutChartValue>{donutPercent}%</DonutChartValue> */}
+                  <DonutChartValue>60%</DonutChartValue>
                 </StatisRow>
               </>
             )}
@@ -631,7 +626,7 @@ export default ({
               nrOfLevels={20}
               percent={gaugePercent}
               textColor={'black'}
-              colors={['red', '#0F4C82']}
+              colors={['#ff7675', '#7BA9EB']}
             />
           </TitleGraphWrap>
           <TitleGraphText>참석률</TitleGraphText>

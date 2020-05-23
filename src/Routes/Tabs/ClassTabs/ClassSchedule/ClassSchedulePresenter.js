@@ -12,11 +12,13 @@ import Button_blue from '../../../../Components/Buttons/Button_blue';
 import Button_red from '../../../../Components/Buttons/Button_red';
 import Input from '../../../../Components/Input';
 import PopupButton from '../../../../Components/Buttons/PopupButton';
+import PopupButton_solo from '../../../../Components/Buttons/PopupButton_solo';
 import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
 import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
+import SelectChange from '../../../../Components/SelectChange';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -91,6 +93,12 @@ const SaveButtonDiv = styled.div`
 `;
 
 const SubjectButtonDiv = styled.div`
+  width: 120px;
+  height: 35px;
+  margin-right: 10px;
+`;
+
+const SubjectButtonDiv2 = styled.div`
   width: 160px;
   margin-right: 10px;
 `;
@@ -123,6 +131,23 @@ const PopupCustom3 = styled(Popup)`
     justify-content: center;
     align-items: center;
   }
+`;
+
+const PopupCustom4 = styled(Popup)`
+  &-content {
+    width: 450px !important;
+    height: 200px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const FrontDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
 `;
 
 const PBody = styled.div`
@@ -181,9 +206,23 @@ const SelectWrapper2 = styled.div`
   margin-bottom: 10px;
 `;
 
+const ThreeButtonWrap = styled.div`
+  width: 100%;
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+`;
+
 const RedButtonWrap = styled.div`
   width: 120px;
   margin: 0px 0px 10px 10px;
+`;
+
+const SpaceDiv = styled.div`
+  width: 10px;
 `;
 
 let newScheduleArray = [];
@@ -209,11 +248,11 @@ export default ({
   deleteSubjectMutation,
   subjectRefetch,
 }) => {
+  console.log(myClassList);
   const mySubjectList = useSelect(
     subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
   );
-
   const subjectClear = () => {
     subjectName.setValue('');
     setSubjectColor(`#0F4C82`);
@@ -252,58 +291,72 @@ export default ({
   };
 
   const onSubmitEdit = async () => {
-    try {
-      toast.info('새로운 과목을 수정 중...');
-      const {
-        data: { editSubject },
-      } = await editSubjectMutation({
-        variables: {
-          subjectId: mySubjectList.option,
-          name: subjectName.value,
-          bgColor: subjectColor,
-        },
-      });
-      if (!editSubject) {
-        alert('과목을 수정할 수 없습니다.');
-      } else {
-        await subjectRefetch();
-        await subjectClear();
-        toast.success('기존 과목이 수정되었습니다.');
-        return true;
+    if (
+      window.confirm(
+        '수정 내용이 기존 스케줄에도 반영됩니다.\n그래도 수정하시겠습니까?',
+      ) === true
+    ) {
+      try {
+        toast.info('해당 과목을 수정 중...');
+        const {
+          data: { editSubject },
+        } = await editSubjectMutation({
+          variables: {
+            subjectId: mySubjectList.option,
+            name: subjectName.value,
+            bgColor: subjectColor,
+          },
+        });
+        if (!editSubject) {
+          alert('해당 수정할 수 없습니다.');
+        } else {
+          await subjectRefetch();
+          await subjectClear();
+          toast.success('해당 과목이 수정되었습니다.');
+          return true;
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+        return false;
       }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      alert(realText[1]);
-      return false;
     }
   };
 
   const onSubmitDelete = async () => {
-    try {
-      toast.info('새로운 과목을 제거 중...');
-      const {
-        data: { deleteSubject },
-      } = await deleteSubjectMutation({
-        variables: {
-          subjectId: mySubjectList.option,
-        },
-      });
-      if (!deleteSubject) {
-        alert('과목을 제거할 수 없습니다.');
-      } else {
-        await subjectRefetch();
-        await subjectClear();
-        toast.success('새로운 과목이 제거되었습니다.');
-        return true;
+    if (
+      window.confirm(
+        '해당 과목이 기존 스케줄에서 삭제됩니다.\n그래도 삭제하시겠습니까?',
+      ) === true
+    ) {
+      try {
+        toast.info('해당 과목을 제거 중...');
+        const {
+          data: { deleteSubject },
+        } = await deleteSubjectMutation({
+          variables: {
+            subjectId: mySubjectList.option,
+          },
+        });
+        if (!deleteSubject) {
+          alert('해당 과목을 제거할 수 없습니다.');
+        } else {
+          await subjectRefetch();
+          await classRefetch();
+          await subjectClear();
+          toast.success('해당 과목이 제거되었습니다.');
+          return true;
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+        return false;
       }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      alert(realText[1]);
-      return false;
     }
   };
 
-  const calendars = subjectList;
+  const calendars = subjectList; //과목 종류 넣기
+  //스케줄 넣기
   schedules = classRoom[myClassList.option].schedules.map((List) => {
     let category = 'time';
     if (List.isAllDay === true) {
@@ -311,8 +364,9 @@ export default ({
     }
 
     const schedule_tmp = {
-      calendarId: classRoom[myClassList.option].id,
+      calendarId: List.subjectId,
       isAllDay: List.isAllDay,
+      isPrivate: List.isPrivate,
       category,
       location: List.location,
       isVisible: true,
@@ -381,6 +435,7 @@ export default ({
 
   const onBeforeCreateSchedule = useCallback(
     (scheduleData) => {
+      console.log(myClassList.option);
       const generateId =
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15);
@@ -389,117 +444,132 @@ export default ({
         id: generateId,
         title: scheduleData.title,
         isAllDay: scheduleData.isAllDay,
+        isPrivate: scheduleData.raw.class === 'private' ? true : false,
         start: scheduleData.start,
         end: scheduleData.end,
         category: scheduleData.isAllDay ? 'allday' : 'time',
         dueDateClass: '',
         location: scheduleData.location,
         raw: {
-          class: scheduleData.raw['class'],
+          class: scheduleData.raw.class === 'private' ? 'private' : 'public',
         },
         state: scheduleData.state,
-        calendarId: classRoom[myClassList.option].id,
+        calendarId: scheduleData.calendarId,
       };
 
       const schedule_tmp = {
         id: generateId,
         isAllDay: scheduleData.isAllDay,
+        isPrivate: scheduleData.raw.class === 'private' ? true : false,
         title: scheduleData.title,
         location: scheduleData.location,
         state: scheduleData.state,
         start: scheduleData.start._date,
         end: scheduleData.end._date,
+        calendarId: scheduleData.calendarId,
         classId: classRoom[myClassList.option].id,
         option: 'create',
       };
 
       newScheduleArray.push(schedule_tmp);
+      console.log(newScheduleArray);
       cal.current.calendarInst.createSchedules([schedule]);
     },
     [myClassList.option],
   );
 
-  const onBeforeDeleteSchedule = useCallback(async (res) => {
-    // console.log('c', res.schedule);
+  const onBeforeDeleteSchedule = useCallback(
+    async (res) => {
+      // console.log('c', res.schedule);
 
-    const schedule_tmp = {
-      id: res.schedule.id,
-      isAllDay: res.schedule.isAllDay,
-      title: res.schedule.title,
-      location: res.schedule.location,
-      state: res.schedule.state,
-      start: res.schedule.start._date,
-      end: res.schedule.end._date,
-      classId: classRoom[myClassList.option].id,
-      option: 'delete',
-    };
-
-    const checkExist = (a) => a.id === res.schedule.id;
-    const checkIndex = newScheduleArray.findIndex(checkExist);
-    if (checkIndex === -1) {
-      newScheduleArray.push(schedule_tmp);
-    } else {
-      newScheduleArray.splice(checkIndex, 1);
-    }
-
-    cal.current.calendarInst.deleteSchedule(
-      res.schedule.id,
-      classRoom[myClassList.option].id,
-    );
-  }, []);
-
-  const onBeforeUpdateSchedule = useCallback(async (res) => {
-    // console.log(res.changes);
-
-    if (res.changes.start !== undefined && res.changes.end !== undefined) {
-      const dateSumVar = {
-        start: res.changes.start._date,
-        end: res.changes.end._date,
+      const schedule_tmp = {
+        id: res.schedule.id,
+        isAllDay: res.schedule.isAllDay,
+        isPrivate: res.schedule.isPrivate,
+        title: res.schedule.title,
+        location: res.schedule.location,
+        state: res.schedule.state,
+        start: res.schedule.start._date,
+        end: res.schedule.end._date,
+        calendarId: res.schedule.calendarId,
+        classId: classRoom[myClassList.option].id,
+        option: 'delete',
       };
-      const dateRmVar = { start: '', end: '' };
-      ObjectUnassign(res.changes, dateRmVar);
-      Object.assign(res.changes, dateSumVar);
-    } else if (res.changes.start !== undefined) {
-      const dateSumVar = { start: res.changes.start._date };
-      const dateRmVar = { start: '' };
-      ObjectUnassign(res.changes, dateRmVar);
-      Object.assign(res.changes, dateSumVar);
-    } else if (res.changes.end !== undefined) {
-      const dateSumVar = { end: res.changes.end._date };
-      const dateRmVar = { end: '' };
-      ObjectUnassign(res.changes, dateRmVar);
-      Object.assign(res.changes, dateSumVar);
-    }
 
-    const schedule_tmp = {
-      id: res.schedule.id,
-      isAllDay: res.schedule.isAllDay,
-      title: res.schedule.title,
-      location: res.schedule.location,
-      state: res.schedule.state,
-      start: res.schedule.start._date,
-      end: res.schedule.end._date,
-      classId: classRoom[myClassList.option].id,
-      option: 'update',
-    };
-    Object.assign(schedule_tmp, res.changes);
+      const checkExist = (a) => a.id === res.schedule.id;
+      const checkIndex = newScheduleArray.findIndex(checkExist);
+      if (checkIndex === -1) {
+        newScheduleArray.push(schedule_tmp);
+      } else {
+        newScheduleArray.splice(checkIndex, 1);
+      }
 
-    const checkExist = (a) => a.id === res.schedule.id;
-    const checkIndex = newScheduleArray.findIndex(checkExist);
-    if (checkIndex === -1) {
-      newScheduleArray.push(schedule_tmp);
-    } else {
-      newScheduleArray.splice(checkIndex, 1);
-      newScheduleArray.push(schedule_tmp);
-    }
+      cal.current.calendarInst.deleteSchedule(
+        res.schedule.id,
+        res.schedule.calendarId,
+      );
+    },
+    [myClassList.option],
+  );
 
-    const { schedule, changes } = res;
-    cal.current.calendarInst.updateSchedule(
-      schedule.id,
-      schedule.calendarId,
-      changes,
-    );
-  }, []);
+  const onBeforeUpdateSchedule = useCallback(
+    async (res) => {
+      // console.log('a', res);
+      if (res.changes !== null) {
+        if (res.changes.start !== undefined && res.changes.end !== undefined) {
+          const dateSumVar = {
+            start: res.changes.start._date,
+            end: res.changes.end._date,
+          };
+          const dateRmVar = { start: '', end: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        } else if (res.changes.start !== undefined) {
+          const dateSumVar = { start: res.changes.start._date };
+          const dateRmVar = { start: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        } else if (res.changes.end !== undefined) {
+          const dateSumVar = { end: res.changes.end._date };
+          const dateRmVar = { end: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        }
+
+        const schedule_tmp = {
+          id: res.schedule.id,
+          isAllDay: res.schedule.isAllDay,
+          isPrivate: res.schedule.isPrivate,
+          title: res.schedule.title,
+          location: res.schedule.location,
+          state: res.schedule.state,
+          start: res.schedule.start._date,
+          end: res.schedule.end._date,
+          calendarId: res.schedule.calendarId,
+          classId: classRoom[myClassList.option].id,
+          option: 'update',
+        };
+        Object.assign(schedule_tmp, res.changes);
+
+        const checkExist = (a) => a.id === res.schedule.id;
+        const checkIndex = newScheduleArray.findIndex(checkExist);
+        if (checkIndex === -1) {
+          newScheduleArray.push(schedule_tmp);
+        } else {
+          newScheduleArray.splice(checkIndex, 1);
+          newScheduleArray.push(schedule_tmp);
+        }
+
+        const { schedule, changes } = res;
+        cal.current.calendarInst.updateSchedule(
+          schedule.id,
+          schedule.calendarId,
+          changes,
+        );
+      }
+    },
+    [myClassList.option],
+  );
 
   function _getFormattedTime(time) {
     const date = new Date(time);
@@ -511,13 +581,13 @@ export default ({
 
   function _getTimeTemplate(schedule, isAllDay) {
     var html = [];
-
+    // console.log(schedule);
     if (!isAllDay) {
       html.push('<strong>' + _getFormattedTime(schedule.start) + '</strong> ');
     }
     if (schedule.isPrivate) {
       html.push('<span class="calendar-font-icon ic-lock-b"></span>');
-      html.push(' Private');
+      html.push('🔒 Private');
     } else {
       if (schedule.isReadOnly) {
         html.push('<span class="calendar-font-icon ic-readonly-b"></span>');
@@ -528,9 +598,20 @@ export default ({
       } else if (schedule.location) {
         html.push('<span class="calendar-font-icon ic-location-b"></span>');
       }
-      html.push(' ' + schedule.title);
+      const subjectIndex = mySubjectList.valueList.indexOf(schedule.calendarId);
+      if (subjectIndex > -1) {
+        html.push(
+          ' ' +
+            '[' +
+            subjectList[subjectIndex].name +
+            ']' +
+            ' ' +
+            schedule.title,
+        );
+      } else {
+        html.push(' ' + schedule.title);
+      }
     }
-
     return html.join('');
   }
 
@@ -540,10 +621,10 @@ export default ({
       return _getTimeTemplate(schedule, false);
     },
     popupStateFree: function () {
-      return '자습';
+      return '강의';
     },
     popupStateBusy: function () {
-      return '강의';
+      return '자습';
     },
   };
 
@@ -560,6 +641,11 @@ export default ({
     );
   }, []);
 
+  useEffect(() => {
+    // 변경내용 저장 초기화
+    newScheduleArray = [];
+  }, [myClassList.option]);
+
   return (
     <Wrapper>
       <PanelWrap>
@@ -570,151 +656,191 @@ export default ({
           {startRange}~{endRange}
         </DateRangeWrap>
         <SelectDiv>
-          <SubjectButtonDiv>
-            <PopupCustom
-              trigger={<PopButton_100 text={'과목 추가'} />}
+          <SubjectButtonDiv2>
+            <PopupCustom4
+              trigger={<PopButton_100 text={'과목 관리'} />}
               closeOnDocumentClick={false}
               modal
             >
               {(close) => (
                 <PBody>
-                  <form
-                    onSubmit={async () => {
-                      const fucResult = await onSubmitAdd();
-                      if (fucResult) {
-                        close();
-                      }
-                    }}
-                  >
-                    <PTitle text={'과목 추가'} />
-                    <InputWrapper>
-                      <Input
-                        placeholder={'과목 이름 (예: 수학 or 영어)'}
-                        {...subjectName}
-                      />
-                    </InputWrapper>
-                    <ColorWrapper>
-                      <SubTitle text={'과목 색상 선택'} />
-                      <SwatchesPicker
-                        color={subjectColor}
-                        onChangeComplete={handleChangeComplete}
-                      />
-                    </ColorWrapper>
+                  <FrontDiv>
+                    <PTitle text={'과목 관리'} />
+                    <ThreeButtonWrap>
+                      <SpaceDiv />
+                      <SubjectButtonDiv>
+                        <PopupCustom
+                          trigger={<PopButton_100 text={'과목 추가'} />}
+                          closeOnDocumentClick={false}
+                          modal
+                        >
+                          {(close) => (
+                            <PBody>
+                              <form
+                                onSubmit={async () => {
+                                  const fucResult = await onSubmitAdd();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              >
+                                <PTitle text={'과목 추가'} />
+                                <InputWrapper>
+                                  <Input
+                                    placeholder={'과목 이름 (예: 수학 or 영어)'}
+                                    {...subjectName}
+                                  />
+                                </InputWrapper>
+                                <ColorWrapper>
+                                  <SubTitle text={'과목 색상 선택'} />
+                                  <SwatchesPicker
+                                    color={subjectColor}
+                                    onChangeComplete={handleChangeComplete}
+                                  />
+                                </ColorWrapper>
+                                <ButtonDiv>
+                                  <PopupButton text={'추가'} />
+                                  <PopupButton
+                                    type="button"
+                                    onClick={() => {
+                                      close();
+                                      subjectClear();
+                                    }}
+                                    text={'닫기'}
+                                  />
+                                </ButtonDiv>
+                              </form>
+                            </PBody>
+                          )}
+                        </PopupCustom>
+                      </SubjectButtonDiv>
+                      <SubjectButtonDiv>
+                        <PopupCustom2
+                          trigger={<PopButton_100 text={'과목 수정'} />}
+                          closeOnDocumentClick={false}
+                          modal
+                        >
+                          {(close) => (
+                            <PBody>
+                              <form
+                                onSubmit={async () => {
+                                  const fucResult = await onSubmitEdit();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              >
+                                <PTitle text={'과목 수정'} />
+                                <SelectWrapDiv>
+                                  <SubTitle text={`수정할 과목:　`} />
+                                  <SelectWrapper2>
+                                    <Select
+                                      {...mySubjectList}
+                                      id={'mySubject_id'}
+                                    />
+                                  </SelectWrapper2>
+                                  <RedButtonWrap>
+                                    <Button_red
+                                      type={'button'}
+                                      text={'기존정보 불러오기'}
+                                      onClick={subjectLoad}
+                                    />
+                                  </RedButtonWrap>
+                                </SelectWrapDiv>
+                                <InputWrapper>
+                                  <Input
+                                    placeholder={
+                                      '과목의 새로운 이름 (예: 수학 or 영어)'
+                                    }
+                                    {...subjectName}
+                                  />
+                                </InputWrapper>
+                                <ColorWrapper>
+                                  <SubTitle text={'과목 색상 선택'} />
+                                  <SwatchesPicker
+                                    color={subjectColor}
+                                    onChangeComplete={handleChangeComplete}
+                                  />
+                                </ColorWrapper>
+                                <ButtonDiv>
+                                  <PopupButton text={'수정'} />
+                                  <PopupButton
+                                    type="button"
+                                    onClick={() => {
+                                      subjectClear();
+                                      close();
+                                    }}
+                                    text={'닫기'}
+                                  />
+                                </ButtonDiv>
+                              </form>
+                            </PBody>
+                          )}
+                        </PopupCustom2>
+                      </SubjectButtonDiv>
+                      <SubjectButtonDiv>
+                        <PopupCustom3
+                          trigger={<PopButton_100 text={'과목 제거'} />}
+                          closeOnDocumentClick={false}
+                          modal
+                        >
+                          {(close) => (
+                            <PBody>
+                              <form
+                                onSubmit={async () => {
+                                  const fucResult = await onSubmitDelete();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              >
+                                <PTitle text={'과목 제거'} />
+                                <SelectWrapDiv>
+                                  <SelectWrapper>
+                                    <Select
+                                      {...mySubjectList}
+                                      id={'mySubject_id'}
+                                    />
+                                  </SelectWrapper>
+                                </SelectWrapDiv>
+                                <ButtonDiv>
+                                  <PopupButton text={'제거'} />
+                                  <PopupButton
+                                    type="button"
+                                    onClick={() => {
+                                      close();
+                                      subjectClear();
+                                    }}
+                                    text={'닫기'}
+                                  />
+                                </ButtonDiv>
+                              </form>
+                            </PBody>
+                          )}
+                        </PopupCustom3>
+                      </SubjectButtonDiv>
+                    </ThreeButtonWrap>
                     <ButtonDiv>
-                      <PopupButton text={'추가'} />
-                      <PopupButton
+                      <PopupButton_solo
                         type="button"
                         onClick={() => {
                           close();
-                          subjectClear();
                         }}
                         text={'닫기'}
                       />
                     </ButtonDiv>
-                  </form>
+                  </FrontDiv>
                 </PBody>
               )}
-            </PopupCustom>
-          </SubjectButtonDiv>
-          <SubjectButtonDiv>
-            <PopupCustom2
-              trigger={<PopButton_100 text={'과목 수정'} />}
-              closeOnDocumentClick={false}
-              modal
-            >
-              {(close) => (
-                <PBody>
-                  <form
-                    onSubmit={async () => {
-                      const fucResult = await onSubmitEdit();
-                      if (fucResult) {
-                        close();
-                      }
-                    }}
-                  >
-                    <PTitle text={'과목 수정'} />
-                    <SelectWrapDiv>
-                      <SubTitle text={`수정할 과목:　`} />
-                      <SelectWrapper2>
-                        <Select {...mySubjectList} id={'mySubject_id'} />
-                      </SelectWrapper2>
-                      <RedButtonWrap>
-                        <Button_red
-                          type={'button'}
-                          text={'기존정보 불러오기'}
-                          onClick={subjectLoad}
-                        />
-                      </RedButtonWrap>
-                    </SelectWrapDiv>
-                    <InputWrapper>
-                      <Input
-                        placeholder={'과목의 새로운 이름 (예: 수학 or 영어)'}
-                        {...subjectName}
-                      />
-                    </InputWrapper>
-                    <ColorWrapper>
-                      <SubTitle text={'과목 색상 선택'} />
-                      <SwatchesPicker
-                        color={subjectColor}
-                        onChangeComplete={handleChangeComplete}
-                      />
-                    </ColorWrapper>
-                    <ButtonDiv>
-                      <PopupButton text={'수정'} />
-                      <PopupButton
-                        type="button"
-                        onClick={() => {
-                          subjectClear();
-                          close();
-                        }}
-                        text={'닫기'}
-                      />
-                    </ButtonDiv>
-                  </form>
-                </PBody>
-              )}
-            </PopupCustom2>
-          </SubjectButtonDiv>
-          <SubjectButtonDiv>
-            <PopupCustom3
-              trigger={<PopButton_100 text={'과목 제거'} />}
-              closeOnDocumentClick={false}
-              modal
-            >
-              {(close) => (
-                <PBody>
-                  <form
-                    onSubmit={async () => {
-                      const fucResult = await onSubmitDelete();
-                      if (fucResult) {
-                        close();
-                      }
-                    }}
-                  >
-                    <PTitle text={'과목 제거'} />
-                    <SelectWrapDiv>
-                      <SelectWrapper>
-                        <Select {...mySubjectList} id={'mySubject_id'} />
-                      </SelectWrapper>
-                    </SelectWrapDiv>
-                    <ButtonDiv>
-                      <PopupButton text={'제거'} />
-                      <PopupButton
-                        type="button"
-                        onClick={() => {
-                          close();
-                          subjectClear();
-                        }}
-                        text={'닫기'}
-                      />
-                    </ButtonDiv>
-                  </form>
-                </PBody>
-              )}
-            </PopupCustom3>
-          </SubjectButtonDiv>
+            </PopupCustom4>
+          </SubjectButtonDiv2>
           <SaveButtonDiv>
-            <Button_blue text={'저장'} onClick={onClickScheduleSave} />
+            <Button_blue
+              text={'저장'}
+              onClick={() => {
+                onClickScheduleSave();
+              }}
+            />
           </SaveButtonDiv>
           <Select {...myClassList} id={'myClassList_id_schedule'} />
         </SelectDiv>

@@ -112,7 +112,12 @@ export default ({
       pageIndexChange(1);
       return <></>;
     } else {
-      return <ClassStatistics classList={classData.myClass} />;
+      return (
+        <ClassStatistics
+          classList={classData.myClass}
+          classRefetch={classRefetch}
+        />
+      );
     }
   } else if (pageIndex === 1) {
     return (

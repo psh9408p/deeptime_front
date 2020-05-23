@@ -14,11 +14,14 @@ export const MY_CLASS = gql`
       schedules {
         id
         isAllDay
+        isPrivate
         title
         location
         state
         start
         end
+        subjectId
+        subjectName
       }
     }
   }
