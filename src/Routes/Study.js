@@ -9,7 +9,8 @@ import styled from 'styled-components';
 // import LoadCamera from "../Components/LoadCamera/LoadCamera"
 import useInterval from '../Hooks/useInterval';
 import useTabs from '../Hooks/useTabs';
-
+import useMouseLeave from '../Hooks/useMouseLeave';
+import useMouseEnter from '../Hooks/useMouseEnter';
 // import ClassTabs from '../Components/Tabs/ClassTabs';
 // const UPDATE_EXISTTOGGLETABLE = gql`
 //   mutation update_existToggleTable($email: String!, $existToggle: Boolean!) {
@@ -319,6 +320,17 @@ export default function Attendance({ Mydata }) {
       </div>
     );
   };
+  const whatNee = () => {
+    console.log('왔니?');
+  };
+  const donleaveme = () => {
+    alert('마우스를 화면에 올려 놓으세요!!!');
+    console.log('날 떠나지마');
+  };
+
+  useMouseEnter(whatNee);
+
+  useMouseLeave(donleaveme);
 
   if (camearLoad === false) {
     return (
