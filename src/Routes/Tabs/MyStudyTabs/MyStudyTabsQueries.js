@@ -2,7 +2,7 @@ import { gql } from 'apollo-boost';
 
 export const ME = gql`
   query me {
-    me {s
+    me {
       schedules {
         id
         isAllDay
