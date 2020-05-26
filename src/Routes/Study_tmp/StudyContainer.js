@@ -1,28 +1,28 @@
-import React, { useState } from "react"
-import StudyPresenter from "./StudyPresenter"
-import useSelect from "../../Hooks/useSelect"
-import useTabs from "../../Hooks/useTabs"
-import { useQuery } from "react-apollo-hooks"
-import { STUDENT_OF_CLASS } from "./StudyQueries"
+import React, { useState } from 'react';
+import StudyPresenter from './StudyPresenter';
+import useSelect from '../../Hooks/useSelect';
+import useTabs from '../../Hooks/useTabs';
+import { useQuery } from 'react-apollo-hooks';
+import { STUDENT_OF_CLASS } from './StudyQueries';
 
-let classId_tmp = ""
+let classId_tmp = '';
 
 const StudyContainer = ({ Mydata }) => {
-  const classList = Mydata.me.classes
-  const loginPosition = Mydata.me.loginPosition
+  const classList = Mydata.me.classes;
+  const loginPosition = Mydata.me.loginPosition;
 
   const myClassList = useSelect(
-    classList.map((List) => `${List.name}(${List.organizationName})`),
-    classList.map((_, index) => index)
-  )
+    classList.map((List) => `${List.name}(${List.academy.name})`),
+    classList.map((_, index) => index),
+  );
 
-  const StaTabContents = ["Today", "Week", "Month"]
-  const StaTabs = useTabs(0, StaTabContents)
+  const StaTabContents = ['Today', 'Week', 'Month'];
+  const StaTabs = useTabs(0, StaTabContents);
 
-  const [selectDate, setSelectDate] = useState(new Date())
+  const [selectDate, setSelectDate] = useState(new Date());
 
   if (classList[0] !== undefined) {
-    classId_tmp = classList[myClassList.option].id
+    classId_tmp = classList[myClassList.option].id;
   }
 
   const {
@@ -34,7 +34,7 @@ const StudyContainer = ({ Mydata }) => {
     pollInterval: 10000,
     variables: { classId: classId_tmp },
     notifyOnNetworkStatusChange: true,
-  })
+  });
 
   return (
     <StudyPresenter
@@ -49,7 +49,7 @@ const StudyContainer = ({ Mydata }) => {
       studentRefetch={studentRefetch}
       networkStatus={networkStatus}
     />
-  )
-}
+  );
+};
 
-export default StudyContainer
+export default StudyContainer;

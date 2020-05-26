@@ -69,8 +69,8 @@ const DetailInfo = styled.li`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 800px !important;
-    height: 400px !important;
+    width: 600px !important;
+    height: 300px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -208,7 +208,7 @@ export default ({
                     />
                   </InputWrapper>
                   <SelectDiv>
-                    <span>학원 :</span>
+                    <span>학원</span>
                     <Select {...myAcademyList} id={'modifyAcademy_id'} />
                   </SelectDiv>
                   <ButtonDiv>

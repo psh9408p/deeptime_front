@@ -4,21 +4,19 @@ import PropTypes from 'prop-types';
 
 const Container = styled.button`
   width: 100%;
+  height: 100%;
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
-  color: black;
+  color: white;
   font-weight: 600;
-  background-color: #e74c3c;
+  background-color: ${(props) => props.theme.classicBlue};
   text-align: center;
-  padding: 7px 0px;
   font-size: 14px;
   cursor: pointer;
 `;
 
-const Button = ({ type, text, onClick }) => (
-  <Container type={type} onClick={onClick}>
-    {text}
-  </Container>
+const Button = ({ text, onClick }) => (
+  <Container onClick={onClick}>{text}</Container>
 );
 
 Button.propTypes = {

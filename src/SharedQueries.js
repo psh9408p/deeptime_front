@@ -20,20 +20,6 @@ export const ME = gql`
         attendanceStatus
         absenceReason
       }
-      academies {
-        id
-        name
-      }
-      classes {
-        id
-        name
-        organizationName
-        bio
-        academy {
-          id
-          name
-        }
-      }
     }
   }
 `;

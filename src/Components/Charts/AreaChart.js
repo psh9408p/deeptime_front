@@ -1,62 +1,62 @@
-import React, { useEffect, useRef, useState } from "react"
-import Chartjs from "chart.js"
+import React, { useEffect, useRef, useState } from 'react';
+import Chartjs from 'chart.js';
 
 export default ({ data_1 }) => {
-  const dat_tmp = [
-    70,
-    90,
-    80,
-    60,
-    40,
-    90,
-    70,
-    80,
-    70,
-    90,
-    80,
-    90,
-    80,
-    60,
-    80,
-    70,
-    70,
-    90,
-    80,
-    60,
-    90,
-    80,
-    60,
-    100,
-  ]
+  // const data_tmp = [
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   45,
+  //   50,
+  //   30,
+  //   35,
+  //   60,
+  //   10,
+  //   50,
+  //   35,
+  //   45,
+  //   45,
+  //   50,
+  //   10,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  // ];
 
   const chartConfig = {
-    type: "line",
+    type: 'line',
     data: {
       labels: [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8 ",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-        "21",
-        "22",
-        "23",
-        "24",
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8 ',
+        '9',
+        '10',
+        '11',
+        '12',
+        '13',
+        '14',
+        '15',
+        '16',
+        '17',
+        '18',
+        '19',
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
       ],
       datasets: [
         // {
@@ -69,10 +69,10 @@ export default ({ data_1 }) => {
         //   pointRadius: 0,
         // },
         {
-          label: "학습량",
+          label: '학습량',
           data: data_1,
-          backgroundColor: ["rgba(54, 162, 235, 1)"],
-          borderColor: ["rgba(54, 162, 235, 1)"],
+          backgroundColor: ['rgba(123, 169, 235, 1)'],
+          borderColor: ['rgba(123, 169, 235, 1)'],
           pointRadius: 3,
         },
       ],
@@ -83,11 +83,11 @@ export default ({ data_1 }) => {
         display: false,
       },
       responsive: true,
-      hoverMode: "index",
+      hoverMode: 'index',
       stacked: false,
       title: {
         display: true,
-        text: "Today 시간 별 학습량",
+        text: 'Today 시간 별 학습량',
       },
       scales: {
         xAxes: [
@@ -95,19 +95,19 @@ export default ({ data_1 }) => {
             display: true,
             scaleLabel: {
               display: true,
-              labelString: "시간 (하루 24시 기준)",
+              labelString: '시간 (하루 24시 기준)',
             },
           },
         ],
         yAxes: [
           {
-            type: "linear", // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
             display: true,
-            position: "left",
-            id: "y-axis-1",
+            position: 'left',
+            id: 'y-axis-1',
             scaleLabel: {
               display: true,
-              labelString: "학습량(분, Min)",
+              labelString: '학습량(분, Min)',
             },
             ticks: {
               beginAtZero: true,
@@ -116,35 +116,36 @@ export default ({ data_1 }) => {
         ],
       },
     },
-  }
+  };
 
-  const chartContainer = useRef(null)
-  const [chartInstance, setChartInstance] = useState(null)
+  const chartContainer = useRef(null);
+  const [chartInstance, setChartInstance] = useState(null);
 
   useEffect(() => {
     if (chartContainer && chartContainer.current) {
-      const newChartInstance = new Chartjs(chartContainer.current, chartConfig)
-      setChartInstance(newChartInstance)
+      const newChartInstance = new Chartjs(chartContainer.current, chartConfig);
+      setChartInstance(newChartInstance);
     }
-  }, [chartContainer])
+  }, [chartContainer]);
 
   const updateDataset = (datasetIndex, newData) => {
-    chartInstance.data.datasets[datasetIndex].data = newData
-    chartInstance.update()
-  }
+    chartInstance.data.datasets[datasetIndex].data = newData;
+    chartInstance.update();
+  };
 
   const AreaChartUpdate = () => {
-    updateDataset(0, data_1)
-  }
+    updateDataset(0, data_1);
+    // updateDataset(0, data_tmp);
+  };
 
-  const isFirstRun = useRef(true)
+  const isFirstRun = useRef(true);
   useEffect(() => {
     if (isFirstRun.current) {
-      isFirstRun.current = false
-      return
+      isFirstRun.current = false;
+      return;
     }
-    AreaChartUpdate()
-  }, [data_1])
+    AreaChartUpdate();
+  }, [data_1]);
 
-  return <canvas ref={chartContainer} />
-}
+  return <canvas ref={chartContainer} />;
+};

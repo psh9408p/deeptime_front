@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export const SAVE_SCHEDULE = gql`
-  mutation saveSchedule($scheduleArray: [ScheduleArray!]!) {
-    saveSchedule(scheduleArray: $scheduleArray)
+  mutation saveSchedule_my($scheduleArray: [ScheduleArray_my!]!) {
+    saveSchedule_my(scheduleArray: $scheduleArray)
   }
 `;
 

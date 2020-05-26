@@ -5,11 +5,23 @@ export const MY_CLASS = gql`
     myClass {
       id
       name
-      organizationName
       bio
+      studentsCount
       academy {
         id
         name
+      }
+      schedules {
+        id
+        isAllDay
+        isPrivate
+        title
+        location
+        state
+        start
+        end
+        subjectId
+        subjectName
       }
     }
   }
