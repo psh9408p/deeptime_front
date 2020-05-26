@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
-export const STUDENT_OF_CLASS = gql`
-  query studentOfClass($classId: String!) {
-    studentOfClass(classId: $classId) {
+export const ME = gql`
+  query me {
+    me {
       fullName
       avatar
       existToggle

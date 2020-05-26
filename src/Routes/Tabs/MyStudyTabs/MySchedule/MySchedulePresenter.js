@@ -18,7 +18,6 @@ import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
-import SelectChange from '../../../../Components/SelectChange';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -99,7 +98,7 @@ const SubjectButtonDiv = styled.div`
 `;
 
 const SubjectButtonDiv2 = styled.div`
-  width: 160px;
+  width: 100px;
   margin-right: 10px;
 `;
 
@@ -234,10 +233,9 @@ export default ({
   setStartRange,
   endRange,
   setEndRange,
-  myClassList,
-  classRoom,
+  myData,
   saveScheduleMutation,
-  classRefetch,
+  myRefetch,
   subjectList,
   subjectName,
   subjectColor,
@@ -249,7 +247,6 @@ export default ({
   subjectRefetch,
   pageIndex,
 }) => {
-  console.log(myClassList);
   const mySubjectList = useSelect(
     subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
@@ -343,7 +340,7 @@ export default ({
           alert('해당 과목을 제거할 수 없습니다.');
         } else {
           await subjectRefetch();
-          await classRefetch();
+          await myRefetch();
           await subjectClear();
           toast.success('해당 과목이 제거되었습니다.');
           return true;
@@ -358,7 +355,7 @@ export default ({
 
   const calendars = subjectList; //과목 종류 넣기
   //스케줄 넣기
-  schedules = classRoom[myClassList.option].schedules.map((List) => {
+  schedules = myData.schedules.map((List) => {
     let category = 'time';
     if (List.isAllDay === true) {
       category = 'allday';
@@ -415,16 +412,16 @@ export default ({
     try {
       toast.info('스케줄 변경사항 저장 중...');
       const {
-        data: { saveSchedule },
+        data: { saveSchedule_my },
       } = await saveScheduleMutation({
         variables: {
           scheduleArray: newScheduleArray,
         },
       });
-      if (!saveSchedule) {
+      if (!saveSchedule_my) {
         alert('스케줄을 변경할 수 없습니다.');
       } else {
-        await classRefetch();
+        await myRefetch();
         newScheduleArray = [];
         toast.success('변경된 스케줄이 저장되었습니다.');
       }
@@ -434,54 +431,99 @@ export default ({
     }
   };
 
-  const onBeforeCreateSchedule = useCallback(
-    (scheduleData) => {
-      console.log(myClassList.option);
-      const generateId =
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
+  const onBeforeCreateSchedule = useCallback((scheduleData) => {
+    // console.log(myClassList.option);
+    const generateId =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
 
-      const schedule = {
-        id: generateId,
-        title: scheduleData.title,
-        isAllDay: scheduleData.isAllDay,
-        isPrivate: scheduleData.raw.class === 'private' ? true : false,
-        start: scheduleData.start,
-        end: scheduleData.end,
-        category: scheduleData.isAllDay ? 'allday' : 'time',
-        dueDateClass: '',
-        location: scheduleData.location,
-        raw: {
-          class: scheduleData.raw.class === 'private' ? 'private' : 'public',
-        },
-        state: scheduleData.state,
-        calendarId: scheduleData.calendarId,
-      };
+    const schedule = {
+      id: generateId,
+      title: scheduleData.title,
+      isAllDay: scheduleData.isAllDay,
+      isPrivate: scheduleData.raw.class === 'private' ? true : false,
+      start: scheduleData.start,
+      end: scheduleData.end,
+      category: scheduleData.isAllDay ? 'allday' : 'time',
+      dueDateClass: '',
+      location: scheduleData.location,
+      raw: {
+        class: scheduleData.raw.class === 'private' ? 'private' : 'public',
+      },
+      state: scheduleData.state,
+      calendarId: scheduleData.calendarId,
+    };
 
-      const schedule_tmp = {
-        id: generateId,
-        isAllDay: scheduleData.isAllDay,
-        isPrivate: scheduleData.raw.class === 'private' ? true : false,
-        title: scheduleData.title,
-        location: scheduleData.location,
-        state: scheduleData.state,
-        start: scheduleData.start._date,
-        end: scheduleData.end._date,
-        calendarId: scheduleData.calendarId,
-        classId: classRoom[myClassList.option].id,
-        option: 'create',
-      };
+    const schedule_tmp = {
+      id: generateId,
+      isAllDay: scheduleData.isAllDay,
+      isPrivate: scheduleData.raw.class === 'private' ? true : false,
+      title: scheduleData.title,
+      location: scheduleData.location,
+      state: scheduleData.state,
+      start: scheduleData.start._date,
+      end: scheduleData.end._date,
+      calendarId: scheduleData.calendarId,
+      option: 'create',
+    };
 
+    newScheduleArray.push(schedule_tmp);
+    // console.log(newScheduleArray);
+    cal.current.calendarInst.createSchedules([schedule]);
+  }, []);
+
+  const onBeforeDeleteSchedule = useCallback(async (res) => {
+    // console.log('c', res.schedule);
+
+    const schedule_tmp = {
+      id: res.schedule.id,
+      isAllDay: res.schedule.isAllDay,
+      isPrivate: res.schedule.isPrivate,
+      title: res.schedule.title,
+      location: res.schedule.location,
+      state: res.schedule.state,
+      start: res.schedule.start._date,
+      end: res.schedule.end._date,
+      calendarId: res.schedule.calendarId,
+      option: 'delete',
+    };
+
+    const checkExist = (a) => a.id === res.schedule.id;
+    const checkIndex = newScheduleArray.findIndex(checkExist);
+    if (checkIndex === -1) {
       newScheduleArray.push(schedule_tmp);
-      console.log(newScheduleArray);
-      cal.current.calendarInst.createSchedules([schedule]);
-    },
-    [myClassList.option],
-  );
+    } else {
+      newScheduleArray.splice(checkIndex, 1);
+    }
 
-  const onBeforeDeleteSchedule = useCallback(
-    async (res) => {
-      // console.log('c', res.schedule);
+    cal.current.calendarInst.deleteSchedule(
+      res.schedule.id,
+      res.schedule.calendarId,
+    );
+  }, []);
+
+  const onBeforeUpdateSchedule = useCallback(async (res) => {
+    // console.log('a', res);
+    if (res.changes !== null) {
+      if (res.changes.start !== undefined && res.changes.end !== undefined) {
+        const dateSumVar = {
+          start: res.changes.start._date,
+          end: res.changes.end._date,
+        };
+        const dateRmVar = { start: '', end: '' };
+        ObjectUnassign(res.changes, dateRmVar);
+        Object.assign(res.changes, dateSumVar);
+      } else if (res.changes.start !== undefined) {
+        const dateSumVar = { start: res.changes.start._date };
+        const dateRmVar = { start: '' };
+        ObjectUnassign(res.changes, dateRmVar);
+        Object.assign(res.changes, dateSumVar);
+      } else if (res.changes.end !== undefined) {
+        const dateSumVar = { end: res.changes.end._date };
+        const dateRmVar = { end: '' };
+        ObjectUnassign(res.changes, dateRmVar);
+        Object.assign(res.changes, dateSumVar);
+      }
 
       const schedule_tmp = {
         id: res.schedule.id,
@@ -493,9 +535,9 @@ export default ({
         start: res.schedule.start._date,
         end: res.schedule.end._date,
         calendarId: res.schedule.calendarId,
-        classId: classRoom[myClassList.option].id,
-        option: 'delete',
+        option: 'update',
       };
+      Object.assign(schedule_tmp, res.changes);
 
       const checkExist = (a) => a.id === res.schedule.id;
       const checkIndex = newScheduleArray.findIndex(checkExist);
@@ -503,74 +545,17 @@ export default ({
         newScheduleArray.push(schedule_tmp);
       } else {
         newScheduleArray.splice(checkIndex, 1);
+        newScheduleArray.push(schedule_tmp);
       }
 
-      cal.current.calendarInst.deleteSchedule(
-        res.schedule.id,
-        res.schedule.calendarId,
+      const { schedule, changes } = res;
+      cal.current.calendarInst.updateSchedule(
+        schedule.id,
+        schedule.calendarId,
+        changes,
       );
-    },
-    [myClassList.option],
-  );
-
-  const onBeforeUpdateSchedule = useCallback(
-    async (res) => {
-      // console.log('a', res);
-      if (res.changes !== null) {
-        if (res.changes.start !== undefined && res.changes.end !== undefined) {
-          const dateSumVar = {
-            start: res.changes.start._date,
-            end: res.changes.end._date,
-          };
-          const dateRmVar = { start: '', end: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        } else if (res.changes.start !== undefined) {
-          const dateSumVar = { start: res.changes.start._date };
-          const dateRmVar = { start: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        } else if (res.changes.end !== undefined) {
-          const dateSumVar = { end: res.changes.end._date };
-          const dateRmVar = { end: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        }
-
-        const schedule_tmp = {
-          id: res.schedule.id,
-          isAllDay: res.schedule.isAllDay,
-          isPrivate: res.schedule.isPrivate,
-          title: res.schedule.title,
-          location: res.schedule.location,
-          state: res.schedule.state,
-          start: res.schedule.start._date,
-          end: res.schedule.end._date,
-          calendarId: res.schedule.calendarId,
-          classId: classRoom[myClassList.option].id,
-          option: 'update',
-        };
-        Object.assign(schedule_tmp, res.changes);
-
-        const checkExist = (a) => a.id === res.schedule.id;
-        const checkIndex = newScheduleArray.findIndex(checkExist);
-        if (checkIndex === -1) {
-          newScheduleArray.push(schedule_tmp);
-        } else {
-          newScheduleArray.splice(checkIndex, 1);
-          newScheduleArray.push(schedule_tmp);
-        }
-
-        const { schedule, changes } = res;
-        cal.current.calendarInst.updateSchedule(
-          schedule.id,
-          schedule.calendarId,
-          changes,
-        );
-      }
-    },
-    [myClassList.option],
-  );
+    }
+  }, []);
 
   function _getFormattedTime(time) {
     const date = new Date(time);
@@ -645,7 +630,7 @@ export default ({
   useEffect(() => {
     // 변경내용 저장 초기화
     newScheduleArray = [];
-  }, [myClassList.option, pageIndex]);
+  }, [pageIndex]);
 
   return (
     <Wrapper>
@@ -843,7 +828,6 @@ export default ({
               }}
             />
           </SaveButtonDiv>
-          <Select {...myClassList} id={'myClassList_id_schedule'} />
         </SelectDiv>
       </PanelWrap>
       <TUICalendar

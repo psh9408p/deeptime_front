@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Auth from '../Routes/Auth';
 import Attendance from '../Routes/Attendance';
-import Attendance_student from '../Routes/Attendance_student';
 import Supervision from '../Routes/Supervision';
 import Marking from '../Routes/Marking';
 import Academy from '../Routes/Academy';
@@ -22,6 +21,8 @@ import Shopping from '../Routes/Shopping';
 import Support from '../Routes/Support';
 import TermsOfService from '../Routes/TermsOfService';
 import TermsOfPrivacy from '../Routes/TermsOfPrivacy';
+import MyStudy from '../Routes/MyStudy';
+import ClassStudy from '../Routes/ClassStudy';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -44,9 +45,11 @@ const LoggedInRoutes = () => {
             exact
             path="/"
             component={() => (
-              <Attendance_student Mydata={Mydata} MyRefetch={MyRefetch} />
+              <Attendance Mydata={Mydata} MyRefetch={MyRefetch} />
             )}
           />
+          <Route path="/mystudy" component={MyStudy} />
+          <Route path="/classstudy" component={ClassStudy} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>
@@ -54,7 +57,7 @@ const LoggedInRoutes = () => {
     } else {
       return (
         <Switch>
-          <Route path="/attendance" component={Attendance} />
+          {/* <Route path="/attendance" component={Attendance} /> */}
           <Route path="/supervision" component={Supervision} />
           <Route path="/marking" component={Marking} />
           <Route exact path="/" component={Academy} />

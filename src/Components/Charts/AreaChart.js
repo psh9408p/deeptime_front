@@ -2,32 +2,32 @@ import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
 export default ({ data_1 }) => {
-  const data_tmp = [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    45,
-    50,
-    30,
-    35,
-    60,
-    10,
-    50,
-    35,
-    45,
-    45,
-    50,
-    10,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-  ];
+  // const data_tmp = [
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   45,
+  //   50,
+  //   30,
+  //   35,
+  //   60,
+  //   10,
+  //   50,
+  //   35,
+  //   45,
+  //   45,
+  //   50,
+  //   10,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  //   0,
+  // ];
 
   const chartConfig = {
     type: 'line',
@@ -134,8 +134,8 @@ export default ({ data_1 }) => {
   };
 
   const AreaChartUpdate = () => {
-    // updateDataset(0, data_1);
-    updateDataset(0, data_tmp);
+    updateDataset(0, data_1);
+    // updateDataset(0, data_tmp);
   };
 
   const isFirstRun = useRef(true);

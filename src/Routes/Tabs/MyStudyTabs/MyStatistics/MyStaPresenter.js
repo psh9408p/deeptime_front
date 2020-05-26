@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Select from '../../../../Components/Select';
-import { useQuery } from 'react-apollo-hooks';
-import { STUDENT_OF_CLASS } from './ClassStaQueries';
 import Loader from '../../../../Components/Loader';
 import Avatar from '../../../../Components/Avatar';
 import AreaChart from '../../../../Components/Charts/AreaChart';
@@ -346,36 +344,22 @@ const tmpTime = {
   targetTime: 0,
   time_24: new Array(288).fill(0),
 };
-let total_targetTime = 0;
-let total_existTime = 0;
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
-let countToggle = 0;
-let gaugePercent = 0;
 let scheduleList_selectDay_length = 0;
 
 export default ({
-  myClassList,
-  classList,
-  selectClass,
   StaTabs,
   selectDate,
   setSelectDate,
   scheduleList,
+  myInfoData,
+  myInfoLoading,
+  myInfoRefetch,
+  networkStatus,
   refreshTerm,
 }) => {
-  const {
-    data: studentData,
-    loading: studentLoading,
-    refetch: studentRefetch,
-    networkStatus,
-  } = useQuery(STUDENT_OF_CLASS, {
-    pollInterval: Number(refreshTerm.value) * 1000,
-    variables: { classId: classList[myClassList.option].id },
-    notifyOnNetworkStatusChange: true,
-  });
-
   const todaySchedule_calculate = () => {
     scheduleList_selectDay = [];
     schedule_label = [];
@@ -400,113 +384,89 @@ export default ({
     taskArray = new Array(24).fill(0);
     taskArray_schedule = new Array(scheduleList_selectDay_length).fill(0);
     taskArray_scheduleT = new Array(scheduleList_selectDay_length).fill(0);
-    total_targetTime = 0;
-    total_existTime = 0;
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    gaugePercent = 0;
-    if (networkStatus === 7 && studentData && studentData.studentOfClass) {
-      countToggle = 0;
-      for (let i = 0; i < studentData.studentOfClass.length; i++) {
-        // 오늘 생선된 시간이 있는 인덱스 구하기
-        let indexOfToday = studentData.studentOfClass[i].times.findIndex(
-          (i) =>
-            new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
-            new Date(i.createdAt).getMonth() == selectDate.getMonth() &&
-            new Date(i.createdAt).getDate() == selectDate.getDate(),
-        );
-        // today Time 없을 경우 값이 0인 Time 추가해주기
-        if (indexOfToday === -1) {
-          studentData.studentOfClass[i].times.push(tmpTime);
-          indexOfToday = studentData.studentOfClass[i].times.length - 1;
-        }
-        const todayTime = studentData.studentOfClass[i].times[indexOfToday];
+    if (networkStatus === 7 && myInfoData) {
+      // 오늘 생선된 시간이 있는 인덱스 구하기
+      let indexOfToday = myInfoData.times.findIndex(
+        (i) =>
+          new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
+          new Date(i.createdAt).getMonth() == selectDate.getMonth() &&
+          new Date(i.createdAt).getDate() == selectDate.getDate(),
+      );
+      // today Time 없을 경우 값이 0인 Time 추가해주기
+      if (indexOfToday === -1) {
+        myInfoData.times.push(tmpTime);
+        indexOfToday = myInfoData.times.length - 1;
+      }
+      const todayTime = myInfoData.times[indexOfToday];
 
-        // AreaChart 계산
-        const arrayBox = SplitArray(todayTime.time_24, 12);
-        let resultArray = [];
-        for (let j = 0; j < 24; j++) {
-          resultArray.push(SumArray(arrayBox[j]));
-        }
-        taskArray = twoArraySum(taskArray, resultArray);
-        // 스케줄 별 그래프 계산
-        let resultArray_schedule = []; // exist 타임 용
-        let resultArray_scheduleT = []; // 타겟타임용
-        for (let j = 0; j < scheduleList_selectDay_length; j++) {
-          console.log(scheduleList_selectDay);
-          const totalMin_start =
-            new Date(scheduleList_selectDay[j].start).getHours() * 60 +
-            new Date(scheduleList_selectDay[j].start).getMinutes();
-          const totalMin_end =
-            new Date(scheduleList_selectDay[j].end).getHours() * 60 +
-            new Date(scheduleList_selectDay[j].end).getMinutes();
-          const indexMin_start = totalMin_start / 5;
-          const indexMin_end = totalMin_end / 5;
-          const slicedTime = todayTime.time_24.slice(
-            indexMin_start,
-            indexMin_end,
-          );
-          resultArray_schedule.push(SumArray(slicedTime));
-          // 타겟타임은 학생마다 더할필요 없고 한번만 실행하면됨
-          if (i === 0) {
-            resultArray_scheduleT.push(totalMin_end - totalMin_start);
-          }
-        }
-        taskArray_schedule = twoArraySum(
-          taskArray_schedule,
-          resultArray_schedule,
+      // AreaChart 계산
+      const arrayBox = SplitArray(todayTime.time_24, 12);
+      let resultArray = [];
+      for (let j = 0; j < 24; j++) {
+        resultArray.push(SumArray(arrayBox[j]));
+      }
+      taskArray = twoArraySum(taskArray, resultArray);
+      // 스케줄 별 그래프 계산
+      let resultArray_schedule = []; // exist 타임 용
+      let resultArray_scheduleT = []; // 타겟타임용
+      for (let j = 0; j < scheduleList_selectDay_length; j++) {
+        // console.log(scheduleList_selectDay);
+        const totalMin_start =
+          new Date(scheduleList_selectDay[j].start).getHours() * 60 +
+          new Date(scheduleList_selectDay[j].start).getMinutes();
+        const totalMin_end =
+          new Date(scheduleList_selectDay[j].end).getHours() * 60 +
+          new Date(scheduleList_selectDay[j].end).getMinutes();
+        const indexMin_start = totalMin_start / 5;
+        const indexMin_end = totalMin_end / 5;
+        const slicedTime = todayTime.time_24.slice(
+          indexMin_start,
+          indexMin_end,
         );
+        resultArray_schedule.push(SumArray(slicedTime));
         // 타겟타임은 학생마다 더할필요 없고 한번만 실행하면됨
-        if (i === 0) {
-          taskArray_scheduleT = twoArraySum(
-            taskArray_scheduleT,
-            resultArray_scheduleT,
-          );
-        }
-        // 도넛차트 계산
-        total_targetTime = total_targetTime + todayTime.targetTime;
-        total_existTime = total_existTime + todayTime.existTime;
-        // 토글개수(현재 있는 사람) 계산
-        if (studentData.studentOfClass[i].existToggle === true) {
-          countToggle = countToggle + 1;
-        }
-
-        if (i === studentData.studentOfClass.length - 1) {
-          // AreaChart 계산
-          taskArray.forEach(function (item, index) {
-            taskArray[index] = item / 60;
-          });
-          // 스케줄 그래프 계산
-          if (taskArray_schedule !== []) {
-            taskArray_schedule.forEach(function (item, index) {
-              taskArray_schedule[index] = item / 60;
-            });
-          }
-          // 도넛차트 계산
-          donutData_1 = total_existTime;
-          donutData_2 = total_targetTime - total_existTime;
-          donutPercent = ((total_existTime / total_targetTime) * 100).toFixed(
-            1,
-          );
-          if (total_targetTime === 0) {
-            donutData_2 = 1;
-            donutPercent = 0;
-          }
-          // 게이지 퍼센트 계산
-          gaugePercent = countToggle / studentData.studentOfClass.length;
-          if (studentData.studentOfClass.length === 0) {
-            gaugePercent = 0;
-          }
-        }
+        resultArray_scheduleT.push(totalMin_end - totalMin_start);
+      }
+      taskArray_schedule = twoArraySum(
+        taskArray_schedule,
+        resultArray_schedule,
+      );
+      // 타겟타임은 학생마다 더할필요 없고 한번만 실행하면됨
+      taskArray_scheduleT = twoArraySum(
+        taskArray_scheduleT,
+        resultArray_scheduleT,
+      );
+      // AreaChart 계산
+      taskArray.forEach(function (item, index) {
+        taskArray[index] = item / 60;
+      });
+      // 스케줄 그래프 계산
+      if (taskArray_schedule !== []) {
+        taskArray_schedule.forEach(function (item, index) {
+          taskArray_schedule[index] = item / 60;
+        });
+      }
+      // 도넛차트 계산
+      donutData_1 = todayTime.existTime;
+      donutData_2 = todayTime.targetTime - todayTime.existTime;
+      donutPercent = (
+        (todayTime.existTime / todayTime.targetTime) *
+        100
+      ).toFixed(1);
+      if (todayTime.targetTime === 0) {
+        donutData_2 = 1;
+        donutPercent = 0;
       }
     }
   };
-
   if (networkStatus === 7) {
     todaySchedule_calculate();
     graph_calculate();
   }
+
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
     return (
       <DatePickButton ref={ref} onClick={onClick}>
@@ -521,15 +481,13 @@ export default ({
       isFirstRun.current = false;
       return;
     }
-    studentRefetch();
+    myInfoRefetch();
   }, []);
 
   return (
     <Wrapper>
       <BigBox>
-        {6 <= networkStatus <= 7 &&
-        studentData &&
-        studentData.studentOfClass ? (
+        {6 <= networkStatus <= 7 && myInfoData ? (
           <>
             <StatisRow>
               <DatePickDiv>
@@ -549,8 +507,8 @@ export default ({
                   />
                 </RefreshInputWrap>
                 <span>(Sec)&nbsp;</span>
-                {studentLoading === false && <IngSpan></IngSpan>}
-                {studentLoading === true && <IngSpan>ing...</IngSpan>}
+                {myInfoLoading === false && <IngSpan></IngSpan>}
+                {myInfoLoading === true && <IngSpan>ing...</IngSpan>}
               </RefreshDiv>
             </StatisRow>
             <StatisRow>
@@ -607,67 +565,41 @@ export default ({
             <Loader />
           </LoaderWrapper>
         )}
-        {/* {studentLoading === true && (
-          <LoaderWrapper2>
-            <Loader />
-          </LoaderWrapper2>
-        )} */}
       </BigBox>
       <BigBox>
         <Title>
-          <ClassName>{selectClass.academy.name}</ClassName>
-          <ClassName>{selectClass.name}</ClassName>
+          {/* <ClassName>{selectClass.academy.name}</ClassName>
+          <ClassName>{selectClass.name}</ClassName> */}
         </Title>
-        <TitleGraph>
-          <TitleGraphWrap>
-            <GaugeChart_2
-              id="gauge-chart1"
-              nrOfLevels={20}
-              percent={gaugePercent}
-              textColor={'black'}
-              colors={['#ff7675', '#7BA9EB']}
-            />
-          </TitleGraphWrap>
-          <TitleGraphText>참석률</TitleGraphText>
-          <TitleGraphText_2>
-            {countToggle}/
-            {studentData &&
-              studentData.studentOfClass &&
-              studentData.studentOfClass.length}
-          </TitleGraphText_2>
-        </TitleGraph>
+        <TitleGraph></TitleGraph>
         <ClassSelect>
-          <Select {...myClassList} id={'myClassList_id_sta'} />
+          {/* <Select {...myClassList} id={'myClassList_id_sta'} /> */}
         </ClassSelect>
         <StudentBox>
           <LightBio>
             <SmallToggleBlue />: 학습 중 　 <SmallToggleRed />: 자리 비움
           </LightBio>
-          {6 <= networkStatus <= 7 &&
-          studentData &&
-          studentData.studentOfClass ? (
-            studentData.studentOfClass.map((student, index) => (
-              <StudentList key={index}>
-                {student.existToggle === true && <ToggleBlue />}
-                {student.existToggle === false && <ToggleRed />}
-                <AvatarWrap>
-                  <Avatar size="sm2" url={student.avatar} />
-                </AvatarWrap>
-                <StudentName>{student.fullName}</StudentName>
-                {student.todayTime.attendanceStatus === '조퇴' ? (
-                  <ListColumn data-tip data-for="absence">
-                    {student.todayTime.attendanceStatus}
-                    <ReactTooltip id="absence">
-                      <StudentTooltip>
-                        조퇴 사유: {student.todayTime.absenceReason}
-                      </StudentTooltip>
-                    </ReactTooltip>
-                  </ListColumn>
-                ) : (
-                  <ListColumn>{student.todayTime.attendanceStatus}</ListColumn>
-                )}
-              </StudentList>
-            ))
+          {6 <= networkStatus <= 7 && myInfoData ? (
+            <StudentList>
+              {myInfoData.existToggle === true && <ToggleBlue />}
+              {myInfoData.existToggle === false && <ToggleRed />}
+              <AvatarWrap>
+                <Avatar size="sm2" url={myInfoData.avatar} />
+              </AvatarWrap>
+              <StudentName>{myInfoData.fullName}</StudentName>
+              {myInfoData.todayTime.attendanceStatus === '조퇴' ? (
+                <ListColumn data-tip data-for="absence">
+                  {myInfoData.todayTime.attendanceStatus}
+                  <ReactTooltip id="absence">
+                    <StudentTooltip>
+                      조퇴 사유: {myInfoData.todayTime.absenceReason}
+                    </StudentTooltip>
+                  </ReactTooltip>
+                </ListColumn>
+              ) : (
+                <ListColumn>{myInfoData.todayTime.attendanceStatus}</ListColumn>
+              )}
+            </StudentList>
           ) : (
             <LoaderWrapper>
               <Loader />

@@ -125,7 +125,7 @@ export default withRouter(() => {
           {data.me && data.me.loginPosition.includes('manager') && (
             <AiBox>
               <Shutter />
-              <AiHeaderLink to="/attendance" replace>
+              <AiHeaderLink to="/" replace>
                 출석
               </AiHeaderLink>
               <AiHeaderLink to="/supervision" replace>
@@ -161,6 +161,12 @@ export default withRouter(() => {
         )}
         {data.me && data.me.loginPosition === 'student' && (
           <HeaderColumn>
+            <HeaderLink to="/mystudy" replace>
+              나의 학습
+            </HeaderLink>
+            <HeaderLink to="/classstudy" replace>
+              클래스 학습
+            </HeaderLink>
             {!data.me ? (
               <HeaderLink to="/#">
                 <User />

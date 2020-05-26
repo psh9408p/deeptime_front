@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import ClassStaPresenter from './ClassStaPresenter';
 import useSelect from '../../../../Hooks/useSelect';
 import useTabs from '../../../../Hooks/useTabs';
-import { useQuery } from 'react-apollo-hooks';
-import { SCHEDULE_OF_CLASS } from './ClassStaQueries';
 import useInput from './../../../../Hooks/useInput';
 
 const ClassStaContainer = ({ classList, classRefetch }) => {
@@ -19,14 +17,6 @@ const ClassStaContainer = ({ classList, classRefetch }) => {
   const refreshTerm = useInput(10, minValue_10);
 
   const [selectDate, setSelectDate] = useState(new Date());
-
-  // const {
-  //   data: scheduleData,
-  //   loading: scheduleLoading,
-  //   refetch: scheduleRefetch,
-  // } = useQuery(SCHEDULE_OF_CLASS, {
-  //   variables: { classId: classList[myClassList.option].id },
-  // });
 
   return (
     <ClassStaPresenter

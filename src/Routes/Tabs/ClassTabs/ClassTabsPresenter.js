@@ -204,6 +204,7 @@ export default ({
         <ClassSchedule
           classRoom={classData.myClass}
           classRefetch={classRefetch}
+          pageIndex={pageIndex}
         />
       );
     }
