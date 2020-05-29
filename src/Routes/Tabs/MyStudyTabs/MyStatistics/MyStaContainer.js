@@ -10,8 +10,33 @@ export default ({ myData }) => {
   const StaTabs = useTabs(0, StaTabContents);
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
-
   const [selectDate, setSelectDate] = useState(new Date());
+  const oneDayHours = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8 ',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+    '21',
+    '22',
+    '23',
+    '24',
+  ];
 
   const {
     data: myInfoData,
@@ -34,6 +59,7 @@ export default ({ myData }) => {
       myInfoRefetch={myInfoRefetch}
       networkStatus={networkStatus}
       refreshTerm={refreshTerm}
+      oneDayHours={oneDayHours}
     />
   );
 };

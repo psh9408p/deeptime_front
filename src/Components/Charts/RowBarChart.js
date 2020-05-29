@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1, data_2, labels }) => {
+export default ({
+  data_1,
+  data_2,
+  labels,
+  label_1,
+  label_2,
+  title,
+  title_x,
+}) => {
   // const data_tmp_1 = [40, 60, 30, 50, 40];
   // const data_tmp_2 = [60, 90, 30, 60, 100];
   // const labels_tmp = ['국어', '영어', '수학', '과학', '사회'];
@@ -12,16 +20,20 @@ export default ({ data_1, data_2, labels }) => {
       labels: labels,
       datasets: [
         {
-          label: '학습 시간',
+          label: label_1,
           backgroundColor: 'rgba(123, 169, 235, 1)',
+          categoryPercentage: 0.8,
+          barPercentage: 0.9,
           borderWidth: 1,
           data: data_1,
           yAxisID: 'bar-y-axis1',
           stack: 'background',
         },
         {
-          label: '목표 시간',
+          label: label_2,
           backgroundColor: 'rgba(233, 236, 244, 1)',
+          categoryPercentage: 0.8,
+          barPercentage: 0.9,
           borderWidth: 1,
           data: data_2,
           yAxisID: 'bar-y-axis2',
@@ -31,7 +43,7 @@ export default ({ data_1, data_2, labels }) => {
     options: {
       title: {
         display: true,
-        text: '수업 별 학습 성취도',
+        text: title,
       },
       scales: {
         xAxes: [
@@ -40,22 +52,21 @@ export default ({ data_1, data_2, labels }) => {
             ticks: {
               beginAtZero: true,
             },
+            scaleLabel: {
+              display: true,
+              labelString: title_x,
+            },
           },
         ],
         yAxes: [
           {
             id: 'bar-y-axis2',
-            categoryPercentage: 0.8,
-            barPercentage: 0.9,
           },
           {
             display: false,
             offset: true,
             id: 'bar-y-axis1',
             type: 'category',
-            categoryPercentage: 0.8,
-            barPercentage: 0.9,
-
             gridLines: {
               offsetGridLines: true,
             },

@@ -33,7 +33,7 @@ export default function Attendance({ Mydata }) {
   // const [faceButton, setFacebutton] = useState(true)
   const [decision, setDecision] = useState([true]);
   const [finalDecision, setFinalDecision] = useState(true);
-  const [Mutation, setMutation] = useState(false);
+  const [Mutation, setMutation] = useState(true);
 
   const [timeCount, setTimeCount] = useState(0);
   const [camearLoad, setCameraLoad] = useState(false);

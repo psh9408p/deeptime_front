@@ -1,3 +1,3 @@
 import React from 'react';
 
-export default () => '준비중';
+export default () => '준비중..';

@@ -1,16 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1, data_2 }) => {
+export default ({ data_1, data_2, title, labels }) => {
   // const data_tmp_1 = 60;
   // const data_tmp_2 = 40;
   const chartConfig = {
     type: 'doughnut',
     data: {
-      label: ['공부', '집중'],
       datasets: [
         {
-          label: ['공부', '집중'],
           data: [data_1, data_2],
           // data: [data_tmp_1, data_tmp_2],
           backgroundColor: ['rgba(123, 169, 235, 1)', 'rgba(233,236,244,1)'],
@@ -18,11 +16,12 @@ export default ({ data_1, data_2 }) => {
           borderWidth: 1,
         },
       ],
+      labels,
     },
     options: {
       title: {
         display: true,
-        text: 'Today 학습 성취도',
+        text: title,
       },
     },
   };

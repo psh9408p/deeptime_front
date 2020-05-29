@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1 }) => {
+export default ({ data_1, labels, title, title_y }) => {
   // const data_tmp = [
   //   0,
   //   0,
@@ -32,32 +32,7 @@ export default ({ data_1 }) => {
   const chartConfig = {
     type: 'line',
     data: {
-      labels: [
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8 ',
-        '9',
-        '10',
-        '11',
-        '12',
-        '13',
-        '14',
-        '15',
-        '16',
-        '17',
-        '18',
-        '19',
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-      ],
+      labels,
       datasets: [
         // {
         //   label: "수업",
@@ -71,7 +46,7 @@ export default ({ data_1 }) => {
         {
           label: '학습량',
           data: data_1,
-          backgroundColor: ['rgba(123, 169, 235, 1)'],
+          backgroundColor: ['rgba(123, 169, 235, 0)'],
           borderColor: ['rgba(123, 169, 235, 1)'],
           pointRadius: 3,
         },
@@ -87,7 +62,7 @@ export default ({ data_1 }) => {
       stacked: false,
       title: {
         display: true,
-        text: 'Today 시간 별 학습량',
+        text: title,
       },
       scales: {
         xAxes: [
@@ -95,7 +70,6 @@ export default ({ data_1 }) => {
             display: true,
             scaleLabel: {
               display: true,
-              labelString: '시간 (하루 24시 기준)',
             },
           },
         ],
@@ -107,7 +81,7 @@ export default ({ data_1 }) => {
             id: 'y-axis-1',
             scaleLabel: {
               display: true,
-              labelString: '학습량(분, Min)',
+              labelString: title_y,
             },
             ticks: {
               beginAtZero: true,

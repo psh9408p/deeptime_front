@@ -15,6 +15,9 @@ import DatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import Input_100 from '../../../../Components/Input_100';
+import selectChange from '../../../../Components/SelectChange';
+import WeekRange from '../../../../Components/Date/WeekRange';
+import ObjectCopy from '../../../../Components/ObjectCopy';
 
 const Wrapper = styled.div`
   display: flex;
@@ -231,7 +234,7 @@ const DonutChartValue = styled.div`
   justify-content: center;
   font-size: 30px;
   font-weight: 600;
-  padding-top: 163px;
+  padding-top: 173px;
 `;
 
 const ClassButton = styled.button`
@@ -334,20 +337,27 @@ const IngSpan = styled.span`
   font-weight: 600;
 `;
 
-let taskArray = new Array(24).fill(0);
+let taskArray = [];
+let taskArray_week = [];
+let taskArray_month = [];
 let taskArray_schedule = [];
 let taskArray_scheduleT = [];
 let schedule_label = [];
 let scheduleList_selectDay = [];
+let scheduleList_selectDay_week = [[], [], [], [], [], [], []];
+let scheduleList_selectDay_month = [];
 const tmpTime = {
   existTime: 0,
   targetTime: 0,
   time_24: new Array(288).fill(0),
 };
+const time_24_tmp = new Array(288).fill(0);
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
 let scheduleList_selectDay_length = 0;
+// let scheduleList_selectDay_week_length = 0;
+let scheduleList_selectDay_month_length = 0;
 
 export default ({
   StaTabs,
@@ -359,10 +369,21 @@ export default ({
   myInfoRefetch,
   networkStatus,
   refreshTerm,
+  oneDayHours,
 }) => {
+  const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
+  const lastMonthDate = new Date(
+    selectDate.getFullYear(),
+    selectDate.getMonth() + 1,
+    0,
+  ).getDate();
+  // daysOfMonth Area차트의 x축 라벨 변수
+  const daysOfMonth_tmp = Array.from(Array(lastMonthDate).keys());
+  const daysOfMonth_number = daysOfMonth_tmp.map((a) => a + 1);
+  const daysOfMonth = daysOfMonth_number.map(String);
+
   const todaySchedule_calculate = () => {
     scheduleList_selectDay = [];
-    schedule_label = [];
     for (let i = 0; i < scheduleList.length; i++) {
       const startYear = new Date(scheduleList[i].start).getFullYear();
       const startMonth = new Date(scheduleList[i].start).getMonth();
@@ -373,17 +394,45 @@ export default ({
         startDate === selectDate.getDate()
       ) {
         scheduleList_selectDay.push(scheduleList[i]);
-        schedule_label.push(scheduleList[i].subjectName);
       }
     }
     scheduleList_selectDay_length = scheduleList_selectDay.length;
   };
+  const weekSchedule_calculate = () => {
+    scheduleList_selectDay_week = [[], [], [], [], [], [], []];
+    for (let i = 0; i < scheduleList.length; i++) {
+      if (
+        new Date(scheduleList[i].start) >= real_weekStart &&
+        new Date(scheduleList[i].start) < real_weekEnd
+      ) {
+        const dayIndex = new Date(scheduleList[i].start).getDay();
+        scheduleList_selectDay_week[dayIndex].push(scheduleList[i]);
+      }
+    }
+    // let schedule_length = 0;
+    // for (let i = 0; i < 7; i++) {
+    //   schedule_length = schedule_length + scheduleList_selectDay_week[i].length;
+    // }
+    // scheduleList_selectDay_week_length = schedule_length;
+  };
+  const monthSchedule_calculate = () => {
+    scheduleList_selectDay_month = [];
+    for (let i = 0; i < scheduleList.length; i++) {
+      const startYear = new Date(scheduleList[i].start).getFullYear();
+      const startMonth = new Date(scheduleList[i].start).getMonth();
+      if (
+        startYear === selectDate.getFullYear() &&
+        startMonth === selectDate.getMonth()
+      ) {
+        scheduleList_selectDay_month.push(scheduleList[i]);
+      }
+    }
+    scheduleList_selectDay_month_length = scheduleList_selectDay_month.length;
+  };
 
-  const graph_calculate = () => {
+  const todayGraph_calculate = () => {
     // 초기화
     taskArray = new Array(24).fill(0);
-    taskArray_schedule = new Array(scheduleList_selectDay_length).fill(0);
-    taskArray_scheduleT = new Array(scheduleList_selectDay_length).fill(0);
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
@@ -412,6 +461,7 @@ export default ({
       // 스케줄 별 그래프 계산
       let resultArray_schedule = []; // exist 타임 용
       let resultArray_scheduleT = []; // 타겟타임용
+      schedule_label = [];
       for (let j = 0; j < scheduleList_selectDay_length; j++) {
         // console.log(scheduleList_selectDay);
         const totalMin_start =
@@ -426,15 +476,26 @@ export default ({
           indexMin_start,
           indexMin_end,
         );
-        resultArray_schedule.push(SumArray(slicedTime));
-        // 타겟타임은 학생마다 더할필요 없고 한번만 실행하면됨
-        resultArray_scheduleT.push(totalMin_end - totalMin_start);
+        const duplIndex = schedule_label.indexOf(
+          scheduleList_selectDay[j].subjectName,
+        ); // 중복되는 과목 인덱스 체크
+        if (duplIndex === -1) {
+          schedule_label.push(scheduleList_selectDay[j].subjectName);
+          resultArray_schedule.push(SumArray(slicedTime));
+          resultArray_scheduleT.push(totalMin_end - totalMin_start);
+        } else {
+          resultArray_schedule[duplIndex] =
+            resultArray_schedule[duplIndex] + SumArray(slicedTime);
+          resultArray_scheduleT[duplIndex] =
+            resultArray_scheduleT[duplIndex] + (totalMin_end - totalMin_start);
+        }
       }
+      taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
+      taskArray_scheduleT = new Array(resultArray_scheduleT.length).fill(0);
       taskArray_schedule = twoArraySum(
         taskArray_schedule,
         resultArray_schedule,
       );
-      // 타겟타임은 학생마다 더할필요 없고 한번만 실행하면됨
       taskArray_scheduleT = twoArraySum(
         taskArray_scheduleT,
         resultArray_scheduleT,
@@ -462,9 +523,263 @@ export default ({
       }
     }
   };
+  const weekGraph_calculate = () => {
+    // 초기화
+    taskArray_week = new Array(7).fill(0);
+    donutData_1 = 0;
+    donutData_2 = 0;
+    donutPercent = 0;
+    if (networkStatus === 7 && myInfoData) {
+      // 이번주에 생선된 시간이 있는 인덱스 구하기
+      let indexOfWeek = [];
+      let stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
+      let slicedTimes = ObjectCopy(myInfoData.times);
+      while (true) {
+        const index_tmp = slicedTimes.findIndex(
+          (i) =>
+            new Date(i.createdAt) >= real_weekStart &&
+            new Date(i.createdAt) < real_weekEnd,
+        );
+        if (index_tmp === -1) {
+          break;
+        } else {
+          indexOfWeek.push(index_tmp + stackIndex);
+          if (index_tmp === slicedTimes.length - 1) {
+            break;
+          }
+        }
+        slicedTimes = slicedTimes.slice(index_tmp + 1);
+        stackIndex = stackIndex + index_tmp + 1;
+      }
+      let arrayBox = [
+        time_24_tmp,
+        time_24_tmp,
+        time_24_tmp,
+        time_24_tmp,
+        time_24_tmp,
+        time_24_tmp,
+        time_24_tmp,
+      ];
+      let arrayBox_twoTimes = [
+        // exis, target Time만 담기위해
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+        { existTime: 0, targetTime: 0 },
+      ];
+      if (indexOfWeek[0] !== undefined) {
+        for (let k = 0; k < indexOfWeek.length; k++) {
+          const dayIndex = new Date(
+            myInfoData.times[indexOfWeek[k]].createdAt,
+          ).getDay();
+          arrayBox[dayIndex] = myInfoData.times[indexOfWeek[k]].time_24;
+          arrayBox_twoTimes[dayIndex].existTime =
+            myInfoData.times[indexOfWeek[k]].existTime;
+          arrayBox_twoTimes[dayIndex].targetTime =
+            myInfoData.times[indexOfWeek[k]].targetTime;
+        }
+      }
+
+      // AreaChart 계산
+      let resultArray = [];
+      for (let j = 0; j < 7; j++) {
+        resultArray.push(SumArray(arrayBox[j]));
+      }
+      taskArray_week = twoArraySum(taskArray_week, resultArray);
+      // 스케줄 별 그래프 계산
+      let resultArray_schedule = []; // exist 타임 용
+      let resultArray_scheduleT = []; // 타겟타임용
+      schedule_label = [];
+      for (let k = 0; k < 7; k++) {
+        const todayTime_24 = arrayBox[k];
+        for (let j = 0; j < scheduleList_selectDay_week[k].length; j++) {
+          // console.log(scheduleList_selectDay);
+          const totalMin_start =
+            new Date(scheduleList_selectDay_week[k][j].start).getHours() * 60 +
+            new Date(scheduleList_selectDay_week[k][j].start).getMinutes();
+          const totalMin_end =
+            new Date(scheduleList_selectDay_week[k][j].end).getHours() * 60 +
+            new Date(scheduleList_selectDay_week[k][j].end).getMinutes();
+          const indexMin_start = totalMin_start / 5;
+          const indexMin_end = totalMin_end / 5;
+          const slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+          const duplIndex = schedule_label.indexOf(
+            scheduleList_selectDay_week[k][j].subjectName,
+          ); // 중복되는 과목 인덱스 체크
+          if (duplIndex === -1) {
+            schedule_label.push(scheduleList_selectDay_week[k][j].subjectName);
+            resultArray_schedule.push(SumArray(slicedTime));
+            resultArray_scheduleT.push(totalMin_end - totalMin_start);
+          } else {
+            resultArray_schedule[duplIndex] =
+              resultArray_schedule[duplIndex] + SumArray(slicedTime);
+            resultArray_scheduleT[duplIndex] =
+              resultArray_scheduleT[duplIndex] +
+              (totalMin_end - totalMin_start);
+          }
+        }
+      }
+      taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
+      taskArray_scheduleT = new Array(resultArray_scheduleT.length).fill(0);
+      taskArray_schedule = twoArraySum(
+        taskArray_schedule,
+        resultArray_schedule,
+      );
+      taskArray_scheduleT = twoArraySum(
+        taskArray_scheduleT,
+        resultArray_scheduleT,
+      );
+      // AreaChart 계산
+      taskArray.forEach(function (item, index) {
+        taskArray[index] = item / 60;
+      });
+      // 스케줄 그래프 계산
+      if (taskArray_schedule !== []) {
+        taskArray_schedule.forEach(function (item, index) {
+          taskArray_schedule[index] = item / 60;
+        });
+      }
+      // 도넛차트 계산
+      let existTime_tmp = 0;
+      let targetTime_tmp = 0;
+      for (let j = 0; j < 7; j++) {
+        existTime_tmp = existTime_tmp + arrayBox_twoTimes[j].existTime;
+        targetTime_tmp = targetTime_tmp + arrayBox_twoTimes[j].targetTime;
+      }
+      donutData_1 = existTime_tmp;
+      donutData_2 = targetTime_tmp - existTime_tmp;
+      donutPercent = ((existTime_tmp / targetTime_tmp) * 100).toFixed(1);
+      if (targetTime_tmp === 0) {
+        donutData_2 = 1;
+        donutPercent = 0;
+      }
+    }
+  };
+  const monthGraph_calculate = () => {
+    // 초기화
+    taskArray_month = new Array(lastMonthDate).fill(0);
+    donutData_1 = 0;
+    donutData_2 = 0;
+    donutPercent = 0;
+    if (networkStatus === 7 && myInfoData) {
+      // 이번달에 생선된 시간이 있는 인덱스 구하기
+      let indexOfMonth = [];
+      let stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
+      let slicedTimes = ObjectCopy(myInfoData.times);
+      while (true) {
+        const index_tmp = slicedTimes.findIndex(
+          (i) =>
+            new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
+            new Date(i.createdAt).getMonth() == selectDate.getMonth(),
+        );
+        if (index_tmp === -1) {
+          break;
+        } else {
+          indexOfMonth.push(index_tmp + stackIndex);
+          if (index_tmp === slicedTimes.length - 1) {
+            break;
+          }
+        }
+        slicedTimes = slicedTimes.slice(index_tmp + 1);
+        stackIndex = stackIndex + index_tmp + 1;
+      }
+      let arrayBox = new Array(lastMonthDate).fill(tmpTime);
+      if (indexOfMonth[0] !== undefined) {
+        for (let k = 0; k < indexOfMonth.length; k++) {
+          const dateIndex =
+            new Date(myInfoData.times[indexOfMonth[k]].createdAt).getDate() - 1;
+          arrayBox[dateIndex] = myInfoData.times[indexOfMonth[k]];
+        }
+      }
+
+      // AreaChart 계산
+      let resultArray = [];
+      for (let j = 0; j < lastMonthDate; j++) {
+        resultArray.push(SumArray(arrayBox[j].time_24));
+      }
+      taskArray_month = twoArraySum(taskArray_month, resultArray);
+      // 스케줄 별 그래프 계산
+      let resultArray_schedule = []; // exist 타임 용
+      let resultArray_scheduleT = []; // 타겟타임용
+      schedule_label = [];
+      for (let j = 0; j < scheduleList_selectDay_month_length; j++) {
+        const dateIndex =
+          new Date(scheduleList_selectDay_month[j].start).getDate() - 1;
+        const todayTime_24 = arrayBox[dateIndex].time_24;
+        const totalMin_start =
+          new Date(scheduleList_selectDay_month[j].start).getHours() * 60 +
+          new Date(scheduleList_selectDay_month[j].start).getMinutes();
+        const totalMin_end =
+          new Date(scheduleList_selectDay_month[j].end).getHours() * 60 +
+          new Date(scheduleList_selectDay_month[j].end).getMinutes();
+        const indexMin_start = totalMin_start / 5;
+        const indexMin_end = totalMin_end / 5;
+        const slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+        const duplIndex = schedule_label.indexOf(
+          scheduleList_selectDay_month[j].subjectName,
+        ); // 중복되는 과목 인덱스 체크
+        if (duplIndex === -1) {
+          schedule_label.push(scheduleList_selectDay_month[j].subjectName);
+          resultArray_schedule.push(SumArray(slicedTime));
+          resultArray_scheduleT.push(totalMin_end - totalMin_start);
+        } else {
+          resultArray_schedule[duplIndex] =
+            resultArray_schedule[duplIndex] + SumArray(slicedTime);
+          resultArray_scheduleT[duplIndex] =
+            resultArray_scheduleT[duplIndex] + (totalMin_end - totalMin_start);
+        }
+      }
+      taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
+      taskArray_scheduleT = new Array(resultArray_scheduleT.length).fill(0);
+      taskArray_schedule = twoArraySum(
+        taskArray_schedule,
+        resultArray_schedule,
+      );
+      taskArray_scheduleT = twoArraySum(
+        taskArray_scheduleT,
+        resultArray_scheduleT,
+      );
+      // AreaChart 계산
+      taskArray.forEach(function (item, index) {
+        taskArray[index] = item / 60;
+      });
+      // 스케줄 그래프 계산
+      if (taskArray_schedule !== []) {
+        taskArray_schedule.forEach(function (item, index) {
+          taskArray_schedule[index] = item / 60;
+        });
+      }
+      // 도넛차트 계산
+      let existTime_tmp = 0;
+      let targetTime_tmp = 0;
+      for (let j = 0; j < lastMonthDate; j++) {
+        existTime_tmp = existTime_tmp + arrayBox[j].existTime;
+        targetTime_tmp = targetTime_tmp + arrayBox[j].targetTime;
+      }
+      donutData_1 = existTime_tmp;
+      donutData_2 = targetTime_tmp - existTime_tmp;
+      donutPercent = ((existTime_tmp / targetTime_tmp) * 100).toFixed(1);
+      if (targetTime_tmp === 0) {
+        donutData_2 = 1;
+        donutPercent = 0;
+      }
+    }
+  };
+
   if (networkStatus === 7) {
-    todaySchedule_calculate();
-    graph_calculate();
+    if (StaTabs.currentIndex === 0) {
+      todaySchedule_calculate();
+      todayGraph_calculate();
+    } else if (StaTabs.currentIndex === 1) {
+      weekSchedule_calculate();
+      weekGraph_calculate();
+    } else {
+      monthSchedule_calculate();
+      monthGraph_calculate();
+    }
   }
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -529,17 +844,31 @@ export default ({
                       data_1={taskArray_schedule}
                       data_2={taskArray_scheduleT}
                       labels={schedule_label}
+                      label_1={'학습 시간'}
+                      label_2={'목표 시간'}
+                      title={'과목별 학습량'}
+                      title_x={'학습량 (분)'}
                     />
                   </ChartWrap>
                 </StatisRow>
                 <StatisRow>
                   <ChartWrap>
-                    <AreaChart data_1={taskArray} />
+                    <AreaChart
+                      data_1={taskArray}
+                      labels={oneDayHours}
+                      title={'시간별 학습량'}
+                      title_y={'학습량 (분)'}
+                    />
                   </ChartWrap>
                 </StatisRow>
                 <StatisRow>
                   <ChartWrap>
-                    <DonutChart data_1={donutData_1} data_2={donutData_2} />
+                    <DonutChart
+                      data_1={donutData_1}
+                      data_2={donutData_2}
+                      title={'학습 성취도'}
+                      labels={['학습량', '목표량']}
+                    />
                   </ChartWrap>
                   <DonutChartValue>{donutPercent}%</DonutChartValue>
                 </StatisRow>
@@ -547,16 +876,78 @@ export default ({
             )}
             {StaTabs.currentIndex === 1 && (
               <>
-                <StatisRow>준비중...</StatisRow>
-                <StatisRow>준비중...</StatisRow>
-                <StatisRow>준비중...</StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <RowBarChart
+                      data_1={taskArray_schedule}
+                      data_2={taskArray_scheduleT}
+                      labels={schedule_label}
+                      label_1={'학습 시간'}
+                      label_2={'목표 시간'}
+                      title={'과목별 학습량'}
+                      title_x={'학습량 (분)'}
+                    />
+                  </ChartWrap>
+                </StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <AreaChart
+                      data_1={taskArray_week}
+                      labels={['일', '월', '화', '수', '목', '금', '토']}
+                      title={'요일별 학습량'}
+                      title_y={'학습량 (분)'}
+                    />
+                  </ChartWrap>
+                </StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <DonutChart
+                      data_1={donutData_1}
+                      data_2={donutData_2}
+                      title={'학습 성취도'}
+                      labels={['학습량', '목표량']}
+                    />
+                  </ChartWrap>
+                  <DonutChartValue>{donutPercent}%</DonutChartValue>
+                </StatisRow>
               </>
             )}
             {StaTabs.currentIndex === 2 && (
               <>
-                <StatisRow>준비중...</StatisRow>
-                <StatisRow>준비중...</StatisRow>
-                <StatisRow>준비중...</StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <RowBarChart
+                      data_1={taskArray_schedule}
+                      data_2={taskArray_scheduleT}
+                      labels={schedule_label}
+                      label_1={'학습 시간'}
+                      label_2={'목표 시간'}
+                      title={'과목별 학습량'}
+                      title_x={'학습량 (분)'}
+                    />
+                  </ChartWrap>
+                </StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <AreaChart
+                      data_1={taskArray_month}
+                      labels={daysOfMonth}
+                      title={'일별 학습량'}
+                      title_y={'학습량 (분)'}
+                    />
+                  </ChartWrap>
+                </StatisRow>
+                <StatisRow>
+                  <ChartWrap>
+                    <DonutChart
+                      data_1={donutData_1}
+                      data_2={donutData_2}
+                      title={'학습 성취도'}
+                      labels={['학습량', '목표량']}
+                    />
+                  </ChartWrap>
+                  <DonutChartValue>{donutPercent}%</DonutChartValue>
+                </StatisRow>
               </>
             )}
           </>

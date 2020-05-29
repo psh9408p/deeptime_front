@@ -103,7 +103,6 @@ export default ({
   onSubmitClass,
   classRefetch,
 }) => {
-  classRefetch();
   if (pageIndex === 0) {
     if (classData.myClass[0] === undefined) {
       alert(
@@ -112,6 +111,7 @@ export default ({
       pageIndexChange(1);
       return <></>;
     } else {
+      classRefetch();
       return (
         <ClassStatistics
           classList={classData.myClass}
@@ -120,6 +120,7 @@ export default ({
       );
     }
   } else if (pageIndex === 1) {
+    classRefetch();
     return (
       <Regist>
         <PopupDiv>
@@ -200,6 +201,7 @@ export default ({
       pageIndexChange(1);
       return <></>;
     } else {
+      classRefetch();
       return (
         <ClassSchedule
           classRoom={classData.myClass}
