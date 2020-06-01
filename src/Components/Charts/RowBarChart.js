@@ -85,7 +85,7 @@ export default ({
     }
   }, [chartContainer]);
 
-  console.log(chartInstance);
+  // console.log(chartInstance);
 
   const updateDataset = (datasetIndex, newData) => {
     chartInstance.data.datasets[datasetIndex].data = newData;

@@ -6,6 +6,7 @@ import Avatar from '../../../../Components/Avatar';
 import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
 import DonutChart from '../../../../Components/Charts/DonutChart';
+import DonutChart_today from '../../../../Components/Charts/DonutChart_today';
 import twoArraySum from '../../../../Components/twoArraySum';
 import GaugeChart from 'react-gauge-chart';
 import SumArray from '../../../../Components/Array/SumArray';
@@ -352,9 +353,11 @@ const tmpTime = {
   time_24: new Array(288).fill(0),
 };
 const time_24_tmp = new Array(288).fill(0);
+let donutData = [];
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
+let rgbBox = [];
 let scheduleList_selectDay_length = 0;
 // let scheduleList_selectDay_week_length = 0;
 let scheduleList_selectDay_month_length = 0;
@@ -433,9 +436,15 @@ export default ({
   const todayGraph_calculate = () => {
     // 초기화
     taskArray = new Array(24).fill(0);
+    donutData = [];
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
+    rgbBox = [
+      'rgba(123, 169, 235, 1)',
+      'rgba(233, 236, 244, 1)',
+      'rgba(15,76,130, 1)',
+    ]; // 범례표시를 위해 야매로 0인 시간 3개 추가
     if (networkStatus === 7 && myInfoData) {
       // 오늘 생선된 시간이 있는 인덱스 구하기
       let indexOfToday = myInfoData.times.findIndex(
@@ -453,10 +462,7 @@ export default ({
 
       // AreaChart 계산
       const arrayBox = SplitArray(todayTime.time_24, 12);
-      let resultArray = [];
-      for (let j = 0; j < 24; j++) {
-        resultArray.push(SumArray(arrayBox[j]));
-      }
+      let resultArray = arrayBox.map((a) => SumArray(a));
       taskArray = twoArraySum(taskArray, resultArray);
       // 스케줄 별 그래프 계산
       let resultArray_schedule = []; // exist 타임 용
@@ -511,14 +517,68 @@ export default ({
         });
       }
       // 도넛차트 계산
-      donutData_1 = todayTime.existTime;
-      donutData_2 = todayTime.targetTime - todayTime.existTime;
+      let slicedTimeBox = [[], [], []];
+      // console.log(todayTime.time_24);
+      let slicedTimes = ObjectCopy(todayTime.time_24);
+      while (true) {
+        const index_tmp = slicedTimes.findIndex((i) => i > 0);
+        if (index_tmp === -1) {
+          slicedTimeBox.push(slicedTimes);
+          const nowDateMin_count = Math.ceil(
+            (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
+          );
+          if (nowDateMin_count === 288) {
+            // 지금이 23시 55분 이상이라는 뜻
+            rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+            break; // 빈시간으로 끝남
+          } else {
+            const lastIndex = 288 - nowDateMin_count; // 아직 지나지 않은 시간이 몇칸인지 알려주는 변수
+            const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
+            if (lastZeroTime.length - lastIndex === 0) {
+              // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
+              rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 지금 이전 시간
+              break; // 현재 이전시간으로 끝남
+            } else {
+              const grayTime = lastZeroTime.slice(
+                0,
+                lastZeroTime.length - lastIndex,
+              );
+              const blueTime = lastZeroTime.slice(
+                lastZeroTime.length - lastIndex,
+              );
+              slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
+              slicedTimeBox.push(blueTime);
+              rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+              rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 지금 이전 시간
+              break; // 현재 이전시간으로 끝남
+            }
+          }
+        } else {
+          if (index_tmp !== 0) {
+            // 0인 시간이 하나라도 있어야 빈시간을 넣지
+            slicedTimeBox.push(slicedTimes.slice(0, index_tmp));
+            rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+            slicedTimes = slicedTimes.slice(index_tmp);
+          }
+          const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
+          if (index_tmp2 === -1) {
+            slicedTimeBox.push(slicedTimes);
+            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 학습시간
+            break; // 학습시간으로 끝남
+          } else {
+            const studyTime = slicedTimes.slice(0, index_tmp2);
+            slicedTimeBox.push(studyTime);
+            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 학습시간
+            slicedTimes = slicedTimes.slice(index_tmp2);
+          }
+        }
+      }
+      donutData = slicedTimeBox.map((a) => a.length * 5);
       donutPercent = (
         (todayTime.existTime / todayTime.targetTime) *
         100
       ).toFixed(1);
       if (todayTime.targetTime === 0) {
-        donutData_2 = 1;
         donutPercent = 0;
       }
     }
@@ -584,10 +644,7 @@ export default ({
       }
 
       // AreaChart 계산
-      let resultArray = [];
-      for (let j = 0; j < 7; j++) {
-        resultArray.push(SumArray(arrayBox[j]));
-      }
+      let resultArray = arrayBox.map((a) => SumArray(a));
       taskArray_week = twoArraySum(taskArray_week, resultArray);
       // 스케줄 별 그래프 계산
       let resultArray_schedule = []; // exist 타임 용
@@ -696,10 +753,7 @@ export default ({
       }
 
       // AreaChart 계산
-      let resultArray = [];
-      for (let j = 0; j < lastMonthDate; j++) {
-        resultArray.push(SumArray(arrayBox[j].time_24));
-      }
+      let resultArray = arrayBox.map((a) => SumArray(a.time_24));
       taskArray_month = twoArraySum(taskArray_month, resultArray);
       // 스케줄 별 그래프 계산
       let resultArray_schedule = []; // exist 타임 용
@@ -863,11 +917,11 @@ export default ({
                 </StatisRow>
                 <StatisRow>
                   <ChartWrap>
-                    <DonutChart
-                      data_1={donutData_1}
-                      data_2={donutData_2}
+                    <DonutChart_today
+                      data={donutData}
+                      color={rgbBox}
                       title={'학습 성취도'}
-                      labels={['학습량', '목표량']}
+                      labels={['학습 시간', '학습 외 시간', '남은 시간']}
                     />
                   </ChartWrap>
                   <DonutChartValue>{donutPercent}%</DonutChartValue>
