@@ -16,6 +16,18 @@ export const ME = gql`
         time_24
         createdAt
       }
+      schedules {
+        id
+        isAllDay
+        isPrivate
+        title
+        location
+        state
+        start
+        end
+        subjectId
+        subjectName
+      }
     }
   }
 `;

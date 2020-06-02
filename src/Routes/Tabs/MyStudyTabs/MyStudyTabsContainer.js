@@ -1,29 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useQuery } from 'react-apollo-hooks';
+import Loader from '../../../Components/Loader';
 import MyStudyTabsPresenter from './MyStudyTabsPresenter';
 import { ME } from './MyStudyTabsQueries';
-import Loader from '../../../Components/Loader';
+import { useQuery } from 'react-apollo-hooks';
+import useInput from '../../../Hooks/useInput';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
 export default ({ pageIndex }) => {
-  const { data: myData, loading: myLoading, refetch: myRefetch } = useQuery(ME);
+  const minValue_10 = (value) => value >= 10;
+  const refreshTerm = useInput(10, minValue_10);
 
-  if (myLoading === true) {
+  const {
+    data: myInfoData,
+    loading: myInfoLoading,
+    refetch: myInfoRefetch,
+    startPolling,
+    stopPolling,
+    networkStatus,
+  } = useQuery(ME, {
+    notifyOnNetworkStatusChange: true,
+  });
+  console.log(networkStatus);
+  if (networkStatus === 1) {
     return (
       <LoaderWrapper>
         <Loader />
       </LoaderWrapper>
     );
-  } else if (!myLoading && myData && myData.me) {
+  } else {
     return (
       <MyStudyTabsPresenter
         pageIndex={pageIndex}
-        myData={myData.me}
-        myRefetch={myRefetch}
+        myInfoData={myInfoData}
+        myInfoRefetch={myInfoRefetch}
+        networkStatus={networkStatus}
+        refreshTerm={refreshTerm}
+        startPolling={startPolling}
+        stopPolling={stopPolling}
       />
     );
   }

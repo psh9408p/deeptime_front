@@ -1,65 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
-import { useQuery } from 'react-apollo-hooks';
-import { ME } from './MyStaQueries';
-import useInput from '../../../../Hooks/useInput';
 
-export default ({ myData }) => {
+export default ({ myInfoData, networkStatus, refreshTerm }) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
   const StaTabs = useTabs(0, StaTabContents);
-  const minValue_10 = (value) => value >= 10;
-  const refreshTerm = useInput(10, minValue_10);
   const [selectDate, setSelectDate] = useState(new Date());
-  const oneDayHours = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8 ',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
-    '21',
-    '22',
-    '23',
-    '24',
-  ];
+  const oneDayHours_tmp = Array.from(Array(24).keys());
+  const oneDayHours_num = oneDayHours_tmp.map((a) => a + 1);
+  const oneDayHours = oneDayHours_num.map(String);
+  const calLoading = useRef(false);
 
-  const {
-    data: myInfoData,
-    loading: myInfoLoading,
-    refetch: myInfoRefetch,
-    networkStatus,
-  } = useQuery(ME, {
-    pollInterval: Number(refreshTerm.value) * 1000,
-    notifyOnNetworkStatusChange: true,
-  });
-
+  console.log(networkStatus, calLoading);
   return (
     <ClassStaPresenter
       StaTabs={StaTabs}
       selectDate={selectDate}
       setSelectDate={setSelectDate}
-      scheduleList={myData.schedules}
       myInfoData={myInfoData.me}
-      myInfoLoading={myInfoLoading}
-      myInfoRefetch={myInfoRefetch}
       networkStatus={networkStatus}
       refreshTerm={refreshTerm}
       oneDayHours={oneDayHours}
+      calLoading={calLoading}
     />
   );
 };

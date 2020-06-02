@@ -16,7 +16,7 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ myData, myRefetch, pageIndex }) => {
+export default ({ pageIndex, myInfoData, myInfoRefetch }) => {
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
@@ -52,9 +52,9 @@ export default ({ myData, myRefetch, pageIndex }) => {
         setStartRange={setStartRange}
         endRange={endRange}
         setEndRange={setEndRange}
-        myData={myData}
+        myData={myInfoData.me}
+        myRefetch={myInfoRefetch}
         saveScheduleMutation={saveScheduleMutation}
-        myRefetch={myRefetch}
         subjectList={subjectData.mySubject}
         subjectName={subjectName}
         subjectColor={subjectColor}
