@@ -23,6 +23,7 @@ import ObjectCopy from '../../../../Components/ObjectCopy';
 
 const Wrapper = styled.div`
   display: flex;
+  justify-content: center;
   width: 100%;
   max-width: 935px;
   margin-top: 20px;
@@ -45,11 +46,6 @@ const BigBox = styled.div`
     width: 70%;
     height: 1095px;
     position: relative;
-  }
-  &:last-child {
-    background-color: ${(props) => props.theme.bgColor};
-    width: 30%;
-    height: 1095px;
   }
 `;
 
@@ -255,6 +251,23 @@ const ClassButton = styled.button`
   }
 `;
 
+const ClassButton_Blue = styled.button`
+  width: 100px;
+  border: 0;
+  outline-color: black;
+  background-color: ${(props) => props.theme.skyBlue};
+  color: white;
+  border-radius: ${(props) => props.theme.borderRadius};
+  font-weight: 600;
+  text-align: center;
+  padding: 7px 0px;
+  font-size: 14px;
+  cursor: pointer;
+  &:not(:last-child) {
+    margin-right: 60px;
+  }
+`;
+
 const GaugeChart_2 = styled(GaugeChart)`
   font-weight: 600;
 `;
@@ -370,6 +383,9 @@ export default ({
   networkStatus,
   refreshTerm,
   oneDayHours,
+  todayCalLoading,
+  weekCalLoading,
+  monthCalLoading,
 }) => {
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
@@ -797,16 +813,20 @@ export default ({
     }
   };
 
+  console.log(networkStatus);
   if (7 === networkStatus) {
     if (StaTabs.currentIndex === 0) {
       todaySchedule_calculate();
       todayGraph_calculate();
+      todayCalLoading.current = false;
     } else if (StaTabs.currentIndex === 1) {
       weekSchedule_calculate();
       weekGraph_calculate();
+      weekCalLoading.current = false;
     } else {
       monthSchedule_calculate();
       monthGraph_calculate();
+      monthCalLoading = false;
     }
   }
 
@@ -840,11 +860,27 @@ export default ({
           </RefreshDiv>
         </StatisRow>
         <StatisRow>
-          {StaTabs.content.map((section, index) => (
-            <ClassButton key={index} onClick={() => StaTabs.changeItem(index)}>
-              {section}
-            </ClassButton>
-          ))}
+          {StaTabs.content.map((section, index) => {
+            if (index === StaTabs.currentIndex) {
+              return (
+                <ClassButton_Blue
+                  key={index}
+                  onClick={() => StaTabs.changeItem(index)}
+                >
+                  {section}
+                </ClassButton_Blue>
+              );
+            } else {
+              return (
+                <ClassButton
+                  key={index}
+                  onClick={() => StaTabs.changeItem(index)}
+                >
+                  {section}
+                </ClassButton>
+              );
+            }
+          })}
         </StatisRow>
         {StaTabs.currentIndex === 0 && (
           <>
@@ -860,6 +896,11 @@ export default ({
                   title_x={'시간(분)'}
                 />
               </ChartWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -870,6 +911,11 @@ export default ({
                   title_y={'학습 시간(분)'}
                 />
               </ChartWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -881,6 +927,11 @@ export default ({
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
           </>
         )}
@@ -898,6 +949,11 @@ export default ({
                   title_x={'시간(분)'}
                 />
               </ChartWrap>
+              {weekCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -908,6 +964,11 @@ export default ({
                   title_y={'시간(분)'}
                 />
               </ChartWrap>
+              {weekCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -919,6 +980,11 @@ export default ({
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
+              {weekCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
           </>
         )}
@@ -936,6 +1002,11 @@ export default ({
                   title_x={'시간(분)'}
                 />
               </ChartWrap>
+              {monthCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -946,6 +1017,11 @@ export default ({
                   title_y={'시간(분)'}
                 />
               </ChartWrap>
+              {monthCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -957,44 +1033,14 @@ export default ({
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
+              {monthCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
             </StatisRow>
           </>
         )}
-      </BigBox>
-      <BigBox>
-        <Title>
-          {/* <ClassName>{selectClass.academy.name}</ClassName>
-          <ClassName>{selectClass.name}</ClassName> */}
-        </Title>
-        <TitleGraph></TitleGraph>
-        <ClassSelect>
-          {/* <Select {...myClassList} id={'myClassList_id_sta'} /> */}
-        </ClassSelect>
-        <StudentBox>
-          <LightBio>
-            <SmallToggleBlue />: 학습 중 　 <SmallToggleRed />: 자리 비움
-          </LightBio>
-          <StudentList>
-            {myInfoData.existToggle === true && <ToggleBlue />}
-            {myInfoData.existToggle === false && <ToggleRed />}
-            <AvatarWrap>
-              <Avatar size="sm2" url={myInfoData.avatar} />
-            </AvatarWrap>
-            <StudentName>{myInfoData.fullName}</StudentName>
-            {myInfoData.todayTime.attendanceStatus === '조퇴' ? (
-              <ListColumn data-tip data-for="absence">
-                {myInfoData.todayTime.attendanceStatus}
-                <ReactTooltip id="absence">
-                  <StudentTooltip>
-                    조퇴 사유: {myInfoData.todayTime.absenceReason}
-                  </StudentTooltip>
-                </ReactTooltip>
-              </ListColumn>
-            ) : (
-              <ListColumn>{myInfoData.todayTime.attendanceStatus}</ListColumn>
-            )}
-          </StudentList>
-        </StudentBox>
       </BigBox>
     </Wrapper>
   );

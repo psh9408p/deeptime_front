@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Loader from '../../../Components/Loader';
 import MyStudyTabsPresenter from './MyStudyTabsPresenter';
 import { ME } from './MyStudyTabsQueries';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import useInput from '../../../Hooks/useInput';
 
 const LoaderWrapper = styled.div`
@@ -16,6 +16,7 @@ export default ({ pageIndex }) => {
 
   const {
     data: myInfoData,
+    error,
     loading: myInfoLoading,
     refetch: myInfoRefetch,
     startPolling,
@@ -24,6 +25,7 @@ export default ({ pageIndex }) => {
   } = useQuery(ME, {
     notifyOnNetworkStatusChange: true,
   });
+  console.log('d', error, myInfoData);
   if (networkStatus === 1) {
     return (
       <LoaderWrapper>
@@ -40,6 +42,7 @@ export default ({ pageIndex }) => {
         refreshTerm={refreshTerm}
         startPolling={startPolling}
         stopPolling={stopPolling}
+        myInfoLoading={myInfoLoading}
       />
     );
   }

@@ -37,13 +37,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
     setSubjectColor(color.hex);
   };
 
-  if (subjectLoading === true) {
-    return (
-      <LoaderWrapper>
-        <Loader />
-      </LoaderWrapper>
-    );
-  } else if (!subjectLoading && subjectData && subjectData.mySubject) {
+  if (!subjectLoading && subjectData && subjectData.mySubject) {
     subjectRefetch();
     return (
       <MySchedulePresenter
@@ -67,6 +61,12 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
         pageIndex={pageIndex}
         networkStatus={networkStatus}
       />
+    );
+  } else {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
     );
   }
 };

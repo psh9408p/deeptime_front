@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
 
@@ -8,6 +8,9 @@ export default ({ myInfoData, networkStatus, refreshTerm }) => {
   const [selectDate, setSelectDate] = useState(new Date());
   const oneDayHours_tmp = Array.from(Array(24).keys());
   const oneDayHours = oneDayHours_tmp.map(String);
+  const todayCalLoading = useRef(true);
+  const weekCalLoading = useRef(true);
+  const monthCalLoading = useRef(true);
 
   return (
     <ClassStaPresenter
@@ -18,6 +21,9 @@ export default ({ myInfoData, networkStatus, refreshTerm }) => {
       networkStatus={networkStatus}
       refreshTerm={refreshTerm}
       oneDayHours={oneDayHours}
+      todayCalLoading={todayCalLoading}
+      weekCalLoading={weekCalLoading}
+      monthCalLoading={monthCalLoading}
     />
   );
 };

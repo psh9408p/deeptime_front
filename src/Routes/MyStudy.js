@@ -29,6 +29,23 @@ const MyButton = styled.button`
   }
 `;
 
+const MyButton_Blue = styled.button`
+  width: 100px;
+  border: 0;
+  outline-color: black;
+  color: white;
+  background-color: ${(props) => props.theme.classicBlue};
+  border-radius: ${(props) => props.theme.borderRadius};
+  font-weight: 600;
+  text-align: center;
+  padding: 7px 0px;
+  font-size: 14px;
+  cursor: pointer;
+  &:not(:last-child) {
+    margin-right: 60px;
+  }
+`;
+
 export default () => {
   const myTabContents = ['나의 통계', '나의 스케줄'];
   const myTabs = useTabs(0, myTabContents);
@@ -36,11 +53,24 @@ export default () => {
   return (
     <Wrapper>
       <Tabs>
-        {myTabs.content.map((section, index) => (
-          <MyButton key={index} onClick={() => myTabs.changeItem(index)}>
-            {section}
-          </MyButton>
-        ))}
+        {myTabs.content.map((section, index) => {
+          if (index === myTabs.currentIndex) {
+            return (
+              <MyButton_Blue
+                key={index}
+                onClick={() => myTabs.changeItem(index)}
+              >
+                {section}
+              </MyButton_Blue>
+            );
+          } else {
+            return (
+              <MyButton key={index} onClick={() => myTabs.changeItem(index)}>
+                {section}
+              </MyButton>
+            );
+          }
+        })}
       </Tabs>
       <MyStudyTabs pageIndex={myTabs.currentIndex} />
     </Wrapper>

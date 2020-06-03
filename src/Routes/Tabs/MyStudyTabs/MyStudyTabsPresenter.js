@@ -10,6 +10,7 @@ export default ({
   refreshTerm,
   startPolling,
   stopPolling,
+  myInfoLoading,
 }) => {
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -22,6 +23,12 @@ export default ({
 
   if (pageIndex === 0) {
     startPolling(Number(refreshTerm.value) * 1000);
+    console.log('a', networkStatus, myInfoLoading);
+    if (networkStatus === 8) {
+      console.log('b', networkStatus, myInfoLoading);
+      stopPolling();
+      console.log('c', networkStatus, myInfoLoading);
+    }
     return (
       <MyStatistics
         myInfoData={myInfoData}
