@@ -370,7 +370,6 @@ export default ({
   networkStatus,
   refreshTerm,
   oneDayHours,
-  calLoading,
 }) => {
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
@@ -666,8 +665,8 @@ export default ({
       resultArray_scheduleT,
     );
     // AreaChart 계산
-    taskArray.forEach(function (item, index) {
-      taskArray[index] = item / 60;
+    taskArray_week.forEach(function (item, index) {
+      taskArray_week[index] = item / 60;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule_week !== []) {
@@ -773,8 +772,8 @@ export default ({
       resultArray_scheduleT,
     );
     // AreaChart 계산
-    taskArray.forEach(function (item, index) {
-      taskArray[index] = item / 60;
+    taskArray_month.forEach(function (item, index) {
+      taskArray_month[index] = item / 60;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule_month !== []) {
@@ -799,7 +798,6 @@ export default ({
   };
 
   if (7 === networkStatus) {
-    calLoading.current = true;
     if (StaTabs.currentIndex === 0) {
       todaySchedule_calculate();
       todayGraph_calculate();
@@ -810,7 +808,6 @@ export default ({
       monthSchedule_calculate();
       monthGraph_calculate();
     }
-    calLoading.current = false;
   }
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -857,48 +854,33 @@ export default ({
                   data_1={taskArray_schedule}
                   data_2={taskArray_scheduleT}
                   labels={schedule_label}
-                  label_1={'학습 시간'}
-                  label_2={'목표 시간'}
-                  title={'과목별 학습량'}
-                  title_x={'학습량 (분)'}
+                  label_1={'학습'}
+                  label_2={'목표'}
+                  title={'과목별 학습 시간'}
+                  title_x={'시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
                 <AreaChart
                   data_1={taskArray}
                   labels={oneDayHours}
-                  title={'시간별 학습량'}
-                  title_y={'학습량 (분)'}
+                  title={'시간별 학습 시간'}
+                  title_y={'학습 시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
                 <DonutChart_today
                   data={donutData}
                   color={rgbBox}
-                  title={'학습 성취도'}
-                  labels={['학습 시간', '학습 외 시간', '남은 시간']}
+                  title={'학습 로그'}
+                  labels={['학습', '학습 외', '나머지']}
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
           </>
         )}
@@ -910,32 +892,22 @@ export default ({
                   data_1={taskArray_schedule_week}
                   data_2={taskArray_scheduleT_week}
                   labels={schedule_label}
-                  label_1={'학습 시간'}
-                  label_2={'목표 시간'}
-                  title={'과목별 학습량'}
-                  title_x={'학습량 (분)'}
+                  label_1={'학습'}
+                  label_2={'목표'}
+                  title={'과목별 학습 시간'}
+                  title_x={'시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
                 <AreaChart
                   data_1={taskArray_week}
                   labels={['일', '월', '화', '수', '목', '금', '토']}
-                  title={'요일별 학습량'}
-                  title_y={'학습량 (분)'}
+                  title={'요일별 학습 시간'}
+                  title_y={'시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -943,15 +915,10 @@ export default ({
                   data_1={donutData_1}
                   data_2={donutData_2}
                   title={'학습 성취도'}
-                  labels={['학습량', '목표량']}
+                  labels={['학습', '목표']}
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
           </>
         )}
@@ -963,32 +930,22 @@ export default ({
                   data_1={taskArray_schedule_month}
                   data_2={taskArray_scheduleT_month}
                   labels={schedule_label}
-                  label_1={'학습 시간'}
-                  label_2={'목표 시간'}
-                  title={'과목별 학습량'}
-                  title_x={'학습량 (분)'}
+                  label_1={'학습'}
+                  label_2={'목표'}
+                  title={'과목별 학습 시간'}
+                  title_x={'시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
                 <AreaChart
                   data_1={taskArray_month}
                   labels={daysOfMonth}
-                  title={'일별 학습량'}
-                  title_y={'학습량 (분)'}
+                  title={'일별 학습 시간'}
+                  title_y={'시간(분)'}
                 />
               </ChartWrap>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
             <StatisRow>
               <ChartWrap>
@@ -996,15 +953,10 @@ export default ({
                   data_1={donutData_1}
                   data_2={donutData_2}
                   title={'학습 성취도'}
-                  labels={['학습량', '목표량']}
+                  labels={['학습', '목표']}
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
-              {calLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
             </StatisRow>
           </>
         )}

@@ -24,7 +24,6 @@ export default ({ pageIndex }) => {
   } = useQuery(ME, {
     notifyOnNetworkStatusChange: true,
   });
-  console.log(networkStatus);
   if (networkStatus === 1) {
     return (
       <LoaderWrapper>

@@ -16,7 +16,7 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ pageIndex, myInfoData, myInfoRefetch }) => {
+export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
@@ -65,6 +65,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch }) => {
         deleteSubjectMutation={deleteSubjectMutation}
         subjectRefetch={subjectRefetch}
         pageIndex={pageIndex}
+        networkStatus={networkStatus}
       />
     );
   }

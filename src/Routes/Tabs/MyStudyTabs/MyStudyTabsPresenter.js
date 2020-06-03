@@ -36,6 +36,7 @@ export default ({
         pageIndex={pageIndex}
         myInfoData={myInfoData}
         myInfoRefetch={myInfoRefetch}
+        networkStatus={networkStatus}
       />
     );
   }

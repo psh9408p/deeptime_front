@@ -246,6 +246,7 @@ export default ({
   deleteSubjectMutation,
   subjectRefetch,
   pageIndex,
+  networkStatus,
 }) => {
   const mySubjectList = useSelect(
     subjectList.map((List) => `${List.name}`),
@@ -355,26 +356,28 @@ export default ({
 
   const calendars = subjectList; //과목 종류 넣기
   //스케줄 넣기
-  schedules = myData.schedules.map((List) => {
-    let category = 'time';
-    if (List.isAllDay === true) {
-      category = 'allday';
-    }
+  if (networkStatus !== 4) {
+    schedules = myData.schedules.map((List) => {
+      let category = 'time';
+      if (List.isAllDay === true) {
+        category = 'allday';
+      }
 
-    const schedule_tmp = {
-      calendarId: List.subjectId,
-      isAllDay: List.isAllDay,
-      isPrivate: List.isPrivate,
-      category,
-      location: List.location,
-      isVisible: true,
-      title: List.title,
-      id: List.id,
-      start: new Date(List.start),
-      end: new Date(List.end),
-    };
-    return schedule_tmp;
-  });
+      const schedule_tmp = {
+        calendarId: List.subjectId,
+        isAllDay: List.isAllDay,
+        isPrivate: List.isPrivate,
+        category,
+        location: List.location,
+        isVisible: true,
+        title: List.title,
+        id: List.id,
+        start: new Date(List.start),
+        end: new Date(List.end),
+      };
+      return schedule_tmp;
+    });
+  }
 
   const handleClickNextButton = () => {
     const calendarInstance = cal.current.getInstance();
