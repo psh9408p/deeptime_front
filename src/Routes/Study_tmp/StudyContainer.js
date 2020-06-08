@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StudyPresenter from './StudyPresenter';
 import useSelect from '../../Hooks/useSelect';
 import useTabs from '../../Hooks/useTabs';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { STUDENT_OF_CLASS } from './StudyQueries';
 
 let classId_tmp = '';

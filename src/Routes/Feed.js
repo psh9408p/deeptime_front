@@ -1,10 +1,10 @@
-import React from "react"
-import { Helmet } from "rl-react-helmet"
-import styled from "styled-components"
-import { gql } from "apollo-boost"
-import { useQuery } from "react-apollo-hooks"
-import Loader from "../Components/Loader"
-import Post from "../Components/Post"
+import React from 'react';
+import { Helmet } from 'rl-react-helmet';
+import styled from 'styled-components';
+import { gql } from 'apollo-boost';
+import { useQuery } from '@apollo/react-hooks';
+import Loader from '../Components/Loader';
+import Post from '../Components/Post';
 
 const FEED_QUERY = gql`
   {
@@ -34,14 +34,14 @@ const FEED_QUERY = gql`
       createdAt
     }
   }
-`
+`;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-`
+`;
 
 export default () => {
   // 새로고침을 통해 로그인 시 seeFeed 에러 고치는 법
@@ -51,7 +51,7 @@ export default () => {
   //   window.location.reload()
   // }
 
-  const { data, loading } = useQuery(FEED_QUERY)
+  const { data, loading } = useQuery(FEED_QUERY);
   return (
     <Wrapper>
       <Helmet>
@@ -61,7 +61,7 @@ export default () => {
       {!loading &&
         data &&
         data.seeFeed &&
-        data.seeFeed.map(post => (
+        data.seeFeed.map((post) => (
           <Post
             key={post.id}
             id={post.id}
@@ -76,5 +76,5 @@ export default () => {
           />
         ))}
     </Wrapper>
-  )
-}
+  );
+};

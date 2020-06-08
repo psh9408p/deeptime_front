@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation } from 'react-apollo-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
 import { DELETE_CLASS, EDIT_CLASS } from './ClassTabQueries';
 import ClassTabPresenter from './ClassTabPresenter';

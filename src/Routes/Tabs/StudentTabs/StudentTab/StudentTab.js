@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import EditButton from '../../../../Components/Buttons/EditButton';
-import { useMutation } from 'react-apollo-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import Popup from 'reactjs-popup';

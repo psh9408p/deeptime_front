@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
-import useInput from "../../Hooks/useInput"
-import PostPresenter from "./PostPresenter"
-import { useMutation } from "react-apollo-hooks"
-import { TOGGLE_LIKE, ADD_COMMENT } from "./PostQueries"
-import { toast } from "react-toastify"
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import useInput from '../../Hooks/useInput';
+import PostPresenter from './PostPresenter';
+import { useMutation } from '@apollo/react-hooks';
+import { TOGGLE_LIKE, ADD_COMMENT } from './PostQueries';
+import { toast } from 'react-toastify';
 
 const PostContainer = ({
   id,
@@ -15,57 +15,57 @@ const PostContainer = ({
   comments,
   createdAt,
   caption,
-  location
+  location,
 }) => {
-  const [isLikedS, setIsLiked] = useState(isLiked)
-  const [likeCountS, setLikeCount] = useState(likeCount)
-  const [currentItem, setCurrentItem] = useState(0)
-  const [selfComments, setSelfComments] = useState([])
-  const comment = useInput("")
+  const [isLikedS, setIsLiked] = useState(isLiked);
+  const [likeCountS, setLikeCount] = useState(likeCount);
+  const [currentItem, setCurrentItem] = useState(0);
+  const [selfComments, setSelfComments] = useState([]);
+  const comment = useInput('');
   const toggleLikeMutation = useMutation(TOGGLE_LIKE, {
-    variables: { postId: id }
-  })
+    variables: { postId: id },
+  });
   const addCommentMutation = useMutation(ADD_COMMENT, {
-    variables: { postId: id, text: comment.value }
-  })
+    variables: { postId: id, text: comment.value },
+  });
   const slide = () => {
-    const totalFiles = files.length
+    const totalFiles = files.length;
     if (currentItem === totalFiles - 1) {
-      setTimeout(() => setCurrentItem(0), 3000)
+      setTimeout(() => setCurrentItem(0), 3000);
     } else {
-      setTimeout(() => setCurrentItem(currentItem + 1), 3000)
+      setTimeout(() => setCurrentItem(currentItem + 1), 3000);
     }
-  }
+  };
   useEffect(() => {
-    slide()
-  }, [currentItem])
+    slide();
+  }, [currentItem]);
 
   const toggleLike = () => {
-    toggleLikeMutation()
+    toggleLikeMutation();
     if (isLikedS === true) {
-      setIsLiked(false)
-      setLikeCount(likeCountS - 1)
+      setIsLiked(false);
+      setLikeCount(likeCountS - 1);
     } else {
-      setIsLiked(true)
-      setLikeCount(likeCountS + 1)
+      setIsLiked(true);
+      setLikeCount(likeCountS + 1);
     }
-  }
+  };
 
-  const onKeyPress = async event => {
-    const { which } = event
+  const onKeyPress = async (event) => {
+    const { which } = event;
     if (which === 13) {
-      event.preventDefault()
+      event.preventDefault();
       try {
         const {
-          data: { addComment }
-        } = await addCommentMutation()
-        setSelfComments([...selfComments, addComment])
-        comment.setValue("")
+          data: { addComment },
+        } = await addCommentMutation();
+        setSelfComments([...selfComments, addComment]);
+        comment.setValue('');
       } catch {
-        toast.error("Cant send comment")
+        toast.error('Cant send comment');
       }
     }
-  }
+  };
 
   return (
     <PostPresenter
@@ -85,21 +85,21 @@ const PostContainer = ({
       onKeyPress={onKeyPress}
       selfComments={selfComments}
     />
-  )
-}
+  );
+};
 
 PostContainer.propTypes = {
   id: PropTypes.string.isRequired,
   user: PropTypes.shape({
     id: PropTypes.string.isRequired,
     avatar: PropTypes.string,
-    username: PropTypes.string.isRequired
+    username: PropTypes.string.isRequired,
   }).isRequired,
   files: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired
-    })
+      url: PropTypes.string.isRequired,
+    }),
   ).isRequired,
   likeCount: PropTypes.number.isRequired,
   isLiked: PropTypes.bool.isRequired,
@@ -109,13 +109,13 @@ PostContainer.propTypes = {
       text: PropTypes.string.isRequired,
       user: PropTypes.shape({
         id: PropTypes.string.isRequired,
-        username: PropTypes.string.isRequired
-      }).isRequired
-    })
+        username: PropTypes.string.isRequired,
+      }).isRequired,
+    }),
   ).isRequired,
   caption: PropTypes.string.isRequired,
   location: PropTypes.string,
-  createdAt: PropTypes.string.isRequired
-}
+  createdAt: PropTypes.string.isRequired,
+};
 
-export default PostContainer
+export default PostContainer;

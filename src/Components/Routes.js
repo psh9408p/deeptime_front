@@ -12,7 +12,7 @@ import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
 import Study from '../Routes/Study';
 import { ME } from '../SharedQueries';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import Loader from './Loader';
 import Review from '../Routes/Review';
 import Experience from '../Routes/Experience';

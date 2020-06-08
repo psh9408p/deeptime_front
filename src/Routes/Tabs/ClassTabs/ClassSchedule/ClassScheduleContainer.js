@@ -4,7 +4,7 @@ import Loader from '../../../../Components/Loader';
 import ClassSchedulePresenter from './ClassSchedulePresenter';
 import useSelect from '../../../../Hooks/useSelect';
 import useInput from '../../../../Hooks/useInput';
-import { useMutation, useQuery } from 'react-apollo-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import {
   SAVE_SCHEDULE,
   ADD_SUBJECT,

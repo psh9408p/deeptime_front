@@ -5,7 +5,7 @@ import Button_red from '../Components/Buttons/Button_red';
 import useInput from '../Hooks/useInput';
 import Textarea from '../Components/Textarea';
 import { gql } from 'apollo-boost';
-import { useMutation } from 'react-apollo-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
 import NumericInput from 'react-numeric-input';
 

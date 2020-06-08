@@ -3,7 +3,7 @@ import AuthPresenter from './AuthPresenter';
 import useInput from '../../Hooks/useInput';
 import useSelect from '../../Hooks/useSelect';
 import useSelect_dynamic from '../../Hooks/useSelect_dynamic';
-import { useMutation } from 'react-apollo-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import {
   REQUEST_LOGIN,
   CREATE_ACCOUNT,

@@ -4,10 +4,56 @@ import Chartjs from 'chart.js';
 export default ({ data, color, title, labels }) => {
   // const data_tmp_1 = 60;
   // const data_tmp_2 = 40;
+
+  // 현재 시간 계산을 위함
+  let nowTime_count =
+    Math.ceil((new Date().getHours() * 60 + new Date().getMinutes()) / 5) - 1;
+  if (nowTime_count === -1) {
+    nowTime_count = 0;
+  }
+
+  const currentTime_data = [
+    0,
+    0,
+    0,
+    0,
+    nowTime_count,
+    1,
+    288 - (nowTime_count + 1),
+  ];
+
   const chartConfig = {
     type: 'doughnut',
     data: {
       datasets: [
+        // {
+        //   data: [1],
+        //   backgroundColor: ['rgba(0, 0, 0, 0)'],
+        //   // borderColor: ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)'],
+        //   borderWidth: 1,
+        // },
+        {
+          data: currentTime_data,
+          backgroundColor: [
+            'rgba(123, 169, 235, 1)',
+            'rgba(233, 236, 244, 1)',
+            'rgba(15,76,130, 1)',
+            'rgba(255, 118, 117, 1)',
+            'rgba(0, 0, 0, 0)',
+            'rgba(255, 118, 117, 1)',
+            'rgba(0, 0, 0, 0)',
+          ],
+          borderColor: [
+            'rgba(123, 169, 235, 0)',
+            'rgba(233, 236, 244, 0)',
+            'rgba(15,76,130, 0)',
+            'rgba(255, 118, 117, 0)',
+            'rgba(0, 0, 0, 0)',
+            'rgba(255, 118, 117, 1)',
+            'rgba(0, 0, 0, 0)',
+          ],
+          borderWidth: 1,
+        },
         {
           data,
           // data: [data_tmp_1, data_tmp_2],
@@ -35,6 +81,12 @@ export default ({ data, color, title, labels }) => {
     }
   }, [chartContainer]);
 
+  //현재 시간전용 업데이트
+  const updateDataset_time = (datasetIndex, newData) => {
+    chartInstance.data.datasets[datasetIndex].data = newData;
+    chartInstance.update();
+  };
+
   const updateDataset = (datasetIndex, newData, color) => {
     chartInstance.data.datasets[datasetIndex].data = newData;
     chartInstance.data.datasets[datasetIndex].borderColor = color;
@@ -43,7 +95,8 @@ export default ({ data, color, title, labels }) => {
   };
 
   const AreaChartUpdate = () => {
-    updateDataset(0, data, color);
+    updateDataset_time(0, currentTime_data);
+    updateDataset(1, data, color);
   };
 
   const isFirstRun = useRef(true);

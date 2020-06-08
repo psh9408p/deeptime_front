@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Select from '../../../../Components/Select';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { STUDENT_OF_CLASS } from './ClassStaQueries';
 import Loader from '../../../../Components/Loader';
 import Avatar from '../../../../Components/Avatar';

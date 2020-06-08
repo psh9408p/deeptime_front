@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useQuery, useMutation } from 'react-apollo-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import AcademyTabsPresenter from './AcademyTabsPresenter';
 import { MY_ACADEMY, ADD_ACADEMY } from './AcademyTabsQueries';
 import Loader from '../../../Components/Loader';

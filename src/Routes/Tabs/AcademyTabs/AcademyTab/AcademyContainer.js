@@ -1,6 +1,6 @@
 import React from 'react';
 import { DELETE_ACADEMY, EDIT_ACADEMY } from './AcademyQueries';
-import { useMutation } from 'react-apollo-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
 import AcademyPresenter from './AcademyPresenter';
 

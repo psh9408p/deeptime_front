@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
 import { Logo, Shutter, User } from './Icons';
 import Avatar from './Avatar';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { ME } from '../SharedQueries';
 
 const Header = styled.header`
@@ -91,7 +91,7 @@ const PotalButton = styled.button`
 export default withRouter(() => {
   const [potal, setPotal] = useState();
 
-  const { data } = useQuery(ME);
+  const { data, loading } = useQuery(ME);
 
   const onClickPotal_student = () => {
     const detect_window = window.open(
@@ -102,83 +102,87 @@ export default withRouter(() => {
     setPotal(detect_window);
   };
 
-  return (
-    <Header>
-      <HeaderWrapper>
-        <HeaderColumn>
-          <Link to="/" replace>
-            <Logo />
-          </Link>
-        </HeaderColumn>
-        <HeaderColumn>
-          {data.me && data.me.loginPosition === 'student' && (
-            <AiBox>
-              <Shutter />
-              <PotalButton type="button" onClick={onClickPotal_student}>
-                학습
-              </PotalButton>
-              <AiHeaderLink to="/" replace>
-                출석
-              </AiHeaderLink>
-            </AiBox>
-          )}
+  if (!loading && data && data.me) {
+    return (
+      <Header>
+        <HeaderWrapper>
+          <HeaderColumn>
+            <Link to="/" replace>
+              <Logo />
+            </Link>
+          </HeaderColumn>
+          <HeaderColumn>
+            {data.me && data.me.loginPosition === 'student' && (
+              <AiBox>
+                <Shutter />
+                <PotalButton type="button" onClick={onClickPotal_student}>
+                  학습
+                </PotalButton>
+                <AiHeaderLink to="/" replace>
+                  출석
+                </AiHeaderLink>
+              </AiBox>
+            )}
+            {data.me && data.me.loginPosition.includes('manager') && (
+              <AiBox>
+                <Shutter />
+                <AiHeaderLink to="/" replace>
+                  출석
+                </AiHeaderLink>
+                <AiHeaderLink to="/supervision" replace>
+                  감독
+                </AiHeaderLink>
+                <AiHeaderLink to="/marking" replace>
+                  채점
+                </AiHeaderLink>
+              </AiBox>
+            )}
+          </HeaderColumn>
           {data.me && data.me.loginPosition.includes('manager') && (
-            <AiBox>
-              <Shutter />
-              <AiHeaderLink to="/" replace>
-                출석
-              </AiHeaderLink>
-              <AiHeaderLink to="/supervision" replace>
-                감독
-              </AiHeaderLink>
-              <AiHeaderLink to="/marking" replace>
-                채점
-              </AiHeaderLink>
-            </AiBox>
+            <HeaderColumn>
+              <HeaderLink to="/" replace>
+                학원
+              </HeaderLink>
+              <HeaderLink to="/class" replace>
+                클래스
+              </HeaderLink>
+              <HeaderLink to="/student" replace>
+                학생
+              </HeaderLink>
+              {!data.me ? (
+                <HeaderLink to="/#">
+                  <User />
+                </HeaderLink>
+              ) : (
+                <HeaderLink to={data.me.username} replace>
+                  <Avatar size="sm" url={data.me.avatar} />
+                </HeaderLink>
+              )}
+            </HeaderColumn>
           )}
-        </HeaderColumn>
-        {data.me && data.me.loginPosition.includes('manager') && (
-          <HeaderColumn>
-            <HeaderLink to="/" replace>
-              학원
-            </HeaderLink>
-            <HeaderLink to="/class" replace>
-              클래스
-            </HeaderLink>
-            <HeaderLink to="/student" replace>
-              학생
-            </HeaderLink>
-            {!data.me ? (
-              <HeaderLink to="/#">
-                <User />
+          {data.me && data.me.loginPosition === 'student' && (
+            <HeaderColumn>
+              <HeaderLink to="/mystudy" replace>
+                나의 학습
               </HeaderLink>
-            ) : (
-              <HeaderLink to={data.me.username} replace>
-                <Avatar size="sm" url={data.me.avatar} />
+              <HeaderLink to="/classstudy" replace>
+                클래스 학습
               </HeaderLink>
-            )}
-          </HeaderColumn>
-        )}
-        {data.me && data.me.loginPosition === 'student' && (
-          <HeaderColumn>
-            <HeaderLink to="/mystudy" replace>
-              나의 학습
-            </HeaderLink>
-            <HeaderLink to="/classstudy" replace>
-              클래스 학습
-            </HeaderLink>
-            {!data.me ? (
-              <HeaderLink to="/#">
-                <User />
-              </HeaderLink>
-            ) : (
-              <HeaderLink to={data.me.username} replace>
-                <Avatar size="sm" url={data.me.avatar} />
-              </HeaderLink>
-            )}
-          </HeaderColumn>
-        )}
-      </HeaderWrapper>
-    </Header>
-  );
+              {!data.me ? (
+                <HeaderLink to="/#">
+                  <User />
+                </HeaderLink>
+              ) : (
+                <HeaderLink to={data.me.username} replace>
+                  <Avatar size="sm" url={data.me.avatar} />
+                </HeaderLink>
+              )}
+            </HeaderColumn>
+          )}
+        </HeaderWrapper>
+      </Header>
+    );
+  } else {
+    return <></>;
+  }
 });

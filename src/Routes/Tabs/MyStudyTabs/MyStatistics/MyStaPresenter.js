@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
-import { useQuery } from 'react-apollo-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { ME } from './MyStaQueries';
 import styled, { keyframes } from 'styled-components';
 import Select from '../../../../Components/Select';
 import Loader from '../../../../Components/Loader';
 import Avatar from '../../../../Components/Avatar';
+import { Clock24 } from '../../../../Components/Image';
 import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
 import DonutChart from '../../../../Components/Charts/DonutChart';
@@ -34,6 +35,7 @@ const LoaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
   height: 100%;
   width: 100%;
 `;
@@ -234,6 +236,18 @@ const DonutChartValue = styled.div`
   font-size: 30px;
   font-weight: 600;
   padding-top: 173px;
+`;
+
+const ClockBox = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  padding-top: 72px;
+  padding-right: 3px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ClassButton = styled.button`
@@ -454,11 +468,7 @@ export default ({
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    rgbBox = [
-      'rgba(123, 169, 235, 1)',
-      'rgba(233, 236, 244, 1)',
-      'rgba(15,76,130, 1)',
-    ]; // 범례표시를 위해 야매로 0인 시간 3개 추가
+    rgbBox = [];
     // 오늘 생선된 시간이 있는 인덱스 구하기
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
@@ -528,7 +538,7 @@ export default ({
       });
     }
     // 도넛차트 계산
-    let slicedTimeBox = [[], [], []];
+    let slicedTimeBox = [];
     // console.log(todayTime.time_24);
     let slicedTimes = ObjectCopy(todayTime.time_24);
     while (true) {
@@ -813,7 +823,6 @@ export default ({
     }
   };
 
-  console.log(networkStatus);
   if (7 === networkStatus) {
     if (StaTabs.currentIndex === 0) {
       todaySchedule_calculate();
@@ -923,10 +932,13 @@ export default ({
                   data={donutData}
                   color={rgbBox}
                   title={'학습 로그'}
-                  labels={['학습', '학습 외', '나머지']}
+                  labels={['학습', '학습 외', '나머지', '현재 시간']}
                 />
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
+              <ClockBox>
+                <Clock24 />
+              </ClockBox>
               {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
