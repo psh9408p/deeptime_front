@@ -23,6 +23,8 @@ import TermsOfService from '../Routes/TermsOfService';
 import TermsOfPrivacy from '../Routes/TermsOfPrivacy';
 import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
+import Shop from '../Routes/Shop';
+import PaymentResult from '../Routes/PaymentResult';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -50,6 +52,8 @@ const LoggedInRoutes = () => {
           />
           <Route path="/mystudy" component={MyStudy} />
           <Route path="/classstudy" component={ClassStudy} />
+          <Route path="/shop" component={Shop} />
+          <Route path="/payment/result" component={PaymentResult} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>

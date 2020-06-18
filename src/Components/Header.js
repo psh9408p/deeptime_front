@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
-import { Logo, Shutter, User } from './Icons';
+import { Logo, Shutter, User, Shop } from './Icons';
 import Avatar from './Avatar';
 import { useQuery } from '@apollo/react-hooks';
 import { ME } from '../SharedQueries';
@@ -167,6 +167,9 @@ export default withRouter(() => {
               </HeaderLink>
               <HeaderLink to="/classstudy" replace>
                 클래스 학습
+              </HeaderLink>
+              <HeaderLink to="/shop">
+                <Shop />
               </HeaderLink>
               {!data.me ? (
                 <HeaderLink to="/#">
