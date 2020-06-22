@@ -35,11 +35,11 @@ export default withRouter(
       params: { username },
     },
   }) => {
-    const profileTabContents = ['나의 학교', '나의 학원', '나의 독서실'];
+    const profileTabContents = ['구독 / 결제', '개인'];
     const profileTabs = useTabs(0, profileTabContents);
 
     const { data, loading } = useQuery(GET_USER, { variables: { username } });
-    const logOut = useMutation(LOG_OUT);
+    const [logOut] = useMutation(LOG_OUT);
     return (
       <ProfilePresenter
         loading={loading}

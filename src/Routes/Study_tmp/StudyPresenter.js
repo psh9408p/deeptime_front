@@ -377,7 +377,7 @@ export default ({
     LoadModel();
   }, []);
 
-  const existToggleMutation = useMutation(UPDATE_EXISTTOGGLE);
+  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   const LoadModel = async () => {
     console.log('Load model');

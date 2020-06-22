@@ -33,12 +33,12 @@ const StudentTabsContainer = ({ pageIndex, pageIndexChange, classList }) => {
     loading: studentLoading,
     refetch: studentRefetch,
   } = useQuery(MY_STUDENT);
-  const confirmStudentMutation = useMutation(CONFIRM_STUDENT, {
+  const [confirmStudentMutation] = useMutation(CONFIRM_STUDENT, {
     variables: { email: studentEmail.value },
   });
 
-  const addStudentMutation = useMutation(ADD_STUDENT);
-  // const connectSeatMutation = useMutation(CON_SEAT, {
+  const [addStudentMutation] = useMutation(ADD_STUDENT);
+  // const [connectSeatMutation] = useMutation(CON_SEAT, {
   //   variables: { email: studentEmail_seat.value, seatId: seatId.value },
   // });
 

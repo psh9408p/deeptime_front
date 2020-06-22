@@ -4,6 +4,44 @@ import queryString from 'query-string';
 import { Card } from '../Components/Icons';
 import Button_pay from '../Components/Buttons/Button_pay';
 import { useHistory } from 'react-router-dom';
+import { gql } from 'apollo-boost';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import Loader from '../Components/Loader';
+
+export const MY_PAYMENTSET = gql`
+  query myPaymentSet {
+    myPaymentSet {
+      id
+      paymentDate
+      freeUse
+      membershipDate
+      user {
+        id
+        email
+        fullName
+        phoneNumber
+      }
+    }
+  }
+`;
+
+export const PAYMENT_BILL = gql`
+  mutation payment_bill(
+    $paymentSet_id: String!
+    $freeUse: Boolean!
+    $card_name: String!
+  ) {
+    payment_bill(
+      paymentSet_id: $paymentSet_id
+      freeUse: $freeUse
+      card_name: $card_name
+    )
+  }
+`;
+
+const LoaderWrapper = styled.div`
+  margin: 100px 0px;
+`;
 
 const Wrapper = styled.div`
   max-width: 800px;
@@ -42,54 +80,129 @@ const ButtonWrap = styled.div`
 export default () => {
   let history = useHistory();
 
-  const billingCallback = (response) => {
-    console.log(response);
-    const query = queryString.stringify(response);
-    history.push(`/payment/result?${query}`);
-  };
+  const {
+    data: paymentSetData,
+    loading: paymentSetLoading,
+    refetch: paymentSetRefetch,
+  } = useQuery(MY_PAYMENTSET);
+
+  const [payment_bill_mutation] = useMutation(PAYMENT_BILL);
+
+  // const billingCallback = async (response) => {
+  //   console.log('a', response);
+  //   const query = queryString.stringify(response);
+  //   if (response.success) {
+  //     try {
+  //       await payment_bill_mutation({
+  //         variables: { paymentSet_id: id, freeUse },
+  //       });
+  //     } catch (e) {
+  //       const realText = e.message.split('GraphQL error: ');
+  //       alert(realText[1]);
+  //     }
+  //   }
+  //   history.push(`/payment/result?${query}`);
+  // };
 
   const billingOnClick = () => {
     const { IMP } = window;
     IMP.init(process.env.REACT_APP_IMPORT_CODE);
+    const { id, freeUse, membershipDate, user } = paymentSetData.myPaymentSet;
+
+    // if (freeUse) {
+    //   if (
+    //     window.confirm(
+    //       '이미 무료 혜택을 받으셔서 바로 결제가 진행됩니다.\n그래도 진행하시겠습니까?',
+    //     ) === false
+    //   ) {
+    //     return;
+    //   }
+    // }
+
+    // IMP.request_pay(
+    //   {
+    //     pg: 'danal',
+    //     pay_method: 'card', // 'card'만 지원됩니다.
+    //     merchant_uid: 'iam_' + new Date().getTime(),
+    //     customer_uid: user.id, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
+    //     name: '정기결제 카드 등록',
+    //     amount: 0, // 빌링키 발급만 진행하며 결제승인을 하지 않습니다.
+    //     buyer_email: user.email,
+    //     buyer_name: user.fullName,
+    //     buyer_tel: user.phoneNumber,
+    //   },
+    //   billingCallback(),
+    // );
     IMP.request_pay(
       {
-        pay_method: 'card', // 'card'만 지원됩니다.
+        // param
+        pg: 'danal',
+        pay_method: 'card', // "card"만 지원됩니다
         merchant_uid: 'iam_' + new Date().getTime(),
-        name: '최초인증결제',
-        amount: 0, // 빌링키 발급만 진행하며 결제승인을 하지 않습니다.
-        customer_uid: 'ck9v23v2t009d0741628dfc34', //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
-        buyer_email: 'iamport@siot.do',
-        buyer_name: '정상헌',
-        buyer_tel: '02-1234-1234',
+        customer_uid: user.id, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
+        name: '정기결제 카드 등록',
+        amount: 0, // 0 으로 설정하여 빌링키 발급만 진행합니다.
+        buyer_email: user.email,
+        buyer_name: user.fullName,
+        buyer_tel: user.phoneNumber,
       },
-      billingCallback,
+      async function (response) {
+        // callback
+        if (response.success) {
+          try {
+            await payment_bill_mutation({
+              variables: {
+                paymentSet_id: id,
+                freeUse,
+                card_name: response.card_name,
+              },
+            });
+          } catch (e) {
+            response.success = false;
+            const realText = e.message.split('GraphQL error: ');
+            response.error_msg = realText[1];
+          }
+        }
+        const query = queryString.stringify(response);
+        history.push(`/payment/result?${query}`);
+      },
     );
   };
 
-  return (
-    <Wrapper>
-      <Card />
-      <TitleDiv>
-        1개월 무료 혜택으로
-        <br />
-        IAM의 모든 학습 기능을 체험해보세요.
-      </TitleDiv>
-      <DetailUl>
-        <li>1개월 무료 이용 후 자동결제 됩니다.</li>
-        <li>
-          (무료)이용 기간 만료 전에 구독을 해지하시면 다음 예약 결제가
-          취소됩니다.
-        </li>
-        <li>1개월 무료 이용은 계정당 1회만 제공됩니다.</li>
-      </DetailUl>
-      <ButtonWrap>
-        <Button_pay
-          text={
-            '구독(카드 등록) 하기' + '\xa0\xa0\xa0\xa0\xa0\xa0' + '9,900원/월'
-          }
-          onClick={billingOnClick}
-        />
-      </ButtonWrap>
-    </Wrapper>
-  );
+  if (!paymentSetLoading && paymentSetData && paymentSetData.myPaymentSet) {
+    return (
+      <Wrapper>
+        <Card />
+        <TitleDiv>
+          1개월 무료 혜택으로
+          <br />
+          IAM의 모든 학습 기능을 체험해보세요.
+        </TitleDiv>
+        <DetailUl>
+          <li>1개월 무료 이용 후 자동결제 됩니다.</li>
+          <li>
+            (무료)이용 기간 만료 전에 구독을 해지하시면 다음 예약 결제가
+            취소됩니다.
+          </li>
+          <li>1개월 무료 이용은 계정당 1회만 제공됩니다.</li>
+        </DetailUl>
+        <ButtonWrap>
+          <Button_pay
+            text={
+              '구독 (카드 등록)' +
+              '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' +
+              '9,900원/월'
+            }
+            onClick={billingOnClick}
+          />
+        </ButtonWrap>
+      </Wrapper>
+    );
+  } else {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
+    );
+  }
 };

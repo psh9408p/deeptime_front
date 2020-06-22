@@ -39,8 +39,8 @@ export default function Attendance({ Mydata }) {
     LoadCamera();
   }, []);
 
-  const existToggleTableMutation = useMutation(UPDATE_EXISTTOGGLETABLE);
-  const existToggleMutation = useMutation(UPDATE_EXISTTOGGLE);
+  const [existToggleTableMutation] = useMutation(UPDATE_EXISTTOGGLETABLE);
+  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   const LoadModel = async () => {
     console.log('Load model');

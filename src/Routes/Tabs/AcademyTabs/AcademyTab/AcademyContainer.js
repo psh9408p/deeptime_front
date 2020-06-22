@@ -16,10 +16,10 @@ export default ({
   openSearchURL,
   clearAcademy,
 }) => {
-  const deleteAcademyMutation = useMutation(DELETE_ACADEMY, {
+  const [deleteAcademyMutation] = useMutation(DELETE_ACADEMY, {
     variables: { zipCode: academy.zipCode },
   });
-  const editAcademyMutation = useMutation(EDIT_ACADEMY, {
+  const [editAcademyMutation] = useMutation(EDIT_ACADEMY, {
     variables: {
       name: academyName.value,
       zipCode: academyZipCode.value,

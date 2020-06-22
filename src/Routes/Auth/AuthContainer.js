@@ -53,10 +53,10 @@ export default () => {
   const emailKey = useInput('');
   const phoneNumber = useInput('');
   const phoneKey = useInput('');
-  const requestLoginMutation = useMutation(REQUEST_LOGIN, {
+  const [requestLoginMutation] = useMutation(REQUEST_LOGIN, {
     variables: { email: email.value, password: password.value },
   });
-  const createAccountMutation = useMutation(CREATE_ACCOUNT, {
+  const [createAccountMutation] = useMutation(CREATE_ACCOUNT, {
     variables: {
       username: username.value,
       email: email.value,
@@ -70,46 +70,46 @@ export default () => {
       studyGroup: studyGroup.option,
     },
   });
-  const localLogInMutation = useMutation(LOCAL_LOG_IN);
-  const sPhoneVerificationMutation = useMutation(S_PHONE_VERIFICATION, {
+  const [localLogInMutation] = useMutation(LOCAL_LOG_IN);
+  const [sPhoneVerificationMutation] = useMutation(S_PHONE_VERIFICATION, {
     variables: {
       phoneNumber: phoneNumber.value,
     },
   });
-  const cPhoneVerificationMutation = useMutation(C_PHONE_VERIFICATION, {
+  const [cPhoneVerificationMutation] = useMutation(C_PHONE_VERIFICATION, {
     variables: {
       phoneNumber: phoneNumber.value,
       key: phoneKey.value,
     },
   });
-  const sEmailVerificationMutation = useMutation(S_EMAIL_VERIFICATION, {
+  const [sEmailVerificationMutation] = useMutation(S_EMAIL_VERIFICATION, {
     variables: {
       emailAdress: email.value,
     },
   });
-  const cEmailVerificationMutation = useMutation(C_EMAIL_VERIFICATION, {
+  const [cEmailVerificationMutation] = useMutation(C_EMAIL_VERIFICATION, {
     variables: {
       emailAdress: email.value,
       key: emailKey.value,
     },
   });
-  const sPhoneFindEmailMutation = useMutation(S_PHONE_FINDEMAIL, {
+  const [sPhoneFindEmailMutation] = useMutation(S_PHONE_FINDEMAIL, {
     variables: {
       phoneNumber: phoneNumber.value,
     },
   });
-  const cPhoneFindEmailMutation = useMutation(C_PHONE_FINDEMAIL, {
+  const [cPhoneFindEmailMutation] = useMutation(C_PHONE_FINDEMAIL, {
     variables: {
       phoneNumber: phoneNumber.value,
       key: phoneKey.value,
     },
   });
-  const sEmailFindPasswordMutation = useMutation(S_EMAIL_FINDPASSWORD, {
+  const [sEmailFindPasswordMutation] = useMutation(S_EMAIL_FINDPASSWORD, {
     variables: {
       emailAdress: email.value,
     },
   });
-  const cEmailFindPasswordMutation = useMutation(C_EMAIL_FINDPASSWORD, {
+  const [cEmailFindPasswordMutation] = useMutation(C_EMAIL_FINDPASSWORD, {
     variables: {
       emailAdress: email.value,
       key: emailKey.value,

@@ -34,7 +34,7 @@ export default ({
     loading: classLoading,
     refetch: classRefetch,
   } = useQuery(MY_CLASS);
-  const addClassMutation = useMutation(ADD_CLASS);
+  const [addClassMutation] = useMutation(ADD_CLASS);
 
   const clearClass = async () => {
     className.setValue('');

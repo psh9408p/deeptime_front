@@ -1,30 +1,36 @@
-import React, { useEffect, useRef, useState, createRef, RadioButton } from "react"
-import * as tf from "@tensorflow/tfjs"
-import * as cocoSsd from "@tensorflow-models/coco-ssd"
-import * as posenet from "@tensorflow-models/posenet"
-import * as faceapi from "face-api.js"
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  createRef,
+  RadioButton,
+} from 'react';
+import * as tf from '@tensorflow/tfjs';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
+import * as posenet from '@tensorflow-models/posenet';
+import * as faceapi from 'face-api.js';
 
 export default function Supervision() {
-  const [modelDetect, setModelDetect] = useState(null)
-  const [modelPose, setModelPose] = useState(null)
-  const [modelFace, setModelFace] = useState(null)
-  const [detectButton, setDetectbutton] = useState(true)
-  const [poseButton, setPosebutton] = useState(true)
-  const [faceButton, setFacebutton] = useState(true)
+  const [modelDetect, setModelDetect] = useState(null);
+  const [modelPose, setModelPose] = useState(null);
+  const [modelFace, setModelFace] = useState(null);
+  const [detectButton, setDetectbutton] = useState(true);
+  const [poseButton, setPosebutton] = useState(true);
+  const [faceButton, setFacebutton] = useState(true);
   // const [update_existToggle, { data }] = useMutation(UPDATE_EXISTTOGGLE)
 
-  const [value, setValue] = useState("on")
+  const [value, setValue] = useState('on');
 
   // const videoRef = useRef([createRef(), createRef()])
-  const video1 = useRef()
+  const video1 = useRef();
   // const video2 = useRef()
-  const videos = [video1]
+  const videos = [video1];
   // const canvasRef = useRef([createRef(), createRef()])
-  const canvas1 = createRef()
+  const canvas1 = createRef();
   // const canvas2 = createRef()
-  const canvases = [canvas1]
+  const canvases = [canvas1];
 
-  const BOUNDING_BOX_LABEL = "Student"
+  const BOUNDING_BOX_LABEL = 'Student';
 
   // const videos = [
   //   document.getElementById("video1"),
@@ -36,14 +42,14 @@ export default function Supervision() {
   // 1. LoadModel
 
   const LoadModel = async () => {
-    console.log("Load model")
+    console.log('Load model');
 
-    const loadedModelDetect = await cocoSsd.load({ base: "mobilenet_v2" })
-    setModelDetect(loadedModelDetect)
+    const loadedModelDetect = await cocoSsd.load({ base: 'mobilenet_v2' });
+    setModelDetect(loadedModelDetect);
 
-    const loadedModelPose = await posenet.load()
-    setModelPose(loadedModelPose)
-    console.log(modelPose)
+    const loadedModelPose = await posenet.load();
+    setModelPose(loadedModelPose);
+    console.log(modelPose);
 
     // const MODEL_URL = "/models"
 
@@ -52,48 +58,48 @@ export default function Supervision() {
     // const loadModelFace = await faceapi.loadFaceRecognitionModel(MODEL_URL)
     // setModelFace(loadModelFace)
     // console.log(loadModelFace)
-  }
+  };
 
   // for # Camera
   // 1. SetVideoElement
   // 1. LoadCamera
   // 1. ConnectElAndCamera
   const LoadCamera = async () => {
-    console.log("Load camera")
+    console.log('Load camera');
 
-    console.log(videos)
+    console.log(videos);
     const getUserMedia =
       navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
+      navigator.msGetUserMedia;
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      console.log("enumerateDevices() not supported.")
-      return
+      console.log('enumerateDevices() not supported.');
+      return;
     }
 
-    const deviceIds = await navigator.mediaDevices.enumerateDevices()
-    const videoDeviceIds = []
+    const deviceIds = await navigator.mediaDevices.enumerateDevices();
+    const videoDeviceIds = [];
 
-    deviceIds.forEach(function(deviceId) {
-      if (deviceId.kind === "videoinput") {
-        videoDeviceIds.push(deviceId)
+    deviceIds.forEach(function (deviceId) {
+      if (deviceId.kind === 'videoinput') {
+        videoDeviceIds.push(deviceId);
       }
-    })
-    console.log("getusermedia")
-    console.log(getUserMedia)
+    });
+    console.log('getusermedia');
+    console.log(getUserMedia);
 
     for (let i = 0; i < videoDeviceIds.length; i++) {
       if (getUserMedia) {
         navigator.mediaDevices
           .getUserMedia({ video: { deviceId: videoDeviceIds[i].deviceId } })
-          .then(function(stream) {
-            videos[i].current.srcObject = stream
+          .then(function (stream) {
+            videos[i].current.srcObject = stream;
           })
-          .catch(function(error) {
-            console.log("Something went wrong!")
-          })
+          .catch(function (error) {
+            console.log('Something went wrong!');
+          });
       }
     }
 
@@ -109,7 +115,7 @@ export default function Supervision() {
     //         })
     //     }
     //   })
-  }
+  };
 
   //   const webcamElement = document.getElementById("webcam")
   //   console.log(webcamElement)
@@ -123,14 +129,14 @@ export default function Supervision() {
         minPoseConfidence: 0.15,
         minPartConfidence: 0.1,
         scoreThreshold: 0.5,
-        nmsRadius: 30
-      })
-      console.log("Pose")
-      console.log(posePredictions)
+        nmsRadius: 30,
+      });
+      console.log('Pose');
+      console.log(posePredictions);
 
-      const objectPredictions = await modelDetect.detect(video)
-      console.log("object")
-      console.log(objectPredictions)
+      const objectPredictions = await modelDetect.detect(video);
+      console.log('object');
+      console.log(objectPredictions);
 
       //   let facePredinctions = await faceapi
       //     .detectAllFaces(video)
@@ -139,66 +145,89 @@ export default function Supervision() {
       //   console.log(facePredinctions)
 
       // const personDetections = objectPredictions.filter(p => p.class === "person")
-      showDetections(video, canvas, posePredictions, objectPredictions)
+      showDetections(video, canvas, posePredictions, objectPredictions);
     } catch (error) {
-      console.log("Couldn't start the webcam")
-      console.error(error)
+      console.log("Couldn't start the webcam");
+      console.error(error);
     }
-  }
+  };
 
-  const showDetections = (video, canvas, posePredictions, objectPredictions) => {
-    const area_data = 3
-    const ctx = canvas.current.getContext("2d")
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-    ctx.drawImage(video, 0, 0)
-    const font = "24px helvetica"
-    ctx.font = font
-    ctx.textBaseline = "top"
+  const showDetections = (
+    video,
+    canvas,
+    posePredictions,
+    objectPredictions,
+  ) => {
+    const area_data = 3;
+    const ctx = canvas.current.getContext('2d');
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(video, 0, 0);
+    const font = '24px helvetica';
+    ctx.font = font;
+    ctx.textBaseline = 'top';
 
     if (detectButton) {
-      objectPredictions.forEach(prediction => {
-        ctx.strokeStyle = "red"
-        ctx.lineWidth = 6
-        ctx.strokeRect(...prediction.bbox)
+      objectPredictions.forEach((prediction) => {
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(...prediction.bbox);
 
-        const x = prediction.bbox[0]
-        const y = prediction.bbox[1]
-        const height = prediction.bbox[3]
+        const x = prediction.bbox[0];
+        const y = prediction.bbox[1];
+        const height = prediction.bbox[3];
 
-        ctx.fillStyle = "red"
-        const textWidth = ctx.measureText(BOUNDING_BOX_LABEL).width
-        const textHeight = parseInt(font, 10)
-        ctx.fillRect(x, y, textWidth + 10, textHeight + 5)
-        ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
+        ctx.fillStyle = 'red';
+        const textWidth = ctx.measureText(BOUNDING_BOX_LABEL).width;
+        const textHeight = parseInt(font, 10);
+        ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
+        ctx.fillRect(
+          x,
+          y + height - textHeight - 5,
+          textWidth + 15,
+          textHeight + 20,
+        );
 
-        ctx.fillStyle = "#FFFFFF"
-        ctx.fillText(BOUNDING_BOX_LABEL, x + 5, y)
-        ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
-      })
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(BOUNDING_BOX_LABEL, x + 5, y);
+        ctx.fillText(
+          prediction.score.toFixed(2),
+          x + 5,
+          y + height - textHeight,
+        );
+      });
     }
     // poses[i].keypoints[j].position.x, poses[i].keypoints[j].position.y
     if (poseButton) {
-      posePredictions.forEach(poses => {
-        ctx.strokeStyle = "red"
-        ctx.lineWidth = 6
+      posePredictions.forEach((poses) => {
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 6;
 
-        const area = new Array(area_data)
+        const area = new Array(area_data);
         for (var i = 0; i < area.length; i++) {
-          area[i] = false
+          area[i] = false;
         }
         //   const img_width = video.webcamVideoElement.width
-        const img_width = video.width
-        ctx.strokeStyle = "#00FFFF"
-        ctx.lineWidth = 4
+        const img_width = video.width;
+        ctx.strokeStyle = '#00FFFF';
+        ctx.lineWidth = 4;
         for (var j = 0; j < poses.keypoints.length; j++) {
-          ctx.strokeRect(poses.keypoints[j].position.x, poses.keypoints[j].position.y, 1, 1)
+          ctx.strokeRect(
+            poses.keypoints[j].position.x,
+            poses.keypoints[j].position.y,
+            1,
+            1,
+          );
 
           // console.log("in stroke")
-          area[Math.floor((poses.keypoints[0].position.x / img_width) * area.length)] = true
+          area[
+            Math.floor(
+              (poses.keypoints[0].position.x / img_width) * area.length,
+            )
+          ] = true;
           // console.log(ctx)
         }
 
-        console.log(area)
+        console.log(area);
 
         //   ctx.fillStyle = "red"
         //   const textWidth = ctx.measureText(BOUNDING_BOX_LABEL).width
@@ -209,7 +238,7 @@ export default function Supervision() {
         //   ctx.fillStyle = "#FFFFFF"
         //   ctx.fillText(BOUNDING_BOX_LABEL, x + 5, y)
         //   ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
-      })
+      });
     }
     // if (faceButton) {
     //   facePredinctions.forEach(detection => {
@@ -232,18 +261,18 @@ export default function Supervision() {
     //   while (new Date().getTime() < start + delay);
     // }
     // sleep(1000)
-  }
+  };
   useEffect(() => {
-    LoadModel()
-    LoadCamera()
-  }, [])
+    LoadModel();
+    LoadCamera();
+  }, []);
 
   setInterval(() => {
     if (modelPose !== null && modelDetect !== null) {
-      detectFromVideoFrame(videos[0].current, canvases[0])
+      detectFromVideoFrame(videos[0].current, canvases[0]);
       // detectFromVideoFrame(videos[1].current, canvases[1])
     }
-  }, 5000)
+  }, 5000);
 
   //   const handleLoadedData = () => {
   //     // console.log("first")
@@ -259,21 +288,21 @@ export default function Supervision() {
   //   }
 
   const Toggle = (toggleValue, togglesetValue, toggleName) => {
-    const toggle = () => togglesetValue(!toggleValue)
+    const toggle = () => togglesetValue(!toggleValue);
     return (
       <div>
         {toggleName}
-        <button onClick={toggle}>{toggleValue ? "ON" : "OFF"}</button>
+        <button onClick={toggle}>{toggleValue ? 'ON' : 'OFF'}</button>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div>
       <div>인공지능 기술 선택하기</div>
       {(detectButton, poseButton)}
-      {Toggle(detectButton, setDetectbutton, "Detection")}
-      {Toggle(poseButton, setPosebutton, "Pose")}
+      {Toggle(detectButton, setDetectbutton, 'Detection')}
+      {Toggle(poseButton, setPosebutton, 'Pose')}
       {/* {Toggle(faceButton, setFacebutton, "Face")} */}
 
       <div>
@@ -302,7 +331,7 @@ export default function Supervision() {
         {/* <canvas ref={canvas2} width="640" height="480" /> */}
       </div>
     </div>
-  )
+  );
 
   // and recycle
   // 1. Detection

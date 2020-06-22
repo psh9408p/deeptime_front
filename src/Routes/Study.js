@@ -81,7 +81,7 @@ export default function Attendance({ Mydata }) {
     LoadModel();
   }, []);
 
-  const existToggleMutation = useMutation(UPDATE_EXISTTOGGLE);
+  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   const LoadModel = async () => {
     console.log('Load model');

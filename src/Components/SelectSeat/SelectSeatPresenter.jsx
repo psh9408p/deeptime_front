@@ -40,7 +40,7 @@ const Sel = () => {
   const canvas1 = createRef();
   const canvas2 = createRef();
   const canvases = [canvas1, canvas2];
-  const existToggleMutation = useMutation(UPDATE_EXISTTOGGLE);
+  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
   const loadSeatQuery = useQuery(LOAD_SEAT);
 
   // for (var i = 0; i < area.length; i++) {

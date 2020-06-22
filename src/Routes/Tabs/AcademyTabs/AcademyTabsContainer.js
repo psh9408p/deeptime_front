@@ -31,7 +31,7 @@ export default ({ pageIndex, pageIndexChange }) => {
   );
   const academyDetailAddress = useInput('');
 
-  const addAcademyMutation = useMutation(ADD_ACADEMY, {
+  const [addAcademyMutation] = useMutation(ADD_ACADEMY, {
     variables: {
       name: academyName.value,
       zipCode: academyZipCode.value,

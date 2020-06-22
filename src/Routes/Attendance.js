@@ -198,7 +198,7 @@ export default ({ Mydata, MyRefetch }) => {
     Mydata.me.targetTimeBox.sunday,
   ); // 일
 
-  const editTargetTimeBoxMutation = useMutation(EDIT_TARGETTIMEBOX, {
+  const [editTargetTimeBoxMutation] = useMutation(EDIT_TARGETTIMEBOX, {
     variables: {
       monday: targetTime_1,
       tuesday: targetTime_2,
@@ -210,25 +210,25 @@ export default ({ Mydata, MyRefetch }) => {
     },
   });
 
-  const checkAttendanceMutation = useMutation(CHECK_ATTENDANCE, {
+  const [checkAttendanceMutation] = useMutation(CHECK_ATTENDANCE, {
     variables: {
       email: Mydata.me.email,
     },
   });
 
-  const endAttendanceMutation = useMutation(END_ATTENDANCE, {
+  const [endAttendanceMutation] = useMutation(END_ATTENDANCE, {
     variables: {
       email: Mydata.me.email,
     },
   });
 
-  const reAttendanceMutation = useMutation(RE_ATTENDANCE, {
+  const [reAttendanceMutation] = useMutation(RE_ATTENDANCE, {
     variables: {
       email: Mydata.me.email,
     },
   });
 
-  const checkAbsenceMutation = useMutation(CHECK_ABSENCE, {
+  const [checkAbsenceMutation] = useMutation(CHECK_ABSENCE, {
     variables: {
       email: Mydata.me.email,
       absenceReason: StatusReason.value,

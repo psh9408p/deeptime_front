@@ -152,17 +152,17 @@ export default ({
     return null;
   }
 
-  const deleteStudentMutation = useMutation(DELETE_STUDENT, {
+  const [deleteStudentMutation] = useMutation(DELETE_STUDENT, {
     variables: {
       email: student.email,
       academyId: student.academies[0].id,
       classId: student.classesOfAcademy[0].id,
     },
   });
-  // const disconSeatMutation = useMutation(DISCON_SEAT, {
+  // const [disconSeatMutation] = useMutation(DISCON_SEAT, {
   //   variables: { email: student.email },
   // });
-  const editStudentMutation = useMutation(EDIT_STUDENT);
+  const [editStudentMutation] = useMutation(EDIT_STUDENT);
 
   const onSubmit = async () => {
     try {

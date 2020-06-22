@@ -12,11 +12,11 @@ export default ({
   classBio,
   clearClass,
 }) => {
-  const deleteClassMutation = useMutation(DELETE_CLASS, {
+  const [deleteClassMutation] = useMutation(DELETE_CLASS, {
     variables: { id: classRoom.id },
   });
 
-  const editClassMutation = useMutation(EDIT_CLASS, {
+  const [editClassMutation] = useMutation(EDIT_CLASS, {
     variables: {
       classId: classRoom.id,
       name: className.value,

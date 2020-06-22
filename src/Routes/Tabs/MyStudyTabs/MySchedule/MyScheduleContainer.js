@@ -23,10 +23,10 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
   const subjectName = useInput('');
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
 
-  const saveScheduleMutation = useMutation(SAVE_SCHEDULE);
-  const addSubjectMutation = useMutation(ADD_SUBJECT);
-  const editSubjectMutation = useMutation(EDIT_SUBJECT);
-  const deleteSubjectMutation = useMutation(DELETE_SUBJECT);
+  const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
+  const [addSubjectMutation] = useMutation(ADD_SUBJECT);
+  const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
+  const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
   const {
     data: subjectData,
     loading: subjectLoading,

@@ -25,6 +25,9 @@ import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
 import Shop from '../Routes/Shop';
 import PaymentResult from '../Routes/PaymentResult';
+import ManageSubscription from '../Routes/ManageSubscription';
+import OrderHistory from '../Routes/OrderHistory';
+import Voucher from '../Routes/Voucher';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -54,6 +57,9 @@ const LoggedInRoutes = () => {
           <Route path="/classstudy" component={ClassStudy} />
           <Route path="/shop" component={Shop} />
           <Route path="/payment/result" component={PaymentResult} />
+          <Route path="/manage-subscription" component={ManageSubscription} />
+          <Route path="/order-history" component={OrderHistory} />
+          <Route path="/voucher" component={Voucher} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>
@@ -85,7 +91,6 @@ const LoggedOutRoutes = () => (
     <Route path="/experience" component={Experience} />
     <Route path="/tos" component={TermsOfService} />
     <Route path="/top" component={TermsOfPrivacy} />
-
     <Redirect from="*" to="/" />
   </Switch>
 );
