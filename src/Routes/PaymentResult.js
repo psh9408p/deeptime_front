@@ -10,6 +10,7 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 function PaymentResult({ history }) {
+  const pushRoute = localStorage.getItem('billingBack');
   const { location } = history;
   const { search } = location;
   const query = queryString.parse(search);
@@ -52,7 +53,14 @@ function PaymentResult({ history }) {
             </li>
           )}
         </ul>
-        <Button size="large" danger={true} onClick={() => history.push('/')}>
+        <Button
+          size="large"
+          danger={true}
+          onClick={async () => {
+            await history.push(pushRoute);
+            await localStorage.removeItem('billingBack');
+          }}
+        >
           <ArrowLeftOutlined />
           돌아가기
         </Button>

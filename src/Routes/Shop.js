@@ -14,7 +14,6 @@ export const MY_PAYMENTSET = gql`
       id
       paymentDate
       freeUse
-      membershipDate
       user {
         id
         email
@@ -30,11 +29,13 @@ export const PAYMENT_BILL = gql`
     $paymentSet_id: String!
     $freeUse: Boolean!
     $card_name: String!
+    $customer_uid: String!
   ) {
     payment_bill(
       paymentSet_id: $paymentSet_id
       freeUse: $freeUse
       card_name: $card_name
+      customer_uid: $customer_uid
     )
   }
 `;
@@ -88,58 +89,31 @@ export default () => {
 
   const [payment_bill_mutation] = useMutation(PAYMENT_BILL);
 
-  // const billingCallback = async (response) => {
-  //   console.log('a', response);
-  //   const query = queryString.stringify(response);
-  //   if (response.success) {
-  //     try {
-  //       await payment_bill_mutation({
-  //         variables: { paymentSet_id: id, freeUse },
-  //       });
-  //     } catch (e) {
-  //       const realText = e.message.split('GraphQL error: ');
-  //       alert(realText[1]);
-  //     }
-  //   }
-  //   history.push(`/payment/result?${query}`);
-  // };
-
   const billingOnClick = () => {
     const { IMP } = window;
     IMP.init(process.env.REACT_APP_IMPORT_CODE);
-    const { id, freeUse, membershipDate, user } = paymentSetData.myPaymentSet;
+    const { id, freeUse, user } = paymentSetData.myPaymentSet;
 
-    // if (freeUse) {
-    //   if (
-    //     window.confirm(
-    //       '이미 무료 혜택을 받으셔서 바로 결제가 진행됩니다.\n그래도 진행하시겠습니까?',
-    //     ) === false
-    //   ) {
-    //     return;
-    //   }
-    // }
+    if (freeUse) {
+      if (
+        window.confirm(
+          '이미 무료 혜택을 받으셔서 바로 결제가 진행됩니다.\n그래도 진행하시겠습니까?',
+        ) === false
+      ) {
+        return;
+      }
+    }
 
-    // IMP.request_pay(
-    //   {
-    //     pg: 'danal',
-    //     pay_method: 'card', // 'card'만 지원됩니다.
-    //     merchant_uid: 'iam_' + new Date().getTime(),
-    //     customer_uid: user.id, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
-    //     name: '정기결제 카드 등록',
-    //     amount: 0, // 빌링키 발급만 진행하며 결제승인을 하지 않습니다.
-    //     buyer_email: user.email,
-    //     buyer_name: user.fullName,
-    //     buyer_tel: user.phoneNumber,
-    //   },
-    //   billingCallback(),
-    // );
+    const userId = user.id;
+    const customer_uid = userId.substring(0, 5) + '_' + new Date().getTime();
+
     IMP.request_pay(
       {
         // param
         pg: 'danal',
         pay_method: 'card', // "card"만 지원됩니다
-        merchant_uid: 'iam_' + new Date().getTime(),
-        customer_uid: user.id, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
+        merchant_uid: 'merchant_' + new Date().getTime(),
+        customer_uid, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
         name: '정기결제 카드 등록',
         amount: 0, // 0 으로 설정하여 빌링키 발급만 진행합니다.
         buyer_email: user.email,
@@ -155,13 +129,18 @@ export default () => {
                 paymentSet_id: id,
                 freeUse,
                 card_name: response.card_name,
+                customer_uid,
               },
             });
+            localStorage.setItem('billingBack', '/manage-subscription');
           } catch (e) {
             response.success = false;
             const realText = e.message.split('GraphQL error: ');
             response.error_msg = realText[1];
+            localStorage.setItem('billingBack', '/shop');
           }
+        } else {
+          localStorage.setItem('billingBack', '/shop');
         }
         const query = queryString.stringify(response);
         history.push(`/payment/result?${query}`);

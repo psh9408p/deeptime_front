@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import styled from 'styled-components';
 import useTabs from '../Hooks/useTabs';
@@ -49,6 +49,8 @@ const ProfileButton = styled.button`
   }
 `;
 
+let trap = true;
+
 export default () => {
   const profileTabContents = ['학생 관리', '좌석 배정'];
   const profileTabs = useTabs(0, profileTabContents);
@@ -59,6 +61,14 @@ export default () => {
     refetch: classRefetch,
   } = useQuery(MY_CLASS);
 
+  useEffect(() => {
+    if (trap) {
+      trap = false;
+      return;
+    }
+    classRefetch();
+  }, []);
+
   if (classLoading === true) {
     return (
       <LoaderWrapper>
@@ -66,7 +76,6 @@ export default () => {
       </LoaderWrapper>
     );
   } else if (!classLoading && classData && classData.myClass) {
-    classRefetch();
     return (
       <Wrapper>
         <Tabs>
