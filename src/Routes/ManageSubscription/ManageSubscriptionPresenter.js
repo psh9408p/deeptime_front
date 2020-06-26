@@ -78,6 +78,13 @@ let pay_method = '';
 export default ({ paymentSetData, SubCancel, ReSub, billingChange }) => {
   const date = new Date(paymentSetData.membershipDate);
   const date_cancel = new Date(paymentSetData.cancel_date);
+  const dateMonth =
+    date.getMonth() + 1 >= 10
+      ? date.getMonth() + 1
+      : '0' + (date.getMonth() + 1);
+  const yesterDate =
+    date.getDate() - 1 >= 10 ? date.getDate() - 1 : '0' + (date.getDate() - 1);
+  const dateDate = date.getDate() >= 10 ? date.getDate() : '0' + date.getDate();
 
   const amout = NumberWithCommas(paymentSetData.amountBooking);
   const cardFour = paymentSetData.card_number.split('****')[1];
@@ -93,14 +100,14 @@ export default ({ paymentSetData, SubCancel, ReSub, billingChange }) => {
           <ContentDiv>
             <LeftDiv>이용 기간</LeftDiv>
             <RightDiv>
-              {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate() - 1}
+              {date.getFullYear()}.{dateMonth}.{yesterDate}
               .&nbsp;23:59&nbsp;까지
             </RightDiv>
           </ContentDiv>
           <ContentDiv>
             <LeftDiv>다음 결제 예정일</LeftDiv>
             <RightDiv>
-              {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}.
+              {date.getFullYear()}.{dateMonth}.{dateDate}.
             </RightDiv>
           </ContentDiv>
           <ContentDiv>
