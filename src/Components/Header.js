@@ -186,6 +186,6 @@ export default withRouter(() => {
       </Header>
     );
   } else {
-    return <></>;
+    return <div></div>;
   }
 });
