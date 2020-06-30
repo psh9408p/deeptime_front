@@ -34,17 +34,7 @@ const LoaderWrapper = styled.div`
 `;
 
 const LoggedInRoutes = () => {
-  const {
-    data: Mydata,
-    loading,
-    error,
-    refetch: MyRefetch,
-    networkStatus,
-  } = useQuery(ME, { notifyOnNetworkStatusChange: true });
-  console.log(loading);
-  console.log(Mydata);
-  console.log(error);
-  console.log(networkStatus);
+  const { data: Mydata, loading, error, refetch: MyRefetch } = useQuery(ME);
   if (!loading && Mydata && Mydata.me) {
     if (Mydata.me.loginPosition === 'student') {
       return (
