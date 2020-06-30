@@ -35,7 +35,9 @@ const LoaderWrapper = styled.div`
 
 const LoggedInRoutes = () => {
   const { data: Mydata, loading, refetch: MyRefetch } = useQuery(ME);
-  if (!loading) {
+  console.log(loading);
+  console.log(Mydata);
+  if (!loading && Mydata && Mydata.me) {
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>
