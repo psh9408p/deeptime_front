@@ -123,7 +123,7 @@ export default withRouter(() => {
                 </AiHeaderLink>
               </AiBox>
             )}
-            {data.me && data.me.loginPosition.includes('manager') && (
+            {/* {data.me && data.me.loginPosition.includes('manager') && (
               <AiBox>
                 <Shutter />
                 <AiHeaderLink to="/" replace>
@@ -136,11 +136,11 @@ export default withRouter(() => {
                   채점
                 </AiHeaderLink>
               </AiBox>
-            )}
+            )} */}
           </HeaderColumn>
           {data.me && data.me.loginPosition.includes('manager') && (
             <HeaderColumn>
-              <HeaderLink to="/" replace>
+              {/* <HeaderLink to="/" replace>
                 학원
               </HeaderLink>
               <HeaderLink to="/class" replace>
@@ -148,6 +148,9 @@ export default withRouter(() => {
               </HeaderLink>
               <HeaderLink to="/student" replace>
                 학생
+              </HeaderLink> */}
+              <HeaderLink to="/shop">
+                <Shop />
               </HeaderLink>
               {!data.me ? (
                 <HeaderLink to="/#">

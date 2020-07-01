@@ -10,6 +10,7 @@ import Academy from '../Routes/Academy';
 import Class from '../Routes/Class';
 import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
+import Profile_M from '../Routes/Profile_M';
 import Study from '../Routes/Study';
 import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
@@ -24,6 +25,7 @@ import TermsOfPrivacy from '../Routes/TermsOfPrivacy';
 import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
 import Shop from '../Routes/Shop';
+import Shop_M from '../Routes/Shop_M';
 import PaymentResult from '../Routes/PaymentResult';
 import ManageSubscription from '../Routes/ManageSubscription';
 import OrderHistory from '../Routes/OrderHistory';
@@ -61,13 +63,13 @@ const LoggedInRoutes = () => {
     } else {
       return (
         <Switch>
-          {/* <Route path="/attendance" component={Attendance} /> */}
-          <Route path="/supervision" component={Supervision} />
+          {/* <Route path="/supervision" component={Supervision} />
           <Route path="/marking" component={Marking} />
           <Route exact path="/" component={Academy} />
-          <Route path="/class" component={Class} />
-          <Route path="/student" component={Student} />
-          <Route path="/:username" component={Profile} />
+          <Route path="/class" component={Class} /> */}
+          {/* <Route path="/student" component={Student} /> */}
+          <Route path="/shop" component={Shop_M} />
+          <Route exact path="/:username" component={Profile_M} />
           <Redirect from="*" to="/" />
         </Switch>
       );
