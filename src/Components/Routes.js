@@ -69,6 +69,7 @@ const LoggedInRoutes = () => {
           <Route path="/class" component={Class} /> */}
           {/* <Route path="/student" component={Student} /> */}
           <Route path="/shop" component={Shop_M} />
+          <Route path="/payment/result" component={PaymentResult} />
           <Route exact path="/:username" component={Profile_M} />
           <Redirect from="*" to="/" />
         </Switch>

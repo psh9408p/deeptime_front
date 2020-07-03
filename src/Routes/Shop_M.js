@@ -26,19 +26,9 @@ export const MY_PAYMENTSET = gql`
   }
 `;
 
-export const PAYMENT_BILL = gql`
-  mutation payment_bill(
-    $paymentSet_id: String!
-    $freeUse: Boolean!
-    $card_name: String!
-    $customer_uid: String!
-  ) {
-    payment_bill(
-      paymentSet_id: $paymentSet_id
-      freeUse: $freeUse
-      card_name: $card_name
-      customer_uid: $customer_uid
-    )
+export const PAYMENT_NORMAL = gql`
+  mutation payment_nomal($paymentSet_id: String!, $imp_uid: String!) {
+    payment_nomal(paymentSet_id: $paymentSet_id, imp_uid: $imp_uid)
   }
 `;
 
@@ -162,6 +152,12 @@ const ItemSubTitle = styled.div`
 
 let numberOfSeat = 1;
 let seatRatio = 1; // 1~8좌석 1  9~16좌석 2 ...
+let merchantName_1 = '';
+let merchantName_6 = '';
+let merchantName_12 = '';
+let resultPrice_1 = 99999999;
+let resultPrice_6 = 99999999;
+let resultPrice_12 = 99999999;
 
 export default () => {
   let history = useHistory();
@@ -177,25 +173,12 @@ export default () => {
     refetch: paymentSetRefetch,
   } = useQuery(MY_PAYMENTSET);
 
-  // const [payment_bill_mutation] = useMutation(PAYMENT_BILL);
+  const [payment_normal_mutation] = useMutation(PAYMENT_NORMAL);
 
-  const billing_1 = () => {
+  const billingOnclick = (merchantName, resultPrice) => {
     const { IMP } = window;
     IMP.init(process.env.REACT_APP_IMPORT_CODE);
     const { id, freeUse, user } = paymentSetData.myPaymentSet;
-
-    if (freeUse) {
-      if (
-        window.confirm(
-          '이미 무료 혜택을 받으셔서 바로 결제가 진행됩니다.\n그래도 진행하시겠습니까?',
-        ) === false
-      ) {
-        return;
-      }
-    }
-
-    const userId = user.id;
-    const customer_uid = userId.substring(0, 5) + '_' + new Date().getTime();
 
     IMP.request_pay(
       {
@@ -203,26 +186,25 @@ export default () => {
         pg: 'danal',
         pay_method: 'card', // "card"만 지원됩니다
         merchant_uid: 'merchant_' + new Date().getTime(),
-        customer_uid, //customer_uid 파라메터가 있어야 빌링키 발급을 시도합니다.
-        name: '정기결제 카드 등록',
-        amount: 0, // 0 으로 설정하여 빌링키 발급만 진행합니다.
+        name: merchantName,
+        amount: resultPrice,
         buyer_email: user.email,
         buyer_name: user.fullName,
         buyer_tel: user.phoneNumber,
       },
       async function (response) {
         // callback
+        const success_msg = 'IAM 이용기간이 성공적으로 연장되었습니다.';
+        Object.assign(response, { success_msg });
         if (response.success) {
           try {
-            // await payment_bill_mutation({
-            //   variables: {
-            //     paymentSet_id: id,
-            //     freeUse,
-            //     card_name: response.card_name,
-            //     customer_uid,
-            //   },
-            // });
-            localStorage.setItem('billingBack', '/manage-subscription');
+            await payment_normal_mutation({
+              variables: {
+                paymentSet_id: id,
+                imp_uid: response.imp_uid,
+              },
+            });
+            localStorage.setItem('billingBack', '/');
           } catch (e) {
             response.success = false;
             const realText = e.message.split('GraphQL error: ');
@@ -241,26 +223,39 @@ export default () => {
   if (!paymentSetLoading && paymentSetData && paymentSetData.myPaymentSet) {
     numberOfSeat = paymentSetData.myPaymentSet.user.numberOfSeat;
     seatRatio = Math.ceil(numberOfSeat / 8);
+    merchantName_1 = `IAM 1개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+      8 * seatRatio
+    }개 좌석)`;
+    merchantName_6 = `IAM 6개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+      8 * seatRatio
+    }개 좌석)`;
+    merchantName_12 = `IAM 12개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+      8 * seatRatio
+    }개 좌석)`;
+    resultPrice_1 = price_1 * seatRatio;
+    resultPrice_6 = price_6 * seatRatio;
+    resultPrice_12 = price_12 * seatRatio;
+    // resultPrice_1 = 101;
+    // resultPrice_6 = 102;
+    // resultPrice_12 = 103;
+
     return (
       <Wrapper>
         <BasicBox>
           <TitleDiv>Basic 상품</TitleDiv>
-          <ItemDiv onClick={() => billing_1()}>
+          <ItemDiv
+            onClick={() => billingOnclick(merchantName_1, resultPrice_1)}
+          >
             <UpperDiv>
               <ItemTitle>Basic 1</ItemTitle>
-              <ItemSubTitle>
-                IAM 1개월 이용권 ({8 * (seatRatio - 1) + 1}~{8 * seatRatio}개
-                좌석)
-              </ItemSubTitle>
+              <ItemSubTitle>{merchantName_1}</ItemSubTitle>
             </UpperDiv>
             <BottomDiv>
               <BottomLeft>
                 {NumberWithCommas(price_1 * seatRatio)}원/월
               </BottomLeft>
               <BottomRight>
-                <RightBottom>
-                  {NumberWithCommas(price_1 * seatRatio)}원
-                </RightBottom>
+                <RightBottom>{NumberWithCommas(resultPrice_1)}원</RightBottom>
                 <RightUpper>
                   <RightPrice></RightPrice>
                   <RightDiscount></RightDiscount>
@@ -268,22 +263,19 @@ export default () => {
               </BottomRight>
             </BottomDiv>
           </ItemDiv>
-          <ItemDiv>
+          <ItemDiv
+            onClick={() => billingOnclick(merchantName_6, resultPrice_6)}
+          >
             <UpperDiv>
               <ItemTitle>Basic 6</ItemTitle>
-              <ItemSubTitle>
-                IAM 6개월 이용권 ({8 * (seatRatio - 1) + 1}~{8 * seatRatio}개
-                좌석)
-              </ItemSubTitle>
+              <ItemSubTitle>{merchantName_6}</ItemSubTitle>
             </UpperDiv>
             <BottomDiv>
               <BottomLeft>
                 {NumberWithCommas(Math.round((price_6 * seatRatio) / 6))}원/월
               </BottomLeft>
               <BottomRight>
-                <RightBottom>
-                  {NumberWithCommas(price_6 * seatRatio)}원
-                </RightBottom>
+                <RightBottom>{NumberWithCommas(resultPrice_6)}원</RightBottom>
                 <RightUpper>
                   <RightPrice>
                     {NumberWithCommas(price_1 * seatRatio * 6)}원
@@ -293,22 +285,19 @@ export default () => {
               </BottomRight>
             </BottomDiv>
           </ItemDiv>
-          <ItemDiv>
+          <ItemDiv
+            onClick={() => billingOnclick(merchantName_12, resultPrice_12)}
+          >
             <UpperDiv>
               <ItemTitle>Basic 12</ItemTitle>
-              <ItemSubTitle>
-                IAM 12개월 이용권 ({8 * (seatRatio - 1) + 1}~{8 * seatRatio}개
-                좌석)
-              </ItemSubTitle>
+              <ItemSubTitle>{merchantName_12}</ItemSubTitle>
             </UpperDiv>
             <BottomDiv>
               <BottomLeft>
                 {NumberWithCommas(Math.round((price_12 * seatRatio) / 12))}원/월
               </BottomLeft>
               <BottomRight>
-                <RightBottom>
-                  {NumberWithCommas(price_12 * seatRatio)}원
-                </RightBottom>
+                <RightBottom>{NumberWithCommas(resultPrice_12)}원</RightBottom>
                 <RightUpper>
                   <RightPrice>
                     {NumberWithCommas(price_1 * seatRatio * 12)}원
