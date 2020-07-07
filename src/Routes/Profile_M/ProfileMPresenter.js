@@ -6,7 +6,7 @@ import Avatar from '../../Components/Avatar';
 import FatText from '../../Components/FatText';
 import FollowButton from '../../Components/FollowButton';
 import Button from '../../Components/Buttons/Button';
-import ProfileTabs from '../Tabs/ProfileTabs';
+import ProfileTabs_M from '../Tabs/ProfileTabs_M';
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -110,10 +110,7 @@ export default ({ loading, data, logOut, profileTabs }) => {
         isSelf,
         bio,
         email,
-        academiesCount,
-        classesCount,
-        studentsCount,
-        loginPosition,
+        organization,
       },
     } = data;
     return (
@@ -138,14 +135,9 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </UsernameRow>
             <Counts>
               <Count>
-                <FatText text={String(academiesCount)} /> 학원
+                <FatText text={organization.name} />
               </Count>
-              <Count>
-                <FatText text={String(classesCount)} /> 클래스
-              </Count>
-              <Count>
-                <FatText text={String(studentsCount)} /> 학생
-              </Count>
+              <Count>{organization.address}</Count>
             </Counts>
             <SubInfoDiv>
               <FatBox text={fullName} />
@@ -164,28 +156,9 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </ProfileButton>
           ))}
         </Tabs>
-        <ProfileTabs pageIndex={profileTabs.currentIndex} />
+        <ProfileTabs_M pageIndex={profileTabs.currentIndex} data={data} />
       </Wrapper>
     );
   }
   return null;
 };
-
-// const Posts = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(4, 200px);
-//   grid-template-rows: 200px;
-//   grid-auto-rows: 200px;
-// `
-
-/* <Posts>
-        {posts &&
-          posts.map(post => (
-            <SquarePost
-              key={post.id}
-              likeCount={post.likeCount}
-              commentCount={post.commentCount}
-              file={post.files[0]}
-            />
-          ))}
-      </Posts> */

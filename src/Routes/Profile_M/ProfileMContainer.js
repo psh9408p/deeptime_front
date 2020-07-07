@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { gql } from 'apollo-boost';
 import { withRouter } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
@@ -15,10 +15,24 @@ const GET_USER = gql`
       isSelf
       bio
       email
-      academiesCount
-      classesCount
-      studentsCount
-      loginPosition
+      organization {
+        id
+        name
+        address
+        seatRatio
+      }
+      payments {
+        id
+        name
+        paid_at
+        pay_method
+        amount
+        receipt_url
+      }
+      paymentSet {
+        id
+        membershipDate
+      }
     }
   }
 `;
@@ -29,17 +43,30 @@ export const LOG_OUT = gql`
   }
 `;
 
+let trap = true;
+
 export default withRouter(
   ({
     match: {
       params: { username },
     },
   }) => {
-    const profileTabContents = ['구독 / 결제', '개인'];
+    const profileTabContents = ['기본 정보', '결제 내역', '기기관리'];
     const profileTabs = useTabs(0, profileTabContents);
 
-    const { data, loading } = useQuery(GET_USER, { variables: { username } });
+    const { data, loading, refetch } = useQuery(GET_USER, {
+      variables: { username },
+    });
     const [logOut] = useMutation(LOG_OUT);
+
+    useEffect(() => {
+      if (trap) {
+        trap = false;
+        return;
+      }
+      refetch();
+    }, []);
+
     return (
       <ProfileMPresenter
         loading={loading}

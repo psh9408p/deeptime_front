@@ -19,8 +19,10 @@ export const MY_PAYMENTSET = gql`
         id
         email
         fullName
-        numberOfSeat
         phoneNumber
+        organization {
+          seatRatio
+        }
       }
     }
   }
@@ -150,7 +152,6 @@ const ItemSubTitle = styled.div`
   color: ${(props) => props.theme.lightGreyColor};
 `;
 
-let numberOfSeat = 1;
 let seatRatio = 1; // 1~8좌석 1  9~16좌석 2 ...
 let merchantName_1 = '';
 let merchantName_6 = '';
@@ -221,8 +222,7 @@ export default () => {
   };
 
   if (!paymentSetLoading && paymentSetData && paymentSetData.myPaymentSet) {
-    numberOfSeat = paymentSetData.myPaymentSet.user.numberOfSeat;
-    seatRatio = Math.ceil(numberOfSeat / 8);
+    seatRatio = paymentSetData.myPaymentSet.user.organization.seatRatio;
     merchantName_1 = `IAM 1개월 이용권 (${8 * (seatRatio - 1) + 1}~${
       8 * seatRatio
     }개 좌석)`;
