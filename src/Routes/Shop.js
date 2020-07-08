@@ -122,6 +122,8 @@ export default () => {
       },
       async function (response) {
         // callback
+        const success_msg = 'IAM 이용기간이 성공적으로 연장되었습니다.';
+        Object.assign(response, { success_msg });
         if (response.success) {
           try {
             await payment_bill_mutation({

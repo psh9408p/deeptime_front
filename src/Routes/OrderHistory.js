@@ -140,7 +140,7 @@ export default () => {
   }, []);
 
   if (!paymentLoading && paymentData && paymentData.my_payment) {
-    console.log(paymentData.my_payment);
+    // console.log(paymentData.my_payment);
     return (
       <Wrapper>
         <TitleDiv>결제/이용권 내역</TitleDiv>

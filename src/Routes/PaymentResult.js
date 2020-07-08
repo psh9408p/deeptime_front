@@ -19,7 +19,7 @@ function PaymentResult({ history }) {
   // console.log(search);
   // console.log(query);
 
-  const { merchant_uid, error_msg, imp_uid } = query;
+  const { success_msg, error_msg } = query;
   const isSuccessed = getIsSuccessed();
   function getIsSuccessed() {
     const { success, imp_success } = query;
@@ -37,14 +37,10 @@ function PaymentResult({ history }) {
         {isSuccessed ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}
         <p>{`결제에 ${resultType}하였습니다`}</p>
         <ul>
-          <li>
-            <span>주문번호</span>
-            <span>{merchant_uid}</span>
-          </li>
           {isSuccessed ? (
             <li>
-              <span>아임포트 번호</span>
-              <span>{imp_uid}</span>
+              <span>결제 결과 메시지</span>
+              <span>{success_msg}</span>
             </li>
           ) : (
             <li>
