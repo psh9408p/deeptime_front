@@ -5,6 +5,7 @@ import NumberWithCommas from '../../../Components/Money/NumberWithCommas';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   max-width: 800px;
   margin: 0 auto;
   padding: 20px 0;
@@ -22,6 +23,16 @@ const ContentDiv_order = styled.div`
   padding: 0 15px;
   width: 100%;
   display: inline-flex;
+  align-items: center;
+  border-bottom: ${(props) => props.theme.boxBorder};
+`;
+
+const ContentDiv_form = styled.form`
+  height: 60px;
+  padding: 0 15px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
   border-bottom: ${(props) => props.theme.boxBorder};
 `;
 
@@ -77,6 +88,28 @@ const SubContent = styled.div`
   }
 `;
 
+const SubContent2 = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  &:first-child {
+    width: 160px;
+    justify-content: flex-start;
+  }
+  &:nth-child(2) {
+    width: 390px;
+    justify-content: flex-start;
+  }
+  &:nth-child(3) {
+    width: 110px;
+    justify-content: flex-start;
+  }
+  &:last-child {
+    width: 110px;
+    justify-content: flex-end;
+  }
+`;
+
 const ContentInput = styled.input`
   cursor: pointer;
   height: 100%;
@@ -88,6 +121,26 @@ const ContentInput = styled.input`
   justify-content: flex-start;
   border: 0;
   background-color: transparent;
+`;
+
+const RaspberryInput = styled.input`
+  height: 50%;
+  display: flex;
+  align-items: center;
+  color: ${(props) => props.theme.skyBlue};
+  font-weight: 600;
+  border-radius: 4px;
+  border: ${(props) => props.theme.boxBorder};
+  &:nth-child(2) {
+    width: 300px;
+    margin-right: 90px;
+    justify-content: flex-start;
+  }
+  &:nth-child(3) {
+    width: 80px;
+    margin-right: 30px;
+    justify-content: flex-start;
+  }
 `;
 
 const Content = styled.div`
@@ -109,8 +162,31 @@ const Content = styled.div`
   }
 `;
 
+const Content_No = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+    font-weight: 600;
+    width: 160px;
+    justify-content: flex-start;
+  }
+`;
+
+const ModifyButton = styled.button`
+  cursor: pointer;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-left: 30px;
+  width: 80px;
+  border: ${(props) => props.theme.boxBorder};
+`;
+
 export default ({ pageIndex, data }) => {
   const User = data.seeUser;
+  const NumberOfRaspberry = new Array(User.organization.seatRatio * 8).fill(1);
   const date = new Date(User.paymentSet.membershipDate);
   const dateMonth =
     date.getMonth() + 1 >= 10
@@ -189,6 +265,27 @@ export default ({ pageIndex, data }) => {
               <Content>{myPayment.pay_method}</Content>
               <Content>{amount}</Content>
             </ContentDiv_order>
+          );
+        })}
+      </Wrapper>
+    );
+  } else {
+    return (
+      <Wrapper>
+        <SubTitleDiv>
+          <SubContent2>No.</SubContent2>
+          <SubContent2>기기 고유번호</SubContent2>
+          <SubContent2>좌석 번호</SubContent2>
+          <SubContent2 />
+        </SubTitleDiv>
+        {NumberOfRaspberry.map((_, index) => {
+          return (
+            <ContentDiv_form key={index} onClick={() => {}}>
+              <Content_No>{index + 1}</Content_No>
+              <RaspberryInput />
+              <RaspberryInput />
+              <ModifyButton>수정</ModifyButton>
+            </ContentDiv_form>
           );
         })}
       </Wrapper>
