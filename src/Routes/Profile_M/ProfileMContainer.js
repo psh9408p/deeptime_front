@@ -20,6 +20,10 @@ const GET_USER = gql`
         name
         address
         seatRatio
+        raspberries {
+          id
+          seatNumber
+        }
       }
       payments {
         id

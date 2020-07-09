@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import NumberWithCommas from '../../../Components/Money/NumberWithCommas';
+import Popup from 'reactjs-popup';
+import PopupButton from '../../../Components/Buttons/PopupButton';
+import Input from '../../../Components/Input';
+import FatText from '../../../Components/FatText';
+import PopButton from '../../../Components/Buttons/PopButton';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,7 +32,7 @@ const ContentDiv_order = styled.div`
   border-bottom: ${(props) => props.theme.boxBorder};
 `;
 
-const ContentDiv_form = styled.form`
+const ContentDiv_Rasp = styled.div`
   height: 60px;
   padding: 0 15px;
   width: 100%;
@@ -123,14 +128,11 @@ const ContentInput = styled.input`
   background-color: transparent;
 `;
 
-const RaspberryInput = styled.input`
+const RaspberryDiv = styled.div`
   height: 50%;
   display: flex;
   align-items: center;
-  color: ${(props) => props.theme.skyBlue};
   font-weight: 600;
-  border-radius: 4px;
-  border: ${(props) => props.theme.boxBorder};
   &:nth-child(2) {
     width: 300px;
     margin-right: 90px;
@@ -166,25 +168,82 @@ const Content_No = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
-    font-weight: 600;
-    width: 160px;
-    justify-content: flex-start;
+  font-weight: 600;
+  width: 160px;
+  justify-content: flex-start;
+`;
+
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 500px !important;
+    height: 250px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
-const ModifyButton = styled.button`
-  cursor: pointer;
-  height: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  margin-left: 30px;
-  width: 80px;
-  border: ${(props) => props.theme.boxBorder};
+const PBody = styled.div`
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    padding: 20px 20px;
+  }
 `;
 
-export default ({ pageIndex, data }) => {
+const SmallInput = styled(Input)`
+  width: 200px;
+  margin-right: 15px;
+  margin-left: 41px;
+`;
+
+const LargeInput = styled(Input)`
+  max-width: 300px;
+  margin-bottom: 15px;
+  margin-left: 41px;
+`;
+
+const PTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const SmallDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 7px;
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const LoadButton = styled.button`
+  border: 0;
+  width: 140px;
+  height: 25px;
+  border-radius: ${(props) => props.theme.borderRadius};
+  font-weight: 600;
+  text-align: center;
+  padding: 5px 0px;
+  font-size: 12px;
+  outline-color: black;
+  background-color: #e74c3c;
+  cursor: pointer;
+`;
+
+export default ({
+  pageIndex,
+  data,
+  raspberryId,
+  seatNumber,
+  RaspberryClear,
+  RaspberryLoad,
+}) => {
   const User = data.seeUser;
   const NumberOfRaspberry = new Array(User.organization.seatRatio * 8).fill(1);
   const date = new Date(User.paymentSet.membershipDate);
@@ -280,12 +339,78 @@ export default ({ pageIndex, data }) => {
         </SubTitleDiv>
         {NumberOfRaspberry.map((_, index) => {
           return (
-            <ContentDiv_form key={index} onClick={() => {}}>
+            <ContentDiv_Rasp key={index}>
               <Content_No>{index + 1}</Content_No>
-              <RaspberryInput />
-              <RaspberryInput />
-              <ModifyButton>수정</ModifyButton>
-            </ContentDiv_form>
+              <RaspberryDiv>
+                {User.organization.raspberries[index] !== undefined
+                  ? User.organization.raspberries[index].id
+                  : '미등록'}
+              </RaspberryDiv>
+              <RaspberryDiv>
+                {User.organization.raspberries[index] !== undefined &&
+                  User.organization.raspberries[index].seatNumber}
+              </RaspberryDiv>
+              <PopupCustom
+                trigger={<PopButton text={'등록/수정'} />}
+                closeOnDocumentClick={false}
+                modal
+              >
+                {(close) => (
+                  <PBody>
+                    <form
+                    // onSubmit={async () => {
+                    //   const fucResult = await onSubmit();
+                    //   if (fucResult) {
+                    //     close();
+                    //   }
+                    // }}
+                    >
+                      <PTitle text={'기기 정보'} />
+                      <SmallDiv>
+                        <SmallInput
+                          placeholder={'좌석 번호 (예: 12)'}
+                          {...seatNumber}
+                        />
+                        <LoadButton
+                          type="button"
+                          onClick={() => {
+                            if (
+                              User.organization.raspberries[index] !== undefined
+                            ) {
+                              RaspberryLoad(
+                                User.organization.raspberries[index].seatNumber,
+                                User.organization.raspberries[index].id,
+                              );
+                            }
+                          }}
+                        >
+                          기존정보 불러오기
+                        </LoadButton>
+                      </SmallDiv>
+                      <div>
+                        <LargeInput
+                          placeholder={
+                            '기기 고유번호 (예: ckcbctntg002b0728rc6ei1td)'
+                          }
+                          {...raspberryId}
+                        />{' '}
+                      </div>
+                      <ButtonDiv>
+                        <PopupButton text={'등록/수정'} />
+                        <PopupButton
+                          type="button"
+                          onClick={() => {
+                            close();
+                            RaspberryClear();
+                          }}
+                          text={'닫기'}
+                        />
+                      </ButtonDiv>
+                    </form>
+                  </PBody>
+                )}
+              </PopupCustom>
+            </ContentDiv_Rasp>
           );
         })}
       </Wrapper>

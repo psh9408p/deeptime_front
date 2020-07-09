@@ -374,6 +374,7 @@ export default ({
         id: List.id,
         start: new Date(List.start),
         end: new Date(List.end),
+        totalTime: new Date(List.totalTime),
       };
       return schedule_tmp;
     });
@@ -466,6 +467,8 @@ export default ({
       state: scheduleData.state,
       start: scheduleData.start._date,
       end: scheduleData.end._date,
+      totalTime:
+        scheduleData.end._date.getTime() - scheduleData.start._date.getTime(),
       calendarId: scheduleData.calendarId,
       option: 'create',
     };
@@ -487,6 +490,8 @@ export default ({
       state: res.schedule.state,
       start: res.schedule.start._date,
       end: res.schedule.end._date,
+      totalTime:
+        res.schedule.end._date.getTime() - res.schedule.start._date.getTime(),
       calendarId: res.schedule.calendarId,
       option: 'delete',
     };
@@ -537,6 +542,8 @@ export default ({
         state: res.schedule.state,
         start: res.schedule.start._date,
         end: res.schedule.end._date,
+        totalTime:
+          res.schedule.end._date.getTime() - res.schedule.start._date.getTime(),
         calendarId: res.schedule.calendarId,
         option: 'update',
       };

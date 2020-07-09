@@ -47,6 +47,7 @@ export const ME = gql`
         state
         start
         end
+        totalTime
         subjectId
         subjectName
       }
