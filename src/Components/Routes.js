@@ -30,6 +30,7 @@ import PaymentResult from '../Routes/PaymentResult';
 import ManageSubscription from '../Routes/ManageSubscription';
 import OrderHistory from '../Routes/OrderHistory';
 import Voucher from '../Routes/Voucher';
+import Introduce_M from '../Routes/Introduce_M';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -63,6 +64,7 @@ const LoggedInRoutes = () => {
     } else {
       return (
         <Switch>
+          <Route exact path="/" component={Introduce_M} />
           {/* <Route path="/supervision" component={Supervision} />
           <Route path="/marking" component={Marking} />
           <Route exact path="/" component={Academy} />
@@ -70,7 +72,7 @@ const LoggedInRoutes = () => {
           {/* <Route path="/student" component={Student} /> */}
           <Route path="/shop" component={Shop_M} />
           <Route path="/payment/result" component={PaymentResult} />
-          <Route exact path="/:username" component={Profile_M} />
+          <Route path="/:username" component={Profile_M} />
           <Redirect from="*" to="/" />
         </Switch>
       );

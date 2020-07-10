@@ -547,13 +547,6 @@ export default ({
           res.schedule.end._date.getTime() - res.schedule.start._date.getTime();
       }
 
-      console.log(
-        res.changes,
-        res.schedule.end._date,
-        res.schedule.start._date,
-        totalTime_tmp,
-      );
-
       const schedule_tmp = {
         id: res.schedule.id,
         isAllDay: res.schedule.isAllDay,
