@@ -16,6 +16,7 @@ export default (options, values) => {
 
   const optionIndexSet = (num) => {
     setOptionIndex(num);
+    setOption(values[num]);
   };
 
   const isFirstRun = useRef(true);

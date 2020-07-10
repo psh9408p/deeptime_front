@@ -3,6 +3,7 @@ import AuthPresenter from './AuthPresenter';
 import useInput from '../../Hooks/useInput';
 import useSelect from '../../Hooks/useSelect';
 import useSelect_dynamic from '../../Hooks/useSelect_dynamic';
+import useSelect_dynamic2 from '../../Hooks/useSelect_dynamic2';
 import { useMutation } from '@apollo/react-hooks';
 import {
   REQUEST_LOGIN,
@@ -19,7 +20,9 @@ import {
 } from './AuthQueries';
 import { toast } from 'react-toastify';
 import {
-  studyOption,
+  studyOption_group,
+  studyOption_group2,
+  studyOption_group3,
   address1,
   address2_total,
 } from '../../Components/LongArray';
@@ -35,7 +38,21 @@ export default () => {
   const [tos, setTos] = useState(false);
   const [top, setTop] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const studyGroup = useSelect(studyOption, studyOption);
+  const studyGroup = useSelect(studyOption_group, studyOption_group);
+  const studyGroup2 = useSelect_dynamic(
+    studyOption_group2,
+    studyOption_group2,
+    studyGroup.optionList,
+    studyGroup.option,
+  );
+  const studyGroup3 = useSelect_dynamic2(
+    studyOption_group3,
+    studyOption_group3,
+    studyGroup.optionList,
+    studyGroup.option,
+    studyGroup2.optionList,
+    studyGroup2.option,
+  );
   const myAddress1 = useSelect(address1, address1);
   const myAddress2 = useSelect_dynamic(
     address2_total,
@@ -333,6 +350,8 @@ export default () => {
       setAction={setAction}
       action={action}
       studyGroup={studyGroup}
+      studyGroup2={studyGroup2}
+      studyGroup3={studyGroup3}
       username={username}
       firstName={firstName}
       lastName={lastName}

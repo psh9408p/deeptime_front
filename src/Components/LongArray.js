@@ -1,21 +1,19 @@
-export const studyOption = [
-  '초1',
-  '초2',
-  '초3',
-  '초4',
-  '초5',
-  '초6',
-  '중1',
-  '중2',
-  '중3',
-  '고1',
-  '고2',
-  '고3',
-  'N수생',
-  '대학생',
-  '공시생',
-  '고시생',
-  '기타',
+export const studyOption_group = ['고등학생', '재(N)수생', '기타'];
+
+export const studyOption_3Level = ['1학년', '2학년', '3학년'];
+
+export const studyOption_series = ['자연', '인문', '예체능'];
+
+export const studyOption_group2 = [
+  studyOption_3Level,
+  ['해당 없음'],
+  ['해당 없음'],
+];
+
+export const studyOption_group3 = [
+  [['해당없음'], studyOption_series, studyOption_series],
+  [studyOption_series],
+  [['해당없음']],
 ];
 
 export const address1 = [
