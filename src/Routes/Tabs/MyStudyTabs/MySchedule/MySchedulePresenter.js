@@ -533,18 +533,56 @@ export default ({
         Object.assign(res.changes, dateSumVar);
       }
 
+      let totalTime_tmp = 0;
+      if (res.changes.start !== undefined && res.changes.end !== undefined) {
+        totalTime_tmp = res.changes.end.getTime() - res.changes.start.getTime();
+      } else if (res.changes.start !== undefined) {
+        totalTime_tmp =
+          res.schedule.end._date.getTime() - res.changes.start.getTime();
+      } else if (res.changes.end !== undefined) {
+        totalTime_tmp =
+          res.changes.end.getTime() - res.schedule.start._date.getTime();
+      } else {
+        totalTime_tmp =
+          res.schedule.end._date.getTime() - res.schedule.start._date.getTime();
+      }
+
+      console.log(
+        res.changes,
+        res.schedule.end._date,
+        res.schedule.start._date,
+        totalTime_tmp,
+      );
+
       const schedule_tmp = {
         id: res.schedule.id,
         isAllDay: res.schedule.isAllDay,
         isPrivate: res.schedule.isPrivate,
-        title: res.schedule.title,
-        location: res.schedule.location,
-        state: res.schedule.state,
-        start: res.schedule.start._date,
-        end: res.schedule.end._date,
-        totalTime:
-          res.schedule.end._date.getTime() - res.schedule.start._date.getTime(),
-        calendarId: res.schedule.calendarId,
+        title:
+          res.changes.title !== undefined
+            ? res.changes.title
+            : res.schedule.title,
+        location:
+          res.changes.location !== undefined
+            ? res.changes.location
+            : res.schedule.location,
+        state:
+          res.changes.state !== undefined
+            ? res.changes.state
+            : res.schedule.state,
+        start:
+          res.changes.start !== undefined
+            ? res.changes.start
+            : res.schedule.start._date,
+        end:
+          res.changes.end !== undefined
+            ? res.changes.end
+            : res.schedule.end._date,
+        totalTime: totalTime_tmp,
+        calendarId:
+          res.changes.calendarId !== undefined
+            ? res.changes.calendarId
+            : res.schedule.calendarId,
         option: 'update',
       };
       Object.assign(schedule_tmp, res.changes);

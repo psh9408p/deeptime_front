@@ -20,9 +20,11 @@ const GET_USER = gql`
         name
         address
         seatRatio
+        raspberriesCount
         raspberries {
           id
           seatNumber
+          registNumber
         }
       }
       payments {
@@ -77,6 +79,7 @@ export default withRouter(
         logOut={logOut}
         data={data}
         profileTabs={profileTabs}
+        userRefetch={refetch}
       />
     );
   },

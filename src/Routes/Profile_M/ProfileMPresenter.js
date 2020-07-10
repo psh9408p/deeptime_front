@@ -92,7 +92,7 @@ const ButtonWrap = styled.div`
   width: 150px;
 `;
 
-export default ({ loading, data, logOut, profileTabs }) => {
+export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
   if (loading === true) {
     return (
       <LoaderWrapper>
@@ -156,7 +156,11 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </ProfileButton>
           ))}
         </Tabs>
-        <ProfileTabs_M pageIndex={profileTabs.currentIndex} data={data} />
+        <ProfileTabs_M
+          pageIndex={profileTabs.currentIndex}
+          data={data}
+          userRefetch={userRefetch}
+        />
       </Wrapper>
     );
   }
