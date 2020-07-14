@@ -12,6 +12,8 @@ export const CREATE_ACCOUNT = gql`
     $address2: String!
     $termsOfMarketing: Boolean!
     $studyGroup: String!
+    $studyGroup2: String!
+    $studyGroup3: String!
   ) {
     createAccount(
       username: $username
@@ -24,6 +26,8 @@ export const CREATE_ACCOUNT = gql`
       address2: $address2
       termsOfMarketing: $termsOfMarketing
       studyGroup: $studyGroup
+      studyGroup2: $studyGroup2
+      studyGroup3: $studyGroup3
     )
   }
 `;

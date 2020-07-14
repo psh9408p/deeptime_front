@@ -19,6 +19,9 @@ const GET_USER = gql`
       classesCount
       studentsCount
       loginPosition
+      studyGroup
+      studyGroup2
+      studyGroup3
     }
   }
 `;

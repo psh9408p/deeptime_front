@@ -85,6 +85,8 @@ export default () => {
       address2: myAddress2.option,
       termsOfMarketing: marketing,
       studyGroup: studyGroup.option,
+      studyGroup2: studyGroup2.option,
+      studyGroup3: studyGroup3.option,
     },
   });
   const [localLogInMutation] = useMutation(LOCAL_LOG_IN);

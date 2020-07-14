@@ -114,6 +114,9 @@ export default ({ loading, data, logOut, profileTabs }) => {
         classesCount,
         studentsCount,
         loginPosition,
+        studyGroup,
+        studyGroup2,
+        studyGroup3,
       },
     } = data;
     return (
@@ -138,14 +141,11 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </UsernameRow>
             <Counts>
               <Count>
-                <FatText text={String(academiesCount)} /> 학원
+                <FatText text={'학습 그룹:'} />
               </Count>
-              <Count>
-                <FatText text={String(classesCount)} /> 클래스
-              </Count>
-              <Count>
-                <FatText text={String(studentsCount)} /> 학생
-              </Count>
+              <Count>{studyGroup},</Count>
+              <Count>{studyGroup2},</Count>
+              <Count>{studyGroup3}</Count>
             </Counts>
             <SubInfoDiv>
               <FatBox text={fullName} />
