@@ -18,6 +18,7 @@ import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
+import { FixedSizeList as BookmarkList } from 'react-window';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -134,7 +135,7 @@ const PopupCustom3 = styled(Popup)`
 
 const PopupCustom4 = styled(Popup)`
   &-content {
-    width: 450px !important;
+    width: 500px !important;
     height: 200px !important;
     display: flex;
     justify-content: center;
@@ -165,6 +166,7 @@ const PTitle = styled(FatText)`
 `;
 
 const ButtonDiv = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
 `;
@@ -222,6 +224,27 @@ const RedButtonWrap = styled.div`
 
 const SpaceDiv = styled.div`
   width: 10px;
+`;
+
+const SubjectForm = styled.form`
+  display: flex;
+  align-items: center;
+`;
+
+const ListWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+`;
+
+const IndiviList = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  font-size: 14px;
+  height: 100%;
+  background-color: ${(props) => (props.isOdd ? '#FAFAFA' : '#c7c7c7')};
 `;
 
 let newScheduleArray = [];
@@ -655,6 +678,12 @@ export default ({
     },
   };
 
+  const subjectRow = ({ index }) => (
+    <IndiviList isOdd={Boolean(index % 2)}>
+      [{subjectList[index].largeCategory}] {subjectList[index].name}
+    </IndiviList>
+  );
+
   useEffect(() => {
     setStartRange(
       moment(cal.current.calendarInst._renderRange.start._date).format(
@@ -695,6 +724,49 @@ export default ({
                     <PTitle text={'과목 관리'} />
                     <ThreeButtonWrap>
                       <SpaceDiv />
+                      <SubjectButtonDiv>
+                        <PopupCustom
+                          trigger={<PopButton_100 text={'학습 과목'} />}
+                          closeOnDocumentClick={false}
+                          modal
+                        >
+                          {(close) => (
+                            <PBody>
+                              <SubjectForm
+                                onSubmit={async () => {
+                                  const fucResult = await onSubmitAdd();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              >
+                                <PTitle text={'학습 과목 관리'} />
+                                <ListWrap>
+                                  <BookmarkList
+                                    height={300}
+                                    itemCount={subjectList.length}
+                                    itemSize={8}
+                                    width={300}
+                                  >
+                                    {subjectRow}
+                                  </BookmarkList>
+                                </ListWrap>
+                                <ButtonDiv>
+                                  <PopupButton text={'추가'} />
+                                  <PopupButton
+                                    type="button"
+                                    onClick={() => {
+                                      close();
+                                      subjectClear();
+                                    }}
+                                    text={'닫기'}
+                                  />
+                                </ButtonDiv>
+                              </SubjectForm>
+                            </PBody>
+                          )}
+                        </PopupCustom>
+                      </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom
                           trigger={<PopButton_100 text={'과목 추가'} />}

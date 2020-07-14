@@ -28,6 +28,7 @@ export const MY_SUBJECT = gql`
   query mySubject {
     mySubject {
       id
+      largeCategory
       name
       color
       bgColor
