@@ -439,6 +439,8 @@ export default ({
                   id="allTermChk"
                   checked={allTerm}
                   onChange={onChangeAllTerm}
+                  boxSize={'35px'}
+                  margin={'0 10px 0 0'}
                 />
                 <CheckLabel htmlFor="allTermChk">
                   <FatText text={'만 14세 이상이며, 약관에 모두 동의합니다'} />
@@ -459,6 +461,8 @@ export default ({
                             id="tosChk"
                             checked={tos}
                             onChange={onChangeTos}
+                            boxSize={'35px'}
+                            margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="tosChk">
                             <Link target="_blank" to="/tos" replace>
@@ -473,6 +477,8 @@ export default ({
                             id="topChk"
                             checked={top}
                             onChange={onChangeTop}
+                            boxSize={'35px'}
+                            margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="topChk">
                             <Link target="_blank" to="/top" replace>
@@ -487,6 +493,8 @@ export default ({
                             id="marketingChk"
                             checked={marketing}
                             onChange={onChangeMarketing}
+                            boxSize={'35px'}
+                            margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="marketingChk">
                             마케팅 수신 동의

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import ObjectUnassign from '../../../../Components/ObjectUnassign';
@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
 import { FixedSizeList as BookmarkList } from 'react-window';
+import CheckBox from '../../../../Components/CheckBox';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -143,6 +144,16 @@ const PopupCustom4 = styled(Popup)`
   }
 `;
 
+const PopupCustom5 = styled(Popup)`
+  &-content {
+    width: 500px !important;
+    height: 500px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
 const FrontDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -241,10 +252,36 @@ const ListWrap = styled.div`
 const IndiviList = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 20px;
   font-size: 14px;
   height: 100%;
   background-color: ${(props) => (props.isOdd ? '#FAFAFA' : '#c7c7c7')};
+`;
+
+const BookMarkTitle = styled.div`
+  border: ${(props) => props.theme.boxBorder};
+  display: flex;
+  flex-direction: row;
+  width: 300px;
+  height: 25px;
+`;
+const BookLeft = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 65px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const BookRight = styled.div`
+  display: flex;
+  align-items: center;
+  width: 235px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 14px;
 `;
 
 let newScheduleArray = [];
@@ -267,13 +304,22 @@ export default ({
   addSubjectMutation,
   editSubjectMutation,
   deleteSubjectMutation,
+  bookMarkSubjectMutation,
   subjectRefetch,
   pageIndex,
   networkStatus,
 }) => {
+  const indiSubject_tmp = subjectList.map((subject) => {
+    if (subject.modifyRight) {
+      return { id: subject.id, name: subject.name, bgColor: subject.bgColor };
+    }
+  });
+  const indiSubject = indiSubject_tmp.filter(function (el) {
+    return el != undefined;
+  });
   const mySubjectList = useSelect(
-    subjectList.map((List) => `${List.name}`),
-    subjectList.map((List) => `${List.id}`),
+    indiSubject.map((List) => `${List.name}`),
+    indiSubject.map((List) => `${List.id}`),
   );
   const subjectClear = () => {
     subjectName.setValue('');
@@ -282,8 +328,8 @@ export default ({
   };
 
   const subjectLoad = () => {
-    subjectName.setValue(subjectList[mySubjectList.optionIndex].name);
-    setSubjectColor(subjectList[mySubjectList.optionIndex].bgColor);
+    subjectName.setValue(indiSubject[mySubjectList.optionIndex].name);
+    setSubjectColor(indiSubject[mySubjectList.optionIndex].bgColor);
   };
 
   const onSubmitAdd = async () => {
@@ -377,7 +423,15 @@ export default ({
     }
   };
 
-  const calendars = subjectList; //과목 종류 넣기
+  //과목 종류 넣기
+  const calendars_tmp = subjectList.map((subject) => {
+    if (subject.bookMark) {
+      return subject;
+    }
+  });
+  const calendars = calendars_tmp.filter(function (el) {
+    return el != undefined;
+  });
   //스케줄 넣기
   if (networkStatus !== 4) {
     schedules = myData.schedules.map((List) => {
@@ -648,7 +702,10 @@ export default ({
       } else if (schedule.location) {
         html.push('<span class="calendar-font-icon ic-location-b"></span>');
       }
-      const subjectIndex = mySubjectList.valueList.indexOf(schedule.calendarId);
+      const subjectIdList = subjectList.map((subject) => {
+        return subject.id;
+      });
+      const subjectIndex = subjectIdList.indexOf(schedule.calendarId);
       if (subjectIndex > -1) {
         html.push(
           ' ' +
@@ -678,12 +735,57 @@ export default ({
     },
   };
 
+  // 과목 즐겨찾기 관련
+  const [bookMarkCh, setBookMarkCh] = useState(
+    subjectList.map((_, index) => {
+      return subjectList[index].bookMark;
+    }),
+  );
+  const onChangeCheck = (index) => (e) => {
+    let newArr = [...bookMarkCh];
+    newArr[index] = e.target.checked;
+    setBookMarkCh(newArr);
+  };
   const subjectRow = ({ index }) => (
-    <IndiviList isOdd={Boolean(index % 2)}>
+    <IndiviList key={index} isOdd={Boolean(index % 2)}>
+      <CheckBox
+        checked={bookMarkCh[index]}
+        onChange={onChangeCheck(index)}
+        boxSize={'25px'}
+        margin={'0 20px 0 0'}
+      />
       [{subjectList[index].largeCategory}] {subjectList[index].name}
     </IndiviList>
   );
 
+  const onClickBookMark = async () => {
+    try {
+      toast.info('북마크 변경사항 저장 중...');
+      const {
+        data: { bookMarkSubject },
+      } = await bookMarkSubjectMutation({
+        variables: {
+          subjectId: subjectList.map((_, index) => {
+            return subjectList[index].id;
+          }),
+          bookMark: bookMarkCh,
+        },
+      });
+      if (!bookMarkSubject) {
+        alert('북마크를 변경할 수 없습니다.');
+      } else {
+        await subjectRefetch();
+        toast.success('변경된 북마크가 저장되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
+  // useEffect 관련
   useEffect(() => {
     setStartRange(
       moment(cal.current.calendarInst._renderRange.start._date).format(
@@ -725,8 +827,8 @@ export default ({
                     <ThreeButtonWrap>
                       <SpaceDiv />
                       <SubjectButtonDiv>
-                        <PopupCustom
-                          trigger={<PopButton_100 text={'학습 과목'} />}
+                        <PopupCustom5
+                          trigger={<PopButton_100 text={'과목 북마크'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
@@ -734,13 +836,17 @@ export default ({
                             <PBody>
                               <SubjectForm
                                 onSubmit={async () => {
-                                  const fucResult = await onSubmitAdd();
+                                  const fucResult = await onClickBookMark();
                                   if (fucResult) {
                                     close();
                                   }
                                 }}
                               >
-                                <PTitle text={'학습 과목 관리'} />
+                                <PTitle text={'과목 북마크'} />
+                                <BookMarkTitle>
+                                  <BookLeft>체크</BookLeft>
+                                  <BookRight>[대분류] 과목 이름</BookRight>
+                                </BookMarkTitle>
                                 <ListWrap>
                                   <BookmarkList
                                     height={300}
@@ -752,12 +858,16 @@ export default ({
                                   </BookmarkList>
                                 </ListWrap>
                                 <ButtonDiv>
-                                  <PopupButton text={'추가'} />
+                                  <PopupButton text={'저장'} />
                                   <PopupButton
                                     type="button"
                                     onClick={() => {
                                       close();
-                                      subjectClear();
+                                      setBookMarkCh(
+                                        subjectList.map((_, index) => {
+                                          return subjectList[index].bookMark;
+                                        }),
+                                      );
                                     }}
                                     text={'닫기'}
                                   />
@@ -765,7 +875,7 @@ export default ({
                               </SubjectForm>
                             </PBody>
                           )}
-                        </PopupCustom>
+                        </PopupCustom5>
                       </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom

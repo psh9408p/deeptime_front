@@ -3,22 +3,28 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const Container = styled.input`
-  width: 25px;
-  height: 25px;
+  width: 100%;
+  height: 100%;
 `;
 
 const Div = styled.div`
   display: flex;
   align-items: center;
   align-items: center;
-  width: 35px;
-  height: 35px;
+  width: ${(props) => props.boxSize};
+  height: ${(props) => props.boxSize};
   padding: 0;
-  margin-right: 10px;
+  margin: ${(props) => props.margin};
 `;
 
-const CheckBox = ({ checked, onChange, type = 'checkbox' }) => (
-  <Div>
+const CheckBox = ({
+  checked,
+  onChange,
+  type = 'checkbox',
+  boxSize,
+  margin,
+}) => (
+  <Div boxSize={boxSize} margin={margin}>
     <Container checked={checked} onChange={onChange} type={type} />
   </Div>
 );

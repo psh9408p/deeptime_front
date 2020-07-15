@@ -24,6 +24,12 @@ export const DELETE_SUBJECT = gql`
   }
 `;
 
+export const BOOKMARK_SUBJECT = gql`
+  mutation bookMarkSubject($subjectId: [String!]!, $bookMark: [Boolean!]!) {
+    bookMarkSubject(subjectId: $subjectId, bookMark: $bookMark)
+  }
+`;
+
 export const MY_SUBJECT = gql`
   query mySubject {
     mySubject {
@@ -34,6 +40,8 @@ export const MY_SUBJECT = gql`
       bgColor
       dragBgColor
       borderColor
+      bookMark
+      modifyRight
     }
   }
 `;

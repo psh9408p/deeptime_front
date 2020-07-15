@@ -10,6 +10,7 @@ import {
   DELETE_SUBJECT,
   MY_SUBJECT,
   EDIT_SUBJECT,
+  BOOKMARK_SUBJECT,
 } from './MyScheduleQueries';
 
 const LoaderWrapper = styled.div`
@@ -27,6 +28,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
   const [addSubjectMutation] = useMutation(ADD_SUBJECT);
   const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
   const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
+  const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
   const {
     data: subjectData,
     loading: subjectLoading,
@@ -57,6 +59,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
         addSubjectMutation={addSubjectMutation}
         editSubjectMutation={editSubjectMutation}
         deleteSubjectMutation={deleteSubjectMutation}
+        bookMarkSubjectMutation={bookMarkSubjectMutation}
         subjectRefetch={subjectRefetch}
         pageIndex={pageIndex}
         networkStatus={networkStatus}
