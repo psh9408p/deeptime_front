@@ -1,6 +1,12 @@
 import React, { useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import Loader from '../../../Components/Loader';
 import MyStatistics from './MyStatistics';
 import MySchedule from './MySchedule';
+
+const LoaderWrapper = styled.div`
+  margin: 100px 0px;
+`;
 
 export default ({
   pageIndex,
@@ -10,7 +16,7 @@ export default ({
   refreshTerm,
   startPolling,
   stopPolling,
-  myInfoLoading,
+  createDefaultSubjectMutation,
 }) => {
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -32,6 +38,15 @@ export default ({
     );
   } else if (pageIndex === 1) {
     stopPolling();
+    // if (!myInfoData.me.setDefaultSubject) {
+    //   const createLoading = await createDefaultSubjectMutation();
+    //   console.log('a', createLoading);
+    //   return (
+    //     <LoaderWrapper>
+    //       <Loader />
+    //     </LoaderWrapper>
+    //   );
+    // } else {
     return (
       <MySchedule
         pageIndex={pageIndex}
@@ -40,5 +55,6 @@ export default ({
         networkStatus={networkStatus}
       />
     );
+    // }
   }
 };

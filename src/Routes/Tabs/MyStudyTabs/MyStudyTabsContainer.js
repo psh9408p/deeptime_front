@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Loader from '../../../Components/Loader';
 import MyStudyTabsPresenter from './MyStudyTabsPresenter';
-import { ME } from './MyStudyTabsQueries';
-import { useQuery } from '@apollo/react-hooks';
+import { ME, CREATE_DEFAULTSUBJECT } from './MyStudyTabsQueries';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import useInput from '../../../Hooks/useInput';
 
 const LoaderWrapper = styled.div`
@@ -14,6 +14,7 @@ export default ({ pageIndex }) => {
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
 
+  const [createDefaultSubjectMutation] = useMutation(CREATE_DEFAULTSUBJECT);
   const {
     data: myInfoData,
     error,
@@ -42,7 +43,7 @@ export default ({ pageIndex }) => {
         refreshTerm={refreshTerm}
         startPolling={startPolling}
         stopPolling={stopPolling}
-        myInfoLoading={myInfoLoading}
+        createDefaultSubjectMutation={createDefaultSubjectMutation}
       />
     );
   }

@@ -746,8 +746,8 @@ export default ({
     newArr[index] = e.target.checked;
     setBookMarkCh(newArr);
   };
-  const subjectRow = ({ index }) => (
-    <IndiviList key={index} isOdd={Boolean(index % 2)}>
+  const subjectRow = ({ index, style }) => (
+    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
       <CheckBox
         checked={bookMarkCh[index]}
         onChange={onChangeCheck(index)}
@@ -851,7 +851,7 @@ export default ({
                                   <BookmarkList
                                     height={300}
                                     itemCount={subjectList.length}
-                                    itemSize={8}
+                                    itemSize={25}
                                     width={300}
                                   >
                                     {subjectRow}

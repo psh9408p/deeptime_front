@@ -21,6 +21,12 @@
 
 import { gql } from 'apollo-boost';
 
+export const CREATE_DEFAULTSUBJECT = gql`
+  mutation createDefaultSubject {
+    createDefaultSubject
+  }
+`;
+
 export const ME = gql`
   query me {
     me {
@@ -28,6 +34,7 @@ export const ME = gql`
       fullName
       avatar
       existToggle
+      setDefaultSubject
       todayTime {
         attendanceStatus
         absenceReason
