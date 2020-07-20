@@ -41,6 +41,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
 
   if (!subjectLoading && subjectData && subjectData.mySubject) {
     subjectRefetch();
+    console.log(subjectData.mySubject);
     return (
       <MySchedulePresenter
         cal={cal}

@@ -72,7 +72,10 @@ export default () => {
           }
         })}
       </Tabs>
-      <MyStudyTabs pageIndex={myTabs.currentIndex} />
+      <MyStudyTabs
+        pageIndex={myTabs.currentIndex}
+        setPageIndex={myTabs.changeItem}
+      />
     </Wrapper>
   );
 };

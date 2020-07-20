@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Loader from '../../../Components/Loader';
 import MyStudyTabsPresenter from './MyStudyTabsPresenter';
@@ -10,9 +10,10 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ pageIndex }) => {
+export default ({ pageIndex, setPageIndex }) => {
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
+  const [loadingToggle, setLoadingToggle] = useState(true);
 
   const [createDefaultSubjectMutation] = useMutation(CREATE_DEFAULTSUBJECT);
   const {
@@ -44,6 +45,9 @@ export default ({ pageIndex }) => {
         startPolling={startPolling}
         stopPolling={stopPolling}
         createDefaultSubjectMutation={createDefaultSubjectMutation}
+        loadingToggle={loadingToggle}
+        setLoadingToggle={setLoadingToggle}
+        setPageIndex={setPageIndex}
       />
     );
   }

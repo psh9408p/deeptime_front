@@ -31,6 +31,7 @@ export const ME = gql`
   query me {
     me {
       id
+      username
       fullName
       avatar
       existToggle
