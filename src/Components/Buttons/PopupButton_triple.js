@@ -14,7 +14,12 @@ const Container = styled.button`
   font-size: 14px;
   cursor: pointer;
   &:first-child {
-    margin-right: 100px;
+    margin-right: 30px;
+  }
+  &:nth-child(2) {
+    margin-right: 30px;
+    background-color: #e74c3c;
+    color: black;
   }
 `;
 

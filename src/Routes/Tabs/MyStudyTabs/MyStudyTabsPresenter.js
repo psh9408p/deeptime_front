@@ -5,6 +5,7 @@ import MyStatistics from './MyStatistics';
 import MySchedule from './MySchedule';
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
+import Countdown from 'react-countdown';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -17,6 +18,13 @@ const MassageDiv = styled.div`
   justify-content: center;
   align-items: center;
   margin: 40px 0 10px 0;
+`;
+
+const CountDownDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 0 10px 0;
 `;
 
 const RedDiv = styled.div`
@@ -82,6 +90,9 @@ export default ({
       <LoaderWrapper>
         <Loader />
         <MassageDiv>[약 1~2분 소요] 기본 과목 세팅 중...</MassageDiv>
+        <CountDownDiv>
+          <Countdown date={Date.now() + 120000} />
+        </CountDownDiv>
         <RedDiv>인터넷 창을 끄지 말아주세요!</RedDiv>
       </LoaderWrapper>
     );

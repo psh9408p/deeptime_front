@@ -13,15 +13,22 @@ const GET_USER = gql`
       username
       fullName
       isSelf
-      bio
       email
-      academiesCount
-      classesCount
-      studentsCount
-      loginPosition
       studyGroup
       studyGroup2
       studyGroup3
+      organization {
+        id
+        name
+        manager {
+          id
+          phoneNumber
+        }
+      }
+      raspberry {
+        id
+        seatNumber
+      }
     }
   }
 `;
@@ -41,7 +48,9 @@ export default withRouter(
     const profileTabContents = ['구독 / 결제', '개인'];
     const profileTabs = useTabs(0, profileTabContents);
 
-    const { data, loading } = useQuery(GET_USER, { variables: { username } });
+    const { data, loading, refetch } = useQuery(GET_USER, {
+      variables: { username },
+    });
     const [logOut] = useMutation(LOG_OUT);
     return (
       <ProfilePresenter
@@ -49,6 +58,7 @@ export default withRouter(
         logOut={logOut}
         data={data}
         profileTabs={profileTabs}
+        userRefetch={refetch}
       />
     );
   },

@@ -2,45 +2,43 @@ import React from 'react';
 import ProfileTabsPresenter from './ProfileTabsMPresenter';
 import { useMutation } from '@apollo/react-hooks';
 import useInput from '../../../Hooks/useInput';
-import { RASPBERRY_REGIST, RASPBERRY_UNREGIST } from './ProfileTabsMQueries';
+import {
+  RASPBERRYSEAT_REGIST,
+  RASPBERRYSEAT_UNREGIST,
+  DISCONNECT_STUDENT,
+} from './ProfileTabsMQueries';
 import { toast } from 'react-toastify';
 
 export default ({ pageIndex, data, userRefetch }) => {
-  const seatNumber = useInput('');
-  const raspberryId = useInput('');
+  const seatNumber = useInput();
 
   const RaspberryClear = () => {
-    raspberryId.setValue('');
     seatNumber.setValue('');
   };
 
-  const RaspberryLoad = (value1, value2) => {
-    seatNumber.setValue(value1);
-    raspberryId.setValue(value2);
-  };
+  const [raspberrySeatRegistMutation] = useMutation(RASPBERRYSEAT_REGIST);
+  const [raspberrySeatUnRegistMutation] = useMutation(RASPBERRYSEAT_UNREGIST);
+  const [disconnectStudentMutation] = useMutation(DISCONNECT_STUDENT);
 
-  const [raspberryRegistMutation] = useMutation(RASPBERRY_REGIST);
-  const [raspberryUnRegistMutation] = useMutation(RASPBERRY_UNREGIST);
-
-  const onRegist = async (index) => {
+  const onRegist = async (index1, index2) => {
     try {
-      toast.info('기기 등록/수정 중...');
+      toast.info('좌석을 등록/수정 중...');
       const {
-        data: { raspberryRegist },
-      } = await raspberryRegistMutation({
+        data: { raspberrySeatRegist },
+      } = await raspberrySeatRegistMutation({
         variables: {
-          raspberryId: raspberryId.value,
-          seatNumber: Number(seatNumber.value),
           organizationId: data.seeUser.organization.id,
-          registNumber: index,
+          raspberryId:
+            data.seeUser.organization.hubs[index1].raspberries[index2].id,
+          seatNumber: Number(seatNumber.value),
         },
       });
-      if (!raspberryRegist) {
-        alert('기기를 등록/수정할 수 없습니다.');
+      if (!raspberrySeatRegist) {
+        alert('좌석을 등록/수정할 수 없습니다.');
       } else {
         await userRefetch();
         await RaspberryClear();
-        toast.success('기기 등록/수정이 완료되었습니다.');
+        toast.success('좌석 등록/수정이 완료되었습니다.');
         return true;
       }
     } catch (e) {
@@ -50,29 +48,56 @@ export default ({ pageIndex, data, userRefetch }) => {
     }
   };
 
-  const onUnRegist = async (raspIndex) => {
-    if (raspIndex === -1) {
-      alert('해당 위치에 등록된 기기가 없습니다.');
-      return;
-    }
+  const onUnRegist = async (index1, index2) => {
     try {
-      toast.info('기기 등록 해제 중...');
+      toast.info('좌석을 해제 중...');
       const {
-        data: { raspberryUnRegist },
-      } = await raspberryUnRegistMutation({
+        data: { raspberrySeatUnRegist },
+      } = await raspberrySeatUnRegistMutation({
         variables: {
-          raspberryId: data.seeUser.organization.raspberries[raspIndex].id,
+          raspberryId:
+            data.seeUser.organization.hubs[index1].raspberries[index2].id,
         },
       });
-      if (!raspberryUnRegist) {
-        alert('기기 등록 해제를 할 수 없습니다.');
+      if (!raspberrySeatUnRegist) {
+        alert('좌석을 해제 할 수 없습니다.');
       } else {
         await userRefetch();
-        toast.success('기기 등록 해제가 완료되었습니다.');
+        toast.success('좌석 해제가 완료되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
+    }
+  };
+
+  const onUnMountStudent = async (studentId) => {
+    if (
+      window.confirm(
+        '해당 학생의 독서실 IAM 서비스 사용이 중단됩니다.\n그래도 해제하시겠습니까?',
+      ) === true
+    ) {
+      try {
+        toast.info('해당 캠(좌석)에서 학생을 해제 중...');
+        const {
+          data: { disconnectStudent_M },
+        } = await disconnectStudentMutation({
+          variables: {
+            studentId,
+          },
+        });
+        if (!disconnectStudent_M) {
+          alert('학생을 해제 할 수 없습니다.');
+        } else {
+          await userRefetch();
+          toast.success('해당 캠(좌석)에서 학생이 해제되었습니다.');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+      }
     }
   };
 
@@ -80,12 +105,11 @@ export default ({ pageIndex, data, userRefetch }) => {
     <ProfileTabsPresenter
       pageIndex={pageIndex}
       data={data}
-      raspberryId={raspberryId}
       seatNumber={seatNumber}
       RaspberryClear={RaspberryClear}
-      RaspberryLoad={RaspberryLoad}
       onRegist={onRegist}
       onUnRegist={onUnRegist}
+      onUnMountStudent={onUnMountStudent}
     />
   );
 };

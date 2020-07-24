@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import NumberWithCommas from '../../../Components/Money/NumberWithCommas';
 import Popup from 'reactjs-popup';
-import PopupButton from '../../../Components/Buttons/PopupButton';
+import PopupButton_triple from '../../../Components/Buttons/PopupButton_triple';
 import Input from '../../../Components/Input';
 import FatText from '../../../Components/FatText';
 import PopButton from '../../../Components/Buttons/PopButton';
+import phoneNumberNormalize from '../../../Components/phoneNumberNormalize';
 
 const Wrapper = styled.div`
   display: flex;
@@ -98,15 +99,15 @@ const SubContent2 = styled.div`
   display: flex;
   align-items: center;
   &:first-child {
-    width: 80px;
+    width: 170px;
     justify-content: flex-start;
   }
   &:nth-child(2) {
-    width: 280px;
+    width: 120px;
     justify-content: flex-start;
   }
   &:nth-child(3) {
-    width: 110px;
+    width: 180px;
     justify-content: flex-start;
   }
   &:nth-child(4) {
@@ -137,15 +138,16 @@ const RaspberryDiv = styled.div`
   display: flex;
   align-items: center;
   font-weight: 600;
-  &:nth-child(2) {
-    width: 260px;
+  &:first-child {
+    width: 150px;
     margin-right: 20px;
     justify-content: flex-start;
   }
-  &:nth-child(3) {
-    width: 80px;
-    margin-right: 30px;
+  &:nth-child(2) {
+    width: 100px;
+    margin-right: 20px;
     justify-content: flex-start;
+    color: ${(props) => props.theme.classicBlue};
   }
 `;
 
@@ -168,19 +170,22 @@ const Content = styled.div`
   }
 `;
 
-const Content_No = styled.div`
+const StudentDiv = styled.div`
+  cursor: pointer;
+  color: ${(props) => props.theme.skyBlue};
   height: 100%;
   display: flex;
   align-items: center;
   font-weight: 600;
-  width: 80px;
+  width: 160px;
+  margin-right: 20px;
   justify-content: flex-start;
 `;
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 500px !important;
-    height: 250px !important;
+    width: 520px !important;
+    height: 200px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -197,14 +202,8 @@ const PBody = styled.div`
 `;
 
 const SmallInput = styled(Input)`
-  width: 200px;
+  width: 270px;
   margin-right: 15px;
-  margin-left: 41px;
-`;
-
-const LargeInput = styled(Input)`
-  max-width: 300px;
-  margin-bottom: 15px;
   margin-left: 41px;
 `;
 
@@ -218,7 +217,8 @@ const SmallDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 7px;
+  justify-content: center;
+  margin-bottom: 20px;
 `;
 
 const ButtonDiv = styled.div`
@@ -231,20 +231,6 @@ const ButtonDiv2 = styled.div`
   justify-content: center;
   align-items: center;
   width: 150px;
-`;
-
-const LoadButton = styled.button`
-  border: 0;
-  width: 140px;
-  height: 25px;
-  border-radius: ${(props) => props.theme.borderRadius};
-  font-weight: 600;
-  text-align: center;
-  padding: 5px 0px;
-  font-size: 12px;
-  outline-color: black;
-  background-color: #e74c3c;
-  cursor: pointer;
 `;
 
 const UnRegistButton = styled.button`
@@ -264,15 +250,14 @@ const UnRegistButton = styled.button`
 export default ({
   pageIndex,
   data,
-  raspberryId,
   seatNumber,
   RaspberryClear,
-  RaspberryLoad,
   onRegist,
   onUnRegist,
+  onUnMountStudent,
 }) => {
+  let keyCount = 0;
   const User = data.seeUser;
-  const NumberOfRaspberry = new Array(User.organization.seatRatio * 8).fill(1);
   const date = new Date(User.paymentSet.membershipDate);
   const dateMonth =
     date.getMonth() + 1 >= 10
@@ -290,6 +275,22 @@ export default ({
   };
 
   if (pageIndex === 0) {
+    let registSeatCount = 0;
+    let raspberryCount = 0;
+    for (let i = 0; i < data.seeUser.organization.hubs.length; i++) {
+      for (
+        let j = 0;
+        j < data.seeUser.organization.hubs[i].raspberries.length;
+        j++
+      ) {
+        raspberryCount = raspberryCount + 1;
+        if (
+          data.seeUser.organization.hubs[i].raspberries[j].seatNumber !== null
+        ) {
+          registSeatCount = registSeatCount + 1;
+        }
+      }
+    }
     return (
       <Wrapper>
         <ContentDiv>
@@ -307,11 +308,10 @@ export default ({
           <LeftDiv>
             IAM 좌석 개수
             <br />
-            (기기등록/최대)
+            (등록/최대)
           </LeftDiv>
           <RightDiv>
-            {User.organization.raspberriesCount}개 /{' '}
-            {User.organization.seatRatio * 8}개
+            {registSeatCount}개 / {raspberryCount}개
           </RightDiv>
         </ContentDiv>
       </Wrapper>
@@ -362,108 +362,110 @@ export default ({
     return (
       <Wrapper>
         <SubTitleDiv>
-          <SubContent2>No.</SubContent2>
-          <SubContent2>기기 고유번호</SubContent2>
+          <SubContent2>캠 시리얼 넘버</SubContent2>
           <SubContent2>좌석 번호</SubContent2>
+          <SubContent2>학생 이름(연락처)</SubContent2>
           <SubContent2 />
           <SubContent2 />
         </SubTitleDiv>
-        {NumberOfRaspberry.map((_, index) => {
-          const equalRegistNumber = (element) =>
-            element.registNumber === index + 1;
-          const raspIndex = User.organization.raspberries.findIndex(
-            equalRegistNumber,
-          );
-          return (
-            <ContentDiv_Rasp key={index}>
-              <Content_No>{index + 1}</Content_No>
-              <RaspberryDiv>
-                {raspIndex !== -1
-                  ? User.organization.raspberries[raspIndex].id
-                  : '미등록'}
-              </RaspberryDiv>
-              <RaspberryDiv>
-                {raspIndex !== -1 &&
-                  User.organization.raspberries[raspIndex].seatNumber}
-              </RaspberryDiv>
-              <ButtonDiv2>
-                <PopupCustom
-                  trigger={<PopButton text={'등록/수정'} />}
-                  closeOnDocumentClick={false}
-                  modal
-                >
-                  {(close) => (
-                    <PBody>
-                      <form
-                        onSubmit={async () => {
-                          const fucResult = await onRegist(index + 1);
-                          if (fucResult) {
-                            close();
-                          }
-                        }}
-                      >
-                        <PTitle text={'기기 정보'} />
-                        <SmallDiv>
-                          <SmallInput
-                            type={'number'}
-                            placeholder={'좌석 번호 (예: 12)'}
-                            {...seatNumber}
-                          />
-                          <LoadButton
-                            type="button"
-                            onClick={() => {
-                              if (
-                                User.organization.raspberries[index] !==
-                                undefined
-                              ) {
-                                RaspberryLoad(
-                                  User.organization.raspberries[index]
-                                    .seatNumber,
-                                  User.organization.raspberries[index].id,
-                                );
-                              }
-                            }}
-                          >
-                            기존정보 불러오기
-                          </LoadButton>
-                        </SmallDiv>
-                        <div>
-                          <LargeInput
-                            placeholder={
-                              '기기 고유번호 (예: ckcbctntg002b0728rc6ei1td)'
-                            }
-                            {...raspberryId}
-                          />{' '}
-                        </div>
-                        <ButtonDiv>
-                          <PopupButton text={'등록/수정'} />
-                          <PopupButton
-                            type="button"
-                            onClick={() => {
-                              close();
-                              RaspberryClear();
-                            }}
-                            text={'닫기'}
-                          />
-                        </ButtonDiv>
-                      </form>
-                    </PBody>
-                  )}
-                </PopupCustom>
-              </ButtonDiv2>
-              <ButtonDiv2>
-                <UnRegistButton
-                  type="button"
+        {User.organization.hubs.map((hub, index1) =>
+          hub.raspberries.map((raspberry, index2) => {
+            keyCount = keyCount + 1;
+            return (
+              <ContentDiv_Rasp key={keyCount}>
+                <RaspberryDiv>{raspberry.serialNumber}</RaspberryDiv>
+                <RaspberryDiv>{raspberry?.seatNumber}</RaspberryDiv>
+                <StudentDiv
                   onClick={() => {
-                    onUnRegist(raspIndex);
+                    if (raspberry.user !== null) {
+                      alert(
+                        `해당 학생의 연락처는 ${phoneNumberNormalize(
+                          raspberry.user.phoneNumber,
+                        )} 입니다.`,
+                      );
+                    }
                   }}
                 >
-                  기기해제
-                </UnRegistButton>
-              </ButtonDiv2>
-            </ContentDiv_Rasp>
-          );
-        })}
+                  {raspberry?.user?.fullName}
+                  {raspberry?.user && <div>(Click)</div>}
+                </StudentDiv>
+                <ButtonDiv2>
+                  <PopupCustom
+                    trigger={<PopButton text={'좌석설정'} />}
+                    closeOnDocumentClick={false}
+                    modal
+                  >
+                    {(close) => (
+                      <PBody>
+                        <form
+                          onSubmit={async () => {
+                            const fucResult = await onRegist(index1, index2);
+                            if (fucResult) {
+                              close();
+                            }
+                          }}
+                        >
+                          <PTitle text={'좌석설정'} />
+                          <SmallDiv>
+                            <SmallInput
+                              type={'number'}
+                              placeholder={
+                                '좌석 번호 (예: 12, 해제 시 입력 불필요)'
+                              }
+                              {...seatNumber}
+                            />
+                          </SmallDiv>
+                          <ButtonDiv>
+                            <PopupButton_triple text={'등록/수정'} />
+                            <PopupButton_triple
+                              type="button"
+                              onClick={async () => {
+                                if (raspberry.seatNumber === null) {
+                                  alert('이미 할당된 좌석이 없습니다.');
+                                } else {
+                                  const fucResult = await onUnRegist(
+                                    index1,
+                                    index2,
+                                  );
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }
+                              }}
+                              text={'해제'}
+                            />
+                            <PopupButton_triple
+                              type="button"
+                              onClick={() => {
+                                close();
+                                RaspberryClear();
+                              }}
+                              text={'닫기'}
+                            />
+                          </ButtonDiv>
+                        </form>
+                      </PBody>
+                    )}
+                  </PopupCustom>
+                </ButtonDiv2>
+                <ButtonDiv2>
+                  <UnRegistButton
+                    type="button"
+                    onClick={() => {
+                      if (raspberry.user === null) {
+                        alert('해당 캠(좌석)에 배정된 학생이 없습니다.');
+                      } else {
+                        onUnMountStudent(raspberry.user.id);
+                      }
+                    }}
+                  >
+                    학생해제
+                  </UnRegistButton>
+                </ButtonDiv2>
+              </ContentDiv_Rasp>
+            );
+          }),
+        )}
       </Wrapper>
     );
   }

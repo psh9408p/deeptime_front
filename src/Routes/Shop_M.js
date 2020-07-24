@@ -21,6 +21,7 @@ export const MY_PAYMENTSET = gql`
         fullName
         phoneNumber
         organization {
+          id
           seatRatio
         }
       }

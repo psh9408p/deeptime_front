@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/react-hooks';
 import {
   REQUEST_LOGIN,
   CREATE_ACCOUNT,
+  CREATE_ACCOUNT_M,
   LOCAL_LOG_IN,
   S_PHONE_VERIFICATION,
   C_PHONE_VERIFICATION,
@@ -70,6 +71,8 @@ export default () => {
   const emailKey = useInput('');
   const phoneNumber = useInput('');
   const phoneKey = useInput('');
+  const organizationName = useInput('');
+  const detailAddress = useInput('');
   const [requestLoginMutation] = useMutation(REQUEST_LOGIN, {
     variables: { email: email.value, password: password.value },
   });
@@ -87,6 +90,21 @@ export default () => {
       studyGroup: studyGroup.option,
       studyGroup2: studyGroup2.option,
       studyGroup3: studyGroup3.option,
+    },
+  });
+  const [createAccount_M_Mutation] = useMutation(CREATE_ACCOUNT_M, {
+    variables: {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      username: username.value,
+      email: email.value,
+      phoneNumber: phoneNumber.value,
+      organizationName: organizationName.value,
+      password: password.value,
+      address1: myAddress1.option,
+      address2: myAddress2.option,
+      detailAddress: detailAddress.value,
+      termsOfMarketing: marketing,
     },
   });
   const [localLogInMutation] = useMutation(LOCAL_LOG_IN);
@@ -166,6 +184,8 @@ export default () => {
     password2.setValue('');
     emailKey.setValue('');
     phoneKey.setValue('');
+    organizationName.setValue('');
+    detailAddress.setValue('');
   };
 
   const sPhoneOnClick = async () => {
@@ -316,6 +336,37 @@ export default () => {
       } else {
         alert('필수 약관에 동의하세요.');
       }
+    } else if (action === 'signUp_manager') {
+      if (tos === true && top === true) {
+        if (password.errorChk === false && password2.errorChk === false) {
+          try {
+            toast.info('새로운 계정 등록 중...');
+            const {
+              data: { createAccount_M },
+            } = await createAccount_M_Mutation();
+            if (!createAccount_M) {
+              alert('계정을 만들 수 없습니다.');
+            } else {
+              toast.success(
+                <div>
+                  계정이 만들어졌습니다.
+                  <br />
+                  로그인을 시도하세요.
+                </div>,
+              );
+              password.setValue('');
+              setAction('logIn');
+            }
+          } catch (e) {
+            const realText = e.message.split('GraphQL error: ');
+            alert(realText[1]);
+          }
+        } else {
+          alert('비밀번호를 다시 확인하세요.');
+        }
+      } else {
+        alert('필수 약관에 동의하세요.');
+      }
     } else if (action === 'findEmail') {
       try {
         toast.info('인증번호 확인 중...');
@@ -361,6 +412,8 @@ export default () => {
       emailKey={emailKey}
       phoneNumber={phoneNumber}
       phoneKey={phoneKey}
+      organizationName={organizationName}
+      detailAddress={detailAddress}
       password={password}
       password2={password2}
       onSubmit={onSubmit}

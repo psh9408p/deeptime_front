@@ -12,9 +12,9 @@ export const ADD_SUBJECT = gql`
   }
 `;
 
-export const EDIT_SUBJECT = gql`
-  mutation editSubject($subjectId: String!, $name: String!, $bgColor: String!) {
-    editSubject(subjectId: $subjectId, name: $name, bgColor: $bgColor)
+export const EDITCOLOR_SUBJECT = gql`
+  mutation editColorSubject($subjectId: String!, $bgColor: String!) {
+    editColorSubject(subjectId: $subjectId, bgColor: $bgColor)
   }
 `;
 

@@ -1,23 +1,27 @@
 import { gql } from 'apollo-boost';
 
-export const RASPBERRY_REGIST = gql`
-  mutation raspberryRegist(
+export const RASPBERRYSEAT_REGIST = gql`
+  mutation raspberrySeatRegist(
+    $organizationId: String!
     $raspberryId: String!
     $seatNumber: Int!
-    $organizationId: String!
-    $registNumber: Int!
   ) {
-    raspberryRegist(
+    raspberrySeatRegist(
+      organizationId: $organizationId
       raspberryId: $raspberryId
       seatNumber: $seatNumber
-      organizationId: $organizationId
-      registNumber: $registNumber
     )
   }
 `;
 
-export const RASPBERRY_UNREGIST = gql`
-  mutation raspberryUnRegist($raspberryId: String!) {
-    raspberryUnRegist(raspberryId: $raspberryId)
+export const RASPBERRYSEAT_UNREGIST = gql`
+  mutation raspberrySeatUnRegist($raspberryId: String!) {
+    raspberrySeatUnRegist(raspberryId: $raspberryId)
+  }
+`;
+
+export const DISCONNECT_STUDENT = gql`
+  mutation disconnectStudent_M($studentId: String!) {
+    disconnectStudent_M(studentId: $studentId)
   }
 `;

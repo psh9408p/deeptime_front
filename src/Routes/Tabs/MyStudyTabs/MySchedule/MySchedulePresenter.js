@@ -302,13 +302,17 @@ export default ({
   setSubjectColor,
   handleChangeComplete,
   addSubjectMutation,
-  editSubjectMutation,
+  editColorSubjectMutation,
   deleteSubjectMutation,
   bookMarkSubjectMutation,
   subjectRefetch,
   pageIndex,
   networkStatus,
 }) => {
+  const originSubject = useSelect(
+    subjectList.map((List) => `${List.name}`),
+    subjectList.map((List) => `${List.id}`),
+  );
   const indiSubject_tmp = subjectList.map((subject) => {
     if (subject.modifyRight) {
       return { id: subject.id, name: subject.name, bgColor: subject.bgColor };
@@ -324,12 +328,12 @@ export default ({
   const subjectClear = () => {
     subjectName.setValue('');
     setSubjectColor(`#0F4C82`);
+    originSubject.setOption(originSubject.valueList[0]);
     mySubjectList.setOption(mySubjectList.valueList[0]);
   };
 
   const subjectLoad = () => {
-    subjectName.setValue(indiSubject[mySubjectList.optionIndex].name);
-    setSubjectColor(indiSubject[mySubjectList.optionIndex].bgColor);
+    setSubjectColor(subjectList[originSubject.optionIndex].bgColor);
   };
 
   const onSubmitAdd = async () => {
@@ -365,22 +369,21 @@ export default ({
       ) === true
     ) {
       try {
-        toast.info('해당 과목을 수정 중...');
+        toast.info('과목 색상을 수정 중...');
         const {
-          data: { editSubject },
-        } = await editSubjectMutation({
+          data: { editColorSubject },
+        } = await editColorSubjectMutation({
           variables: {
-            subjectId: mySubjectList.option,
-            name: subjectName.value,
+            subjectId: originSubject.option,
             bgColor: subjectColor,
           },
         });
-        if (!editSubject) {
-          alert('해당 수정할 수 없습니다.');
+        if (!editColorSubject) {
+          alert('과목 색상을 수정할 수 없습니다.');
         } else {
           await subjectRefetch();
           await subjectClear();
-          toast.success('해당 과목이 수정되었습니다.');
+          toast.success('과목 색상이 수정되었습니다.');
           return true;
         }
       } catch (e) {
@@ -939,13 +942,13 @@ export default ({
                                   }
                                 }}
                               >
-                                <PTitle text={'과목 수정'} />
+                                <PTitle text={'색상 수정'} />
                                 <SelectWrapDiv>
                                   <SubTitle text={`수정할 과목:　`} />
                                   <SelectWrapper2>
                                     <Select
-                                      {...mySubjectList}
-                                      id={'mySubject_id'}
+                                      {...originSubject}
+                                      id={'originSubject_id'}
                                     />
                                   </SelectWrapper2>
                                   <RedButtonWrap>
@@ -956,14 +959,6 @@ export default ({
                                     />
                                   </RedButtonWrap>
                                 </SelectWrapDiv>
-                                <InputWrapper>
-                                  <Input
-                                    placeholder={
-                                      '과목의 새로운 이름 (예: 수학 or 영어)'
-                                    }
-                                    {...subjectName}
-                                  />
-                                </InputWrapper>
                                 <ColorWrapper>
                                   <SubTitle text={'과목 색상 선택'} />
                                   <SwatchesPicker

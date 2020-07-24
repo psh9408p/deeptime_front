@@ -92,7 +92,7 @@ const ButtonWrap = styled.div`
   width: 150px;
 `;
 
-export default ({ loading, data, logOut, profileTabs }) => {
+export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
   if (loading === true) {
     return (
       <LoaderWrapper>
@@ -110,10 +110,6 @@ export default ({ loading, data, logOut, profileTabs }) => {
         isSelf,
         bio,
         email,
-        academiesCount,
-        classesCount,
-        studentsCount,
-        loginPosition,
         studyGroup,
         studyGroup2,
         studyGroup3,
@@ -164,7 +160,11 @@ export default ({ loading, data, logOut, profileTabs }) => {
             </ProfileButton>
           ))}
         </Tabs>
-        <ProfileTabs pageIndex={profileTabs.currentIndex} />
+        <ProfileTabs
+          pageIndex={profileTabs.currentIndex}
+          User={data.seeUser}
+          userRefetch={userRefetch}
+        />
       </Wrapper>
     );
   }

@@ -9,7 +9,7 @@ import {
   ADD_SUBJECT,
   DELETE_SUBJECT,
   MY_SUBJECT,
-  EDIT_SUBJECT,
+  EDITCOLOR_SUBJECT,
   BOOKMARK_SUBJECT,
 } from './MyScheduleQueries';
 
@@ -26,7 +26,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
   const [addSubjectMutation] = useMutation(ADD_SUBJECT);
-  const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
+  const [editColorSubjectMutation] = useMutation(EDITCOLOR_SUBJECT);
   const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
   const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
   const {
@@ -58,7 +58,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
         setSubjectColor={setSubjectColor}
         handleChangeComplete={handleChangeComplete}
         addSubjectMutation={addSubjectMutation}
-        editSubjectMutation={editSubjectMutation}
+        editColorSubjectMutation={editColorSubjectMutation}
         deleteSubjectMutation={deleteSubjectMutation}
         bookMarkSubjectMutation={bookMarkSubjectMutation}
         subjectRefetch={subjectRefetch}

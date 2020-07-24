@@ -13,18 +13,26 @@ const GET_USER = gql`
       username
       fullName
       isSelf
-      bio
       email
       organization {
         id
         name
-        address
         seatRatio
-        raspberriesCount
-        raspberries {
+        secretCode
+        hubs {
           id
-          seatNumber
-          registNumber
+          serialNumber
+          raspberries {
+            id
+            seatNumber
+            serialNumber
+            category
+            user {
+              id
+              fullName
+              phoneNumber
+            }
+          }
         }
       }
       payments {

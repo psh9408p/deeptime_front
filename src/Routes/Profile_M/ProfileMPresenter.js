@@ -143,6 +143,10 @@ export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
               <FatBox text={fullName} />
               <FatBox text={email} />
             </SubInfoDiv>
+            <SubInfoDiv>
+              <FatBox text={'학생 가입번호:'} />
+              <FatBox text={organization.secretCode} />
+            </SubInfoDiv>
             <Bio>{bio}</Bio>
           </HeaderColumn>
         </Header>
