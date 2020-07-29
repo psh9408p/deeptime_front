@@ -128,7 +128,6 @@ const CheckLabel = styled.label`
 
 const JoinButtonDiv = styled.div`
   margin-top: 10px;
-  margin-bottom: 30px;
 `;
 
 const VerifiInputDiv = styled.div`
@@ -138,6 +137,7 @@ const VerifiInputDiv = styled.div`
 
 export default ({
   pageIndex,
+  meData,
   firstName,
   lastName,
   username,
@@ -153,6 +153,14 @@ export default ({
   marketing,
   onChangeMarketing,
   onEditAccount,
+  onEditPassword,
+  sPhoneOnClick,
+  cPhoneOnClick,
+  sEmailOnClick,
+  cEmailOnClick,
+  password_pre,
+  password,
+  password2,
 }) => {
   if (pageIndex === 0) {
     return (
@@ -186,10 +194,13 @@ export default ({
                       />
                       <PopButton_auth
                         type={'button'}
-                        onClick={
-                          () => {}
-                          // sEmailOnClick
-                        }
+                        onClick={() => {
+                          if (meData.email === email.value) {
+                            alert('기존 Email 주소와 동일합니다.');
+                          } else {
+                            sEmailOnClick();
+                          }
+                        }}
                         text={'인증번호 발송'}
                       />
                     </EmailInputDiv>
@@ -199,17 +210,17 @@ export default ({
                         type="button"
                         text={'인증'}
                         onClick={async () => {
-                          // const fucResult = await cEmailOnClick();
-                          // if (fucResult) {
-                          //   close();
-                          // }
+                          const fucResult = await cEmailOnClick();
+                          if (fucResult) {
+                            close();
+                          }
                         }}
                       />
                       <PopupButton
                         type="button"
                         onClick={() => {
-                          // close();
-                          // emailKey.setValue(``);
+                          close();
+                          emailKey.setValue(``);
                         }}
                         text={'닫기'}
                       />
@@ -242,10 +253,13 @@ export default ({
                       />
                       <PopButton
                         type={'button'}
-                        onClick={
-                          () => {}
-                          // sPhoneOnClick
-                        }
+                        onClick={() => {
+                          if (meData.phoneNumber === phoneNumber.value) {
+                            alert('기존 휴대폰 번호와 동일합니다.');
+                          } else {
+                            sPhoneOnClick();
+                          }
+                        }}
                         text={'인증번호 발송'}
                       />
                     </VerifiInputDiv>
@@ -255,17 +269,17 @@ export default ({
                         type="button"
                         text={'인증'}
                         onClick={async () => {
-                          // const fucResult = await cPhoneOnClick();
-                          // if (fucResult) {
-                          //   close();
-                          // }
+                          const fucResult = await cPhoneOnClick();
+                          if (fucResult) {
+                            close();
+                          }
                         }}
                       />
                       <PopupButton
                         type="button"
                         onClick={() => {
-                          // close();
-                          // phoneKey.setValue(``);
+                          close();
+                          phoneKey.setValue(``);
                         }}
                         text={'닫기'}
                       />
@@ -311,6 +325,51 @@ export default ({
       </Wrapper>
     );
   } else if (pageIndex === 1) {
-    return <Wrapper></Wrapper>;
+    return (
+      <Wrapper>
+        <Form>
+          <form
+            onSubmit={() => {
+              if (password_pre.value === password.value) {
+                alert('이전 비밀번호와 새 비밀번호가 동일합니다.');
+              } else if (password.errorChk || password2.errorChk) {
+                alert('새 비밀번호를 다시 확인하세요.');
+              } else {
+                onEditPassword();
+              }
+            }}
+          >
+            <Input
+              placeholder={'이전 비밀번호 (예: ABCD1234)'}
+              type="password"
+              {...password_pre}
+            />
+            <Input
+              placeholder={'새 비밀번호 (예: ABCD1234)'}
+              type="password"
+              {...password}
+            />
+            {password.errorChk && (
+              <div style={{ color: 'red', marginBottom: '7px' }}>
+                비밀번호는 6글자 이상이어야 합니다
+              </div>
+            )}
+            <Input
+              placeholder={'새 비밀번호 확인 (예: ABCD1234)'}
+              type="password"
+              {...password2}
+            />
+            {password2.errorChk && (
+              <div style={{ color: 'red', marginBottom: '7px' }}>
+                비밀번호가 일치하지 않습니다
+              </div>
+            )}
+            <JoinButtonDiv>
+              <Button text={'수정'} />
+            </JoinButtonDiv>
+          </form>
+        </Form>
+      </Wrapper>
+    );
   }
 };

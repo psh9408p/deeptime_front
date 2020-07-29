@@ -29,3 +29,33 @@ export const EDIT_ACCOUNT = gql`
     )
   }
 `;
+
+export const EDIT_PASSWORD = gql`
+  mutation editPassword($password_pre: String!, $password: String!) {
+    editPassword(password_pre: $password_pre, password: $password)
+  }
+`;
+
+export const S_PHONE_VERIFICATION = gql`
+  mutation startPhoneVerification($phoneNumber: String!) {
+    startPhoneVerification(phoneNumber: $phoneNumber)
+  }
+`;
+
+export const C_PHONE_VERIFICATION = gql`
+  mutation completePhoneVerification($phoneNumber: String!, $key: String!) {
+    completePhoneVerification(phoneNumber: $phoneNumber, key: $key)
+  }
+`;
+
+export const S_EMAIL_VERIFICATION = gql`
+  mutation startEmailVerification($emailAdress: String!) {
+    startEmailVerification(emailAdress: $emailAdress)
+  }
+`;
+
+export const C_EMAIL_VERIFICATION = gql`
+  mutation completeEmailVerification($emailAdress: String!, $key: String!) {
+    completeEmailVerification(emailAdress: $emailAdress, key: $key)
+  }
+`;
