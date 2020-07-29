@@ -31,6 +31,7 @@ import ManageSubscription from '../Routes/ManageSubscription';
 import OrderHistory from '../Routes/OrderHistory';
 import Voucher from '../Routes/Voucher';
 import Introduce_M from '../Routes/Introduce_M';
+import Account from '../Routes/Account';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -57,6 +58,7 @@ const LoggedInRoutes = () => {
           <Route path="/manage-subscription" component={ManageSubscription} />
           <Route path="/order-history" component={OrderHistory} />
           <Route path="/voucher" component={Voucher} />
+          <Route path="/account" component={Account} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>

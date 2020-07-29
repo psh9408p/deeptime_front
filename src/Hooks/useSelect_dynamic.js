@@ -5,12 +5,13 @@ export default (
   values_dynamic,
   ref_optionList,
   ref_option,
+  initValue,
 ) => {
   const selectedIndex = ref_optionList.indexOf(`${ref_option}`);
   const options = options_dynamic[selectedIndex];
   const values = values_dynamic[selectedIndex];
 
-  const [option, setOption] = useState(values[0]);
+  const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
   let optionList = options;
   let valueList = values;

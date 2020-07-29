@@ -7,6 +7,8 @@ import FatText from '../../Components/FatText';
 import FollowButton from '../../Components/FollowButton';
 import Button from '../../Components/Buttons/Button';
 import ProfileTabs from '../Tabs/ProfileTabs';
+import { Link } from 'react-router-dom';
+import { Setting } from '../../Components/Icons';
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -37,6 +39,14 @@ const Username = styled.span`
   font-size: 26px;
   display: block;
   margin-right: 25px;
+`;
+
+const SettingLink = styled(Link)`
+  cursor: pointer;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  margin-left: 10px;
 `;
 
 const Counts = styled.ul`
@@ -92,6 +102,12 @@ const ButtonWrap = styled.div`
   width: 150px;
 `;
 
+const SettingWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
   if (loading === true) {
     return (
@@ -126,10 +142,15 @@ export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
           </HeaderColumn>
           <HeaderColumn>
             <UsernameRow>
-              <Username>{username}</Username>{' '}
+              <Username>{username}</Username>
               <ButtonWrap>
                 {isSelf ? (
-                  <Button onClick={logOut} text="로그아웃" />
+                  <SettingWrap>
+                    <Button onClick={logOut} text="로그아웃" />
+                    <SettingLink to="/account" replace>
+                      <Setting />
+                    </SettingLink>
+                  </SettingWrap>
                 ) : (
                   <FollowButton isFollowing={isFollowing} id={id} />
                 )}

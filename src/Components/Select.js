@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import selectChange from './SelectChange';
 import PropTypes from 'prop-types';
@@ -9,12 +9,12 @@ const Container = styled.select`
 `;
 
 const Select = ({ optionList, valueList, option, onChange, id }) => {
-  const isFirstRun = useRef(true);
+  // const isFirstRun = useRef(true);
   useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      return;
-    }
+    // if (isFirstRun.current) {
+    //   isFirstRun.current = false;
+    //   return;
+    // }
     selectChange(id, valueList.indexOf(option));
   }, [option]);
 

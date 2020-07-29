@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default (options, values) => {
-  const [option, setOption] = useState(values[0]);
+export default (options, values, initValue) => {
+  const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
   const optionList = options;
   const valueList = values;

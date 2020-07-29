@@ -7,6 +7,7 @@ export default (
   ref_option,
   ref2_optionList,
   ref2_option,
+  initValue,
 ) => {
   const selectedIndex = ref_optionList.indexOf(`${ref_option}`);
   let selectedIndex2 = ref2_optionList.indexOf(`${ref2_option}`);
@@ -15,7 +16,7 @@ export default (
   }
   const options = options_dynamic[selectedIndex][selectedIndex2];
   const values = values_dynamic[selectedIndex][selectedIndex2];
-  const [option, setOption] = useState(values[0]);
+  const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
   let optionList = options;
   let valueList = values;
