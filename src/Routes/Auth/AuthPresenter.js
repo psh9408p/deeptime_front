@@ -335,15 +335,7 @@ export default ({
             <Helmet>
               <title>회원가입 | SLOG-IAM</title>
             </Helmet>
-            <form
-              onSubmit={() => {
-                if (password.errorChk || password2.errorChk) {
-                  alert('비밀번호를 다시 확인하세요.');
-                } else {
-                  onSubmit();
-                }
-              }}
-            >
+            <form onSubmit={onSubmit}>
               <NameInputDiv>
                 <Input placeholder={'성 (예: 홍)'} {...lastName} />
                 <Input placeholder={'이름 (예: 길동)'} {...firstName} />
@@ -618,15 +610,7 @@ export default ({
             <Helmet>
               <title>회원가입 | SLOG-IAM</title>
             </Helmet>
-            <form
-              onSubmit={() => {
-                if (password.errorChk || password2.errorChk) {
-                  alert('비밀번호를 다시 확인하세요.');
-                } else {
-                  onSubmit();
-                }
-              }}
-            >
+            <form onSubmit={onSubmit}>
               <NameInputDiv>
                 <Input placeholder={'성 (예: 홍)'} {...lastName} />
                 <Input placeholder={'이름 (예: 길동)'} {...firstName} />

@@ -328,17 +328,7 @@ export default ({
     return (
       <Wrapper>
         <Form>
-          <form
-            onSubmit={() => {
-              if (password_pre.value === password.value) {
-                alert('이전 비밀번호와 새 비밀번호가 동일합니다.');
-              } else if (password.errorChk || password2.errorChk) {
-                alert('새 비밀번호를 다시 확인하세요.');
-              } else {
-                onEditPassword();
-              }
-            }}
-          >
+          <form onSubmit={onEditPassword}>
             <Input
               placeholder={'이전 비밀번호 (예: ABCD1234)'}
               type="password"

@@ -98,7 +98,8 @@ export default ({ pageIndex, meData, meRefetch }) => {
     },
   });
 
-  const onEditAccount = async () => {
+  const onEditAccount = async (e) => {
+    e.preventDefault();
     try {
       toast.info('프로필 수정 중...');
       const {
@@ -130,28 +131,37 @@ export default ({ pageIndex, meData, meRefetch }) => {
     }
   };
 
-  const onEditPassword = async () => {
-    try {
-      toast.info('비밀번호 수정 중...');
-      const {
-        data: { editPassword },
-      } = await editPasswordMutation({
-        variables: {
-          password_pre: password_pre.value,
-          password: password.value,
-        },
-      });
-      if (!editPassword) {
-        alert('비밀번호를 수정할 수 없습니다.');
-      } else {
-        password_pre.setValue('');
-        password.setValue('');
-        password2.setValue('');
-        toast.success('비밀번호 수정이 완료되었습니다.');
+  const onEditPassword = async (e) => {
+    e.preventDefault();
+    if (password_pre.value === password.value) {
+      alert('이전 비밀번호와 새 비밀번호가 동일합니다.');
+    } else if (password.errorChk || password2.errorChk) {
+      alert('새 비밀번호를 다시 확인하세요.');
+    } else {
+      try {
+        toast.info('비밀번호 수정 중...');
+        const {
+          data: { editPassword },
+        } = await editPasswordMutation({
+          variables: {
+            password_pre: password_pre.value,
+            password: password.value,
+          },
+        });
+        if (!editPassword) {
+          alert('비밀번호를 수정할 수 없습니다.');
+        } else {
+          await meRefetch();
+          password_pre.setValue('');
+          password.setValue('');
+          password2.setValue('');
+          toast.success('비밀번호 수정이 완료되었습니다.');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        // alert(realText[1]);
+        alert(e.message);
       }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      alert(realText[1]);
     }
   };
 
