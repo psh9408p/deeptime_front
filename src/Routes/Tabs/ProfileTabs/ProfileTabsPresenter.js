@@ -49,12 +49,10 @@ const PopupCustom = styled(Popup)`
 `;
 
 const PBody = styled.div`
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    padding: 20px 20px;
-  }
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
 `;
 
 const PTitle = styled(FatText)`
@@ -112,44 +110,44 @@ export default ({ pageIndex, User, onUnRegist }) => {
           {(close) => {
             return (
               <PBody>
-                <form
-                  onSubmit={() => {
-                    let organizationNonExist = false;
-                    if (User.organization === null) {
-                      organizationNonExist = true;
-                    }
-                    onUnRegist(organizationNonExist);
-                  }}
-                >
-                  <PTitle text={'나의 독서실'} />
-                  <ReadingContent>
-                    <LeftDiv>기관명:&nbsp;</LeftDiv>
-                    <RightDiv>{User?.organization?.name}</RightDiv>
-                  </ReadingContent>
-                  <ReadingContent>
-                    <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
-                    <RightDiv>
-                      {User?.organization?.manager?.phoneNumber &&
-                        phoneNumberNormalize(
-                          User.organization.manager.phoneNumber,
-                        )}
-                    </RightDiv>
-                  </ReadingContent>
-                  <ReadingContent>
-                    <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
-                    <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
-                  </ReadingContent>
-                  <ButtonDiv>
-                    <PopupButton text={'좌석 해제'} />
-                    <PopupButton
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
-                </form>
+                <PTitle text={'나의 독서실'} />
+                <ReadingContent>
+                  <LeftDiv>기관명:&nbsp;</LeftDiv>
+                  <RightDiv>{User?.organization?.name}</RightDiv>
+                </ReadingContent>
+                <ReadingContent>
+                  <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
+                  <RightDiv>
+                    {User?.organization?.manager?.phoneNumber &&
+                      phoneNumberNormalize(
+                        User.organization.manager.phoneNumber,
+                      )}
+                  </RightDiv>
+                </ReadingContent>
+                <ReadingContent>
+                  <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
+                  <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
+                </ReadingContent>
+                <ButtonDiv>
+                  <PopupButton
+                    type="button"
+                    text={'좌석 해제'}
+                    onClick={() => {
+                      let organizationNonExist = false;
+                      if (User.organization === null) {
+                        organizationNonExist = true;
+                      }
+                      onUnRegist(organizationNonExist);
+                    }}
+                  />
+                  <PopupButton
+                    type="button"
+                    onClick={() => {
+                      close();
+                    }}
+                    text={'닫기'}
+                  />
+                </ButtonDiv>
               </PBody>
             );
             // }

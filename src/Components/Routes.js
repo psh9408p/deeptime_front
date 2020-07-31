@@ -32,6 +32,7 @@ import OrderHistory from '../Routes/OrderHistory';
 import Voucher from '../Routes/Voucher';
 import Introduce_M from '../Routes/Introduce_M';
 import Account from '../Routes/Account';
+import Upload_tmp from '../Routes/Upload_tmp';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -92,7 +93,7 @@ const LoggedInRoutes = () => {
 const LoggedOutRoutes = () => (
   <Switch>
     <Route exact path="/" component={Introduce} />
-    <Route path="/review" component={Review} />
+    <Route path="/review" component={Upload_tmp} />
     <Route path="/shopping" component={Shopping} />
     <Route path="/support" component={Support} />
     <Route path="/auth" component={Auth} />

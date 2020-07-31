@@ -193,12 +193,10 @@ const PopupCustom = styled(Popup)`
 `;
 
 const PBody = styled.div`
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    padding: 20px 20px;
-  }
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
 `;
 
 const SmallInput = styled(Input)`
@@ -397,53 +395,53 @@ export default ({
                   >
                     {(close) => (
                       <PBody>
-                        <form
-                          onSubmit={async () => {
-                            const fucResult = await onRegist(index1, index2);
-                            if (fucResult) {
-                              close();
+                        <PTitle text={'좌석설정'} />
+                        <SmallDiv>
+                          <SmallInput
+                            type={'number'}
+                            placeholder={
+                              '좌석 번호 (예: 12, 해제 시 입력 불필요)'
                             }
-                          }}
-                        >
-                          <PTitle text={'좌석설정'} />
-                          <SmallDiv>
-                            <SmallInput
-                              type={'number'}
-                              placeholder={
-                                '좌석 번호 (예: 12, 해제 시 입력 불필요)'
-                              }
-                              {...seatNumber}
-                            />
-                          </SmallDiv>
-                          <ButtonDiv>
-                            <PopupButton_triple text={'등록/수정'} />
-                            <PopupButton_triple
-                              type="button"
-                              onClick={async () => {
-                                if (raspberry.seatNumber === null) {
-                                  alert('이미 할당된 좌석이 없습니다.');
-                                } else {
-                                  const fucResult = await onUnRegist(
-                                    index1,
-                                    index2,
-                                  );
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }
-                              }}
-                              text={'해제'}
-                            />
-                            <PopupButton_triple
-                              type="button"
-                              onClick={() => {
+                            {...seatNumber}
+                          />
+                        </SmallDiv>
+                        <ButtonDiv>
+                          <PopupButton_triple
+                            type="button"
+                            text={'등록/수정'}
+                            onClick={async () => {
+                              const fucResult = await onRegist(index1, index2);
+                              if (fucResult) {
                                 close();
-                                RaspberryClear();
-                              }}
-                              text={'닫기'}
-                            />
-                          </ButtonDiv>
-                        </form>
+                              }
+                            }}
+                          />
+                          <PopupButton_triple
+                            type="button"
+                            onClick={async () => {
+                              if (raspberry.seatNumber === null) {
+                                alert('이미 할당된 좌석이 없습니다.');
+                              } else {
+                                const fucResult = await onUnRegist(
+                                  index1,
+                                  index2,
+                                );
+                                if (fucResult) {
+                                  close();
+                                }
+                              }
+                            }}
+                            text={'해제'}
+                          />
+                          <PopupButton_triple
+                            type="button"
+                            onClick={() => {
+                              close();
+                              RaspberryClear();
+                            }}
+                            text={'닫기'}
+                          />
+                        </ButtonDiv>
                       </PBody>
                     )}
                   </PopupCustom>
