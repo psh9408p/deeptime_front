@@ -11,11 +11,14 @@ export default (
 ) => {
   const selectedIndex = ref_optionList.indexOf(`${ref_option}`);
   let selectedIndex2 = ref2_optionList.indexOf(`${ref2_option}`);
-  if (selectedIndex2 === -1) {
-    selectedIndex2 = 0;
-  }
-  const options = options_dynamic[selectedIndex][selectedIndex2];
-  const values = values_dynamic[selectedIndex][selectedIndex2];
+  const options =
+    options_dynamic[selectedIndex !== -1 ? selectedIndex : 0][
+      selectedIndex2 !== -1 ? selectedIndex2 : 0
+    ];
+  const values =
+    values_dynamic[selectedIndex !== -1 ? selectedIndex : 0][
+      selectedIndex2 !== -1 ? selectedIndex2 : 0
+    ];
   const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
   let optionList = options;

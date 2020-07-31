@@ -8,8 +8,8 @@ export default (
   initValue,
 ) => {
   const selectedIndex = ref_optionList.indexOf(`${ref_option}`);
-  const options = options_dynamic[selectedIndex];
-  const values = values_dynamic[selectedIndex];
+  const options = options_dynamic[selectedIndex !== -1 ? selectedIndex : 0];
+  const values = values_dynamic[selectedIndex !== -1 ? selectedIndex : 0];
 
   const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);

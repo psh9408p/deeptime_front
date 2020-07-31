@@ -21,6 +21,14 @@ const ACCOUNT_ME = gql`
       address1
       address2
       termsOfMarketing
+      loginPosition
+      organization {
+        id
+        name
+        address1
+        address2
+        detailAddress
+      }
     }
   }
 `;

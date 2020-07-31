@@ -161,14 +161,7 @@ const FrontDiv = styled.div`
   padding: 20px 20px;
 `;
 
-const PBody = styled.div`
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    padding: 20px 20px;
-  }
-`;
+const PBody = styled.div``;
 
 const PTitle = styled(FatText)`
   font-size: 18px;
@@ -237,9 +230,19 @@ const SpaceDiv = styled.div`
   width: 10px;
 `;
 
-const SubjectForm = styled.form`
+const SubjectForm = styled.div`
   display: flex;
   align-items: center;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
+`;
+
+const SubjectForm2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
 `;
 
 const ListWrap = styled.div`
@@ -752,7 +755,7 @@ export default ({
   const subjectRow = ({ index, style }) => (
     <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
       <CheckBox
-        checked={bookMarkCh[index]}
+        checked={bookMarkCh[index] !== undefined ? bookMarkCh[index] : true}
         onChange={onChangeCheck(index)}
         boxSize={'25px'}
         margin={'0 20px 0 0'}
@@ -837,14 +840,7 @@ export default ({
                         >
                           {(close) => (
                             <PBody>
-                              <SubjectForm
-                                onSubmit={async () => {
-                                  const fucResult = await onClickBookMark();
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }}
-                              >
+                              <SubjectForm>
                                 <PTitle text={'과목 북마크'} />
                                 <BookMarkTitle>
                                   <BookLeft>체크</BookLeft>
@@ -861,7 +857,16 @@ export default ({
                                   </BookmarkList>
                                 </ListWrap>
                                 <ButtonDiv>
-                                  <PopupButton text={'저장'} />
+                                  <PopupButton
+                                    type="button"
+                                    text={'저장'}
+                                    onClick={async () => {
+                                      const fucResult = await onClickBookMark();
+                                      if (fucResult) {
+                                        close();
+                                      }
+                                    }}
+                                  />
                                   <PopupButton
                                     type="button"
                                     onClick={() => {
@@ -888,14 +893,7 @@ export default ({
                         >
                           {(close) => (
                             <PBody>
-                              <form
-                                onSubmit={async () => {
-                                  const fucResult = await onSubmitAdd();
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }}
-                              >
+                              <SubjectForm2>
                                 <PTitle text={'과목 추가'} />
                                 <InputWrapper>
                                   <Input
@@ -911,7 +909,16 @@ export default ({
                                   />
                                 </ColorWrapper>
                                 <ButtonDiv>
-                                  <PopupButton text={'추가'} />
+                                  <PopupButton
+                                    type="button"
+                                    text={'추가'}
+                                    onClick={async () => {
+                                      const fucResult = await onSubmitAdd();
+                                      if (fucResult) {
+                                        close();
+                                      }
+                                    }}
+                                  />
                                   <PopupButton
                                     type="button"
                                     onClick={() => {
@@ -921,7 +928,7 @@ export default ({
                                     text={'닫기'}
                                   />
                                 </ButtonDiv>
-                              </form>
+                              </SubjectForm2>
                             </PBody>
                           )}
                         </PopupCustom>
@@ -934,14 +941,7 @@ export default ({
                         >
                           {(close) => (
                             <PBody>
-                              <form
-                                onSubmit={async () => {
-                                  const fucResult = await onSubmitEdit();
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }}
-                              >
+                              <SubjectForm2>
                                 <PTitle text={'색상 수정'} />
                                 <SelectWrapDiv>
                                   <SubTitle text={`수정할 과목:　`} />
@@ -967,7 +967,16 @@ export default ({
                                   />
                                 </ColorWrapper>
                                 <ButtonDiv>
-                                  <PopupButton text={'수정'} />
+                                  <PopupButton
+                                    type="button"
+                                    text={'수정'}
+                                    onClick={async () => {
+                                      const fucResult = await onSubmitEdit();
+                                      if (fucResult) {
+                                        close();
+                                      }
+                                    }}
+                                  />
                                   <PopupButton
                                     type="button"
                                     onClick={() => {
@@ -977,7 +986,7 @@ export default ({
                                     text={'닫기'}
                                   />
                                 </ButtonDiv>
-                              </form>
+                              </SubjectForm2>
                             </PBody>
                           )}
                         </PopupCustom2>
@@ -990,14 +999,7 @@ export default ({
                         >
                           {(close) => (
                             <PBody>
-                              <form
-                                onSubmit={async () => {
-                                  const fucResult = await onSubmitDelete();
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }}
-                              >
+                              <SubjectForm2>
                                 <PTitle text={'과목 제거'} />
                                 <SelectWrapDiv>
                                   <SelectWrapper>
@@ -1008,7 +1010,16 @@ export default ({
                                   </SelectWrapper>
                                 </SelectWrapDiv>
                                 <ButtonDiv>
-                                  <PopupButton text={'제거'} />
+                                  <PopupButton
+                                    type="button"
+                                    text={'제거'}
+                                    onClick={async () => {
+                                      const fucResult = await onSubmitDelete();
+                                      if (fucResult) {
+                                        close();
+                                      }
+                                    }}
+                                  />
                                   <PopupButton
                                     type="button"
                                     onClick={() => {
@@ -1018,7 +1029,7 @@ export default ({
                                     text={'닫기'}
                                   />
                                 </ButtonDiv>
-                              </form>
+                              </SubjectForm2>
                             </PBody>
                           )}
                         </PopupCustom3>

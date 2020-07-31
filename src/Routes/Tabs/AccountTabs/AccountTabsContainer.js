@@ -14,6 +14,7 @@ import { useMutation } from '@apollo/react-hooks';
 import AccountTabsPresenter from './AccountTabsPresenter';
 import {
   EDIT_ACCOUNT,
+  EDIT_ACCOUNT_M,
   EDIT_PASSWORD,
   S_PHONE_VERIFICATION,
   S_EMAIL_VERIFICATION,
@@ -33,6 +34,8 @@ export default ({ pageIndex, meData, meRefetch }) => {
   const emailKey = useInput('');
   const phoneNumber = useInput(meData.phoneNumber);
   const phoneKey = useInput('');
+  const organizationName = useInput(meData.organization.name);
+  const detailAddress = useInput(meData.organization.detailAddress);
   const [marketing, setMarketing] = useState(meData.termsOfMarketing);
   const password_pre = useInput('');
   const password = useInput('', '', minLen_6);
@@ -60,13 +63,21 @@ export default ({ pageIndex, meData, meRefetch }) => {
     studyGroup2.option,
     meData.studyGroup3,
   );
-  const myAddress1 = useSelect(address1, address1, meData.address1);
+  const myAddress1 = useSelect(
+    address1,
+    address1,
+    meData.loginPosition === 'student'
+      ? meData.address1
+      : meData.organization.address1,
+  );
   const myAddress2 = useSelect_dynamic(
     address2_total,
     address2_total,
     myAddress1.optionList,
     myAddress1.option,
-    meData.address2,
+    meData.loginPosition === 'student'
+      ? meData.address2
+      : meData.organization.address2,
   );
 
   const onChangeMarketing = (e) => {
@@ -74,6 +85,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
   };
 
   const [editAccountMutation] = useMutation(EDIT_ACCOUNT);
+  const [editAccountMMutation] = useMutation(EDIT_ACCOUNT_M);
   const [editPasswordMutation] = useMutation(EDIT_PASSWORD);
   const [sPhoneVerificationMutation] = useMutation(S_PHONE_VERIFICATION, {
     variables: {
@@ -100,34 +112,65 @@ export default ({ pageIndex, meData, meRefetch }) => {
 
   const onEditAccount = async (e) => {
     e.preventDefault();
-    try {
-      toast.info('프로필 수정 중...');
-      const {
-        data: { editAccount },
-      } = await editAccountMutation({
-        variables: {
-          firstName: firstName.value,
-          lastName: lastName.value,
-          username: username.value,
-          email: email.value,
-          phoneNumber: phoneNumber.value,
-          studyGroup: studyGroup.option,
-          studyGroup2: studyGroup2.option,
-          studyGroup3: studyGroup3.option,
-          address1: myAddress1.option,
-          address2: myAddress2.option,
-          termsOfMarketing: marketing,
-        },
-      });
-      if (!editAccount) {
-        alert('프로필을 수정할 수 없습니다.');
-      } else {
-        await meRefetch();
-        toast.success('프로필 수정이 완료되었습니다.');
+    if (meData.loginPosition === 'student') {
+      try {
+        toast.info('프로필 수정 중...');
+        const {
+          data: { editAccount },
+        } = await editAccountMutation({
+          variables: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            username: username.value,
+            email: email.value,
+            phoneNumber: phoneNumber.value,
+            studyGroup: studyGroup.option,
+            studyGroup2: studyGroup2.option,
+            studyGroup3: studyGroup3.option,
+            address1: myAddress1.option,
+            address2: myAddress2.option,
+            termsOfMarketing: marketing,
+          },
+        });
+        if (!editAccount) {
+          alert('프로필을 수정할 수 없습니다.');
+        } else {
+          await meRefetch();
+          toast.success('프로필 수정이 완료되었습니다.');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
       }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      alert(realText[1]);
+    } else {
+      try {
+        toast.info('프로필 수정 중...');
+        const {
+          data: { editAccount_M },
+        } = await editAccountMMutation({
+          variables: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            username: username.value,
+            email: email.value,
+            phoneNumber: phoneNumber.value,
+            name: organizationName.value,
+            address1: myAddress1.option,
+            address2: myAddress2.option,
+            detailAddress: detailAddress.value,
+            termsOfMarketing: marketing,
+          },
+        });
+        if (!editAccount_M) {
+          alert('프로필을 수정할 수 없습니다.');
+        } else {
+          await meRefetch();
+          toast.success('프로필 수정이 완료되었습니다.');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+      }
     }
   };
 
@@ -243,6 +286,8 @@ export default ({ pageIndex, meData, meRefetch }) => {
       studyGroup3={studyGroup3}
       myAddress1={myAddress1}
       myAddress2={myAddress2}
+      organizationName={organizationName}
+      detailAddress={detailAddress}
       marketing={marketing}
       onChangeMarketing={onChangeMarketing}
       onEditAccount={onEditAccount}

@@ -595,7 +595,6 @@ export default ({
       }
     }
     donutData = slicedTimeBox.map((a) => a.length * 5);
-    console.log(todayTime.existTime, todayTime.targetTime);
     donutPercent = ((todayTime.existTime / todayTime.targetTime) * 100).toFixed(
       1,
     );

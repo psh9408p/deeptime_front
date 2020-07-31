@@ -150,6 +150,8 @@ export default ({
   studyGroup3,
   myAddress1,
   myAddress2,
+  organizationName,
+  detailAddress,
   marketing,
   onChangeMarketing,
   onEditAccount,
@@ -288,23 +290,50 @@ export default ({
                 )}
               </PopupCustom>
             </VerficationInputDiv>
-            <SelectDiv>
-              <span>학습 그룹 1</span>
-              <Select {...studyGroup} id={'studyGroup_id'} />
-            </SelectDiv>
-            <SelectDiv>
-              <span>학습 그룹 2</span>
-              <Select {...studyGroup2} id={'studyGroup2_id'} />
-            </SelectDiv>
-            <SelectDiv>
-              <span>학습 그룹 3</span>
-              <Select {...studyGroup3} id={'studyGroup3_id'} />
-            </SelectDiv>
-            <SelectDiv>
-              <span>주소</span>
-              <Select {...myAddress1} id={'myAddress1_id'} />
-              <Select {...myAddress2} id={'myAddress2_id'} />
-            </SelectDiv>
+            {meData.loginPosition === 'manager' && (
+              <Input
+                placeholder={'기관 이름 (예: IAM독서실)'}
+                {...organizationName}
+              />
+            )}
+            {meData.loginPosition === 'student' && (
+              <>
+                <SelectDiv>
+                  <span>학습 그룹 1</span>
+                  <Select {...studyGroup} id={'studyGroup_id'} />
+                </SelectDiv>
+                <SelectDiv>
+                  <span>학습 그룹 2</span>
+                  <Select {...studyGroup2} id={'studyGroup2_id'} />
+                </SelectDiv>
+                <SelectDiv>
+                  <span>학습 그룹 3</span>
+                  <Select {...studyGroup3} id={'studyGroup3_id'} />
+                </SelectDiv>
+                <SelectDiv>
+                  <span>주소</span>
+                  <Select {...myAddress1} id={'myAddress1_id'} />
+                  <Select {...myAddress2} id={'myAddress2_id'} />
+                </SelectDiv>
+              </>
+            )}
+            {meData.loginPosition === 'manager' && (
+              <>
+                <SelectDiv>
+                  <span>
+                    기관
+                    <br />
+                    주소
+                  </span>
+                  <Select {...myAddress1} id={'myAddress1_id'} />
+                  <Select {...myAddress2} id={'myAddress2_id'} />
+                </SelectDiv>
+                <Input
+                  placeholder={'기관 상세주소 (예: 삼성로85길 42)'}
+                  {...detailAddress}
+                />
+              </>
+            )}
             <AllCheckDiv>
               <CheckBox
                 id="marketingChk"
