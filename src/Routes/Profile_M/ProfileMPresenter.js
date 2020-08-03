@@ -9,6 +9,8 @@ import Button from '../../Components/Buttons/Button';
 import ProfileTabs_M from '../Tabs/ProfileTabs_M';
 import { Link } from 'react-router-dom';
 import { Setting } from '../../Components/Icons';
+import Popup from 'reactjs-popup';
+import PopupButton_triple from '../../Components/Buttons/PopupButton_triple';
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -22,12 +24,17 @@ const LoaderWrapper = styled.div`
 const Header = styled.header`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   width: 80%;
   margin: 40px auto;
 `;
 
-const HeaderColumn = styled.div``;
+const HeaderColumn = styled.div`
+  &:first-child {
+    cursor: pointer;
+    margin-right: 80px;
+  }
+`;
 
 const UsernameRow = styled.div`
   display: flex;
@@ -108,7 +115,53 @@ const SettingLink = styled(Link)`
   margin-left: 10px;
 `;
 
-export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 520px !important;
+    height: 200px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const PBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
+`;
+
+const PTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const SmallDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export default ({
+  loading,
+  data,
+  logOut,
+  profileTabs,
+  userRefetch,
+  handleFileInput,
+  onAvatar,
+  deleteAvatar,
+  setSelectFile,
+}) => {
   if (loading === true) {
     return (
       <LoaderWrapper>
@@ -135,9 +188,58 @@ export default ({ loading, data, logOut, profileTabs, userRefetch }) => {
           <title>{username} | SLOG-IAM</title>
         </Helmet>
         <Header>
-          <HeaderColumn>
-            <Avatar size="lg" url={avatar} />
-          </HeaderColumn>
+          <PopupCustom
+            trigger={
+              <HeaderColumn>
+                <Avatar size="lg" url={avatar} />
+              </HeaderColumn>
+            }
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => (
+              <PBody>
+                <PTitle text={'프로필 이미지 설정'} />
+                <SmallDiv>
+                  <input
+                    id="avatarImage"
+                    type="file"
+                    onChange={(e) => handleFileInput(e)}
+                  />
+                </SmallDiv>
+                <ButtonDiv>
+                  <PopupButton_triple
+                    type="button"
+                    text={'변경'}
+                    onClick={async () => {
+                      const fucResult = await onAvatar();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                  />
+                  <PopupButton_triple
+                    type="button"
+                    onClick={async () => {
+                      const fucResult = await deleteAvatar();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                    text={'기본값'}
+                  />
+                  <PopupButton_triple
+                    type="button"
+                    onClick={() => {
+                      close();
+                      setSelectFile(null);
+                    }}
+                    text={'닫기'}
+                  />
+                </ButtonDiv>
+              </PBody>
+            )}
+          </PopupCustom>
           <HeaderColumn>
             <UsernameRow>
               <Username>{username}</Username>{' '}

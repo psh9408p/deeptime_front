@@ -1,61 +1,16 @@
-import React, { useEffect } from 'react';
-import { gql } from 'apollo-boost';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import ProfileMPresenter from './ProfileMPresenter';
 import useTabs from '../../Hooks/useTabs';
-
-const GET_USER = gql`
-  query seeUser($username: String!) {
-    seeUser(username: $username) {
-      id
-      avatar
-      username
-      fullName
-      isSelf
-      email
-      organization {
-        id
-        name
-        seatRatio
-        secretCode
-        hubs {
-          id
-          serialNumber
-          raspberries {
-            id
-            seatNumber
-            serialNumber
-            category
-            user {
-              id
-              fullName
-              phoneNumber
-            }
-          }
-        }
-      }
-      payments {
-        id
-        name
-        paid_at
-        pay_method
-        amount
-        receipt_url
-      }
-      paymentSet {
-        id
-        membershipDate
-      }
-    }
-  }
-`;
-
-export const LOG_OUT = gql`
-  mutation logUserOut {
-    logUserOut @client
-  }
-`;
+import {
+  GET_USER,
+  LOG_OUT,
+  EDIT_AVATAR,
+  DELETE_AVATAR,
+} from './ProfileMQueries';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 let trap = true;
 
@@ -67,11 +22,74 @@ export default withRouter(
   }) => {
     const profileTabContents = ['기본 정보', '결제 내역', '기기관리'];
     const profileTabs = useTabs(0, profileTabContents);
+    const [selectFile, setSelectFile] = useState(null);
 
     const { data, loading, refetch } = useQuery(GET_USER, {
       variables: { username },
     });
     const [logOut] = useMutation(LOG_OUT);
+    const [editAvatarMuation] = useMutation(EDIT_AVATAR);
+    const [deleteAvatarMuation] = useMutation(DELETE_AVATAR);
+
+    const handleFileInput = (e) => {
+      setSelectFile(e.target.files);
+    };
+
+    const onAvatar = async () => {
+      const formData = new FormData();
+      formData.append('file', selectFile[0]);
+      try {
+        toast.info('프로필 이미지 변경 중...');
+        const { data } = await axios.post(
+          process.env.REACT_APP_BACKEND_URI + '/api/upload/avatar',
+          formData,
+          {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          },
+        );
+
+        const {
+          data: { editAvatar },
+        } = await editAvatarMuation({
+          variables: { location: data.location, key: data.key },
+        });
+        if (!editAvatar) {
+          alert('프로필 이미지를 변경할 수 없습니다.');
+        } else {
+          setSelectFile(null);
+          await refetch();
+          toast.success('프로필 이미지가 변경 되었습니다.');
+          return true;
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+        return false;
+      }
+    };
+
+    const deleteAvatar = async () => {
+      try {
+        toast.info('프로필 이미지를 변경 중...');
+        const {
+          data: { deleteAvatar },
+        } = await deleteAvatarMuation();
+        if (!deleteAvatar) {
+          alert('프로필 이미지를 변경할 수 없습니다.');
+        } else {
+          setSelectFile(null);
+          await refetch();
+          toast.success('프로필 이미지가 변경 되었습니다.');
+          return true;
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+        return false;
+      }
+    };
 
     useEffect(() => {
       if (trap) {
@@ -88,6 +106,10 @@ export default withRouter(
         data={data}
         profileTabs={profileTabs}
         userRefetch={refetch}
+        handleFileInput={handleFileInput}
+        onAvatar={onAvatar}
+        deleteAvatar={deleteAvatar}
+        setSelectFile={setSelectFile}
       />
     );
   },

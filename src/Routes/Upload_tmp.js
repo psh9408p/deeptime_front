@@ -1,48 +1,57 @@
-import React, { useState } from "react"
-import axios from "axios"
-import { toast } from "react-toastify"
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default () => {
-  const [selectFile, setSelectFile] = useState(null)
+  const [selectFile, setSelectFile] = useState(null);
 
   const handleFileInput = (e) => {
-    console.log(e.target)
-    setSelectFile(e.target.files)
-    console.log(selectFile)
-  }
+    console.log(e);
+    console.log(e.target);
+    setSelectFile(e.target.files);
+    console.log(selectFile);
+  };
   const handlePost = async () => {
-    console.log(selectFile)
-    const formData = new FormData()
-    formData.append("files", selectFile[0])
-    formData.append("files", selectFile[1])
+    console.log(selectFile);
+    const formData = new FormData();
+    formData.append('file', selectFile[0]);
+    // formData.append('files', selectFile[1]);
     try {
       const { data } = await axios.post(
-        process.env.REACT_APP_BACKEND_URI + "/api/upload",
+        process.env.REACT_APP_BACKEND_URI + '/api/upload/avatar',
         formData,
         {
           headers: {
-            "content-type": "multipart/form-data",
+            'content-type': 'multipart/form-data',
           },
-        }
-      )
-      console.log(data)
+        },
+      );
+      console.log(data.location);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast.error(
         <div>
           업로드가 불가능합니다.
           <br />
           다시 시도하세요.
-        </div>
-      )
+        </div>,
+      );
     }
-  }
+  };
   return (
     <div>
-      <input type="file" onChange={(e) => handleFileInput(e)} multiple />
-      <button type="button" onClick={() => handlePost()}>
-        업로드
-      </button>
+      <div>
+        <input type="file" onChange={(e) => handleFileInput(e)} multiple />
+        <button type="button" onClick={() => handlePost()}>
+          업로드
+        </button>
+      </div>
+      <div>
+        <input type="file" onChange={(e) => handleFileInput(e)} />
+        <button type="button" onClick={() => handlePost()}>
+          업로드
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
