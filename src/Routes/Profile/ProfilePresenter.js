@@ -117,8 +117,8 @@ const SettingWrap = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 520px !important;
-    height: 200px !important;
+    width: 600px !important;
+    height: 320px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -149,6 +149,16 @@ const SmallDiv = styled.div`
 const ButtonDiv = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+const PreviewImg = styled.canvas`
+  background-image: url(${(props) => props.url});
+  background-size: cover;
+  background-position: center center;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  margin-right: 30px;
 `;
 
 export default ({
@@ -203,9 +213,13 @@ export default ({
               <PBody>
                 <PTitle text={'프로필 이미지 설정'} />
                 <SmallDiv>
+                  <PreviewImg
+                    id="preview-img"
+                    url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Missing_avatar.svg/1024px-Missing_avatar.svg.png"
+                  ></PreviewImg>
                   <input
-                    id="avatarImage"
                     type="file"
+                    accept="image/*"
                     onChange={(e) => handleFileInput(e)}
                   />
                 </SmallDiv>

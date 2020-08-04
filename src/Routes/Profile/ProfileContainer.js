@@ -11,6 +11,7 @@ import {
 } from './ProfileQueries';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import imageResize from '../../Components/imageResize';
 
 export default withRouter(
   ({
@@ -30,12 +31,12 @@ export default withRouter(
     const [deleteAvatarMuation] = useMutation(DELETE_AVATAR);
 
     const handleFileInput = (e) => {
-      setSelectFile(e.target.files);
+      imageResize(e.target.files, 'preview-img', 640, setSelectFile);
     };
 
     const onAvatar = async () => {
       const formData = new FormData();
-      formData.append('file', selectFile[0]);
+      formData.append('file', selectFile);
       try {
         toast.info('프로필 이미지 변경 중...');
         const { data } = await axios.post(
