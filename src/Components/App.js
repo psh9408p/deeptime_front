@@ -31,7 +31,7 @@ export default () => {
   return (
     <ThemeProvider theme={Theme}>
       <>
-        {window.location.hash !== '#/study' ? (
+        {window.location.hash !== '#/experience' ? (
           <GlobalStyles />
         ) : (
           <GlobalStyles_potal />
@@ -41,10 +41,11 @@ export default () => {
             {isLoggedIn === true && window.location.hash !== '#/study' && (
               <Header />
             )}
-            {isLoggedIn === false && <Header_welcome />}
+            {isLoggedIn === false &&
+              window.location.hash !== '#/experience' && <Header_welcome />}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
-              {window.location.hash !== '#/study' && <Footer />}
+              {window.location.hash !== '#/experience' && <Footer />}
             </Wrapper>
           </>
         </Router>

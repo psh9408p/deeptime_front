@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
 import { Logo, Shutter } from './Icons';
@@ -62,11 +62,6 @@ const HeaderLink = styled(Link)`
   font-size: 16px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
-  &:last-child {
-    border: 1px solid ${(props) => props.theme.classicBlue};
-    border-radius: 3px;
-    padding: 0px 10px;
-  }
 `;
 
 const WelcomeLink = styled(Link)`
@@ -91,7 +86,31 @@ const IamText = styled.div`
   margin: 0px 8px 0px 10px;
 `;
 
+const PotalButton = styled.button`
+  cursor: pointer;
+  margin: 0px 30px 0px 15px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 16px;
+  outline: none;
+  color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  background: none;
+  border: 1px solid ${(props) => props.theme.classicBlue};
+  border-radius: 3px;
+  padding: 0px 10px;
+`;
+
 export default withRouter(() => {
+  const onClickPotal_student = () => {
+    const detect_window = window.open(
+      window.location.origin + '/#/experience',
+      'detect',
+      'height=361,width=481,fullscreen=yes,resizable=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no',
+    );
+  };
+
   return (
     <Header>
       <HeaderWrapper>
@@ -120,10 +139,10 @@ export default withRouter(() => {
           <HeaderLink to="/auth" replace>
             로그인
           </HeaderLink>
-          <HeaderLink to="/experience" replace>
+          <PotalButton type="button" onClick={onClickPotal_student}>
             <Shutter />
             <IamText>IAM</IamText>체험하기
-          </HeaderLink>
+          </PotalButton>
         </HeaderColumn>
       </HeaderWrapper>
     </Header>

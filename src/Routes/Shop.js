@@ -174,7 +174,12 @@ export default () => {
               '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' +
               '9,900원/월'
             }
-            onClick={billingOnClick}
+            onClick={
+              // billingOnClick
+              () => {
+                alert('개인용 서비스는 준비 중 입니다.');
+              }
+            }
           />
         </ButtonWrap>
       </Wrapper>

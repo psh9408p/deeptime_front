@@ -192,6 +192,9 @@ export default () => {
             <span>{Mydata.me.todayTime.attendanceStatus}</span>
           </MyStatus>
           <ButtonWrap>
+            <Button_blue text={'다시 공부하기~!'} onClick={func_reAttendance} />
+          </ButtonWrap>
+          <ButtonWrap>
             <Button_red
               type={'button'}
               text={'오늘 학습 끝~!'}
@@ -201,12 +204,6 @@ export default () => {
         </AttendanceBox>
         <AbsenceBox onSubmit={func_absence}>
           <EtcButtonWrap>
-            <ButtonWrap>
-              <Button_blue
-                text={'다시 공부하기~!'}
-                onClick={func_reAttendance}
-              />
-            </ButtonWrap>
             <ButtonWrap>
               <Button_red type="submit" text={'조퇴하기'} />
             </ButtonWrap>

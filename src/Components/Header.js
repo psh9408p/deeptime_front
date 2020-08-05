@@ -82,6 +82,7 @@ const PotalButton = styled.button`
   -webkit-box-align: center;
   align-items: center;
   font-size: 16px;
+  outline: none;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
   background: none;
@@ -115,7 +116,15 @@ export default withRouter(() => {
             {data.me && data.me.loginPosition === 'student' && (
               <AiBox>
                 <Shutter />
-                <PotalButton type="button" onClick={onClickPotal_student}>
+                <PotalButton
+                  type="button"
+                  onClick={
+                    // onClickPotal_student
+                    () => {
+                      alert('개인용 서비스는 준비 중 입니다.');
+                    }
+                  }
+                >
                   학습
                 </PotalButton>
                 <AiHeaderLink to="/attendance" replace>

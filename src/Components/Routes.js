@@ -16,7 +16,6 @@ import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
 import Loader from './Loader';
 import Review from '../Routes/Review';
-import Experience from '../Routes/Experience';
 import Introduce from '../Routes/Introduce';
 import Shopping from '../Routes/Shopping';
 import Support from '../Routes/Support';
@@ -33,6 +32,7 @@ import Voucher from '../Routes/Voucher';
 import Introduce_M from '../Routes/Introduce_M';
 import Account from '../Routes/Account';
 import Upload_tmp from '../Routes/Upload_tmp';
+import Experience from '../Routes/Experience';
 import { gql } from 'apollo-boost';
 
 export const MEPOSITION = gql`
