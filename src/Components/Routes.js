@@ -33,26 +33,30 @@ import Voucher from '../Routes/Voucher';
 import Introduce_M from '../Routes/Introduce_M';
 import Account from '../Routes/Account';
 import Upload_tmp from '../Routes/Upload_tmp';
+import { gql } from 'apollo-boost';
+
+export const MEPOSITION = gql`
+  query me {
+    me {
+      id
+      loginPosition
+    }
+  }
+`;
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
 const LoggedInRoutes = () => {
-  const { data: Mydata, loading, error, refetch: MyRefetch } = useQuery(ME);
+  const { data: Mydata, loading, refetch: MyRefetch } = useQuery(MEPOSITION);
   if (!loading && Mydata && Mydata.me) {
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>
-          <Route path="/study" component={() => <Study Mydata={Mydata} />} />
-          <Route
-            exact
-            path="/"
-            component={() => (
-              <Attendance Mydata={Mydata} MyRefetch={MyRefetch} />
-            )}
-          />
-          <Route path="/mystudy" component={MyStudy} />
+          {/* <Route path="/study" component={() => <Study Mydata={Mydata} />} /> */}
+          <Route path="/attendance" component={Attendance} />
+          <Route exact path="/" component={MyStudy} />
           <Route path="/classstudy" component={ClassStudy} />
           <Route path="/shop" component={Shop} />
           <Route path="/payment/result" component={PaymentResult} />

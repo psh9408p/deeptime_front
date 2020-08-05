@@ -8,15 +8,6 @@ export const ME = gql`
       username
       avatar
       loginPosition
-      targetTimeBox {
-        monday
-        tuesday
-        wednesday
-        thursday
-        friday
-        saturday
-        sunday
-      }
       todayTime {
         attendanceStatus
         absenceReason

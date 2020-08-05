@@ -118,7 +118,7 @@ export default withRouter(() => {
                 <PotalButton type="button" onClick={onClickPotal_student}>
                   학습
                 </PotalButton>
-                <AiHeaderLink to="/" replace>
+                <AiHeaderLink to="/attendance" replace>
                   출석
                 </AiHeaderLink>
               </AiBox>
@@ -165,7 +165,7 @@ export default withRouter(() => {
           )}
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
-              <HeaderLink to="/mystudy" replace>
+              <HeaderLink to="/" replace>
                 나의 학습
               </HeaderLink>
               <HeaderLink to="/classstudy" replace>
