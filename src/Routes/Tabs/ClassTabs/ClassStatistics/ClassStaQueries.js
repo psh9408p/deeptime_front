@@ -12,7 +12,6 @@ export const STUDENT_OF_CLASS = gql`
       }
       times {
         existTime
-        targetTime
         time_24
         createdAt
       }

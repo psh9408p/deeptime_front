@@ -12,7 +12,6 @@ export const ME = gql`
       }
       times {
         existTime
-        targetTime
         time_24
         createdAt
       }

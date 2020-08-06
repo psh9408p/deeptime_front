@@ -810,6 +810,7 @@ export default ({
     newScheduleArray = [];
   }, [pageIndex]);
 
+  console.log(schedules, newScheduleArray);
   return (
     <Wrapper>
       <PanelWrap>

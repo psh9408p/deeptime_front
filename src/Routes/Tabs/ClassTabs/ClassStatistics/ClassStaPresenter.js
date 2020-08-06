@@ -343,7 +343,6 @@ let schedule_label = [];
 let scheduleList_selectDay = [];
 const tmpTime = {
   existTime: 0,
-  targetTime: 0,
   time_24: new Array(288).fill(0),
 };
 let total_targetTime = 0;

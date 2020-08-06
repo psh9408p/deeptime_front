@@ -18,7 +18,6 @@ export default ({ pageIndex, setPageIndex }) => {
   const [createDefaultSubjectMutation] = useMutation(CREATE_DEFAULTSUBJECT);
   const {
     data: myInfoData,
-    error,
     loading: myInfoLoading,
     refetch: myInfoRefetch,
     startPolling,
@@ -28,6 +27,7 @@ export default ({ pageIndex, setPageIndex }) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  console.log(networkStatus, myInfoData);
   if (networkStatus === 1) {
     return (
       <LoaderWrapper>

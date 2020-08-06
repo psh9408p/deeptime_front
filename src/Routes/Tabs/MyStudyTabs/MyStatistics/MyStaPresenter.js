@@ -480,7 +480,6 @@ export default ({
     if (indexOfToday === -1) {
       myInfoData.times.push({
         existTime: 0,
-        targetTime: 0,
         time_24: new Array(288).fill(0),
       });
       indexOfToday = myInfoData.times.length - 1;
