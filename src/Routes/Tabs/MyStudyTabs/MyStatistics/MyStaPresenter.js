@@ -595,11 +595,12 @@ export default ({
       }
     }
     donutData = slicedTimeBox.map((a) => a.length * 5);
-    donutPercent = ((todayTime.existTime / todayTime.targetTime) * 100).toFixed(
-      1,
-    );
-    if (todayTime.targetTime === 0) {
+    console.log(slicedTimeBox, donutData);
+    const targetTime = SumArray(taskArray_scheduleT) * 60;
+    if (targetTime === 0) {
       donutPercent = 0;
+    } else {
+      donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(1);
     }
   };
   const weekGraph_calculate = () => {
@@ -630,7 +631,7 @@ export default ({
       stackIndex = stackIndex + index_tmp + 1;
     }
     let arrayBox = new Array(7).fill(null).map(() => {
-      return { existTime: 0, targetTime: 0, time_24: new Array(288).fill(0) };
+      return { existTime: 0, time_24: new Array(288).fill(0) };
     });
     if (indexOfWeek[0] !== undefined) {
       for (let k = 0; k < indexOfWeek.length; k++) {
@@ -640,8 +641,6 @@ export default ({
         arrayBox[dayIndex].time_24 = myInfoData.times[indexOfWeek[k]].time_24;
         arrayBox[dayIndex].existTime =
           myInfoData.times[indexOfWeek[k]].existTime;
-        arrayBox[dayIndex].targetTime =
-          myInfoData.times[indexOfWeek[k]].targetTime;
       }
     }
 
@@ -702,17 +701,19 @@ export default ({
     }
     // 도넛차트 계산
     let existTime_tmp = 0;
-    let targetTime_tmp = 0;
     for (let j = 0; j < 7; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
-      targetTime_tmp = targetTime_tmp + arrayBox[j].targetTime;
     }
-    donutData_1 = existTime_tmp;
-    donutData_2 = targetTime_tmp - existTime_tmp;
-    donutPercent = ((existTime_tmp / targetTime_tmp) * 100).toFixed(1);
-    if (targetTime_tmp === 0) {
+    const targetTime = SumArray(taskArray_scheduleT_week) * 60;
+
+    if (targetTime === 0) {
+      donutData_1 = 0;
       donutData_2 = 1;
       donutPercent = 0;
+    } else {
+      donutData_1 = existTime_tmp;
+      donutData_2 = targetTime - existTime_tmp;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
     }
   };
   const monthGraph_calculate = () => {
@@ -743,7 +744,7 @@ export default ({
       stackIndex = stackIndex + index_tmp + 1;
     }
     let arrayBox = new Array(lastMonthDate).fill(null).map(() => {
-      return { existTime: 0, targetTime: 0, time_24: new Array(288).fill(0) };
+      return { existTime: 0, time_24: new Array(288).fill(0) };
     });
     if (indexOfMonth[0] !== undefined) {
       for (let k = 0; k < indexOfMonth.length; k++) {
@@ -809,17 +810,18 @@ export default ({
     }
     // 도넛차트 계산
     let existTime_tmp = 0;
-    let targetTime_tmp = 0;
     for (let j = 0; j < lastMonthDate; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
-      targetTime_tmp = targetTime_tmp + arrayBox[j].targetTime;
     }
-    donutData_1 = existTime_tmp;
-    donutData_2 = targetTime_tmp - existTime_tmp;
-    donutPercent = ((existTime_tmp / targetTime_tmp) * 100).toFixed(1);
-    if (targetTime_tmp === 0) {
+    const targetTime = SumArray(taskArray_scheduleT_month) * 60;
+    if (targetTime === 0) {
+      donutData_1 = 0;
       donutData_2 = 1;
       donutPercent = 0;
+    } else {
+      donutData_1 = existTime_tmp;
+      donutData_2 = targetTime - existTime_tmp;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
     }
   };
 

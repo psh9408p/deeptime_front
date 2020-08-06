@@ -88,7 +88,6 @@ const IamText = styled.div`
 
 const PotalButton = styled.button`
   cursor: pointer;
-  margin: 0px 30px 0px 15px;
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;

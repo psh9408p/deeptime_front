@@ -153,6 +153,57 @@ export default ({ pageIndex, User, onUnRegist }) => {
             // }
           }}
         </PopupCustom>
+        <PopupCustom
+          trigger={<ContentDiv>독서실 좌석 연결</ContentDiv>}
+          closeOnDocumentClick={false}
+          modal
+        >
+          {(close) => {
+            return (
+              <PBody>
+                <PTitle text={'나의 독서실'} />
+                <ReadingContent>
+                  <LeftDiv>기관명:&nbsp;</LeftDiv>
+                  <RightDiv>{User?.organization?.name}</RightDiv>
+                </ReadingContent>
+                <ReadingContent>
+                  <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
+                  <RightDiv>
+                    {User?.organization?.manager?.phoneNumber &&
+                      phoneNumberNormalize(
+                        User.organization.manager.phoneNumber,
+                      )}
+                  </RightDiv>
+                </ReadingContent>
+                <ReadingContent>
+                  <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
+                  <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
+                </ReadingContent>
+                <ButtonDiv>
+                  <PopupButton
+                    type="button"
+                    text={'좌석 해제'}
+                    onClick={() => {
+                      let organizationNonExist = false;
+                      if (User.organization === null) {
+                        organizationNonExist = true;
+                      }
+                      onUnRegist(organizationNonExist);
+                    }}
+                  />
+                  <PopupButton
+                    type="button"
+                    onClick={() => {
+                      close();
+                    }}
+                    text={'닫기'}
+                  />
+                </ButtonDiv>
+              </PBody>
+            );
+            // }
+          }}
+        </PopupCustom>
       </Regist>
     );
   }
