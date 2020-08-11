@@ -392,6 +392,7 @@ let scheduleList_selectDay_month_length = 0;
 export default ({
   StaTabs,
   selectDate,
+  nextDate,
   setSelectDate,
   myInfoData,
   networkStatus,
@@ -476,6 +477,12 @@ export default ({
         new Date(i.createdAt).getMonth() == selectDate.getMonth() &&
         new Date(i.createdAt).getDate() == selectDate.getDate(),
     );
+    let indexOfNextday = myInfoData.times.findIndex(
+      (i) =>
+        new Date(i.createdAt).getFullYear() == nextDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() == nextDate.getMonth() &&
+        new Date(i.createdAt).getDate() == nextDate.getDate(),
+    );
     // today Time 없을 경우 값이 0인 Time 추가해주기
     if (indexOfToday === -1) {
       myInfoData.times.push({
@@ -484,7 +491,16 @@ export default ({
       });
       indexOfToday = myInfoData.times.length - 1;
     }
+    if (indexOfNextday === -1) {
+      myInfoData.times.push({
+        existTime: 0,
+        time_24: new Array(288).fill(0),
+      });
+      indexOfNextday = myInfoData.times.length - 1;
+    }
+
     const todayTime = myInfoData.times[indexOfToday];
+    const nextdayTime = myInfoData.times[indexOfNextday];
 
     // AreaChart 계산
     const arrayBox = SplitArray(todayTime.time_24, 12);
@@ -496,6 +512,10 @@ export default ({
     schedule_label = [];
     for (let j = 0; j < scheduleList_selectDay_length; j++) {
       // console.log(scheduleList_selectDay);
+      const totalMin =
+        (new Date(scheduleList_selectDay[j].end).getTime() -
+          new Date(scheduleList_selectDay[j].start).getTime()) /
+        60000;
       const totalMin_start =
         new Date(scheduleList_selectDay[j].start).getHours() * 60 +
         new Date(scheduleList_selectDay[j].start).getMinutes();
@@ -504,19 +524,28 @@ export default ({
         new Date(scheduleList_selectDay[j].end).getMinutes();
       const indexMin_start = totalMin_start / 5;
       const indexMin_end = totalMin_end / 5;
-      const slicedTime = todayTime.time_24.slice(indexMin_start, indexMin_end);
+      let slicedTime = todayTime.time_24.slice(indexMin_start, indexMin_end);
+      //만약 2틀에 걸친 스케줄이라면
+      if (
+        new Date(scheduleList_selectDay[j].start).getDate() !==
+        new Date(scheduleList_selectDay[j].end).getDate()
+      ) {
+        const scheduleTime_today = todayTime.time_24.slice(indexMin_start, 288);
+        const scheduleTime_nextday = nextdayTime.time_24.slice(0, indexMin_end);
+        slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
+      }
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay[j].subjectName,
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(scheduleList_selectDay[j].subjectName);
         resultArray_schedule.push(SumArray(slicedTime));
-        resultArray_scheduleT.push(totalMin_end - totalMin_start);
+        resultArray_scheduleT.push(totalMin);
       } else {
         resultArray_schedule[duplIndex] =
           resultArray_schedule[duplIndex] + SumArray(slicedTime);
         resultArray_scheduleT[duplIndex] =
-          resultArray_scheduleT[duplIndex] + (totalMin_end - totalMin_start);
+          resultArray_scheduleT[duplIndex] + totalMin;
       }
     }
     taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
@@ -594,7 +623,6 @@ export default ({
       }
     }
     donutData = slicedTimeBox.map((a) => a.length * 5);
-    console.log(slicedTimeBox, donutData);
     const targetTime = SumArray(taskArray_scheduleT) * 60;
     if (targetTime === 0) {
       donutPercent = 0;
@@ -654,6 +682,10 @@ export default ({
       const todayTime_24 = arrayBox[k].time_24;
       for (let j = 0; j < scheduleList_selectDay_week[k].length; j++) {
         // console.log(scheduleList_selectDay);
+        const totalMin =
+          (new Date(scheduleList_selectDay_week[k][j].end).getTime() -
+            new Date(scheduleList_selectDay_week[k][j].start).getTime()) /
+          60000;
         const totalMin_start =
           new Date(scheduleList_selectDay_week[k][j].start).getHours() * 60 +
           new Date(scheduleList_selectDay_week[k][j].start).getMinutes();
@@ -662,19 +694,47 @@ export default ({
           new Date(scheduleList_selectDay_week[k][j].end).getMinutes();
         const indexMin_start = totalMin_start / 5;
         const indexMin_end = totalMin_end / 5;
-        const slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+        let slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+        //만약 2틀에 걸친 스케줄이라면
+        if (
+          new Date(scheduleList_selectDay_week[k][j].start).getDate() !==
+          new Date(scheduleList_selectDay_week[k][j].end).getDate()
+        ) {
+          /// 토요일(일주일 끝나는날) 다음날에 걸치는 스케줄 있을시 다음날 시간 땡겨오기
+          let nextdayTime_24 = [];
+          if (k === 6) {
+            const indexOfNextday = myInfoData.times.findIndex(
+              (i) =>
+                new Date(i.createdAt).getFullYear() ==
+                  real_weekEnd.getFullYear() &&
+                new Date(i.createdAt).getMonth() == real_weekEnd.getMonth() &&
+                new Date(i.createdAt).getDate() == real_weekEnd.getDate(),
+            );
+            if (indexOfNextday === -1) {
+              nextdayTime_24 = new Array(288).fill(0);
+            } else {
+              nextdayTime_24 = myInfoData.times[indexOfNextday].time_24;
+            }
+          } else {
+            nextdayTime_24 = arrayBox[k + 1].time_24;
+          }
+
+          const scheduleTime_today = todayTime_24.slice(indexMin_start, 288);
+          const scheduleTime_nextday = nextdayTime_24.slice(0, indexMin_end);
+          slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
+        }
         const duplIndex = schedule_label.indexOf(
           scheduleList_selectDay_week[k][j].subjectName,
         ); // 중복되는 과목 인덱스 체크
         if (duplIndex === -1) {
           schedule_label.push(scheduleList_selectDay_week[k][j].subjectName);
           resultArray_schedule.push(SumArray(slicedTime));
-          resultArray_scheduleT.push(totalMin_end - totalMin_start);
+          resultArray_scheduleT.push(totalMin);
         } else {
           resultArray_schedule[duplIndex] =
             resultArray_schedule[duplIndex] + SumArray(slicedTime);
           resultArray_scheduleT[duplIndex] =
-            resultArray_scheduleT[duplIndex] + (totalMin_end - totalMin_start);
+            resultArray_scheduleT[duplIndex] + totalMin;
         }
       }
     }
@@ -764,6 +824,10 @@ export default ({
       const dateIndex =
         new Date(scheduleList_selectDay_month[j].start).getDate() - 1;
       const todayTime_24 = arrayBox[dateIndex].time_24;
+      const totalMin =
+        (new Date(scheduleList_selectDay_month[j].end).getTime() -
+          new Date(scheduleList_selectDay_month[j].start).getTime()) /
+        60000;
       const totalMin_start =
         new Date(scheduleList_selectDay_month[j].start).getHours() * 60 +
         new Date(scheduleList_selectDay_month[j].start).getMinutes();
@@ -772,19 +836,54 @@ export default ({
         new Date(scheduleList_selectDay_month[j].end).getMinutes();
       const indexMin_start = totalMin_start / 5;
       const indexMin_end = totalMin_end / 5;
-      const slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+      let slicedTime = todayTime_24.slice(indexMin_start, indexMin_end);
+      //만약 2틀에 걸친 스케줄이라면
+      if (
+        new Date(scheduleList_selectDay_month[j].start).getDate() !==
+        new Date(scheduleList_selectDay_month[j].end).getDate()
+      ) {
+        /// 토요일(일주일 끝나는날) 다음날에 걸치는 스케줄 있을시 다음날 시간 땡겨오기
+        let nextdayTime_24 = [];
+        if (dateIndex + 1 === lastMonthDate) {
+          const nextMonthFirstDay = new Date(
+            selectDate.getFullYear(),
+            selectDate.getMonth() + 1,
+            1,
+          );
+          console.log(nextMonthFirstDay);
+          const indexOfNextday = myInfoData.times.findIndex(
+            (i) =>
+              new Date(i.createdAt).getFullYear() ==
+                nextMonthFirstDay.getFullYear() &&
+              new Date(i.createdAt).getMonth() ==
+                nextMonthFirstDay.getMonth() &&
+              new Date(i.createdAt).getDate() == nextMonthFirstDay.getDate(),
+          );
+          if (indexOfNextday === -1) {
+            nextdayTime_24 = new Array(288).fill(0);
+          } else {
+            nextdayTime_24 = myInfoData.times[indexOfNextday].time_24;
+          }
+        } else {
+          nextdayTime_24 = arrayBox[dateIndex + 1].time_24;
+        }
+
+        const scheduleTime_today = todayTime_24.slice(indexMin_start, 288);
+        const scheduleTime_nextday = nextdayTime_24.slice(0, indexMin_end);
+        slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
+      }
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay_month[j].subjectName,
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(scheduleList_selectDay_month[j].subjectName);
         resultArray_schedule.push(SumArray(slicedTime));
-        resultArray_scheduleT.push(totalMin_end - totalMin_start);
+        resultArray_scheduleT.push(totalMin);
       } else {
         resultArray_schedule[duplIndex] =
           resultArray_schedule[duplIndex] + SumArray(slicedTime);
         resultArray_scheduleT[duplIndex] =
-          resultArray_scheduleT[duplIndex] + (totalMin_end - totalMin_start);
+          resultArray_scheduleT[duplIndex] + totalMin;
       }
     }
     taskArray_schedule_month = new Array(resultArray_schedule.length).fill(0);
@@ -904,6 +1003,7 @@ export default ({
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
                   title_x={'시간(분)'}
+                  stepSize_x={60}
                 />
               </ChartWrap>
               {todayCalLoading.current && (
@@ -960,6 +1060,7 @@ export default ({
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
                   title_x={'시간(분)'}
+                  stepSize_x={60}
                 />
               </ChartWrap>
               {weekCalLoading.current && (
@@ -1013,6 +1114,7 @@ export default ({
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
                   title_x={'시간(분)'}
+                  stepSize_x={60}
                 />
               </ChartWrap>
               {monthCalLoading.current && (

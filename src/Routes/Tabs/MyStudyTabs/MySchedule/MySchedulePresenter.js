@@ -439,6 +439,7 @@ export default ({
     return el != undefined;
   });
   //스케줄 넣기
+  console.log(myData?.schedules);
   if (networkStatus !== 4) {
     schedules = myData.schedules.map((List) => {
       let category = 'time';
@@ -739,6 +740,24 @@ export default ({
     popupStateBusy: function () {
       return '자습';
     },
+    popupSave: function () {
+      return '입력';
+    },
+    popupUpdate: function () {
+      return '업데이트';
+    },
+    popupEdit: function () {
+      return '편집';
+    },
+    popupDelete: function () {
+      return '삭제';
+    },
+    titlePlaceholder: function () {
+      return '제목';
+    },
+    locationPlaceholder: function () {
+      return '위치';
+    },
   };
 
   // 과목 즐겨찾기 관련
@@ -810,7 +829,6 @@ export default ({
     newScheduleArray = [];
   }, [pageIndex]);
 
-  console.log(schedules, newScheduleArray);
   return (
     <Wrapper>
       <PanelWrap>
@@ -1069,7 +1087,7 @@ export default ({
         calendars={calendars}
         schedules={schedules}
         taskView={false}
-        scheduleView={['allday', 'time']}
+        scheduleView={['time']}
         usageStatistics={true}
         onClickSchedule={onClickSchedule}
         onBeforeCreateSchedule={onBeforeCreateSchedule}

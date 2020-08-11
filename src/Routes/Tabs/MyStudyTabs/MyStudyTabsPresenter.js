@@ -45,7 +45,6 @@ export default ({
   createDefaultSubjectMutation,
   loadingToggle,
   setLoadingToggle,
-  setPageIndex,
 }) => {
   let history = useHistory();
 

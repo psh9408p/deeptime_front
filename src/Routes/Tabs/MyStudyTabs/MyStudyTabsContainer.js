@@ -10,7 +10,7 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ pageIndex, setPageIndex }) => {
+export default ({ pageIndex }) => {
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
   const [loadingToggle, setLoadingToggle] = useState(true);
@@ -27,7 +27,6 @@ export default ({ pageIndex, setPageIndex }) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  console.log(networkStatus, myInfoData);
   if (networkStatus === 1) {
     return (
       <LoaderWrapper>
@@ -47,7 +46,6 @@ export default ({ pageIndex, setPageIndex }) => {
         createDefaultSubjectMutation={createDefaultSubjectMutation}
         loadingToggle={loadingToggle}
         setLoadingToggle={setLoadingToggle}
-        setPageIndex={setPageIndex}
       />
     );
   }

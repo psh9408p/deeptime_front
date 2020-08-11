@@ -9,6 +9,7 @@ export default ({
   label_2,
   title,
   title_x,
+  stepSize_x,
 }) => {
   // const data_tmp_1 = [40, 60, 30, 50, 40];
   // const data_tmp_2 = [60, 90, 30, 60, 100];
@@ -51,6 +52,7 @@ export default ({
             id: 'bar-x-axis1',
             ticks: {
               beginAtZero: true,
+              stepSize: stepSize_x,
             },
             scaleLabel: {
               display: true,
