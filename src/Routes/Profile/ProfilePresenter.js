@@ -105,6 +105,23 @@ const ProfileButton = styled.button`
   }
 `;
 
+const ProfileButton_Blue = styled.button`
+  width: 100px;
+  border: 0;
+  color: white;
+  outline-color: black;
+  background-color: ${(props) => props.theme.classicBlue};
+  border-radius: ${(props) => props.theme.borderRadius};
+  font-weight: 600;
+  text-align: center;
+  padding: 7px 0px;
+  font-size: 14px;
+  cursor: pointer;
+  &:not(:last-child) {
+    margin-right: 60px;
+  }
+`;
+
 const ButtonWrap = styled.div`
   width: 150px;
 `;
@@ -288,14 +305,27 @@ export default ({
           </HeaderColumn>
         </Header>
         <Tabs>
-          {profileTabs.content.map((section, index) => (
-            <ProfileButton
-              key={index}
-              onClick={() => profileTabs.changeItem(index)}
-            >
-              {section}
-            </ProfileButton>
-          ))}
+          {profileTabs.content.map((section, index) => {
+            if (index === profileTabs.currentIndex) {
+              return (
+                <ProfileButton_Blue
+                  key={index}
+                  onClick={() => profileTabs.changeItem(index)}
+                >
+                  {section}
+                </ProfileButton_Blue>
+              );
+            } else {
+              return (
+                <ProfileButton
+                  key={index}
+                  onClick={() => profileTabs.changeItem(index)}
+                >
+                  {section}
+                </ProfileButton>
+              );
+            }
+          })}
         </Tabs>
         <ProfileTabs
           pageIndex={profileTabs.currentIndex}

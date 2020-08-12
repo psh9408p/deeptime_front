@@ -5,6 +5,7 @@ import Popup from 'reactjs-popup';
 import FatText from '../../../Components/FatText';
 import PopupButton from '../../../Components/Buttons/PopupButton';
 import phoneNumberNormalize from '../../../Components/phoneNumberNormalize';
+import Input from '../../../Components/Input';
 
 const Regist = styled.div`
   display: flex;
@@ -24,6 +25,21 @@ const ContentLink = styled(Link)`
   font-size: 16px;
   color: black;
   font-weight: 700;
+`;
+
+const ContentButton = styled.button`
+  cursor: pointer;
+  width: 320px;
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: black;
+  font-weight: 700;
+  background: none;
+  border: 0;
+  outline: none;
 `;
 
 const ContentDiv = styled.div`
@@ -84,7 +100,27 @@ const RightDiv = styled.div`
   color: ${(props) => props.theme.darkGreyColor};
 `;
 
-export default ({ pageIndex, User, onUnRegist }) => {
+const InputUpWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const InputWrapper = styled.div`
+  width: 300px;
+  margin-bottom: 20px;
+`;
+
+export default ({
+  pageIndex,
+  User,
+  onUnRegist,
+  raspberrySerial,
+  secretCode,
+  clearOnRegist,
+  onRegist,
+}) => {
   if (pageIndex === 0) {
     return (
       <Regist>
@@ -94,9 +130,17 @@ export default ({ pageIndex, User, onUnRegist }) => {
         <ContentLink to="/order-history" replace>
           결제/이용권 내역
         </ContentLink>
-        <ContentLink to="/voucher" replace>
+        <ContentButton
+          type="button"
+          onClick={() => {
+            alert('이용권 등록 서비스는 준비 중 입니다.');
+          }}
+        >
           이용권 등록
-        </ContentLink>
+        </ContentButton>
+        {/* <ContentLink to="/voucher" replace>
+          이용권 등록
+        </ContentLink> */}
       </Regist>
     );
   } else if (pageIndex === 1) {
@@ -161,39 +205,36 @@ export default ({ pageIndex, User, onUnRegist }) => {
           {(close) => {
             return (
               <PBody>
-                <PTitle text={'나의 독서실'} />
-                <ReadingContent>
-                  <LeftDiv>기관명:&nbsp;</LeftDiv>
-                  <RightDiv>{User?.organization?.name}</RightDiv>
-                </ReadingContent>
-                <ReadingContent>
-                  <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
-                  <RightDiv>
-                    {User?.organization?.manager?.phoneNumber &&
-                      phoneNumberNormalize(
-                        User.organization.manager.phoneNumber,
-                      )}
-                  </RightDiv>
-                </ReadingContent>
-                <ReadingContent>
-                  <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
-                  <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
-                </ReadingContent>
+                <PTitle text={'독서실 좌석 연결'} />
+                <InputUpWrapper>
+                  <InputWrapper>
+                    <Input
+                      placeholder={'시리얼 넘버 (예: a0001-a01-a0001)'}
+                      {...raspberrySerial}
+                    />
+                  </InputWrapper>
+                  <InputWrapper>
+                    <Input
+                      placeholder={'가입번호 (예: 1234)'}
+                      {...secretCode}
+                    />
+                  </InputWrapper>
+                </InputUpWrapper>
                 <ButtonDiv>
                   <PopupButton
                     type="button"
-                    text={'좌석 해제'}
-                    onClick={() => {
-                      let organizationNonExist = false;
-                      if (User.organization === null) {
-                        organizationNonExist = true;
+                    text={'좌석 연결'}
+                    onClick={async () => {
+                      const fucResult = await onRegist();
+                      if (fucResult) {
+                        close();
                       }
-                      onUnRegist(organizationNonExist);
                     }}
                   />
                   <PopupButton
                     type="button"
                     onClick={() => {
+                      clearOnRegist();
                       close();
                     }}
                     text={'닫기'}

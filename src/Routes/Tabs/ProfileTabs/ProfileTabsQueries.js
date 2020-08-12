@@ -5,3 +5,9 @@ export const DISCONNECT_STUDENT = gql`
     disconnectStudent
   }
 `;
+
+export const CONNECT_STUDENT = gql`
+  mutation connectStudent($secretCode: String!, $raspberrySerial: String!) {
+    connectStudent(secretCode: $secretCode, raspberrySerial: $raspberrySerial)
+  }
+`;
