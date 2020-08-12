@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import ObjectUnassign from '../../../../Components/ObjectUnassign';
@@ -290,6 +290,9 @@ const BookRight = styled.div`
 let newScheduleArray = [];
 let schedules = [];
 
+let isFirstRun = true;
+let isRefectRun = false;
+
 export default ({
   cal,
   startRange,
@@ -312,6 +315,7 @@ export default ({
   pageIndex,
   networkStatus,
 }) => {
+  console.log(newScheduleArray);
   const originSubject = useSelect(
     subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
@@ -439,12 +443,14 @@ export default ({
     return el != undefined;
   });
   //스케줄 넣기
-  console.log(myData?.schedules);
-  if (networkStatus !== 4) {
+  console.log(networkStatus);
+  const inputSchedules = () => {
     schedules = myData.schedules.map((List) => {
       let category = 'time';
+      const endDate = new Date(List.end);
       if (List.isAllDay === true) {
         category = 'allday';
+        endDate.setTime(endDate.getTime() - 1000);
       }
 
       const schedule_tmp = {
@@ -457,12 +463,12 @@ export default ({
         title: List.title,
         id: List.id,
         start: new Date(List.start),
-        end: new Date(List.end),
+        end: endDate,
         totalTime: new Date(List.totalTime),
       };
       return schedule_tmp;
     });
-  }
+  };
 
   const handleClickNextButton = () => {
     const calendarInstance = cal.current.getInstance();
@@ -559,6 +565,7 @@ export default ({
 
     newScheduleArray.push(schedule_tmp);
     // console.log(newScheduleArray);
+    schedules.push(schedule);
     cal.current.calendarInst.createSchedules([schedule]);
   }, []);
 
@@ -582,11 +589,14 @@ export default ({
 
     const checkExist = (a) => a.id === res.schedule.id;
     const checkIndex = newScheduleArray.findIndex(checkExist);
+    const checkIndex2 = schedules.findIndex(checkExist);
     if (checkIndex === -1) {
       newScheduleArray.push(schedule_tmp);
     } else {
       newScheduleArray.splice(checkIndex, 1);
     }
+    // 랜더링되는 스케줄 변수는 딜리트 시 무조건 지움
+    schedules.splice(checkIndex2, 1);
 
     cal.current.calendarInst.deleteSchedule(
       res.schedule.id,
@@ -666,12 +676,16 @@ export default ({
 
       const checkExist = (a) => a.id === res.schedule.id;
       const checkIndex = newScheduleArray.findIndex(checkExist);
+      const checkIndex2 = schedules.findIndex(checkExist);
       if (checkIndex === -1) {
         newScheduleArray.push(schedule_tmp);
       } else {
         newScheduleArray.splice(checkIndex, 1);
         newScheduleArray.push(schedule_tmp);
       }
+      // 업데이트라는건 랜더링되는 스케줄변수가 무조건 있으니 if문 없음
+      schedules.splice(checkIndex2, 1);
+      schedules.push(res.schedule);
 
       const { schedule, changes } = res;
       cal.current.calendarInst.updateSchedule(
@@ -810,8 +824,23 @@ export default ({
     }
   };
 
+  // 맨처음 스케줄 넣기
+  if (isFirstRun) {
+    isFirstRun = false;
+    inputSchedules();
+  }
+  // 리페치가 완료되야지만 새로운 스케줄 넣기
+  if (networkStatus === 4) {
+    isRefectRun = true;
+  }
+  if (isRefectRun && networkStatus === 7) {
+    isRefectRun = false;
+    inputSchedules();
+  }
+
   // useEffect 관련
   useEffect(() => {
+    //날짜 범위 세팅
     setStartRange(
       moment(cal.current.calendarInst._renderRange.start._date).format(
         'YYYY.MM.DD',
@@ -823,11 +852,6 @@ export default ({
       ),
     );
   }, []);
-
-  useEffect(() => {
-    // 변경내용 저장 초기화
-    newScheduleArray = [];
-  }, [pageIndex]);
 
   return (
     <Wrapper>
@@ -1087,7 +1111,7 @@ export default ({
         calendars={calendars}
         schedules={schedules}
         taskView={false}
-        scheduleView={['time']}
+        scheduleView={['allday', 'time']}
         usageStatistics={true}
         onClickSchedule={onClickSchedule}
         onBeforeCreateSchedule={onBeforeCreateSchedule}

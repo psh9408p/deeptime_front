@@ -89,6 +89,20 @@ const PotalButton = styled.button`
   border: 0;
 `;
 
+const TmpButton = styled.button`
+  cursor: pointer;
+  margin: 0px 30px 0px 0px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 16px;
+  outline: none;
+  color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  background: none;
+  border: 0;
+`;
+
 export default withRouter(() => {
   const [potal, setPotal] = useState();
 
@@ -177,9 +191,14 @@ export default withRouter(() => {
               <HeaderLink to="/" replace>
                 나의 학습
               </HeaderLink>
-              <HeaderLink to="/classstudy" replace>
+              <TmpButton
+                type="button"
+                onClick={() => {
+                  alert('클래스 학습 서비스는 준비 중 입니다.');
+                }}
+              >
                 클래스 학습
-              </HeaderLink>
+              </TmpButton>
               <HeaderLink to="/shop">
                 <Shop />
               </HeaderLink>
