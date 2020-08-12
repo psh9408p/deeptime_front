@@ -1104,7 +1104,7 @@ export default ({
       </PanelWrap>
       <TUICalendar
         ref={cal}
-        height="1000px"
+        height="1330px"
         useCreationPopup={true}
         useDetailPopup={true}
         template={templates}
