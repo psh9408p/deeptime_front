@@ -35,6 +35,7 @@ export default () => {
   //   value.length <= 11 && !value.includes('-');
 
   const [action, setAction] = useState('logIn');
+  const [action2, setAction2] = useState('select');
   const [allTerm, setAllTerm] = useState(false);
   const [tos, setTos] = useState(false);
   const [top, setTop] = useState(false);
@@ -73,6 +74,8 @@ export default () => {
   const phoneKey = useInput('');
   const organizationName = useInput('');
   const detailAddress = useInput('');
+  const managerSecret = useInput('');
+
   const [requestLoginMutation] = useMutation(REQUEST_LOGIN, {
     variables: { email: email.value, password: password.value },
   });
@@ -402,6 +405,8 @@ export default () => {
     <AuthPresenter
       setAction={setAction}
       action={action}
+      setAction2={setAction2}
+      action2={action2}
       studyGroup={studyGroup}
       studyGroup2={studyGroup2}
       studyGroup3={studyGroup3}
@@ -434,6 +439,7 @@ export default () => {
       sPhoneOnClick_findEmail={sPhoneOnClick_findEmail}
       allClear={allClear}
       sEmailOnClick_findPassword={sEmailOnClick_findPassword}
+      managerSecret={managerSecret}
     />
   );
 };

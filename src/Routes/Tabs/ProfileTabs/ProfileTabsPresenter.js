@@ -215,7 +215,7 @@ export default ({
                   </InputWrapper>
                   <InputWrapper>
                     <Input
-                      placeholder={'가입번호 (예: 1234)'}
+                      placeholder={'가입번호 (예: 123456)'}
                       {...secretCode}
                     />
                   </InputWrapper>

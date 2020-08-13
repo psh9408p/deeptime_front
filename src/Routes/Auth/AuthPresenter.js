@@ -241,8 +241,23 @@ const ItemSub = styled.div`
   align-items: center;
 `;
 
+const InputUpWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const InputWrapper = styled.div`
+  width: 300px;
+  margin-bottom: 20px;
+`;
+
 export default ({
+  setAction,
   action,
+  setAction2,
+  action2,
   studyGroup,
   studyGroup2,
   studyGroup3,
@@ -255,7 +270,6 @@ export default ({
   phoneKey,
   organizationName,
   detailAddress,
-  setAction,
   onSubmit,
   password,
   password2,
@@ -276,6 +290,7 @@ export default ({
   sPhoneOnClick_findEmail,
   allClear,
   sEmailOnClick_findPassword,
+  managerSecret,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -943,36 +958,75 @@ export default ({
               >
                 {(close) => (
                   <PBody>
-                    <PTitle text={'회원가입'} />
-                    <SignTypeWrap>
-                      <SignItem
-                        onClick={() => {
-                          setAction('signUp');
-                          allClear();
-                        }}
-                      >
-                        <ItemName>학생회원</ItemName>
-                        <ItemSub>(만 14세 이상의 학생)</ItemSub>
-                      </SignItem>
-                      <SignItem
-                        onClick={() => {
-                          setAction('signUp_manager');
-                          allClear();
-                        }}
-                      >
-                        <ItemName>관리자회원</ItemName>
-                        <ItemSub>(독서실 관리자)</ItemSub>
-                      </SignItem>
-                    </SignTypeWrap>
-                    <ButtonDiv>
-                      <PopupButton_solo
-                        type="button"
-                        onClick={() => {
-                          close();
-                        }}
-                        text={'닫기'}
-                      />
-                    </ButtonDiv>
+                    {action2 === 'select' ? (
+                      <>
+                        <PTitle text={'회원가입'} />
+                        <SignTypeWrap>
+                          <SignItem
+                            onClick={() => {
+                              setAction('signUp');
+                              allClear();
+                            }}
+                          >
+                            <ItemName>학생회원</ItemName>
+                            <ItemSub>(만 14세 이상의 학생)</ItemSub>
+                          </SignItem>
+                          <SignItem
+                            onClick={() => {
+                              setAction2('secret');
+                            }}
+                          >
+                            <ItemName>관리자회원</ItemName>
+                            <ItemSub>(독서실 관리자)</ItemSub>
+                          </SignItem>
+                        </SignTypeWrap>
+                        <ButtonDiv>
+                          <PopupButton_solo
+                            type="button"
+                            onClick={() => {
+                              close();
+                            }}
+                            text={'닫기'}
+                          />
+                        </ButtonDiv>
+                      </>
+                    ) : (
+                      <>
+                        <PTitle text={'관리자 인증'} />
+                        <InputUpWrapper>
+                          <InputWrapper>
+                            <Input
+                              placeholder={'인증코드'}
+                              {...managerSecret}
+                            />
+                          </InputWrapper>
+                        </InputUpWrapper>
+                        <ButtonDiv>
+                          <PopupButton
+                            type="button"
+                            text={'인증'}
+                            onClick={() => {
+                              if (managerSecret.value === '코람데오') {
+                                managerSecret.setValue('');
+                                setAction2('select');
+                                setAction('signUp_manager');
+                                allClear();
+                              } else {
+                                alert('인증코드가 불일치합니다.');
+                              }
+                            }}
+                          />
+                          <PopupButton
+                            type="button"
+                            onClick={() => {
+                              managerSecret.setValue('');
+                              setAction2('select');
+                            }}
+                            text={'닫기'}
+                          />
+                        </ButtonDiv>
+                      </>
+                    )}
                   </PBody>
                 )}
               </PopupSign>
