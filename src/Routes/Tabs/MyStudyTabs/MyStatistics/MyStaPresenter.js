@@ -850,7 +850,6 @@ export default ({
             selectDate.getMonth() + 1,
             1,
           );
-          console.log(nextMonthFirstDay);
           const indexOfNextday = myInfoData.times.findIndex(
             (i) =>
               new Date(i.createdAt).getFullYear() ==

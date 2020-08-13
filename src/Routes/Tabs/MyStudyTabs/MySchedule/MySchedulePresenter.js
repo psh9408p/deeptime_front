@@ -199,6 +199,13 @@ const SelectWrapDiv = styled.div`
   align-items: center;
 `;
 
+const SelectWrapDiv2 = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
 const SelectWrapper = styled.div`
   width: 50%;
   height: 35px;
@@ -289,9 +296,11 @@ const BookRight = styled.div`
 
 let newScheduleArray = [];
 let schedules = [];
+let calendars = [];
 
 let isFirstRun = true;
 let isRefectRun = false;
+let isRefectRun2 = false;
 
 export default ({
   cal,
@@ -308,16 +317,15 @@ export default ({
   setSubjectColor,
   handleChangeComplete,
   addSubjectMutation,
-  editColorSubjectMutation,
+  editSubjectMutation,
   deleteSubjectMutation,
   bookMarkSubjectMutation,
   subjectRefetch,
-  pageIndex,
   networkStatus,
+  subjectnetwork,
 }) => {
-  console.log(newScheduleArray);
   const originSubject = useSelect(
-    subjectList.map((List) => `${List.name}`),
+    subjectList.map((List) => `[${List.largeCategory}]${List.name}`),
     subjectList.map((List) => `${List.id}`),
   );
   const indiSubject_tmp = subjectList.map((subject) => {
@@ -340,10 +348,15 @@ export default ({
   };
 
   const subjectLoad = () => {
+    subjectName.setValue(subjectList[originSubject.optionIndex].name);
     setSubjectColor(subjectList[originSubject.optionIndex].bgColor);
   };
 
   const onSubmitAdd = async () => {
+    if (subjectName.value === '') {
+      alert('과목 이름을 입력하세요.');
+      return;
+    }
     try {
       toast.info('새로운 과목을 추가 중...');
       const {
@@ -370,27 +383,39 @@ export default ({
   };
 
   const onSubmitEdit = async () => {
+    if (subjectName.value === '') {
+      alert('과목 이름을 입력하세요.');
+      return;
+    }
+    if (
+      subjectList[originSubject.optionIndex].modifyRight === false &&
+      subjectList[originSubject.optionIndex].name !== subjectName.value
+    ) {
+      alert('개인이 추가한(대분류: 기타) 과목만 이름 수정이 가능합니다.');
+      return;
+    }
     if (
       window.confirm(
         '수정 내용이 기존 스케줄에도 반영됩니다.\n그래도 수정하시겠습니까?',
       ) === true
     ) {
       try {
-        toast.info('과목 색상을 수정 중...');
+        toast.info('과목을 수정 중...');
         const {
-          data: { editColorSubject },
-        } = await editColorSubjectMutation({
+          data: { editSubject },
+        } = await editSubjectMutation({
           variables: {
             subjectId: originSubject.option,
+            name: subjectName.value,
             bgColor: subjectColor,
           },
         });
-        if (!editColorSubject) {
-          alert('과목 색상을 수정할 수 없습니다.');
+        if (!editSubject) {
+          alert('과목을 수정할 수 없습니다.');
         } else {
           await subjectRefetch();
           await subjectClear();
-          toast.success('과목 색상이 수정되었습니다.');
+          toast.success('과목이 수정되었습니다.');
           return true;
         }
       } catch (e) {
@@ -432,18 +457,19 @@ export default ({
       }
     }
   };
-
   //과목 종류 넣기
-  const calendars_tmp = subjectList.map((subject) => {
-    if (subject.bookMark) {
-      return subject;
-    }
-  });
-  const calendars = calendars_tmp.filter(function (el) {
-    return el != undefined;
-  });
+  const inputCalendars = () => {
+    const calendars_tmp = subjectList.map((subject) => {
+      if (subject.bookMark) {
+        return subject;
+      }
+    });
+    calendars = calendars_tmp.filter(function (el) {
+      return el != undefined;
+    });
+  };
+
   //스케줄 넣기
-  console.log(networkStatus);
   const inputSchedules = () => {
     schedules = myData.schedules.map((List) => {
       let category = 'time';
@@ -468,6 +494,33 @@ export default ({
       };
       return schedule_tmp;
     });
+  };
+
+  const inputSchedules2 = () => {
+    schedules = myData.schedules.map((List) => {
+      let category = 'time';
+      const endDate = new Date(List.end);
+      if (List.isAllDay === true) {
+        category = 'allday';
+        endDate.setTime(endDate.getTime() - 1000);
+      }
+
+      const schedule_tmp = {
+        calendarId: List.subjectId,
+        isAllDay: List.isAllDay,
+        isPrivate: List.isPrivate,
+        category,
+        location: List.location,
+        isVisible: true,
+        title: List.title,
+        id: List.id,
+        start: new Date(List.start),
+        end: endDate,
+        totalTime: new Date(List.totalTime),
+      };
+      return schedule_tmp;
+    });
+    schedules.splice(0, 1);
   };
 
   const handleClickNextButton = () => {
@@ -824,12 +877,20 @@ export default ({
     }
   };
 
-  // 맨처음 스케줄 넣기
+  // 맨처음 스케줄, 과목 넣기
   if (isFirstRun) {
     isFirstRun = false;
+    inputCalendars();
     inputSchedules();
   }
-  // 리페치가 완료되야지만 새로운 스케줄 넣기
+  // 과목의 리페치가 완료되야지만 새로운 과목&스케줄 넣기
+  if (subjectnetwork === 4) {
+    isRefectRun2 = true;
+  }
+  if (isRefectRun2 && subjectnetwork === 7) {
+    inputCalendars();
+  }
+  // 스케줄의 리페치가 완료되야지만 새로운 스케줄 넣기
   if (networkStatus === 4) {
     isRefectRun = true;
   }
@@ -940,7 +1001,7 @@ export default ({
                                 <PTitle text={'과목 추가'} />
                                 <InputWrapper>
                                   <Input
-                                    placeholder={'과목 이름 (예: 수학 or 영어)'}
+                                    placeholder={'과목 이름 (예: 음악 or 미술)'}
                                     {...subjectName}
                                   />
                                 </InputWrapper>
@@ -986,7 +1047,7 @@ export default ({
                             <PBody>
                               <SubjectForm2>
                                 <PTitle text={'색상 수정'} />
-                                <SelectWrapDiv>
+                                <SelectWrapDiv2>
                                   <SubTitle text={`수정할 과목:　`} />
                                   <SelectWrapper2>
                                     <Select
@@ -1001,7 +1062,13 @@ export default ({
                                       onClick={subjectLoad}
                                     />
                                   </RedButtonWrap>
-                                </SelectWrapDiv>
+                                </SelectWrapDiv2>
+                                <InputWrapper>
+                                  <Input
+                                    placeholder={'과목 이름 (예: 음악 or 미술)'}
+                                    {...subjectName}
+                                  />
+                                </InputWrapper>
                                 <ColorWrapper>
                                   <SubTitle text={'과목 색상 선택'} />
                                   <SwatchesPicker

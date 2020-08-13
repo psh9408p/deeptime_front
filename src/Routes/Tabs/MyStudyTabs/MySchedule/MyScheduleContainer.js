@@ -9,7 +9,7 @@ import {
   ADD_SUBJECT,
   DELETE_SUBJECT,
   MY_SUBJECT,
-  EDITCOLOR_SUBJECT,
+  EDIT_SUBJECT,
   BOOKMARK_SUBJECT,
 } from './MyScheduleQueries';
 
@@ -17,7 +17,7 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
-export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
+export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
@@ -26,22 +26,21 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
   const [addSubjectMutation] = useMutation(ADD_SUBJECT);
-  const [editColorSubjectMutation] = useMutation(EDITCOLOR_SUBJECT);
+  const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
   const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
   const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
   const {
     data: subjectData,
     loading: subjectLoading,
     refetch: subjectRefetch,
-  } = useQuery(MY_SUBJECT);
+    networkStatus: subjectnetwork,
+  } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
 
   const handleChangeComplete = (color, event) => {
     setSubjectColor(color.hex);
   };
 
-  if (!subjectLoading && subjectData && subjectData.mySubject) {
-    subjectRefetch();
-    // console.log(subjectData.mySubject);
+  if (subjectnetwork === 7 || subjectnetwork === 4) {
     return (
       <MySchedulePresenter
         cal={cal}
@@ -58,12 +57,12 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
         setSubjectColor={setSubjectColor}
         handleChangeComplete={handleChangeComplete}
         addSubjectMutation={addSubjectMutation}
-        editColorSubjectMutation={editColorSubjectMutation}
+        editSubjectMutation={editSubjectMutation}
         deleteSubjectMutation={deleteSubjectMutation}
         bookMarkSubjectMutation={bookMarkSubjectMutation}
         subjectRefetch={subjectRefetch}
-        pageIndex={pageIndex}
         networkStatus={networkStatus}
+        subjectnetwork={subjectnetwork}
       />
     );
   } else {

@@ -172,9 +172,17 @@ export default withRouter(() => {
               <HeaderLink to="/student" replace>
                 학생
               </HeaderLink> */}
-              <HeaderLink to="/shop">
+              {/* <HeaderLink to="/shop" replace>
                 <Shop />
-              </HeaderLink>
+              </HeaderLink> */}
+              <TmpButton
+                type="button"
+                onClick={() => {
+                  alert('상품 구매는 준비 중 입니다.');
+                }}
+              >
+                <Shop />
+              </TmpButton>
               {!data.me ? (
                 <HeaderLink to="/#">
                   <User />

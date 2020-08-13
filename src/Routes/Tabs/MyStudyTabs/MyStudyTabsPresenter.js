@@ -109,7 +109,6 @@ export default ({
       stopPolling();
       return (
         <MySchedule
-          pageIndex={pageIndex}
           myInfoData={myInfoData}
           myInfoRefetch={myInfoRefetch}
           networkStatus={networkStatus}
