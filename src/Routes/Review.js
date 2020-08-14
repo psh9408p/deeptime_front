@@ -1,5 +1,15 @@
-import React from "react"
+import React from 'react';
+import styled from 'styled-components';
+
+const TmpDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 30px 0 30px 0;
+`;
 
 export default () => {
-  return "구매후기 준비중..."
-}
+  return <TmpDiv>사용후기 준비 중입니다.</TmpDiv>;
+};

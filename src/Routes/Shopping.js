@@ -1,8 +1,15 @@
 import React from 'react';
-import useMouseLeave from '../Hooks/useMouseLeave';
+import styled from 'styled-components';
+
+const TmpDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 30px 0 30px 0;
+`;
 
 export default () => {
-  const donleaveme = () => console.log('떠나지마');
-  useMouseLeave(donleaveme);
-  return '구매하기 준비중...';
+  return <TmpDiv>구매하기 준비 중입니다.</TmpDiv>;
 };

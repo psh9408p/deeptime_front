@@ -531,7 +531,7 @@ export default ({
                           />
                           <CheckLabel2 htmlFor="tosChk">
                             <Link target="_blank" to="/tos" replace>
-                              이용 약관
+                              서비스 이용약관
                             </Link>
                             &nbsp;동의
                             <span style={{ color: 'red' }}>&nbsp;(필수)</span>
@@ -562,7 +562,9 @@ export default ({
                             margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="marketingChk">
-                            마케팅 수신 동의
+                            <Link target="_blank" to="/tom" replace>
+                              마케팅 정보 수신 동의
+                            </Link>
                             <span style={{ color: 'gray' }}>&nbsp;(선택)</span>
                           </CheckLabel2>
                         </AllCheckDiv>
@@ -805,8 +807,8 @@ export default ({
                             margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="tosChk">
-                            <Link target="_blank" to="/tos" replace>
-                              이용 약관
+                            <Link target="_blank" to="/tosm" replace>
+                              서비스 이용약관
                             </Link>
                             &nbsp;동의
                             <span style={{ color: 'red' }}>&nbsp;(필수)</span>
@@ -837,7 +839,9 @@ export default ({
                             margin={'0 10px 0 0'}
                           />
                           <CheckLabel2 htmlFor="marketingChk">
-                            마케팅 수신 동의
+                            <Link target="_blank" to="/tom" replace>
+                              마케팅 정보 수신 동의
+                            </Link>
                             <span style={{ color: 'gray' }}>&nbsp;(선택)</span>
                           </CheckLabel2>
                         </AllCheckDiv>

@@ -343,7 +343,7 @@ export default ({
                 margin={'0 10px 0 0'}
               />
               <CheckLabel htmlFor="marketingChk">
-                <FatText text={'마케팅 수신 동의'} />
+                <FatText text={'마케팅 정보 수신 동의'} />
               </CheckLabel>
             </AllCheckDiv>
             <JoinButtonDiv>

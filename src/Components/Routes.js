@@ -20,7 +20,9 @@ import Introduce from '../Routes/Introduce';
 import Shopping from '../Routes/Shopping';
 import Support from '../Routes/Support';
 import TermsOfService from '../Routes/TermsOfService';
+import TermsOfService_M from '../Routes/TermsOfService_M';
 import TermsOfPrivacy from '../Routes/TermsOfPrivacy';
+import TermsOfMarketing from '../Routes/TermsOfMarketing';
 import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
 import Shop from '../Routes/Shop';
@@ -97,13 +99,15 @@ const LoggedInRoutes = () => {
 const LoggedOutRoutes = () => (
   <Switch>
     <Route exact path="/" component={Introduce} />
-    <Route path="/review" component={Upload_tmp} />
+    <Route path="/review" component={Review} />
     <Route path="/shopping" component={Shopping} />
     <Route path="/support" component={Support} />
     <Route path="/auth" component={Auth} />
     <Route path="/experience" component={Experience} />
     <Route path="/tos" component={TermsOfService} />
+    <Route path="/tosm" component={TermsOfService_M} />
     <Route path="/top" component={TermsOfPrivacy} />
+    <Route path="/tom" component={TermsOfMarketing} />
     <Redirect from="*" to="/" />
   </Switch>
 );

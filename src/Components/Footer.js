@@ -1,5 +1,5 @@
-import React from "react"
-import styled from "styled-components"
+import React from 'react';
+import styled from 'styled-components';
 
 const Footer = styled.footer`
   display: flex;
@@ -10,30 +10,30 @@ const Footer = styled.footer`
   font-size: 12px;
   margin: 50px 0px;
   padding: 0px 30px;
-`
+`;
 
 const List = styled.ul`
   display: flex;
-`
+`;
 
 const ListItem = styled.li`
   &:not(:last-child) {
     margin-right: 16px;
   }
-`
+`;
 
 const Link = styled.a`
-  color: ${props => props.theme.classicBlue};
-`
+  color: ${(props) => props.theme.classicBlue};
+`;
 
 const Copyright = styled.span`
-  color: ${props => props.theme.darkGreyColor};
-`
+  color: ${(props) => props.theme.darkGreyColor};
+`;
 
 export default () => (
   <Footer>
     <List>
-      <ListItem>
+      {/* <ListItem>
         <Link href="#">about us</Link>
       </ListItem>
       <ListItem>
@@ -65,8 +65,8 @@ export default () => (
       </ListItem>
       <ListItem>
         <Link href="#">language</Link>
-      </ListItem>
+      </ListItem> */}
     </List>
     <Copyright>&copy; {new Date().getFullYear()} IAM FROM SLOG</Copyright>
   </Footer>
-)
+);
