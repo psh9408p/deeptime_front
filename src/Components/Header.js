@@ -8,6 +8,7 @@ import { ME } from '../SharedQueries';
 
 const Header = styled.header`
   width: 100%;
+  height: 68px;
   border: 0;
   position: fixed;
   top: 0;
@@ -188,7 +189,7 @@ export default withRouter(() => {
                   <User />
                 </HeaderLink>
               ) : (
-                <HeaderLink to={data.me.username} replace>
+                <HeaderLink to={'/' + data.me.username} replace>
                   <Avatar size="sm" url={data.me.avatar} />
                 </HeaderLink>
               )}
@@ -196,6 +197,9 @@ export default withRouter(() => {
           )}
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
+              <HeaderLink to="/userguide/student/connectseat" replace>
+                사용가이드
+              </HeaderLink>
               <HeaderLink to="/" replace>
                 나의 학습
               </HeaderLink>
@@ -215,7 +219,7 @@ export default withRouter(() => {
                   <User />
                 </HeaderLink>
               ) : (
-                <HeaderLink to={data.me.username} replace>
+                <HeaderLink to={'/' + data.me.username} replace>
                   <Avatar size="sm" url={data.me.avatar} />
                 </HeaderLink>
               )}

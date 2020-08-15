@@ -5,6 +5,7 @@ import { Logo, Shutter } from './Icons';
 
 const Header = styled.header`
   width: 100%;
+  height: 68px;
   border: 0;
   position: fixed;
   top: 0;
@@ -123,8 +124,8 @@ export default withRouter(() => {
             <WelcomeLink to="/" replace>
               IAM
             </WelcomeLink>
-            <WelcomeLink to="/review" replace>
-              사용후기
+            <WelcomeLink to="/userguide/student/connectseat" replace>
+              사용가이드
             </WelcomeLink>
             <WelcomeLink to="/shopping" replace>
               구매하기
