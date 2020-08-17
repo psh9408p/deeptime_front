@@ -61,7 +61,7 @@ const AiBox = styled.div`
 const HeaderLink = styled(Link)`
   cursor: pointer;
   &:not(:last-child) {
-    margin-right: 30px;
+    margin-right: 15px;
   }
   display: inline-flex;
   -webkit-box-align: center;
@@ -80,7 +80,7 @@ const AiHeaderLink = styled(HeaderLink)`
 
 const PotalButton = styled.button`
   cursor: pointer;
-  margin: 0px 30px 0px 15px;
+  margin: 0px 15px 0px 15px;
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
@@ -94,7 +94,7 @@ const PotalButton = styled.button`
 
 const TmpButton = styled.button`
   cursor: pointer;
-  margin: 0px 30px 0px 0px;
+  margin: 0px 15px 0px 0px;
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
