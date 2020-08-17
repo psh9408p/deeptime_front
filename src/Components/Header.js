@@ -31,9 +31,10 @@ const HeaderWrapper = styled.div`
 `;
 
 const HeaderColumn = styled.div`
-  width: 33%;
+  width: 20%;
   text-align: center;
   &:first-child {
+    width: 40%;
     margin-right: auto;
     text-align: left;
     display: inline-flex;
@@ -41,6 +42,7 @@ const HeaderColumn = styled.div`
     align-items: center;
   }
   &:last-child {
+    width: 40%;
     margin-left: auto;
     justify-content: flex-end;
     display: inline-flex;
