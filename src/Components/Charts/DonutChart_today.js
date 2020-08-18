@@ -35,9 +35,9 @@ export default ({ data, color, title, labels }) => {
         {
           data: currentTime_data,
           backgroundColor: [
-            'rgba(123, 169, 235, 1)',
-            'rgba(233, 236, 244, 1)',
             'rgba(15,76,130, 1)',
+            'rgba(233, 236, 244, 1)',
+            'rgba(123, 169, 235, 1)',
             'rgba(255, 118, 117, 1)',
             'rgba(0, 0, 0, 0)',
             'rgba(255, 118, 117, 1)',

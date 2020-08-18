@@ -573,9 +573,10 @@ export default ({
       const index_tmp = slicedTimes.findIndex((i) => i > 0);
       if (index_tmp === -1) {
         slicedTimeBox.push(slicedTimes);
-        const nowDateMin_count = Math.ceil(
-          (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
-        );
+        const nowDateMin_count =
+          Math.floor(
+            (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
+          ) + 1;
         if (nowDateMin_count === 288) {
           // 지금이 23시 55분 이상이라는 뜻
           rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
@@ -585,7 +586,7 @@ export default ({
           const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
           if (lastZeroTime.length - lastIndex === 0) {
             // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
-            rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 지금 이전 시간
+            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
             break; // 현재 이전시간으로 끝남
           } else {
             const grayTime = lastZeroTime.slice(
@@ -598,7 +599,7 @@ export default ({
             slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
             slicedTimeBox.push(blueTime);
             rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-            rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 지금 이전 시간
+            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
             break; // 현재 이전시간으로 끝남
           }
         }
@@ -612,12 +613,12 @@ export default ({
         const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
         if (index_tmp2 === -1) {
           slicedTimeBox.push(slicedTimes);
-          rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 학습시간
+          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
           break; // 학습시간으로 끝남
         } else {
           const studyTime = slicedTimes.slice(0, index_tmp2);
           slicedTimeBox.push(studyTime);
-          rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 학습시간
+          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
           slicedTimes = slicedTimes.slice(index_tmp2);
         }
       }
