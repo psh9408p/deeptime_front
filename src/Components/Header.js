@@ -199,7 +199,11 @@ export default withRouter(() => {
           )}
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
-              <HeaderLink to="/userguide/student/connectseat" replace>
+              <HeaderLink
+                target="_blank"
+                to="/userguide/student/connectseat"
+                replace
+              >
                 사용가이드
               </HeaderLink>
               <HeaderLink to="/" replace>

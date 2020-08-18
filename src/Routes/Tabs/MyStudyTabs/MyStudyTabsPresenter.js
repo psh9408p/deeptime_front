@@ -88,9 +88,9 @@ export default ({
     return (
       <LoaderWrapper>
         <Loader />
-        <MassageDiv>[약 1~2분 소요] 기본 과목 세팅 중...</MassageDiv>
+        <MassageDiv>기본 과목 세팅 중... (1분 내 완료)</MassageDiv>
         <CountDownDiv>
-          <Countdown date={Date.now() + 120000} />
+          <Countdown date={Date.now() + 60000} />
         </CountDownDiv>
         <RedDiv>인터넷 창을 끄지 말아주세요!</RedDiv>
       </LoaderWrapper>
