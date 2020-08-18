@@ -36,21 +36,21 @@ export default () => {
         <Swiper {...params}>
           <div>
             <img
-              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.JPG"
+              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.png"
               alt="소개자료_2"
               width="100%"
             />
           </div>
           <div>
             <img
-              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C4.JPG"
+              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C4.png"
               alt="소개자료_4"
               width="100%"
             />
           </div>
           <div>
             <img
-              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C7.JPG"
+              src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/welcomeImg/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C7.png"
               alt="소개자료_7"
               width="100%"
             />
