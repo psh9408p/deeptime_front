@@ -1,20 +1,14 @@
-import React, { useEffect, useRef, forwardRef } from 'react';
-import { useQuery } from '@apollo/react-hooks';
-import { ME } from './MyStaQueries';
+import React, { forwardRef } from 'react';
 import styled, { keyframes } from 'styled-components';
-import Select from '../../../../Components/Select';
 import Loader from '../../../../Components/Loader';
-import Avatar from '../../../../Components/Avatar';
 import { Clock24 } from '../../../../Components/Image';
 import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
 import DonutChart from '../../../../Components/Charts/DonutChart';
 import DonutChart_today from '../../../../Components/Charts/DonutChart_today';
 import twoArraySum from '../../../../Components/twoArraySum';
-import GaugeChart from 'react-gauge-chart';
 import SumArray from '../../../../Components/Array/SumArray';
 import SplitArray from '../../../../Components/Array/SplitArray';
-import ReactTooltip from 'react-tooltip';
 import DatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -38,6 +32,10 @@ const LoaderWrapper = styled.div`
   z-index: 1;
   height: 100%;
   width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `;
 
 const BigBox = styled.div`
@@ -49,148 +47,6 @@ const BigBox = styled.div`
     height: 1095px;
     position: relative;
   }
-`;
-
-const Title = styled.div`
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: white;
-  padding: 10px 20px;
-  width: 100%;
-  height: 70px;
-`;
-
-const TitleGraph = styled.div`
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: white;
-  width: 100%;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: relative;
-`;
-
-const TitleGraphWrap = styled.div`
-  height: 100%;
-  width: 80%;
-`;
-
-const ClassSelect = styled.div`
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: white;
-  width: 100%;
-  height: 30px;
-`;
-
-const StudentBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: white;
-  padding: 5px 5px;
-  width: 100%;
-  height: 895px;
-`;
-
-const ClassName = styled.div`
-  display: flex;
-  align-items: center;
-  height: 50%;
-  font-weight: 600;
-  font-size: 16px;
-  color: ${(props) => props.theme.darkGreyColor};
-  &:last-child {
-    flex-direction: row-reverse;
-    font-size: 20px;
-    color: black;
-  }
-`;
-
-const StudentList = styled.div`
-  display: flex;
-  align-items: center;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.bgColor};
-  width: 100%;
-  height: 50px;
-  &:not(:first-child) {
-    margin-top: 5px;
-  }
-`;
-
-const SmallToggleRed = styled.div`
-  border: 0;
-  border-radius: 5px;
-  background-color: #ff7675;
-  height: 10px;
-  width: 40px;
-  margin: 5px 5px;
-`;
-
-const SmallToggleBlue = styled.div`
-  border: 0;
-  border-radius: 5px;
-  background-color: #7ba9eb;
-  height: 10px;
-  width: 40px;
-  margin: 5px 5px;
-`;
-
-const ToggleRed = styled.div`
-  border: 0;
-  border-radius: 5px;
-  background-color: #ff7675;
-  height: 40px;
-  width: 10px;
-  margin: 5px 5px;
-`;
-
-const ToggleBlue = styled.div`
-  border: 0;
-  border-radius: 5px;
-  background-color: #7ba9eb;
-  height: 40px;
-  width: 10px;
-  margin: 5px 5px;
-`;
-
-const AvatarWrap = styled.div`
-  margin-left: 5px;
-  height: 40px;
-`;
-
-const StudentName = styled.div`
-  width: 90px;
-  text-align: center;
-  font-size: 17px;
-  font-weight: 600;
-  margin-left: 10px;
-`;
-
-const ListColumn = styled.div`
-  border: 0;
-  border-radius: 15px;
-  margin-left: 10px;
-  width: 80px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${(props) => props.theme.darkGreyColor};
-  font-weight: 600;
-  background-color: ${(props) => props.theme.bgColor};
-`;
-
-const LightBio = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
 `;
 
 const StatisRow = styled.div`
@@ -236,6 +92,10 @@ const DonutChartValue = styled.div`
   font-size: 30px;
   font-weight: 600;
   padding-top: 173px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `;
 
 const ClockBox = styled.div`
@@ -248,6 +108,10 @@ const ClockBox = styled.div`
   padding-right: 3px;
   justify-content: center;
   align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `;
 
 const ClassButton = styled.button`
@@ -282,31 +146,6 @@ const ClassButton_Blue = styled.button`
   }
 `;
 
-const GaugeChart_2 = styled(GaugeChart)`
-  font-weight: 600;
-`;
-
-const TitleGraphText = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 1;
-  text-align: left;
-  font-size: 17px;
-  font-weight: 600;
-  padding: 30px 0px 0px 20px;
-`;
-const TitleGraphText_2 = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 1;
-  text-align: left;
-  font-size: 17px;
-  font-weight: 600;
-  padding: 50px 0px 0px 20px;
-`;
-
 const DatePickButton = styled.button`
   border: 0;
   outline-color: black;
@@ -318,10 +157,6 @@ const DatePickButton = styled.button`
   padding: 7px 10px;
   font-size: 14px;
   cursor: pointer;
-`;
-
-const StudentTooltip = styled.span`
-  line-height: 1.5;
 `;
 
 const DatePickDiv = styled.div`

@@ -48,7 +48,7 @@ const ControlButton = styled.button`
   }
   &:nth-child(2) {
     width: 30px;
-    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Previous_icon.png')
+    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/Previous_icon.png')
       no-repeat;
     background-color: white;
     background-position: center center;
@@ -56,7 +56,7 @@ const ControlButton = styled.button`
   }
   &:nth-child(3) {
     width: 30px;
-    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/Next_icon.png')
+    background: url('https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/Next_icon.png')
       no-repeat;
     background-color: white;
     background-position: center center;
