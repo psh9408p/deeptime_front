@@ -46,7 +46,12 @@ export const HeartFull = () => (
 );
 
 export const User = () => (
-  <img src="/image/icon/user.png" alt="School" width="24" height="24" />
+  <img
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/user.png"
+    alt="School"
+    width="24"
+    height="24"
+  />
 );
 
 export const Comment = () => (
@@ -78,15 +83,29 @@ export const CommentFull = () => (
 // )
 
 export const Logo = () => (
-  <img src="/image/icon/logo_bgwhite.png" alt="mainLogo" height="45" />
+  <img
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/logo_bgwhite.png"
+    alt="mainLogo"
+    height="45"
+  />
 );
 
 export const Shutter = () => (
-  <img src="/image/icon/shutter.png" alt="shutter" width="24" height="24" />
+  <img
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/shutter.png"
+    alt="shutter"
+    width="24"
+    height="24"
+  />
 );
 
 export const School = () => (
-  <img src="/image/icon/school.png" alt="School" width="24" height="24" />
+  <img
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/school.png"
+    alt="School"
+    width="24"
+    height="24"
+  />
 );
 
 export const Building = () => (
@@ -99,7 +118,7 @@ export const Building = () => (
 
 export const ClassRoom = () => (
   <img
-    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/classRoom.png"
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/classRoom.png"
     alt="ClassRoom"
     width="24"
     height="24"
@@ -108,7 +127,7 @@ export const ClassRoom = () => (
 
 export const Next = () => (
   <img
-    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/Next_icon.png"
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/Next_icon.png"
     alt="Next"
     width="24"
     height="24"
@@ -117,7 +136,7 @@ export const Next = () => (
 
 export const Previous = () => (
   <img
-    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/Previous_icon.png"
+    src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/icon/Previous_icon.png"
     alt="Previous"
     width="24"
     height="24"
