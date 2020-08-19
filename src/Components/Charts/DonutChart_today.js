@@ -69,6 +69,9 @@ export default ({ data, color, title, labels }) => {
         display: true,
         text: title,
       },
+      plugins: {
+        labels: false,
+      },
     },
   };
   const chartContainer = useRef(null);

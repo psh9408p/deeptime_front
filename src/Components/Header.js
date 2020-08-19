@@ -20,7 +20,7 @@ const Header = styled.header`
   justify-content: center;
   align-items: center;
   padding: 10px 0px;
-  z-index: 2;
+  z-index: 999;
 `;
 
 const HeaderWrapper = styled.div`

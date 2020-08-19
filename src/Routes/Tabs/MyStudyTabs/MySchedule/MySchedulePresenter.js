@@ -478,9 +478,8 @@ export default ({
         category = 'allday';
         endDate.setTime(endDate.getTime() - 1000);
       }
-
       const schedule_tmp = {
-        calendarId: List.subjectId,
+        calendarId: List.subject ? List.subject.id : '',
         isAllDay: List.isAllDay,
         isPrivate: List.isPrivate,
         category,
@@ -506,7 +505,7 @@ export default ({
       }
 
       const schedule_tmp = {
-        calendarId: List.subjectId,
+        calendarId: List.subject.id,
         isAllDay: List.isAllDay,
         isPrivate: List.isPrivate,
         category,

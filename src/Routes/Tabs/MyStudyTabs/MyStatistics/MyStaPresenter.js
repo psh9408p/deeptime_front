@@ -6,11 +6,11 @@ import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
 import DonutChart from '../../../../Components/Charts/DonutChart';
 import DonutChart_today from '../../../../Components/Charts/DonutChart_today';
+import PieChart from '../../../../Components/Charts/PieChart';
 import twoArraySum from '../../../../Components/twoArraySum';
 import SumArray from '../../../../Components/Array/SumArray';
 import SplitArray from '../../../../Components/Array/SplitArray';
 import DatePicker from 'react-datepicker';
-
 import 'react-datepicker/dist/react-datepicker.css';
 import Input_100 from '../../../../Components/Input_100';
 import WeekRange from '../../../../Components/Date/WeekRange';
@@ -43,8 +43,8 @@ const BigBox = styled.div`
   &:first-child {
     border: ${(props) => props.theme.boxBorder};
     border-radius: ${(props) => props.theme.borderRadius};
-    width: 70%;
-    height: 1095px;
+    width: 654.5px;
+    height: 1730px;
     position: relative;
   }
 `;
@@ -69,6 +69,12 @@ const StatisRow = styled.div`
     height: 310px;
   }
   &:nth-child(4) {
+    height: 310px;
+  }
+  &:nth-child(5) {
+    height: 310px;
+  }
+  &:nth-child(6) {
     height: 310px;
   }
   &:last-child {
@@ -370,10 +376,10 @@ export default ({
         slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
       }
       const duplIndex = schedule_label.indexOf(
-        scheduleList_selectDay[j].subjectName,
+        scheduleList_selectDay[j].subject.name,
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
-        schedule_label.push(scheduleList_selectDay[j].subjectName);
+        schedule_label.push(scheduleList_selectDay[j].subject.name);
         resultArray_schedule.push(SumArray(slicedTime));
         resultArray_scheduleT.push(totalMin);
       } else {
@@ -560,10 +566,10 @@ export default ({
           slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
         }
         const duplIndex = schedule_label.indexOf(
-          scheduleList_selectDay_week[k][j].subjectName,
+          scheduleList_selectDay_week[k][j].subject.name,
         ); // 중복되는 과목 인덱스 체크
         if (duplIndex === -1) {
-          schedule_label.push(scheduleList_selectDay_week[k][j].subjectName);
+          schedule_label.push(scheduleList_selectDay_week[k][j].subject.name);
           resultArray_schedule.push(SumArray(slicedTime));
           resultArray_scheduleT.push(totalMin);
         } else {
@@ -708,10 +714,10 @@ export default ({
         slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
       }
       const duplIndex = schedule_label.indexOf(
-        scheduleList_selectDay_month[j].subjectName,
+        scheduleList_selectDay_month[j].subject.name,
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
-        schedule_label.push(scheduleList_selectDay_month[j].subjectName);
+        schedule_label.push(scheduleList_selectDay_month[j].subject.name);
         resultArray_schedule.push(SumArray(slicedTime));
         resultArray_scheduleT.push(totalMin);
       } else {
@@ -875,6 +881,29 @@ export default ({
               <ClockBox>
                 <Clock24 />
               </ClockBox>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
+            <StatisRow>
+              <ChartWrap>
+                <PieChart
+                // data_1={donutData_1}
+                // data_2={donutData_2}
+                // title={'학습 성취도'}
+                // labels={['학습', '목표']}
+                />
+              </ChartWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
+            <StatisRow>
+              <ChartWrap></ChartWrap>
               {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />

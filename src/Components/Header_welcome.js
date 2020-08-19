@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
 import { Logo, Shutter } from './Icons';
@@ -17,7 +17,7 @@ const Header = styled.header`
   justify-content: center;
   align-items: center;
   padding: 10px 0px;
-  z-index: 2;
+  z-index: 999;
 `;
 
 const HeaderWrapper = styled.div`

@@ -23,6 +23,9 @@ export default ({ data_1, data_2, title, labels }) => {
         display: true,
         text: title,
       },
+      plugins: {
+        labels: false,
+      },
     },
   };
   const chartContainer = useRef(null);

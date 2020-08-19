@@ -55,8 +55,11 @@ export const ME = gql`
         start
         end
         totalTime
-        subjectId
-        subjectName
+        subject {
+          id
+          name
+          color
+        }
       }
     }
   }
