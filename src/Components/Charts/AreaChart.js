@@ -64,6 +64,9 @@ export default ({ data_1, labels, title, title_y }) => {
         display: true,
         text: title,
       },
+      plugins: {
+        datalabels: false,
+      },
       scales: {
         xAxes: [
           {

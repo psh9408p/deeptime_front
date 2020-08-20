@@ -1,56 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
-import 'chartjs-plugin-labels';
+import 'chartjs-plugin-datalabels';
 
-export default ({
-  data_1,
-  data_2,
-  dataColor_1,
-  dataColor_2,
-  title,
-  labels,
-}) => {
-  var randomScalingFactor = function () {
-    return Math.round(Math.random() * 100);
-  };
-
+export default ({ data, dataColor, title, labels, updateBoolean }) => {
   const chartConfig = {
     type: 'pie',
     data: {
       datasets: [
         {
-          data: [
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-          ],
-          backgroundColor: [
-            'rgba(123, 169, 235, 1)',
-            'rgba(123, 169, 235, 1)',
-            'rgba(123, 169, 235, 1)',
-            'rgba(123, 169, 235, 1)',
-            'rgba(123, 169, 2, 1)',
-          ],
-          label: 'Dataset 1',
+          data,
+          backgroundColor: dataColor,
+          label: '시간 비율',
         },
-        // {
-        //   data: [
-        //     randomScalingFactor(),
-        //     randomScalingFactor(),
-        //     randomScalingFactor(),
-        //     randomScalingFactor(),
-        //     randomScalingFactor(),
-        //   ],
-        //   backgroundColor: [
-        //     'rgba(123, 169, 235, 1)',
-        //     'rgba(123, 169, 235, 1)',
-        //     'rgba(123, 169, 235, 1)',
-        //     'rgba(123, 169, 235, 1)',
-        //     'rgba(123, 169, 2, 1)',
-        //   ],
-        // },
       ],
       labels: labels,
     },
@@ -61,23 +22,26 @@ export default ({
         text: title,
       },
       plugins: {
-        labels: {
-          // mode 'label', 'value' or 'percentage', default is 'percentage'
-          render: 'percentage',
-
-          // precision for percentage, default is 0
-          precision: 1,
-
-          // font size, default is defaultFontSize
-          fontSize: 15,
-
-          // font color, default is '#fff'
-          fontColor: 'black',
-
-          // font style, default is defaultFontStyle
-          fontStyle: 'bold',
-
-          position: 'outside',
+        datalabels: {
+          backgroundColor: function (context) {
+            return context.dataset.backgroundColor;
+          },
+          borderColor: 'white',
+          borderRadius: 25,
+          borderWidth: 2,
+          color: 'black',
+          display: function (context) {
+            var dataset = context.dataset;
+            var count = dataset.data.length;
+            var value = dataset.data[context.dataIndex];
+            return value > count * 1.5;
+          },
+          font: {
+            weight: 'bold',
+          },
+          formatter: (value) => {
+            return value + '%';
+          },
         },
       },
     },
@@ -92,14 +56,18 @@ export default ({
     }
   }, [chartContainer]);
 
-  const updateDataset = (datasetIndex, datasetIndex_2, newData) => {
-    chartInstance.data.datasets[datasetIndex].data[datasetIndex_2] = newData;
+  const updateDataset = (datasetIndex, newData, newColor) => {
+    chartInstance.data.labels = labels;
+    chartInstance.options.title.text = title;
+    chartInstance.data.datasets[datasetIndex].data = newData;
+    chartInstance.data.datasets[datasetIndex].backgroundColor = newColor;
     chartInstance.update();
+    // console.log(chartInstance);
   };
 
   const AreaChartUpdate = () => {
-    updateDataset(0, 0, data_1);
-    updateDataset(0, 1, data_2);
+    updateDataset(0, data, dataColor);
+    // updateDataset(0, 1, data_2);
     // updateDataset(0, 0, data_tmp_1);
     // updateDataset(0, 1, data_tmp_2);
   };
@@ -111,7 +79,7 @@ export default ({
       return;
     }
     AreaChartUpdate();
-  }, [data_1, data_2]);
+  }, [data, updateBoolean]);
 
   return <canvas ref={chartContainer} />;
 };

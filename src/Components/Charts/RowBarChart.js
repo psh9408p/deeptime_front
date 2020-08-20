@@ -46,6 +46,9 @@ export default ({
         display: true,
         text: title,
       },
+      plugins: {
+        datalabels: false,
+      },
       scales: {
         xAxes: [
           {

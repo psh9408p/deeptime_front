@@ -70,7 +70,7 @@ export default ({ data, color, title, labels }) => {
         text: title,
       },
       plugins: {
-        labels: false,
+        datalabels: false,
       },
     },
   };

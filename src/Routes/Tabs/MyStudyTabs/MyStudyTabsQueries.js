@@ -58,7 +58,7 @@ export const ME = gql`
         subject {
           id
           name
-          color
+          bgColor
         }
       }
     }

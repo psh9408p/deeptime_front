@@ -24,7 +24,7 @@ export default ({ data_1, data_2, title, labels }) => {
         text: title,
       },
       plugins: {
-        labels: false,
+        datalabels: false,
       },
     },
   };

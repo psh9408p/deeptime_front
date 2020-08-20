@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Loader from '../../../../Components/Loader';
 import { Clock24 } from '../../../../Components/Image';
@@ -208,6 +208,38 @@ const IngSpan = styled.span`
   font-weight: 600;
 `;
 
+const ChangeWrap = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const ChangeButton = styled.button`
+  width: 100px;
+  height: 35px;
+  border: 0;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.skyBlue};
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 5px 0px;
+  font-size: 12px;
+  outline-color: black;
+  cursor: pointer;
+  &:first-child {
+    margin-right: 300px;
+  }
+`;
+
 let taskArray = [];
 let taskArray_week = [];
 let taskArray_month = [];
@@ -217,7 +249,10 @@ let taskArray_schedule_month = [];
 let taskArray_scheduleT = [];
 let taskArray_scheduleT_week = [];
 let taskArray_scheduleT_month = [];
+let taskArray_percent = [];
+let taskArray_percentT = [];
 let schedule_label = [];
+let schedule_color = [];
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_week = [[], [], [], [], [], [], []];
 let scheduleList_selectDay_month = [];
@@ -242,6 +277,8 @@ export default ({
   todayCalLoading,
   weekCalLoading,
   monthCalLoading,
+  selectPercent,
+  setSelectPercent,
 }) => {
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
@@ -351,6 +388,7 @@ export default ({
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
+    schedule_color = [];
     for (let j = 0; j < scheduleList_selectDay_length; j++) {
       // console.log(scheduleList_selectDay);
       const totalMin =
@@ -376,10 +414,21 @@ export default ({
         slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
       }
       const duplIndex = schedule_label.indexOf(
-        scheduleList_selectDay[j].subject.name,
+        scheduleList_selectDay[j].subject
+          ? scheduleList_selectDay[j].subject.name
+          : '과목 없음',
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
-        schedule_label.push(scheduleList_selectDay[j].subject.name);
+        schedule_label.push(
+          scheduleList_selectDay[j].subject
+            ? scheduleList_selectDay[j].subject.name
+            : '과목 없음',
+        );
+        schedule_color.push(
+          scheduleList_selectDay[j].subject
+            ? scheduleList_selectDay[j].subject.bgColor
+            : '#A1B56C',
+        );
         resultArray_schedule.push(SumArray(slicedTime));
         resultArray_scheduleT.push(totalMin);
       } else {
@@ -405,6 +454,33 @@ export default ({
       taskArray_schedule.forEach(function (item, index) {
         taskArray_schedule[index] = item / 60;
       });
+    }
+    // 스케줄(과목) 시간 퍼센트 계산
+    const totalExsitTime = SumArray(taskArray_schedule);
+    const totalTargetTime = SumArray(taskArray_scheduleT);
+    if (schedule_label.length === 0) {
+      taskArray_percent = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalExsitTime === 0) {
+      taskArray_percent = taskArray_schedule.map(() => 0);
+      taskArray_percent.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percent = taskArray_schedule.map((time) =>
+        Math.floor((time / totalExsitTime) * 100),
+      );
+    }
+    if (schedule_label.length === 0) {
+      taskArray_percentT = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalTargetTime === 0) {
+      taskArray_percentT = taskArray_scheduleT.map(() => 0);
+      taskArray_percentT.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percentT = taskArray_scheduleT.map((time) =>
+        Math.floor((time / totalTargetTime) * 100),
+      );
     }
     // 도넛차트 계산
     let slicedTimeBox = [];
@@ -520,6 +596,7 @@ export default ({
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
+    schedule_color = [];
     for (let k = 0; k < 7; k++) {
       const todayTime_24 = arrayBox[k].time_24;
       for (let j = 0; j < scheduleList_selectDay_week[k].length; j++) {
@@ -566,10 +643,21 @@ export default ({
           slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
         }
         const duplIndex = schedule_label.indexOf(
-          scheduleList_selectDay_week[k][j].subject.name,
+          scheduleList_selectDay_week[k][j].subject
+            ? scheduleList_selectDay_week[k][j].subject.name
+            : '과목 없음',
         ); // 중복되는 과목 인덱스 체크
         if (duplIndex === -1) {
-          schedule_label.push(scheduleList_selectDay_week[k][j].subject.name);
+          schedule_label.push(
+            scheduleList_selectDay_week[k][j].subject
+              ? scheduleList_selectDay_week[k][j].subject.name
+              : '과목 없음',
+          );
+          schedule_color.push(
+            scheduleList_selectDay_week[k][j].subject
+              ? scheduleList_selectDay_week[k][j].subject.bgColor
+              : '#A1B56C',
+          );
           resultArray_schedule.push(SumArray(slicedTime));
           resultArray_scheduleT.push(totalMin);
         } else {
@@ -599,6 +687,33 @@ export default ({
       taskArray_schedule_week.forEach(function (item, index) {
         taskArray_schedule_week[index] = item / 60;
       });
+    }
+    // 스케줄(과목) 시간 퍼센트 계산
+    const totalExsitTime = SumArray(taskArray_schedule_week);
+    const totalTargetTime = SumArray(taskArray_scheduleT_week);
+    if (schedule_label.length === 0) {
+      taskArray_percent = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalExsitTime === 0) {
+      taskArray_percent = taskArray_schedule_week.map(() => 0);
+      taskArray_percent.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percent = taskArray_schedule_week.map((time) =>
+        Math.floor((time / totalExsitTime) * 100),
+      );
+    }
+    if (schedule_label.length === 0) {
+      taskArray_percentT = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalTargetTime === 0) {
+      taskArray_percentT = taskArray_scheduleT_week.map(() => 0);
+      taskArray_percentT.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percentT = taskArray_scheduleT_week.map((time) =>
+        Math.floor((time / totalTargetTime) * 100),
+      );
     }
     // 도넛차트 계산
     let existTime_tmp = 0;
@@ -662,6 +777,7 @@ export default ({
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
+    schedule_color = [];
     for (let j = 0; j < scheduleList_selectDay_month_length; j++) {
       const dateIndex =
         new Date(scheduleList_selectDay_month[j].start).getDate() - 1;
@@ -714,11 +830,22 @@ export default ({
         slicedTime = [...scheduleTime_today, ...scheduleTime_nextday];
       }
       const duplIndex = schedule_label.indexOf(
-        scheduleList_selectDay_month[j].subject.name,
+        scheduleList_selectDay_month[j].subject
+          ? scheduleList_selectDay_month[j].subject.name
+          : '과목 없음',
       ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
-        schedule_label.push(scheduleList_selectDay_month[j].subject.name);
+        schedule_label.push(
+          scheduleList_selectDay_month[j].subject
+            ? scheduleList_selectDay_month[j].subject.name
+            : '과목 없음',
+        );
         resultArray_schedule.push(SumArray(slicedTime));
+        schedule_color.push(
+          scheduleList_selectDay_month[j].subject
+            ? scheduleList_selectDay_month[j].subject.bgColor
+            : '#A1B56C',
+        );
         resultArray_scheduleT.push(totalMin);
       } else {
         resultArray_schedule[duplIndex] =
@@ -746,6 +873,33 @@ export default ({
       taskArray_schedule_month.forEach(function (item, index) {
         taskArray_schedule_month[index] = item / 60;
       });
+    }
+    // 스케줄(과목) 시간 퍼센트 계산
+    const totalExsitTime = SumArray(taskArray_schedule_month);
+    const totalTargetTime = SumArray(taskArray_scheduleT_month);
+    if (schedule_label.length === 0) {
+      taskArray_percent = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalExsitTime === 0) {
+      taskArray_percent = taskArray_schedule_month.map(() => 0);
+      taskArray_percent.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percent = taskArray_schedule_month.map((time) =>
+        Math.floor((time / totalExsitTime) * 100),
+      );
+    }
+    if (schedule_label.length === 0) {
+      taskArray_percentT = [1];
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else if (totalTargetTime === 0) {
+      taskArray_percentT = taskArray_scheduleT_month.map(() => 0);
+      taskArray_percentT.push(1);
+      schedule_color.push('rgba(233, 236, 244, 1)');
+    } else {
+      taskArray_percentT = taskArray_scheduleT_month.map((time) =>
+        Math.floor((time / totalTargetTime) * 100),
+      );
     }
     // 도넛차트 계산
     let existTime_tmp = 0;
@@ -890,12 +1044,33 @@ export default ({
             <StatisRow>
               <ChartWrap>
                 <PieChart
-                // data_1={donutData_1}
-                // data_2={donutData_2}
-                // title={'학습 성취도'}
-                // labels={['학습', '목표']}
+                  data={selectPercent ? taskArray_percentT : taskArray_percent}
+                  dataColor={schedule_color}
+                  labels={schedule_label}
+                  title={
+                    selectPercent
+                      ? '과목별 목표 시간 비율'
+                      : '과목별 학습 시간 비율'
+                  }
+                  updateBoolean={selectPercent}
                 />
               </ChartWrap>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(true);
+                  }}
+                >
+                  목표 시간
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(false);
+                  }}
+                >
+                  학습 시간
+                </ChangeButton>
+              </ChangeWrap>
               {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
@@ -964,6 +1139,50 @@ export default ({
                 </LoaderWrapper>
               )}
             </StatisRow>
+            <StatisRow>
+              <ChartWrap>
+                <PieChart
+                  data={selectPercent ? taskArray_percentT : taskArray_percent}
+                  dataColor={schedule_color}
+                  labels={schedule_label}
+                  title={
+                    selectPercent
+                      ? '과목별 목표 시간 비율'
+                      : '과목별 학습 시간 비율'
+                  }
+                  updateBoolean={selectPercent}
+                />
+              </ChartWrap>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(true);
+                  }}
+                >
+                  목표 시간
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(false);
+                  }}
+                >
+                  학습 시간
+                </ChangeButton>
+              </ChangeWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
+            <StatisRow>
+              <ChartWrap></ChartWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
           </>
         )}
         {StaTabs.currentIndex === 2 && (
@@ -1013,6 +1232,50 @@ export default ({
               </ChartWrap>
               <DonutChartValue>{donutPercent}%</DonutChartValue>
               {monthCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
+            <StatisRow>
+              <ChartWrap>
+                <PieChart
+                  data={selectPercent ? taskArray_percentT : taskArray_percent}
+                  dataColor={schedule_color}
+                  labels={schedule_label}
+                  title={
+                    selectPercent
+                      ? '과목별 목표 시간 비율'
+                      : '과목별 학습 시간 비율'
+                  }
+                  updateBoolean={selectPercent}
+                />
+              </ChartWrap>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(true);
+                  }}
+                >
+                  목표 시간
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent(false);
+                  }}
+                >
+                  학습 시간
+                </ChangeButton>
+              </ChangeWrap>
+              {todayCalLoading.current && (
+                <LoaderWrapper>
+                  <Loader />
+                </LoaderWrapper>
+              )}
+            </StatisRow>
+            <StatisRow>
+              <ChartWrap></ChartWrap>
+              {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
                 </LoaderWrapper>

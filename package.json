@@ -18,7 +18,7 @@
     "axios": "0.19.2",
     "chained-function": "^0.5.0",
     "chart.js": "2.9.3",
-    "chartjs-plugin-labels": "^1.1.0",
+    "chartjs-plugin-datalabels": "0.7.0",
     "classnames": "^2.2.6",
     "face-api.js": "0.22.1",
     "graphql": "^14.1.1",
