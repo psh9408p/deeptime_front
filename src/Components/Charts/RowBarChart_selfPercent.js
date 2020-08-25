@@ -105,7 +105,7 @@ export default ({ data_1, data_2, title, updateBoolean }) => {
   };
 
   const AreaChartUpdate = () => {
-    console.log(chartInstance, '1');
+    // console.log(chartInstance, '1');
     updateDataset(0, data_1);
     updateDataset(1, data_2);
     updateDataset(2, total_value === 0 ? 1 : 0);
