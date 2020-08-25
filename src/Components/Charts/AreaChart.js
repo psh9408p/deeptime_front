@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1, labels, title, title_y }) => {
+export default ({ data_1, labels, title, title_y, dateRange }) => {
   // const data_tmp = [
   //   0,
   //   0,
@@ -52,7 +52,6 @@ export default ({ data_1, labels, title, title_y }) => {
         },
       ],
     },
-
     options: {
       legend: {
         display: false,
@@ -66,6 +65,41 @@ export default ({ data_1, labels, title, title_y }) => {
       },
       plugins: {
         datalabels: false,
+      },
+      tooltips: {
+        callbacks: {
+          title: function (tooltipItem, data) {
+            let returnValue = '';
+            if (dateRange === 'today') {
+              returnValue =
+                tooltipItem[0].xLabel +
+                '~' +
+                (parseFloat(tooltipItem[0].xLabel) + 1) +
+                '시';
+            } else if (dateRange === 'week') {
+              returnValue = tooltipItem[0].xLabel + '요일';
+            } else {
+              returnValue = tooltipItem[0].xLabel + '일';
+            }
+            return returnValue;
+          },
+          label: function (tooltipItem, data) {
+            // console.log(tooltipItem, data, 'sdd');
+            let decimalTime = parseFloat(tooltipItem.value);
+            let hours = 0;
+            let minutes = 0;
+            if (dateRange === 'today') {
+              hours = Math.floor(decimalTime / 60);
+              decimalTime = decimalTime - hours * 60;
+              minutes = Math.round(decimalTime);
+            } else {
+              hours = Math.floor(decimalTime);
+              decimalTime = decimalTime - hours;
+              minutes = Math.round(decimalTime * 60);
+            }
+            return hours + '시간 ' + minutes + '분';
+          },
+        },
       },
       scales: {
         xAxes: [

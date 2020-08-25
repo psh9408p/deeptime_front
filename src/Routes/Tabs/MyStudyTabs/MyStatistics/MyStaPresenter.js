@@ -1,9 +1,10 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Loader from '../../../../Components/Loader';
 import { Clock24 } from '../../../../Components/Image';
 import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
+import RowBarChart_selfPercent from '../../../../Components/Charts/RowBarChart_selfPercent';
 import DonutChart from '../../../../Components/Charts/DonutChart';
 import DonutChart_today from '../../../../Components/Charts/DonutChart_today';
 import PieChart from '../../../../Components/Charts/PieChart';
@@ -29,7 +30,7 @@ const LoaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 3;
   height: 100%;
   width: 100%;
   top: 0;
@@ -44,7 +45,7 @@ const BigBox = styled.div`
     border: ${(props) => props.theme.boxBorder};
     border-radius: ${(props) => props.theme.borderRadius};
     width: 654.5px;
-    height: 1730px;
+    height: 1475px;
     position: relative;
   }
 `;
@@ -66,26 +67,31 @@ const StatisRow = styled.div`
     height: 50px;
   }
   &:nth-child(3) {
-    height: 310px;
+    height: 290px;
   }
   &:nth-child(4) {
-    height: 310px;
+    height: 270px;
   }
   &:nth-child(5) {
-    height: 310px;
+    height: 295px;
   }
   &:nth-child(6) {
-    height: 310px;
+    height: 295px;
   }
   &:last-child {
-    height: 310px;
+    height: 145px;
     margin-bottom: 10px;
   }
 `;
 
 const ChartWrap = styled.div`
   width: 570px;
-  height: 280px;
+  height: 100%;
+`;
+
+const ChartWrap_percentBar = styled.div`
+  width: 300px;
+  height: 100%;
 `;
 
 const DonutChartValue = styled.div`
@@ -97,7 +103,7 @@ const DonutChartValue = styled.div`
   justify-content: center;
   font-size: 30px;
   font-weight: 600;
-  padding-top: 173px;
+  padding-top: 160px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -110,7 +116,7 @@ const ClockBox = styled.div`
   position: absolute;
   z-index: 2;
   display: flex;
-  padding-top: 72px;
+  padding-top: 59px;
   padding-right: 3px;
   justify-content: center;
   align-items: center;
@@ -223,20 +229,23 @@ const ChangeWrap = styled.div`
 `;
 
 const ChangeButton = styled.button`
-  width: 100px;
-  height: 35px;
+  width: 50px;
+  height: 50px;
   border: 0;
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.skyBlue};
-  color: white;
+  border-radius: 25px;
+  background-color: ${(props) =>
+    props.styleBoolean
+      ? (props) => props.theme.skyBlue
+      : (props) => props.theme.classicGray};
+  color: ${(props) => (props.styleBoolean ? 'white' : 'black')};
   font-weight: 600;
   text-align: center;
   padding: 5px 0px;
   font-size: 12px;
-  outline-color: black;
+  outline: none;
   cursor: pointer;
   &:first-child {
-    margin-right: 300px;
+    margin-right: 400px;
   }
 `;
 
@@ -264,6 +273,10 @@ let rgbBox = [];
 let scheduleList_selectDay_length = 0;
 // let scheduleList_selectDay_week_length = 0;
 let scheduleList_selectDay_month_length = 0;
+let self_percent = [];
+let lecture_percent = [];
+let self_percentT = [];
+let lecture_percentT = [];
 
 export default ({
   StaTabs,
@@ -279,6 +292,8 @@ export default ({
   monthCalLoading,
   selectPercent,
   setSelectPercent,
+  selectPercent2,
+  setSelectPercent2,
 }) => {
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
@@ -301,7 +316,8 @@ export default ({
       if (
         startYear === selectDate.getFullYear() &&
         startMonth === selectDate.getMonth() &&
-        startDate === selectDate.getDate()
+        startDate === selectDate.getDate() &&
+        scheduleList[i].isPrivate === false
       ) {
         scheduleList_selectDay.push(scheduleList[i]);
       }
@@ -313,7 +329,8 @@ export default ({
     for (let i = 0; i < scheduleList.length; i++) {
       if (
         new Date(scheduleList[i].start) >= real_weekStart &&
-        new Date(scheduleList[i].start) < real_weekEnd
+        new Date(scheduleList[i].start) < real_weekEnd &&
+        scheduleList[i].isPrivate === false
       ) {
         const dayIndex = new Date(scheduleList[i].start).getDay();
         scheduleList_selectDay_week[dayIndex].push(scheduleList[i]);
@@ -332,7 +349,8 @@ export default ({
       const startMonth = new Date(scheduleList[i].start).getMonth();
       if (
         startYear === selectDate.getFullYear() &&
-        startMonth === selectDate.getMonth()
+        startMonth === selectDate.getMonth() &&
+        scheduleList[i].isPrivate === false
       ) {
         scheduleList_selectDay_month.push(scheduleList[i]);
       }
@@ -341,6 +359,7 @@ export default ({
   };
 
   const todayGraph_calculate = () => {
+    // console.log(scheduleList_selectDay);
     // 초기화
     taskArray = new Array(24).fill(0);
     donutData = [];
@@ -389,6 +408,14 @@ export default ({
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
     schedule_color = [];
+    self_percent = [];
+    lecture_percent = [];
+    self_percentT = [];
+    lecture_percentT = [];
+    let selfStudy_box = [];
+    let lectureStudy_box = [];
+    let selfStudy_boxT = [];
+    let lectureStudy_boxT = [];
     for (let j = 0; j < scheduleList_selectDay_length; j++) {
       // console.log(scheduleList_selectDay);
       const totalMin =
@@ -417,7 +444,8 @@ export default ({
         scheduleList_selectDay[j].subject
           ? scheduleList_selectDay[j].subject.name
           : '과목 없음',
-      ); // 중복되는 과목 인덱스 체크
+      );
+      // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(
           scheduleList_selectDay[j].subject
@@ -436,6 +464,14 @@ export default ({
           resultArray_schedule[duplIndex] + SumArray(slicedTime);
         resultArray_scheduleT[duplIndex] =
           resultArray_scheduleT[duplIndex] + totalMin;
+      }
+      // 자습 강의 구분하여 시간 넣기
+      if (scheduleList_selectDay[j].state === '자습') {
+        selfStudy_box.push(SumArray(slicedTime));
+        selfStudy_boxT.push(totalMin);
+      } else {
+        lectureStudy_box.push(SumArray(slicedTime));
+        lectureStudy_boxT.push(totalMin);
       }
     }
     taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
@@ -547,6 +583,27 @@ export default ({
     } else {
       donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(1);
     }
+    //자습 강의 비율 계산
+    const total_self = SumArray(selfStudy_box);
+    const total_lecture = SumArray(lectureStudy_box);
+    const total_value = total_self + total_lecture;
+    const total_selfT = SumArray(selfStudy_boxT);
+    const total_lectureT = SumArray(lectureStudy_boxT);
+    const total_valueT = total_selfT + total_lectureT;
+    if (total_value === 0) {
+      self_percent = 0;
+      lecture_percent = 0;
+    } else {
+      self_percent = Math.round((total_self / total_value) * 100);
+      lecture_percent = 100 - self_percent;
+    }
+    if (total_valueT === 0) {
+      self_percentT = 0;
+      lecture_percentT = 0;
+    } else {
+      self_percentT = Math.round((total_selfT / total_valueT) * 100);
+      lecture_percentT = 100 - self_percentT;
+    }
   };
   const weekGraph_calculate = () => {
     // 초기화
@@ -597,6 +654,14 @@ export default ({
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
     schedule_color = [];
+    self_percent = [];
+    lecture_percent = [];
+    self_percentT = [];
+    lecture_percentT = [];
+    let selfStudy_box = [];
+    let lectureStudy_box = [];
+    let selfStudy_boxT = [];
+    let lectureStudy_boxT = [];
     for (let k = 0; k < 7; k++) {
       const todayTime_24 = arrayBox[k].time_24;
       for (let j = 0; j < scheduleList_selectDay_week[k].length; j++) {
@@ -666,6 +731,14 @@ export default ({
           resultArray_scheduleT[duplIndex] =
             resultArray_scheduleT[duplIndex] + totalMin;
         }
+        // 자습 강의 구분해서 시간 넣기
+        if (scheduleList_selectDay_week[k][j].state === '자습') {
+          selfStudy_box.push(SumArray(slicedTime));
+          selfStudy_boxT.push(totalMin);
+        } else {
+          lectureStudy_box.push(SumArray(slicedTime));
+          lectureStudy_boxT.push(totalMin);
+        }
       }
     }
     taskArray_schedule_week = new Array(resultArray_schedule.length).fill(0);
@@ -680,12 +753,17 @@ export default ({
     );
     // AreaChart 계산
     taskArray_week.forEach(function (item, index) {
-      taskArray_week[index] = item / 60;
+      taskArray_week[index] = item / 3600;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule_week !== []) {
       taskArray_schedule_week.forEach(function (item, index) {
-        taskArray_schedule_week[index] = item / 60;
+        taskArray_schedule_week[index] = item / 3600;
+      });
+    }
+    if (taskArray_scheduleT_week !== []) {
+      taskArray_scheduleT_week.forEach(function (item, index) {
+        taskArray_scheduleT_week[index] = item / 60;
       });
     }
     // 스케줄(과목) 시간 퍼센트 계산
@@ -730,6 +808,27 @@ export default ({
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
       donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+    }
+    //자습 강의 비율 계산
+    const total_self = SumArray(selfStudy_box);
+    const total_lecture = SumArray(lectureStudy_box);
+    const total_value = total_self + total_lecture;
+    const total_selfT = SumArray(selfStudy_boxT);
+    const total_lectureT = SumArray(lectureStudy_boxT);
+    const total_valueT = total_selfT + total_lectureT;
+    if (total_value === 0) {
+      self_percent = 0;
+      lecture_percent = 0;
+    } else {
+      self_percent = Math.round((total_self / total_value) * 100);
+      lecture_percent = 100 - self_percent;
+    }
+    if (total_valueT === 0) {
+      self_percentT = 0;
+      lecture_percentT = 0;
+    } else {
+      self_percentT = Math.round((total_selfT / total_valueT) * 100);
+      lecture_percentT = 100 - self_percentT;
     }
   };
   const monthGraph_calculate = () => {
@@ -778,6 +877,14 @@ export default ({
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
     schedule_color = [];
+    self_percent = [];
+    lecture_percent = [];
+    self_percentT = [];
+    lecture_percentT = [];
+    let selfStudy_box = [];
+    let lectureStudy_box = [];
+    let selfStudy_boxT = [];
+    let lectureStudy_boxT = [];
     for (let j = 0; j < scheduleList_selectDay_month_length; j++) {
       const dateIndex =
         new Date(scheduleList_selectDay_month[j].start).getDate() - 1;
@@ -853,6 +960,14 @@ export default ({
         resultArray_scheduleT[duplIndex] =
           resultArray_scheduleT[duplIndex] + totalMin;
       }
+      // 자습 강의 구분하여 시간 넣기
+      if (scheduleList_selectDay_month[j].state === '자습') {
+        selfStudy_box.push(SumArray(slicedTime));
+        selfStudy_boxT.push(totalMin);
+      } else {
+        lectureStudy_box.push(SumArray(slicedTime));
+        lectureStudy_boxT.push(totalMin);
+      }
     }
     taskArray_schedule_month = new Array(resultArray_schedule.length).fill(0);
     taskArray_scheduleT_month = new Array(resultArray_scheduleT.length).fill(0);
@@ -866,12 +981,17 @@ export default ({
     );
     // AreaChart 계산
     taskArray_month.forEach(function (item, index) {
-      taskArray_month[index] = item / 60;
+      taskArray_month[index] = item / 3600;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule_month !== []) {
       taskArray_schedule_month.forEach(function (item, index) {
-        taskArray_schedule_month[index] = item / 60;
+        taskArray_schedule_month[index] = item / 3600;
+      });
+    }
+    if (taskArray_scheduleT_month !== []) {
+      taskArray_scheduleT_month.forEach(function (item, index) {
+        taskArray_scheduleT_month[index] = item / 60;
       });
     }
     // 스케줄(과목) 시간 퍼센트 계산
@@ -915,6 +1035,27 @@ export default ({
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
       donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+    }
+    //자습 강의 비율 계산
+    const total_self = SumArray(selfStudy_box);
+    const total_lecture = SumArray(lectureStudy_box);
+    const total_value = total_self + total_lecture;
+    const total_selfT = SumArray(selfStudy_boxT);
+    const total_lectureT = SumArray(lectureStudy_boxT);
+    const total_valueT = total_selfT + total_lectureT;
+    if (total_value === 0) {
+      self_percent = 0;
+      lecture_percent = 0;
+    } else {
+      self_percent = Math.round((total_self / total_value) * 100);
+      lecture_percent = 100 - self_percent;
+    }
+    if (total_valueT === 0) {
+      self_percentT = 0;
+      lecture_percentT = 0;
+    } else {
+      self_percentT = Math.round((total_selfT / total_valueT) * 100);
+      lecture_percentT = 100 - self_percentT;
     }
   };
 
@@ -993,12 +1134,13 @@ export default ({
                 <RowBarChart
                   data_1={taskArray_schedule}
                   data_2={taskArray_scheduleT}
+                  data_color={schedule_color}
                   labels={schedule_label}
                   label_1={'학습'}
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
                   title_x={'시간(분)'}
-                  stepSize_x={60}
+                  dateRange={'today'}
                 />
               </ChartWrap>
               {todayCalLoading.current && (
@@ -1014,6 +1156,7 @@ export default ({
                   labels={oneDayHours}
                   title={'시간별 학습 시간'}
                   title_y={'학습 시간(분)'}
+                  dateRange={'today'}
                 />
               </ChartWrap>
               {todayCalLoading.current && (
@@ -1060,15 +1203,17 @@ export default ({
                   onClick={() => {
                     setSelectPercent(true);
                   }}
+                  styleBoolean={selectPercent}
                 >
-                  목표 시간
+                  목표
                 </ChangeButton>
                 <ChangeButton
                   onClick={() => {
                     setSelectPercent(false);
                   }}
+                  styleBoolean={!selectPercent}
                 >
-                  학습 시간
+                  학습
                 </ChangeButton>
               </ChangeWrap>
               {todayCalLoading.current && (
@@ -1078,7 +1223,36 @@ export default ({
               )}
             </StatisRow>
             <StatisRow>
-              <ChartWrap></ChartWrap>
+              <ChartWrap_percentBar>
+                <RowBarChart_selfPercent
+                  title={
+                    selectPercent2
+                      ? '목표 시간 자습&강의 비율'
+                      : '학습 시간 자습&강의 비율'
+                  }
+                  data_1={selectPercent2 ? self_percentT : self_percent}
+                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                  updateBoolean={selectPercent2}
+                />
+              </ChartWrap_percentBar>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(true);
+                  }}
+                  styleBoolean={selectPercent2}
+                >
+                  목표
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(false);
+                  }}
+                  styleBoolean={!selectPercent2}
+                >
+                  학습
+                </ChangeButton>
+              </ChangeWrap>
               {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
@@ -1094,12 +1268,13 @@ export default ({
                 <RowBarChart
                   data_1={taskArray_schedule_week}
                   data_2={taskArray_scheduleT_week}
+                  data_color={schedule_color}
                   labels={schedule_label}
                   label_1={'학습'}
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
-                  title_x={'시간(분)'}
-                  stepSize_x={60}
+                  title_x={'시간(시)'}
+                  dateRange={'week'}
                 />
               </ChartWrap>
               {weekCalLoading.current && (
@@ -1114,7 +1289,8 @@ export default ({
                   data_1={taskArray_week}
                   labels={['일', '월', '화', '수', '목', '금', '토']}
                   title={'요일별 학습 시간'}
-                  title_y={'시간(분)'}
+                  title_y={'시간(시)'}
+                  dateRange={'week'}
                 />
               </ChartWrap>
               {weekCalLoading.current && (
@@ -1158,26 +1334,57 @@ export default ({
                   onClick={() => {
                     setSelectPercent(true);
                   }}
+                  styleBoolean={selectPercent}
                 >
-                  목표 시간
+                  목표
                 </ChangeButton>
                 <ChangeButton
                   onClick={() => {
                     setSelectPercent(false);
                   }}
+                  styleBoolean={!selectPercent}
                 >
-                  학습 시간
+                  학습
                 </ChangeButton>
               </ChangeWrap>
-              {todayCalLoading.current && (
+              {weekCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
                 </LoaderWrapper>
               )}
             </StatisRow>
             <StatisRow>
-              <ChartWrap></ChartWrap>
-              {todayCalLoading.current && (
+              <ChartWrap_percentBar>
+                <RowBarChart_selfPercent
+                  title={
+                    selectPercent2
+                      ? '목표 시간 자습&강의 비율'
+                      : '학습 시간 자습&강의 비율'
+                  }
+                  data_1={selectPercent2 ? self_percentT : self_percent}
+                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                  updateBoolean={selectPercent2}
+                />
+              </ChartWrap_percentBar>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(true);
+                  }}
+                  styleBoolean={selectPercent2}
+                >
+                  목표
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(false);
+                  }}
+                  styleBoolean={!selectPercent2}
+                >
+                  학습
+                </ChangeButton>
+              </ChangeWrap>
+              {weekCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
                 </LoaderWrapper>
@@ -1192,12 +1399,13 @@ export default ({
                 <RowBarChart
                   data_1={taskArray_schedule_month}
                   data_2={taskArray_scheduleT_month}
+                  data_color={schedule_color}
                   labels={schedule_label}
                   label_1={'학습'}
                   label_2={'목표'}
                   title={'과목별 학습 시간'}
-                  title_x={'시간(분)'}
-                  stepSize_x={60}
+                  title_x={'시간(시)'}
+                  dateRange={'month'}
                 />
               </ChartWrap>
               {monthCalLoading.current && (
@@ -1212,7 +1420,8 @@ export default ({
                   data_1={taskArray_month}
                   labels={daysOfMonth}
                   title={'일별 학습 시간'}
-                  title_y={'시간(분)'}
+                  title_y={'시간(시)'}
+                  dateRange={'month'}
                 />
               </ChartWrap>
               {monthCalLoading.current && (
@@ -1256,26 +1465,57 @@ export default ({
                   onClick={() => {
                     setSelectPercent(true);
                   }}
+                  styleBoolean={selectPercent}
                 >
-                  목표 시간
+                  목표
                 </ChangeButton>
                 <ChangeButton
                   onClick={() => {
                     setSelectPercent(false);
                   }}
+                  styleBoolean={!selectPercent}
                 >
-                  학습 시간
+                  학습
                 </ChangeButton>
               </ChangeWrap>
-              {todayCalLoading.current && (
+              {monthCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
                 </LoaderWrapper>
               )}
             </StatisRow>
             <StatisRow>
-              <ChartWrap></ChartWrap>
-              {todayCalLoading.current && (
+              <ChartWrap_percentBar>
+                <RowBarChart_selfPercent
+                  title={
+                    selectPercent2
+                      ? '목표 시간 자습&강의 비율'
+                      : '학습 시간 자습&강의 비율'
+                  }
+                  data_1={selectPercent2 ? self_percentT : self_percent}
+                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                  updateBoolean={selectPercent2}
+                />
+              </ChartWrap_percentBar>
+              <ChangeWrap>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(true);
+                  }}
+                  styleBoolean={selectPercent2}
+                >
+                  목표
+                </ChangeButton>
+                <ChangeButton
+                  onClick={() => {
+                    setSelectPercent2(false);
+                  }}
+                  styleBoolean={!selectPercent2}
+                >
+                  학습
+                </ChangeButton>
+              </ChangeWrap>
+              {monthCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
                 </LoaderWrapper>

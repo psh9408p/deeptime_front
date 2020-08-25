@@ -486,6 +486,7 @@ export default ({
         location: List.location,
         isVisible: true,
         title: List.title,
+        state: List.state,
         id: List.id,
         start: new Date(List.start),
         end: endDate,
@@ -493,33 +494,6 @@ export default ({
       };
       return schedule_tmp;
     });
-  };
-
-  const inputSchedules2 = () => {
-    schedules = myData.schedules.map((List) => {
-      let category = 'time';
-      const endDate = new Date(List.end);
-      if (List.isAllDay === true) {
-        category = 'allday';
-        endDate.setTime(endDate.getTime() - 1000);
-      }
-
-      const schedule_tmp = {
-        calendarId: List.subject.id,
-        isAllDay: List.isAllDay,
-        isPrivate: List.isPrivate,
-        category,
-        location: List.location,
-        isVisible: true,
-        title: List.title,
-        id: List.id,
-        start: new Date(List.start),
-        end: endDate,
-        totalTime: new Date(List.totalTime),
-      };
-      return schedule_tmp;
-    });
-    schedules.splice(0, 1);
   };
 
   const handleClickNextButton = () => {
@@ -578,11 +552,17 @@ export default ({
   };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
-    // console.log(myClassList.option);
     const generateId =
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
-
+    // 0시0분에 끝나면 끝나는 시간 -1초
+    const tmpEndDate = new Date(scheduleData.end._date);
+    if (
+      scheduleData.end._date.getMinutes() === 0 &&
+      scheduleData.end._date.getHours() === 0
+    ) {
+      tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+    }
     const schedule = {
       id: generateId,
       title: scheduleData.title,
@@ -599,7 +579,6 @@ export default ({
       state: scheduleData.state,
       calendarId: scheduleData.calendarId,
     };
-
     const schedule_tmp = {
       id: generateId,
       isAllDay: scheduleData.isAllDay,
@@ -608,9 +587,11 @@ export default ({
       location: scheduleData.location,
       state: scheduleData.state,
       start: scheduleData.start._date,
-      end: scheduleData.end._date,
+      end: tmpEndDate,
       totalTime:
-        scheduleData.end._date.getTime() - scheduleData.start._date.getTime(),
+        (scheduleData.end._date.getTime() -
+          scheduleData.start._date.getTime()) /
+        1000,
       calendarId: scheduleData.calendarId,
       option: 'create',
     };
@@ -624,6 +605,15 @@ export default ({
   const onBeforeDeleteSchedule = useCallback(async (res) => {
     // console.log('c', res.schedule);
 
+    // 0시0분에 끝나면 끝나는 시간 -1초
+    const tmpEndDate = new Date(res.schedule.end._date);
+    if (
+      res.schedule.end._date.getMinutes() === 0 &&
+      res.schedule.end._date.getHours() === 0
+    ) {
+      tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+    }
+
     const schedule_tmp = {
       id: res.schedule.id,
       isAllDay: res.schedule.isAllDay,
@@ -632,9 +622,11 @@ export default ({
       location: res.schedule.location,
       state: res.schedule.state,
       start: res.schedule.start._date,
-      end: res.schedule.end._date,
+      end: tmpEndDate,
       totalTime:
-        res.schedule.end._date.getTime() - res.schedule.start._date.getTime(),
+        (res.schedule.end._date.getTime() -
+          res.schedule.start._date.getTime()) /
+        1000,
       calendarId: res.schedule.calendarId,
       option: 'delete',
     };
@@ -657,7 +649,6 @@ export default ({
   }, []);
 
   const onBeforeUpdateSchedule = useCallback(async (res) => {
-    // console.log('a', res);
     if (res.changes !== null) {
       if (res.changes.start !== undefined && res.changes.end !== undefined) {
         const dateSumVar = {
@@ -692,7 +683,16 @@ export default ({
         totalTime_tmp =
           res.schedule.end._date.getTime() - res.schedule.start._date.getTime();
       }
-
+      totalTime_tmp = totalTime_tmp / 1000;
+      // 0시 0분으로 끝나면 1초 빼주기
+      const tmpEndDate = new Date(res.changes.end);
+      if (
+        res.changes.end !== undefined &&
+        res.changes.end.getMinutes() === 0 &&
+        res.changes.end.getHours() === 0
+      ) {
+        tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+      }
       const schedule_tmp = {
         id: res.schedule.id,
         isAllDay: res.schedule.isAllDay,
@@ -714,9 +714,7 @@ export default ({
             ? res.changes.start
             : res.schedule.start._date,
         end:
-          res.changes.end !== undefined
-            ? res.changes.end
-            : res.schedule.end._date,
+          res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
         totalTime: totalTime_tmp,
         calendarId:
           res.changes.calendarId !== undefined
@@ -762,35 +760,33 @@ export default ({
     if (!isAllDay) {
       html.push('<strong>' + _getFormattedTime(schedule.start) + '</strong> ');
     }
+    // if (schedule.isPrivate) {
+    //   html.push('<span class="calendar-font-icon ic-lock-b"></span>');
+    //   html.push('🔒 Private');
+    // } else {
     if (schedule.isPrivate) {
-      html.push('<span class="calendar-font-icon ic-lock-b"></span>');
-      html.push('🔒 Private');
+      html.push('🔒 ');
+    }
+
+    if (schedule.isReadOnly) {
+      html.push('<span class="calendar-font-icon ic-readonly-b"></span>');
+    } else if (schedule.recurrenceRule) {
+      html.push('<span class="calendar-font-icon ic-repeat-b"></span>');
+    } else if (schedule.attendees.length) {
+      html.push('<span class="calendar-font-icon ic-user-b"></span>');
+    } else if (schedule.location) {
+      html.push('<span class="calendar-font-icon ic-location-b"></span>');
+    }
+    const subjectIdList = subjectList.map((subject) => {
+      return subject.id;
+    });
+    const subjectIndex = subjectIdList.indexOf(schedule.calendarId);
+    if (subjectIndex > -1) {
+      html.push(
+        ' ' + '[' + subjectList[subjectIndex].name + ']' + ' ' + schedule.title,
+      );
     } else {
-      if (schedule.isReadOnly) {
-        html.push('<span class="calendar-font-icon ic-readonly-b"></span>');
-      } else if (schedule.recurrenceRule) {
-        html.push('<span class="calendar-font-icon ic-repeat-b"></span>');
-      } else if (schedule.attendees.length) {
-        html.push('<span class="calendar-font-icon ic-user-b"></span>');
-      } else if (schedule.location) {
-        html.push('<span class="calendar-font-icon ic-location-b"></span>');
-      }
-      const subjectIdList = subjectList.map((subject) => {
-        return subject.id;
-      });
-      const subjectIndex = subjectIdList.indexOf(schedule.calendarId);
-      if (subjectIndex > -1) {
-        html.push(
-          ' ' +
-            '[' +
-            subjectList[subjectIndex].name +
-            ']' +
-            ' ' +
-            schedule.title,
-        );
-      } else {
-        html.push(' ' + schedule.title);
-      }
+      html.push(' ' + schedule.title);
     }
     return html.join('');
   }

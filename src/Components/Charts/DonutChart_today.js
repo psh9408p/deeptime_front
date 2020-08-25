@@ -87,19 +87,18 @@ export default ({ data, color, title, labels }) => {
   //현재 시간전용 업데이트
   const updateDataset_time = (datasetIndex, newData) => {
     chartInstance.data.datasets[datasetIndex].data = newData;
-    chartInstance.update();
   };
 
   const updateDataset = (datasetIndex, newData, color) => {
     chartInstance.data.datasets[datasetIndex].data = newData;
     chartInstance.data.datasets[datasetIndex].borderColor = color;
     chartInstance.data.datasets[datasetIndex].backgroundColor = color;
-    chartInstance.update();
   };
 
   const AreaChartUpdate = () => {
     updateDataset_time(0, currentTime_data);
     updateDataset(1, data, color);
+    chartInstance.update();
   };
 
   const isFirstRun = useRef(true);

@@ -4,12 +4,13 @@ import Chartjs from 'chart.js';
 export default ({
   data_1,
   data_2,
+  data_color,
   labels,
   label_1,
   label_2,
   title,
   title_x,
-  stepSize_x,
+  dateRange,
 }) => {
   // const data_tmp_1 = [40, 60, 30, 50, 40];
   // const data_tmp_2 = [60, 90, 30, 60, 100];
@@ -22,7 +23,7 @@ export default ({
       datasets: [
         {
           label: label_1,
-          backgroundColor: 'rgba(123, 169, 235, 1)',
+          backgroundColor: data_color,
           categoryPercentage: 0.8,
           barPercentage: 0.9,
           borderWidth: 1,
@@ -49,14 +50,44 @@ export default ({
       plugins: {
         datalabels: false,
       },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem, data) {
+            // console.log(tooltipItem, data, 'sdd');
+            let decimalTime = parseFloat(tooltipItem.value);
+            let hours = 0;
+            let minutes = 0;
+            if (dateRange === 'today') {
+              hours = Math.floor(decimalTime / 60);
+              decimalTime = decimalTime - hours * 60;
+              minutes = Math.round(decimalTime);
+            } else {
+              hours = Math.floor(decimalTime);
+              decimalTime = decimalTime - hours;
+              minutes = Math.round(decimalTime * 60);
+            }
+            return (
+              (tooltipItem.datasetIndex === 0 ? label_1 : label_2) +
+              ': ' +
+              hours +
+              '시간 ' +
+              minutes +
+              '분'
+            );
+          },
+        },
+      },
       scales: {
         xAxes: [
           {
             id: 'bar-x-axis1',
-            ticks: {
-              beginAtZero: true,
-              stepSize: stepSize_x,
-            },
+            // ticks: {
+            //   beginAtZero: true,
+            //   stepSize: stepSize_x,
+            // },
             scaleLabel: {
               display: true,
               labelString: title_x,
@@ -94,18 +125,15 @@ export default ({
 
   const updateDataset = (datasetIndex, newData) => {
     chartInstance.data.datasets[datasetIndex].data = newData;
-    chartInstance.update();
-  };
-
-  const updateLabel = (newData) => {
-    chartInstance.data.labels = newData;
-    chartInstance.update();
   };
 
   const AreaChartUpdate = () => {
     updateDataset(0, data_1);
     updateDataset(1, data_2);
-    updateLabel(labels);
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets[0].backgroundColor = data_color;
+    chartInstance.update();
+    // console.log(chartInstance);
     // updateDataset(0, data_tmp_1);
     // updateDataset(1, data_tmp_2);
     // updateLabel(labels_tmp);
@@ -118,7 +146,7 @@ export default ({
       return;
     }
     AreaChartUpdate();
-  }, [data_1, data_2]);
+  }, [data_1, data_2, data_color]);
 
   return <canvas ref={chartContainer} />;
 };

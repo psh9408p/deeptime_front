@@ -40,12 +40,12 @@ export default ({ data_1, data_2, title, labels }) => {
 
   const updateDataset = (datasetIndex, datasetIndex_2, newData) => {
     chartInstance.data.datasets[datasetIndex].data[datasetIndex_2] = newData;
-    chartInstance.update();
   };
 
   const AreaChartUpdate = () => {
     updateDataset(0, 0, data_1);
     updateDataset(0, 1, data_2);
+    chartInstance.update();
     // updateDataset(0, 0, data_tmp_1);
     // updateDataset(0, 1, data_tmp_2);
   };

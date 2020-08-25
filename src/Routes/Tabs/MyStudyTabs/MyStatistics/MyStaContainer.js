@@ -8,6 +8,7 @@ export default ({ myInfoData, networkStatus, refreshTerm }) => {
   const [selectDate, setSelectDate] = useState(new Date());
   const [nextDate, setNextDate] = useState(new Date());
   const [selectPercent, setSelectPercent] = useState(true);
+  const [selectPercent2, setSelectPercent2] = useState(true);
   const oneDayHours_tmp = Array.from(Array(24).keys());
   const oneDayHours = oneDayHours_tmp.map(String);
   const todayCalLoading = useRef(true);
@@ -40,6 +41,8 @@ export default ({ myInfoData, networkStatus, refreshTerm }) => {
       monthCalLoading={monthCalLoading}
       selectPercent={selectPercent}
       setSelectPercent={setSelectPercent}
+      selectPercent2={selectPercent2}
+      setSelectPercent2={setSelectPercent2}
     />
   );
 };
