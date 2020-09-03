@@ -579,6 +579,7 @@ export default ({
       state: scheduleData.state,
       calendarId: scheduleData.calendarId,
     };
+
     const schedule_tmp = {
       id: generateId,
       isAllDay: scheduleData.isAllDay,
@@ -592,7 +593,7 @@ export default ({
         (scheduleData.end._date.getTime() -
           scheduleData.start._date.getTime()) /
         1000,
-      calendarId: scheduleData.calendarId,
+      calendarId: scheduleData.calendarId ? scheduleData.calendarId : '',
       option: 'create',
     };
 
@@ -693,6 +694,7 @@ export default ({
       ) {
         tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
       }
+
       const schedule_tmp = {
         id: res.schedule.id,
         isAllDay: res.schedule.isAllDay,
