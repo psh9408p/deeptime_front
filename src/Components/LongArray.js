@@ -11,9 +11,9 @@ export const studyOption_group2 = [
 ];
 
 export const studyOption_group3 = [
-  [['해당없음'], studyOption_series, studyOption_series],
+  [['해당 없음'], studyOption_series, studyOption_series],
   [studyOption_series],
-  [['해당없음']],
+  [['해당 없음']],
 ];
 
 export const address1 = [
