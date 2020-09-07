@@ -36,7 +36,6 @@ export default () => {
 
   const [action, setAction] = useState('logIn');
   const [action2, setAction2] = useState('select');
-  const [allTerm, setAllTerm] = useState(false);
   const [tos, setTos] = useState(false);
   const [top, setTop] = useState(false);
   const [marketing, setMarketing] = useState(false);
@@ -156,11 +155,16 @@ export default () => {
     },
   });
 
-  const onChangeAllTerm = (e) => {
-    setAllTerm(e.target.checked);
-    setTos(e.target.checked);
-    setTop(e.target.checked);
-    setMarketing(e.target.checked);
+  const onChangeAllTerm = () => {
+    if (tos && top && marketing) {
+      setTos(false);
+      setTop(false);
+      setMarketing(false);
+    } else {
+      setTos(true);
+      setTop(true);
+      setMarketing(true);
+    }
   };
 
   const onChangeTos = (e) => {
@@ -428,7 +432,6 @@ export default () => {
       cEmailOnClick={cEmailOnClick}
       myAddress1={myAddress1}
       myAddress2={myAddress2}
-      allTerm={allTerm}
       tos={tos}
       top={top}
       marketing={marketing}
