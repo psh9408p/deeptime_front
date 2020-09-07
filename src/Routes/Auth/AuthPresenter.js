@@ -778,7 +778,7 @@ export default ({
               <AllCheckDiv>
                 <CheckBox
                   id="allTermChk"
-                  checked={allTerm}
+                  checked={tos && top && marketing}
                   onChange={onChangeAllTerm}
                   boxSize={'35px'}
                   margin={'0 10px 0 0'}
