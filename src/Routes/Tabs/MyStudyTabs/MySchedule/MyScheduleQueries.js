@@ -40,7 +40,6 @@ export const MY_SUBJECT = gql`
       dragBgColor
       borderColor
       bookMark
-      modifyRight
     }
   }
 `;

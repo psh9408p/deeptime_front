@@ -324,32 +324,19 @@ export default ({
   networkStatus,
   subjectnetwork,
 }) => {
-  const originSubject = useSelect(
+  const mySubjectList = useSelect(
     subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
-  );
-  const indiSubject_tmp = subjectList.map((subject) => {
-    if (subject.modifyRight) {
-      return { id: subject.id, name: subject.name, bgColor: subject.bgColor };
-    }
-  });
-  const indiSubject = indiSubject_tmp.filter(function (el) {
-    return el != undefined;
-  });
-  const mySubjectList = useSelect(
-    indiSubject.map((List) => `${List.name}`),
-    indiSubject.map((List) => `${List.id}`),
   );
   const subjectClear = () => {
     subjectName.setValue('');
     setSubjectColor(`#0F4C82`);
-    originSubject.setOption(originSubject.valueList[0]);
     mySubjectList.setOption(mySubjectList.valueList[0]);
   };
 
   const subjectLoad = () => {
-    subjectName.setValue(subjectList[originSubject.optionIndex].name);
-    setSubjectColor(subjectList[originSubject.optionIndex].bgColor);
+    subjectName.setValue(subjectList[mySubjectList.optionIndex].name);
+    setSubjectColor(subjectList[mySubjectList.optionIndex].bgColor);
   };
 
   const onSubmitAdd = async () => {
@@ -388,13 +375,6 @@ export default ({
       return;
     }
     if (
-      subjectList[originSubject.optionIndex].modifyRight === false &&
-      subjectList[originSubject.optionIndex].name !== subjectName.value
-    ) {
-      alert('개인이 추가한(대분류: 기타) 과목만 이름 수정이 가능합니다.');
-      return;
-    }
-    if (
       window.confirm(
         '수정 내용이 기존 스케줄에도 반영됩니다.\n그래도 수정하시겠습니까?',
       ) === true
@@ -405,7 +385,7 @@ export default ({
           data: { editSubject },
         } = await editSubjectMutation({
           variables: {
-            subjectId: originSubject.option,
+            subjectId: mySubjectList.option,
             name: subjectName.value,
             bgColor: subjectColor,
           },
@@ -1048,8 +1028,8 @@ export default ({
                                   <SubTitle text={`수정할 과목:　`} />
                                   <SelectWrapper2>
                                     <Select
-                                      {...originSubject}
-                                      id={'originSubject_id'}
+                                      {...mySubjectList}
+                                      id={'mySubjectList_id'}
                                     />
                                   </SelectWrapper2>
                                   <RedButtonWrap>
