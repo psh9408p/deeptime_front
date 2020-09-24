@@ -29,7 +29,6 @@ export const ME = gql`
       fullName
       avatar
       existToggle
-      setDefaultSubject
       todayTime {
         attendanceStatus
         absenceReason
