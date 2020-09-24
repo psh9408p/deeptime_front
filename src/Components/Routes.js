@@ -42,6 +42,7 @@ export const MEPOSITION = gql`
   query me {
     me {
       id
+      email
       loginPosition
     }
   }
@@ -51,9 +52,12 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
+export let userEmail = '';
+
 const LoggedInRoutes = () => {
   const { data: Mydata, loading, refetch: MyRefetch } = useQuery(MEPOSITION);
   if (!loading && Mydata && Mydata.me) {
+    userEmail = Mydata.me.email;
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>

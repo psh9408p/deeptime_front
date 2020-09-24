@@ -2,30 +2,19 @@ import React, { useEffect, useRef, useState, createRef } from 'react';
 import * as posenet from '@tensorflow-models/posenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 // import * as faceapi from "face-api.js"
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import Loader from '../Components/Loader';
 import styled from 'styled-components';
 // import LoadCamera from "../Components/LoadCamera/LoadCamera"
 import useInterval from '../Hooks/useInterval';
-import useTabs from '../Hooks/useTabs';
-import useMouseLeave from '../Hooks/useMouseLeave';
-import useMouseEnter from '../Hooks/useMouseEnter';
+import { userEmail } from '../Components/Routes';
 // import ClassTabs from '../Components/Tabs/ClassTabs';
 // const UPDATE_EXISTTOGGLETABLE = gql`
 //   mutation update_existToggleTable($email: String!, $existToggle: Boolean!) {
 //     update_existToggleTable(email: $email, existToggle: $existToggle)
 //   }
 // `
-
-const MeData = gql`
-  query me {
-    me {
-      id
-      email
-    }
-  }
-`;
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -52,43 +41,7 @@ export default function Attendance() {
   const video1 = useRef();
   const canvas1 = createRef();
 
-  const classTabContents = ['클래스 통계', '나의 클래스'];
-  const classTabs = useTabs(0, classTabContents);
-
-  const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `;
-
-  const Tabs = styled.div`
-    display: flex;
-    justify-content: center;
-  `;
-
-  const ClassButton = styled.button`
-    width: 100px;
-    border: 0;
-    outline-color: black;
-    border-radius: ${(props) => props.theme.borderRadius};
-    font-weight: 600;
-    text-align: center;
-    padding: 7px 0px;
-    font-size: 14px;
-    cursor: pointer;
-    &:not(:last-child) {
-      margin-right: 60px;
-    }
-  `;
-
-  const LoaderWrapper = styled.div`
-    margin: 100px 0px;
-  `;
-  // once
-  // 1. LoadModel
-
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
-  const { data: Mydata, loading: MyLoading } = useQuery(MeData);
 
   const LoadModel = async () => {
     console.log('Load model');
@@ -258,12 +211,12 @@ export default function Attendance() {
       return obj;
     }, {});
     console.log(temp);
-    if (decision.length === 5) {
+    if (decision.length === 3) {
       console.log(decision);
       // setDecision([])
       // console.log(decision)
 
-      if (temp.true > 2) {
+      if (temp.true > 1) {
         setFinalDecision(true);
         console.log(finalDecision);
       } else {
@@ -281,7 +234,7 @@ export default function Attendance() {
       modelDetect !== null &&
       canvas1.current !== null
     ) {
-      if (timeCount % 6 === 1) {
+      if (timeCount % 20 === 1) {
         detectFromVideoFrame(video1.current, canvas1);
       } else {
         const ctx = canvas1.current.getContext('2d');
@@ -297,11 +250,11 @@ export default function Attendance() {
       }
       // setTimeCount(timeCount + 1)
       if (Mutation === true) {
-        if (finalDecision === true && decision.length === 5) {
+        if (finalDecision === true && decision.length === 3) {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: true } })
           console.log('Final decision : true');
           existToggleMutation({
-            variables: { email: Mydata?.me.email, existToggle: true },
+            variables: { email: userEmail, existToggle: true },
           });
           setDecision([]);
           // setFinalDecision([])
@@ -309,14 +262,14 @@ export default function Attendance() {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: false } })
           console.log('Final decision : false');
           existToggleMutation({
-            variables: { email: Mydata?.me.email, existToggle: false },
+            variables: { email: userEmail, existToggle: false },
           });
           setDecision([]);
           // setFinalDecision([])
         }
       }
     }
-  }, 2000);
+  }, 1000);
 
   const Toggle = (toggleValue, togglesetValue, toggleName) => {
     const toggle = () => togglesetValue(!toggleValue);
@@ -327,13 +280,13 @@ export default function Attendance() {
       </div>
     );
   };
-  const whatNee = () => {
-    console.log('왔니?');
-  };
-  const donleaveme = () => {
-    alert('마우스를 화면에 올려 놓으세요!!!');
-    console.log('날 떠나지마');
-  };
+  // const whatNee = () => {
+  //   console.log('왔니?');
+  // };
+  // const donleaveme = () => {
+  //   alert('마우스를 화면에 올려 놓으세요!!!');
+  //   console.log('날 떠나지마');
+  // };
 
   // useMouseEnter(whatNee);
 
@@ -344,21 +297,20 @@ export default function Attendance() {
     LoadModel();
   }, []);
 
-  console.log(cameraLoad, MyLoading);
-  if (cameraLoad === false || MyLoading === true) {
-    return (
-      <LoaderWrapper>
-        <Loader />
-      </LoaderWrapper>
-    );
-  } else {
-    return (
+  // if (cameraLoad === false) {
+  //   return (
+  //     <LoaderWrapper>
+  //       <Loader />
+  //     </LoaderWrapper>
+  //   );
+  // } else {
+  return (
+    <div>
       <div>
-        <div>
-          <video ref={video1} playsInline width="1" height="1" autoPlay muted />
-          <canvas ref={canvas1} width="480" height="360" />
-        </div>
+        <video ref={video1} playsInline width="1" height="1" autoPlay muted />
+        <canvas ref={canvas1} width="480" height="360" />
       </div>
-    );
-  }
+    </div>
+  );
+  // }
 }

@@ -172,7 +172,7 @@ export default () => {
             text={
               '구독 (카드 등록)' +
               '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' +
-              '9,900원/월'
+              '4,900원/월'
             }
             onClick={
               // billingOnClick

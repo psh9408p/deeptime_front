@@ -325,7 +325,7 @@ export default ({
   subjectnetwork,
 }) => {
   const originSubject = useSelect(
-    subjectList.map((List) => `[${List.largeCategory}]${List.name}`),
+    subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
   );
   const indiSubject_tmp = subjectList.map((subject) => {
@@ -843,7 +843,7 @@ export default ({
         boxSize={'25px'}
         margin={'0 20px 0 0'}
       />
-      [{subjectList[index].largeCategory}] {subjectList[index].name}
+      {subjectList[index].name}
     </IndiviList>
   );
 
@@ -945,7 +945,7 @@ export default ({
                                 <PTitle text={'과목 북마크'} />
                                 <BookMarkTitle>
                                   <BookLeft>체크</BookLeft>
-                                  <BookRight>[대분류] 과목 이름</BookRight>
+                                  <BookRight>과목 이름</BookRight>
                                 </BookMarkTitle>
                                 <ListWrap>
                                   <BookmarkList
@@ -1043,7 +1043,7 @@ export default ({
                           {(close) => (
                             <PBody>
                               <SubjectForm2>
-                                <PTitle text={'색상 수정'} />
+                                <PTitle text={'과목 수정'} />
                                 <SelectWrapDiv2>
                                   <SubTitle text={`수정할 과목:　`} />
                                   <SelectWrapper2>
