@@ -891,6 +891,7 @@ export default ({
     );
   }, []);
 
+  console.log(subjectColor);
   return (
     <Wrapper>
       <PanelWrap>

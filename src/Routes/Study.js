@@ -232,7 +232,8 @@ export default function Attendance() {
     if (
       modelPose !== null &&
       modelDetect !== null &&
-      canvas1.current !== null
+      canvas1.current !== null &&
+      video1.current !== null
     ) {
       if (timeCount % 20 === 1) {
         detectFromVideoFrame(video1.current, canvas1);
