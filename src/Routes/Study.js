@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, createRef } from 'react';
 import * as posenet from '@tensorflow-models/posenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 // import * as faceapi from "face-api.js"
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import Loader from '../Components/Loader';
 import styled from 'styled-components';
@@ -17,13 +17,23 @@ import useMouseEnter from '../Hooks/useMouseEnter';
 //     update_existToggleTable(email: $email, existToggle: $existToggle)
 //   }
 // `
+
+const MeData = gql`
+  query me {
+    me {
+      id
+      email
+    }
+  }
+`;
+
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
     update_existToggle(email: $email, existToggle: $existToggle)
   }
 `;
 
-export default function Attendance({ Mydata }) {
+export default function Attendance() {
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -36,7 +46,7 @@ export default function Attendance({ Mydata }) {
   const [Mutation, setMutation] = useState(true);
 
   const [timeCount, setTimeCount] = useState(0);
-  const [camearLoad, setCameraLoad] = useState(false);
+  const [cameraLoad, setCameraLoad] = useState(false);
   const [modelLoad, setModelLoad] = useState(false);
 
   const video1 = useRef();
@@ -76,12 +86,9 @@ export default function Attendance({ Mydata }) {
   `;
   // once
   // 1. LoadModel
-  useEffect(() => {
-    LoadCamera();
-    LoadModel();
-  }, []);
 
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
+  const { data: Mydata, loading: MyLoading } = useQuery(MeData);
 
   const LoadModel = async () => {
     console.log('Load model');
@@ -294,7 +301,7 @@ export default function Attendance({ Mydata }) {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: true } })
           console.log('Final decision : true');
           existToggleMutation({
-            variables: { email: Mydata.me.email, existToggle: true },
+            variables: { email: Mydata?.me.email, existToggle: true },
           });
           setDecision([]);
           // setFinalDecision([])
@@ -302,7 +309,7 @@ export default function Attendance({ Mydata }) {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: false } })
           console.log('Final decision : false');
           existToggleMutation({
-            variables: { email: Mydata.me.email, existToggle: false },
+            variables: { email: Mydata?.me.email, existToggle: false },
           });
           setDecision([]);
           // setFinalDecision([])
@@ -328,11 +335,17 @@ export default function Attendance({ Mydata }) {
     console.log('날 떠나지마');
   };
 
-  useMouseEnter(whatNee);
+  // useMouseEnter(whatNee);
 
-  useMouseLeave(donleaveme);
+  // useMouseLeave(donleaveme);
 
-  if (camearLoad === false) {
+  useEffect(() => {
+    LoadCamera();
+    LoadModel();
+  }, []);
+
+  console.log(cameraLoad, MyLoading);
+  if (cameraLoad === false || MyLoading === true) {
     return (
       <LoaderWrapper>
         <Loader />

@@ -57,7 +57,7 @@ const LoggedInRoutes = () => {
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>
-          {/* <Route path="/study" component={() => <Study Mydata={Mydata} />} /> */}
+          <Route path="/study" component={Study} />
           <Route path="/userguide" component={UserGuide} />
           <Route path="/attendance" component={Attendance} />
           <Route exact path="/" component={MyStudy} />

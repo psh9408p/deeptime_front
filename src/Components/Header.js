@@ -136,10 +136,10 @@ export default withRouter(() => {
                 <PotalButton
                   type="button"
                   onClick={
-                    // onClickPotal_student
-                    () => {
-                      alert('개인용 서비스는 준비 중 입니다.');
-                    }
+                    onClickPotal_student
+                    // () => {
+                    //   alert('개인용 서비스는 준비 중 입니다.');
+                    // }
                   }
                 >
                   학습
@@ -209,14 +209,14 @@ export default withRouter(() => {
               <HeaderLink to="/" replace>
                 나의 학습
               </HeaderLink>
-              <TmpButton
+              {/* <TmpButton
                 type="button"
                 onClick={() => {
                   alert('클래스 학습 서비스는 준비 중 입니다.');
                 }}
               >
                 클래스 학습
-              </TmpButton>
+              </TmpButton> */}
               <HeaderLink to="/shop">
                 <Shop />
               </HeaderLink>
