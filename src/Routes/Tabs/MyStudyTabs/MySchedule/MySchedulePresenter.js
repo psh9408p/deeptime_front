@@ -20,6 +20,7 @@ import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
 import { FixedSizeList as BookmarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
+import ObjectCopy from '../../../../Components/ObjectCopy';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -706,9 +707,27 @@ export default ({
       };
       Object.assign(schedule_tmp, res.changes);
 
+      let overlap = false;
+      const schedules_test = ObjectCopy(schedules);
       const checkExist = (a) => a.id === res.schedule.id;
-      const checkIndex = newScheduleArray.findIndex(checkExist);
       const checkIndex2 = schedules.findIndex(checkExist);
+      schedules_test.splice(checkIndex2, 1);
+      schedules_test.map((sch) => {
+        if (
+          new Date(sch.end._date ? sch.end._date : sch.end) >
+            schedule_tmp.start &&
+          new Date(sch.start._date ? sch.start._date : sch.start) <
+            schedule_tmp.end
+        ) {
+          overlap = true;
+        }
+      });
+      if (overlap) {
+        alert('스케줄 시간은 중복될 수 없습니다.');
+        return;
+      }
+
+      const checkIndex = newScheduleArray.findIndex(checkExist);
       if (checkIndex === -1) {
         newScheduleArray.push(schedule_tmp);
       } else {
@@ -891,7 +910,6 @@ export default ({
     );
   }, []);
 
-  console.log(subjectColor);
   return (
     <Wrapper>
       <PanelWrap>
