@@ -228,7 +228,8 @@ export default function Attendance() {
   useInterval(() => {
     console.log(timeCount);
     console.log(decision);
-
+    console.log(canvas1.current);
+    console.log(video1.current);
     if (
       modelPose !== null &&
       modelDetect !== null &&
@@ -270,7 +271,7 @@ export default function Attendance() {
         }
       }
     }
-  }, 1000);
+  }, 5000);
 
   const Toggle = (toggleValue, togglesetValue, toggleName) => {
     const toggle = () => togglesetValue(!toggleValue);
