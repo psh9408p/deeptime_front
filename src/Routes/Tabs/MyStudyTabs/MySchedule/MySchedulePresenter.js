@@ -533,6 +533,22 @@ export default ({
   };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
+    let overlap = false;
+    schedules.map((sch) => {
+      if (
+        new Date(sch.end._date ? sch.end._date : sch.end) >
+          scheduleData.start._date &&
+        new Date(sch.start._date ? sch.start._date : sch.start) <
+          scheduleData.end._date
+      ) {
+        overlap = true;
+      }
+    });
+    if (overlap) {
+      alert('스케줄 시간은 중복될 수 없습니다.');
+      return;
+    }
+
     const generateId =
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
@@ -544,6 +560,7 @@ export default ({
     ) {
       tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
     }
+
     const schedule = {
       id: generateId,
       title: scheduleData.title,
