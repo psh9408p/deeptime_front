@@ -8,7 +8,7 @@ const TmpDiv = styled.div`
   display: flex;
   flex-direction: column;
   font-weight: bold;
-  max-width: 784px;
+  max-width: 1000px;
   margin: 0 auto;
   padding-top: 50px;
   min-height: 750px;
@@ -47,6 +47,11 @@ const TitleImg = styled.p`
 
 const SubContent = styled.p`
   margin-top: 10px;
+  line-height: 0.9em;
+`;
+
+const SSubContent = styled.p`
+  margin: 5px 0 10px 0;
   line-height: 0.9em;
 `;
 
@@ -177,141 +182,209 @@ export default () => {
             <TitleContent>
               IAM 서비스는 학습자의 계획을 기준으로 학습시간 확인 및 분석합니다.
               <br />
-              스케줄을 작성하지 않을 시 통계분석이 불가능하다는 점 유의바랍니다.
+              스케줄을 작성하지 않을 시 통계분석이 불가능하다는 점 유의
+              바랍니다.
               <br />
               스케줄은 주 단위로 작성 가능합니다.
             </TitleContent>
             <TitleImg>스케줄러 찾기</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%EB%9F%AC+%EC%B0%BE%EA%B8%B0_1).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_1.png'
               }
             />
             <Content_ol>
               <li>나의 학습 클릭</li>
               <li>나의 스케줄 클릭</li>
             </Content_ol>
-            <TitleImg>
-              북마크 추가하기 : 시간표 작성 전 원하는 과목을 북마크해야 합니다.
-            </TitleImg>
+            <TitleImg>스케줄러 기본 설명</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_2).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_2.png'
+              }
+            />
+            <Content_ol>
+              <li>이번 주로 이동</li>
+              <li>1주일 전후 이동</li>
+              <li>현재 스케줄 기간</li>
+              <li>
+                종일(0시~24시) 또는 이틀 연속의 스케줄 작성 시 스케줄 배정 칸
+              </li>
+              <li>날짜&amp;시간 별 스케줄 배정 칸</li>
+            </Content_ol>
+            <TitleImg>과목 북마크(즐겨찾기)</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_3.png'
               }
             />
             <Content_ol>
               <li>과목 관리 클릭</li>
-            </Content_ol>
-            <ImgDiv
-              src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_2-1).jpg'
-              }
-            />
-            <Content_ol>
               <li>과목 북마크 클릭</li>
-              <li>원하는 과목 체크박스 체크</li>
-              <li>저장</li>
+              <li>북마크(즐겨찾기) 원하는 과목 체크</li>
+              <li>
+                저장 클릭
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    북마크 된 과목만 스케줄 추가 시 사용 가능
+                  </span>
+                </SubContent>
+              </li>
             </Content_ol>
-            <TitleImg>
-              원하는 과목 만들기 : 기본과목에 없는 기타과목 생성방법
-            </TitleImg>
+            <TitleImg>과목 추가</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_2-2).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_4.png'
               }
             />
             <Content_ol>
               <li>과목 관리 클릭</li>
               <li>과목 추가 클릭</li>
-              <li>과목 이름 작성</li>
-              <li>색상 선택</li>
-              <li>추가 클릭</li>
-              <li>과목 북마크에서 ‘[기타] 생성한 과목’ 체크 확인</li>
+              <li>과목 이름 입력</li>
+              <li>과목 색상 선택</li>
               <li>
-                저장
+                추가 클릭
                 <SubContent>
-                  개인이 만든 과목은 통계 데이터 제공 시 부정확한 데이터가
-                  제공될 수 있습니다.
-                </SubContent>
-                <SubContent>
-                  따라서 기본으로 제공되는 과목은 새로 만들지 마시고 그대로
-                  사용해주세요.
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    추가된 과목은 자동으로 북마크(즐겨찾기) 설정이 적용
+                  </span>
                 </SubContent>
               </li>
             </Content_ol>
-            <TitleImg>
-              시간 및 날짜 설정 : 나의 스케줄에서 공부할 날짜와 시간을 작성하는
-              방법
-            </TitleImg>
+            <TitleImg>과목 수정</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_3).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_5.png'
               }
             />
             <Content_ol>
+              <li>과목 관리 클릭</li>
+              <li>과목 수정 클릭</li>
+              <li>수정할 과목 선택</li>
+              <li>'기존정보 불러오기' 클릭</li>
+              <li>과목 이름 입력</li>
+              <li>과목 색상 선택</li>
               <li>
-                드래그해서 날짜, 시간 설정(드래그는 PC에서만 가능. 모바일은 바로
-                아래의 안내를 봐주시면 됩니다)
-              </li>
-              <li>
-                과목 선택 : 화살표를 클릭하면 과목관리에서 북마크한 과목 중 선택
-                가능합니다.
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;제목 생성 : 자유롭게 원하는 제목
-                생성 가능합니다.
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;자습, 강의 선택: 스스로 공부한
-                시간과 인강&amp;현강 시간을 구분하기 위함입니다.
+                수정 클릭
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    수정 시 이미 작성된 스케줄에 해당 과목 정보가 모두 반영
+                  </span>
+                </SubContent>
               </li>
             </Content_ol>
-            <TitleImg>
-              클릭해서 날짜, 시간 설정(모바일 기기의 경우 클릭 후 시간 설정가능)
-            </TitleImg>
+            <TitleImg>과목 삭제</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_4).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_6.png'
               }
             />
             <Content_ol>
+              <li>과목 관리 클릭</li>
+              <li>과목 삭제 클릭</li>
+              <li>삭제할 과목 선택</li>
               <li>
-                원하는 날짜, 시간을 클릭 : 어디를 선택하던 날짜, 시간설정을
-                입력한 곳으로 생성됩니다.
-              </li>
-              <li>날짜, 시간 설정</li>
-              <li>
-                저장 : 스케줄러는 변경 사항이 있을 시 <u>반드시 저장</u>을 해야
-                반영됩니다.
+                삭제 클릭
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    삭제 시 본 과목이 할당된 기존 스케줄의 과목 또한
+                    삭제(해제)됨
+                  </span>
+                </SubContent>
               </li>
             </Content_ol>
+            <TitleImg>스케줄 추가</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_3-1).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_7.png'
               }
             />
             <Content_ol>
+              <li>원하는 날짜&amp;시간을 클릭 또는 드래그</li>
               <li>
-                생성된 모습 : 이 스케줄 바는 PC에서 마우스로 끌어서 이동할 수
-                있습니다.
+                과목 선택{' '}
+                <span style={{ color: '#7BA9EB' }}>
+                  (북마크 된 과목만 선택 가능)
+                </span>
+              </li>
+              <li>제목 입력</li>
+              <li>
+                통계 분석 시 스케줄 미반영(열림)&amp;반영(잠김) 선택{' '}
+                <span style={{ color: '#7BA9EB' }}>(추후 수정 불가)</span>
+                <SSubContent>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style={{ color: 'red' }}>
+                    IAM으로 학습시간 측정이 불가능한 현강 같은 스케줄 작성 시
+                    활용 가능
+                  </span>
+                </SSubContent>
               </li>
               <li>
-                저장 클릭 : 스케줄러는 변경 사항이 있을 시 <u>반드시 저장</u>을
-                해야 반영됩니다.
+                위치 입력 <span style={{ color: '#7BA9EB' }}>(필수 아님)</span>
+              </li>
+              <li>
+                날짜 선택{' '}
+                <span style={{ color: '#7BA9EB' }}>(2일 이내 가능)</span>
+              </li>
+              <li>
+                시간을 해당 날짜 종일(0시~24시)로 설정 가능{' '}
+                <span style={{ color: '#7BA9EB' }}>(추후 수정 불가)</span>
+              </li>
+              <li>자습&amp;인강 선택</li>
+              <li>입력 클릭</li>
+              <li>
+                <u>저장 클릭</u>{' '}
+                <span style={{ color: '#7BA9EB' }}>
+                  (스케줄 추가&amp;수정&amp;삭제 후, 한 번에 저장 가능)
+                </span>
               </li>
             </Content_ol>
-            <TitleImg>스케줄러 편집 및 삭제</TitleImg>
+            <TitleImg>스케줄 수정</TitleImg>
             <ImgDiv
               src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/%EC%8A%A4%EC%BC%80%EC%A5%B4%ED%91%9C%EC%9E%91%EC%84%B1_5).jpg'
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_8.png'
               }
             />
             <Content_ol>
+              <li>수정할 과목 클릭</li>
+              <li>수정 클릭</li>
+              <li>수정사항 입력</li>
               <li>
-                스케줄바 클릭 : 편집 및 삭제 하고싶은 스케줄바를 좌클릭 또는
-                선택하면 검토 창이 생성되어 편집 또는 삭제가 가능합니다.
+                수정 불가{' '}
+                <span style={{ color: '#7BA9EB' }}>
+                  (잠금도 열림으로 표시됨, 추후 업데이트 예정)
+                </span>
               </li>
               <li>
-                저장 클릭 : 스케줄러는 변경 사항이 있을 시 <u>반드시 저장</u>을
-                해야 반영됩니다.
+                All day On&rarr;Off 불가능, Off&rarr;On 가능{' '}
+                <span style={{ color: '#7BA9EB' }}>(추후 업데이트 예정)</span>
+              </li>
+              <li>수정 클릭</li>
+              <li>
+                <u>저장 클릭</u>{' '}
+                <span style={{ color: '#7BA9EB' }}>
+                  (스케줄 추가&amp;수정&amp;삭제 후, 한 번에 저장 가능)
+                </span>
+              </li>
+            </Content_ol>
+            <TitleImg>스케줄 삭제</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/schedule/schedule_9.png'
+              }
+            />
+            <Content_ol>
+              <li>삭제할 과목 클릭</li>
+              <li>삭제 클릭</li>
+              <li>
+                <u>저장 클릭</u>{' '}
+                <span style={{ color: '#7BA9EB' }}>
+                  (스케줄 추가&amp;수정&amp;삭제 후, 한 번에 저장 가능)
+                </span>
               </li>
             </Content_ol>
           </>

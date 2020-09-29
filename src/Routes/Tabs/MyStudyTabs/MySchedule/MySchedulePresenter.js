@@ -414,7 +414,7 @@ export default ({
       ) === true
     ) {
       try {
-        toast.info('해당 과목을 제거 중...');
+        toast.info('해당 과목을 삭제 중...');
         const {
           data: { deleteSubject },
         } = await deleteSubjectMutation({
@@ -423,12 +423,12 @@ export default ({
           },
         });
         if (!deleteSubject) {
-          alert('해당 과목을 제거할 수 없습니다.');
+          alert('해당 과목을 삭제할 수 없습니다.');
         } else {
           await subjectRefetch();
           await myRefetch();
           await subjectClear();
-          toast.success('해당 과목이 제거되었습니다.');
+          toast.success('해당 과목이 삭제되었습니다.');
           return true;
         }
       } catch (e) {
@@ -824,10 +824,10 @@ export default ({
       return '입력';
     },
     popupUpdate: function () {
-      return '업데이트';
+      return '수정';
     },
     popupEdit: function () {
-      return '편집';
+      return '수정';
     },
     popupDelete: function () {
       return '삭제';
@@ -1116,14 +1116,14 @@ export default ({
                       </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom3
-                          trigger={<PopButton_100 text={'과목 제거'} />}
+                          trigger={<PopButton_100 text={'과목 삭제'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
                           {(close) => (
                             <PBody>
                               <SubjectForm2>
-                                <PTitle text={'과목 제거'} />
+                                <PTitle text={'과목 삭제'} />
                                 <SelectWrapDiv>
                                   <SelectWrapper>
                                     <Select
@@ -1135,7 +1135,7 @@ export default ({
                                 <ButtonDiv>
                                   <PopupButton
                                     type="button"
-                                    text={'제거'}
+                                    text={'삭제'}
                                     onClick={async () => {
                                       const fucResult = await onSubmitDelete();
                                       if (fucResult) {
