@@ -798,8 +798,8 @@ export default ({
     for (let j = 0; j < 7; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
+    existTime_tmp = existTime_tmp / 60;
     const targetTime = SumArray(taskArray_scheduleT_week) * 60;
-
     if (targetTime === 0) {
       donutData_1 = 0;
       donutData_2 = 1;
@@ -1026,6 +1026,7 @@ export default ({
     for (let j = 0; j < lastMonthDate; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
+    existTime_tmp = existTime_tmp / 60;
     const targetTime = SumArray(taskArray_scheduleT_month) * 60;
     if (targetTime === 0) {
       donutData_1 = 0;
