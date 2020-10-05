@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
 import SideNav, { NavItem, NavText } from '@trendmicro/react-sidenav';
@@ -10,7 +10,7 @@ const TmpDiv = styled.div`
   font-weight: bold;
   max-width: 1000px;
   margin: 0 auto;
-  padding-top: 50px;
+  padding: 50px 0 0 100px;
   min-height: 750px;
 `;
 
@@ -89,10 +89,23 @@ const SubContent_ul = styled.ul`
   list-style-type: disc;
 `;
 
+const ScrollPoint = styled.div`
+  height: 68px;
+`;
+
 export default () => {
   let history = useHistory();
   let location = useLocation();
   const pageName = location.pathname.split('/userguide/')[1];
+
+  // 클릭 스크롤 정의
+  const focusTarget = useRef([]);
+  const scrollToRef = (value) => {
+    focusTarget.current[value].scrollIntoView({
+      offset: { top: 68 },
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <>
@@ -105,29 +118,95 @@ export default () => {
         }}
       >
         <SideNav.Toggle />
-        <SideNav.Nav defaultSelected="student/connectseat">
-          <NavItem eventKey="student">
+        <SideNav.Nav defaultSelected="schedule">
+          <NavItem eventKey="schedule">
             <NavText>
-              <NavTextWrap>학생</NavTextWrap>
+              <NavTextWrap>스케줄 관리</NavTextWrap>
             </NavText>
-            <NavItem eventKey="student/connectseat">
-              <NavText>좌석 연결</NavText>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(0);
+              }}
+            >
+              <NavText>스케줄러 찾기</NavText>
             </NavItem>
-            <NavItem eventKey="student/schedule">
-              <NavText>스케줄표 작성</NavText>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(1);
+              }}
+            >
+              <NavText>스케줄러 기본 설명</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(2);
+              }}
+            >
+              <NavText>과목 북마크(즐겨찾기)</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(3);
+              }}
+            >
+              <NavText>과목 추가</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(4);
+              }}
+            >
+              <NavText>과목 수정</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(5);
+              }}
+            >
+              <NavText>과목 삭제</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(6);
+              }}
+            >
+              <NavText>스케줄 추가</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(7);
+              }}
+            >
+              <NavText>스케줄 수정</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(8);
+              }}
+            >
+              <NavText>스케줄 삭제</NavText>
             </NavItem>
           </NavItem>
-          <NavItem eventKey="manager">
+          {/* <NavItem eventKey="manager">
             <NavText>
               <NavTextWrap>관리자</NavTextWrap>
             </NavText>
-            {/* <NavItem eventKey="manager/linechart">
+            <NavItem eventKey="manager/linechart">
               <NavText>Line Chart</NavText>
             </NavItem>
             <NavItem eventKey="charts/barchart">
               <NavText>Bar Chart</NavText>
-            </NavItem> */}
-          </NavItem>
+            </NavItem>
+          </NavItem> */}
         </SideNav.Nav>
       </SideWrap>
       <TmpDiv>
@@ -176,9 +255,9 @@ export default () => {
             </Content_ol>
           </>
         )}
-        {pageName === 'student/schedule' && (
+        {pageName === 'schedule' && (
           <>
-            <Title_h1>스케줄표 작성</Title_h1>
+            <Title_h1>스케줄 관리</Title_h1>
             <TitleContent>
               IAM 서비스는 학습자의 계획을 기준으로 학습시간 확인 및 분석합니다.
               <br />
@@ -187,6 +266,7 @@ export default () => {
               <br />
               스케줄은 주 단위로 작성 가능합니다.
             </TitleContent>
+            <ScrollPoint ref={(el) => (focusTarget.current[0] = el)} />
             <TitleImg>스케줄러 찾기</TitleImg>
             <ImgDiv
               src={
@@ -197,6 +277,7 @@ export default () => {
               <li>나의 학습 클릭</li>
               <li>나의 스케줄 클릭</li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[1] = el)} />
             <TitleImg>스케줄러 기본 설명</TitleImg>
             <ImgDiv
               src={
@@ -212,6 +293,7 @@ export default () => {
               </li>
               <li>날짜&amp;시간 별 스케줄 배정 칸</li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[2] = el)} />
             <TitleImg>과목 북마크(즐겨찾기)</TitleImg>
             <ImgDiv
               src={
@@ -232,6 +314,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[3] = el)} />
             <TitleImg>과목 추가</TitleImg>
             <ImgDiv
               src={
@@ -253,6 +336,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[4] = el)} />
             <TitleImg>과목 수정</TitleImg>
             <ImgDiv
               src={
@@ -276,6 +360,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[5] = el)} />
             <TitleImg>과목 삭제</TitleImg>
             <ImgDiv
               src={
@@ -297,6 +382,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[6] = el)} />
             <TitleImg>스케줄 추가</TitleImg>
             <ImgDiv
               src={
@@ -343,6 +429,7 @@ export default () => {
                 </span>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[7] = el)} />
             <TitleImg>스케줄 수정</TitleImg>
             <ImgDiv
               src={
@@ -371,6 +458,7 @@ export default () => {
                 </span>
               </li>
             </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget.current[8] = el)} />
             <TitleImg>스케줄 삭제</TitleImg>
             <ImgDiv
               src={

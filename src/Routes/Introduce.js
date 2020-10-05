@@ -30,6 +30,7 @@ export default () => {
       prevEl: '.swiper-button-prev',
     },
   };
+
   return (
     <Wrapper>
       <SwipeWrap>

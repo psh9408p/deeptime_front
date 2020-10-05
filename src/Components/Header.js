@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
-import { Logo, Shutter, User, Shop } from './Icons';
+import { Logo, Shutter, User, Shop, Guide, MyStudy } from './Icons';
 import Avatar from './Avatar';
 import { useQuery } from '@apollo/react-hooks';
 import { ME } from '../SharedQueries';
@@ -31,7 +31,6 @@ const HeaderWrapper = styled.div`
 `;
 
 const HeaderColumn = styled.div`
-  width: 20%;
   text-align: center;
   &:first-child {
     width: 40%;
@@ -40,12 +39,26 @@ const HeaderColumn = styled.div`
     display: inline-flex;
     -webkit-box-align: center;
     align-items: center;
+    @media (max-width: 845px) {
+      width: 20%;
+      min-width: 190px;
+    }
+  }
+  &:nth-child(2) {
+    width: 20%;
+    @media (max-width: 845px) {
+      width: 60%;
+    }
   }
   &:last-child {
     width: 40%;
     margin-left: auto;
     justify-content: flex-end;
     display: inline-flex;
+    @media (max-width: 845px) {
+      width: 20%;
+      min-width: 190px;
+    }
   }
 `;
 
@@ -53,7 +66,8 @@ const AiBox = styled.div`
   display: inline-flex;
   align-items: center;
   padding: 10px 15px;
-  height: 100%;
+  height: 45px;
+  width: 162px;
   border: 1px solid ${(props) => props.theme.classicBlue};
   border-radius: 3px;
 `;
@@ -69,7 +83,20 @@ const HeaderLink = styled(Link)`
   font-size: 16px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
+  height: 45px;
 `;
+
+// const GuideLink = styled(HeaderLink)`
+//   @media (max-width: 845px) {
+//     display: none;
+//   }
+// `;
+
+// const MystudyLink = styled(HeaderLink)`
+//   @media (max-width: 675px) {
+//     display: none;
+//   }
+// `;
 
 const AiHeaderLink = styled(HeaderLink)`
   color: ${(props) => props.theme.classicBlue};
@@ -104,6 +131,19 @@ const TmpButton = styled.button`
   font-weight: 600;
   background: none;
   border: 0;
+`;
+
+const VisualShort = styled.div`
+  display: none;
+  @media (max-width: 845px) {
+    display: flex;
+  }
+`;
+
+const VisualLong = styled.div`
+  @media (max-width: 845px) {
+    display: none;
+  }
 `;
 
 export default withRouter(() => {
@@ -199,15 +239,17 @@ export default withRouter(() => {
           )}
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
-              <HeaderLink
-                target="_blank"
-                to="/userguide/student/connectseat"
-                replace
-              >
-                사용가이드
+              <HeaderLink target="_blank" to="/userguide/schedule" replace>
+                <VisualLong>사용가이드</VisualLong>
+                <VisualShort>
+                  <Guide />
+                </VisualShort>
               </HeaderLink>
               <HeaderLink to="/" replace>
-                나의 학습
+                <VisualLong>나의 학습</VisualLong>
+                <VisualShort>
+                  <MyStudy />
+                </VisualShort>
               </HeaderLink>
               {/* <TmpButton
                 type="button"
