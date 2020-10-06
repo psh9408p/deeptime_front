@@ -12,6 +12,7 @@ import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
 import Profile_M from '../Routes/Profile_M';
 import Study from '../Routes/Study';
+import Study_tmp from '../Routes/Study_tmp';
 import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
 import Loader from './Loader';
@@ -61,7 +62,7 @@ const LoggedInRoutes = () => {
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>
-          <Route path="/study" component={Study} />
+          <Route path="/study" component={Study_tmp} />
           <Route path="/userguide" component={UserGuide} />
           <Route path="/attendance" component={Attendance} />
           <Route exact path="/" component={MyStudy} />
