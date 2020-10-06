@@ -29,6 +29,8 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
     options: {
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: [title1, title2],
       },
       legend: {

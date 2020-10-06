@@ -6,6 +6,8 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 // import LoadCamera from "../Components/LoadCamera/LoadCamera"
+import useMouseLeave from '../../Hooks/useMouseLeave';
+import useMouseEnter from '../../Hooks/useMouseEnter';
 import useInterval from '../../Hooks/useInterval';
 import { userEmail } from '../../Components/Routes';
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
@@ -15,8 +17,7 @@ import twoArraySum from '../../Components/twoArraySum';
 import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
-import useMouseLeave from '../../Hooks/useMouseLeave';
-import useMouseEnter from '../../Hooks/useMouseEnter';
+import { Coffee, NextSchedule } from '../../Components/Icons';
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -49,9 +50,60 @@ const DonutWrap = styled.div`
   border: 1px solid red;
 `;
 
+const NowNextWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 150px;
+`;
+
 const BarWrap = styled.div`
   width: 60%;
-  height: 150px;
+  height: 100%;
+  border: 1px solid red;
+`;
+
+const BreakNextWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 100%;
+`;
+
+const BreakTimeDiv = styled.div`
+  width: 100%;
+  height: 50%;
+  border: 1px solid red;
+`;
+
+const NextTimeDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+  border: 1px solid red;
+`;
+
+const NextTimeIn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1.5em;
+  width: 70%;
+  height: 100%;
+  font-size: 13px;
+  font-weight: bold;
+`;
+
+const IconWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  height: 100%;
   border: 1px solid red;
 `;
 
@@ -79,6 +131,10 @@ let nowScheduleTimeT = 0;
 let nowScheduleColor = 'rgba(123, 169, 235, 1)';
 let nowTitle1 = '';
 let nowTitle2 = '';
+let nextScheduleIndex = -1;
+let nextTitle1 = '';
+let nextTitle2 = '';
+let next_TimeText = '';
 
 export default ({ myInfoData, networkStatus, startPolling }) => {
   const [modelPose, setModelPose] = useState(null);
@@ -349,9 +405,9 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
     console.log('날 떠나지마');
   };
 
-  useMouseEnter(whatNee);
+  // useMouseEnter(whatNee);
 
-  useMouseLeave(donleaveme);
+  // useMouseLeave(donleaveme);
 
   useEffect(() => {
     LoadCamera();
@@ -386,6 +442,9 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
     const findShedule = (i) =>
       new Date(i.start) <= nowDate && new Date(i.end) > nowDate;
     nowScheduleIndex = scheduleList_selectDay.findIndex(findShedule);
+    // 다음 과목 찾기
+    const findShedule_next = (i) => nowDate < new Date(i.start);
+    nextScheduleIndex = scheduleList_selectDay.findIndex(findShedule_next);
   };
 
   const todayGraph_calculate = () => {
@@ -468,6 +527,22 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       nowScheduleColor = 'rgba(123, 169, 235, 1)';
       nowTitle1 = '현재 스케줄 없음';
       nowTitle2 = '';
+    }
+    // nextSchedule 계산
+    if (nextScheduleIndex !== -1) {
+      const nextSchedule = scheduleList_selectDay[nextScheduleIndex];
+      nextTitle1 = nextSchedule.subject.name;
+      nextTitle2 = '(' + nextSchedule.title + ')';
+      const startPoint_next = new Date(nextSchedule.start);
+      const endPoint_next = new Date(nextSchedule.end);
+      next_TimeText =
+        moment(startPoint_next).format('hh:mma') +
+        ' ~ ' +
+        moment(endPoint_next).format('hh:mma');
+    } else {
+      nextTitle1 = '다음 스케줄 없음';
+      nextTitle2 = 'X';
+      next_TimeText = '';
     }
 
     // AreaChart 계산
@@ -697,15 +772,33 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
             labels={['학습', '학습 외', '나머지', '현재 시간']}
           />
         </DonutWrap>
-        <BarWrap>
-          <RowBarChart_now
-            title1={nowTitle1}
-            title2={nowTitle2}
-            data_1={nowScheduleTime}
-            data_2={nowScheduleTimeT}
-            scheduleColor={nowScheduleColor}
-          />
-        </BarWrap>
+        <NowNextWrap>
+          <BarWrap>
+            <RowBarChart_now
+              title1={nowTitle1}
+              title2={nowTitle2}
+              data_1={nowScheduleTime}
+              data_2={nowScheduleTimeT}
+              scheduleColor={nowScheduleColor}
+            />
+          </BarWrap>
+          <BreakNextWrap>
+            <BreakTimeDiv></BreakTimeDiv>
+            <NextTimeDiv>
+              <IconWrap>
+                <NextSchedule />
+                <div style={{ fontSize: 13, fontWeight: 'bold' }}>next</div>
+              </IconWrap>
+              <NextTimeIn>
+                {nextTitle1}
+                <br />
+                {nextTitle2}
+                <br />
+                {next_TimeText}
+              </NextTimeIn>
+            </NextTimeDiv>
+          </BreakNextWrap>
+        </NowNextWrap>
       </GraphDiv>
     </Wrapper>
   );
