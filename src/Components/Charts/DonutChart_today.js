@@ -65,8 +65,14 @@ export default ({ data, color, title, labels }) => {
       labels,
     },
     options: {
+      legend: {
+        display: true,
+        position: 'right',
+      },
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: title,
       },
       plugins: {

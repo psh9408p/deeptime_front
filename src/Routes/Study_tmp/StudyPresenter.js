@@ -18,6 +18,7 @@ import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
 import { Coffee, NextSchedule } from '../../Components/Icons';
+import Countdown from 'react-countdown';
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -29,9 +30,16 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
+const VideoWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const VideoDiv = styled.div`
-  width: 450px;
-  height: 450px;
+  width: 430px;
+  height: 430px;
+  margin: 10px;
   background-color: black;
 `;
 const GraphDiv = styled.div`
@@ -47,7 +55,7 @@ const HeaderDiv = styled.div`
 const DonutWrap = styled.div`
   width: 100%;
   height: 240px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 `;
 
 const NowNextWrap = styled.div`
@@ -60,7 +68,7 @@ const NowNextWrap = styled.div`
 const BarWrap = styled.div`
   width: 60%;
   height: 100%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 `;
 
 const BreakNextWrap = styled.div`
@@ -71,9 +79,12 @@ const BreakNextWrap = styled.div`
 `;
 
 const BreakTimeDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 100%;
   height: 50%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 `;
 
 const NextTimeDiv = styled.div`
@@ -82,11 +93,12 @@ const NextTimeDiv = styled.div`
   align-items: center;
   width: 100%;
   height: 50%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 `;
 
-const NextTimeIn = styled.div`
+const TimeIn = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -104,7 +116,7 @@ const IconWrap = styled.div`
   align-items: center;
   width: 30%;
   height: 100%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 `;
 
 let scheduleList_selectDay = [];
@@ -135,6 +147,10 @@ let nextScheduleIndex = -1;
 let nextTitle1 = '';
 let nextTitle2 = '';
 let next_TimeText = '';
+let break_title = '';
+let break_time = '';
+let break_boolean = false;
+let break_countdown = 0;
 
 export default ({ myInfoData, networkStatus, startPolling }) => {
   const [modelPose, setModelPose] = useState(null);
@@ -410,8 +426,8 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
   // useMouseLeave(donleaveme);
 
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    // LoadCamera();
+    // LoadModel();
     startPolling(10000);
   }, []);
 
@@ -513,10 +529,10 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       }
       nowScheduleTime = SumArray(slicedTime_now) / 60;
       nowScheduleTimeT = nowSchedule.totalTime / 60 - nowScheduleTime;
-      nowScheduleColor = nowSchedule.subject.bgColor;
+      nowScheduleColor = nowSchedule.subject?.bgColor;
       const startPoint = new Date(nowSchedule.start);
       const endPoint = new Date(nowSchedule.end);
-      nowTitle1 = nowSchedule.subject.name + ' (' + nowSchedule.title + ')';
+      nowTitle1 = nowSchedule.subject?.name + ' (' + nowSchedule.title + ')';
       nowTitle2 =
         moment(startPoint).format('hh:mma') +
         ' ~ ' +
@@ -526,12 +542,12 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       nowScheduleTimeT = 0;
       nowScheduleColor = 'rgba(123, 169, 235, 1)';
       nowTitle1 = '현재 스케줄 없음';
-      nowTitle2 = '';
+      nowTitle2 = 'X';
     }
     // nextSchedule 계산
     if (nextScheduleIndex !== -1) {
       const nextSchedule = scheduleList_selectDay[nextScheduleIndex];
-      nextTitle1 = nextSchedule.subject.name;
+      nextTitle1 = nextSchedule.subject?.name;
       nextTitle2 = '(' + nextSchedule.title + ')';
       const startPoint_next = new Date(nextSchedule.start);
       const endPoint_next = new Date(nextSchedule.end);
@@ -543,6 +559,33 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       nextTitle1 = '다음 스케줄 없음';
       nextTitle2 = 'X';
       next_TimeText = '';
+    }
+    // breakTime 계산
+    if (nextScheduleIndex > 0) {
+      const startPoint_break = new Date(
+        scheduleList_selectDay[nextScheduleIndex - 1].end,
+      );
+      const endPoint_break = new Date(
+        scheduleList_selectDay[nextScheduleIndex].start,
+      );
+      const nowTime_break = new Date();
+      if (nowTime_break >= startPoint_break && nowTime_break < endPoint_break) {
+        break_boolean = true;
+        break_title = '휴식 시간';
+        break_countdown =
+          endPoint_break.getTime() - nowTime_break.getTime() + 60000;
+      } else {
+        break_boolean = false;
+        break_title = '다음 휴식 시간';
+      }
+      break_time =
+        moment(startPoint_break).format('hh:mma') +
+        ' ~ ' +
+        moment(endPoint_break).format('hh:mma');
+    } else {
+      break_title = '다음 휴식 없음';
+      break_time = 'X';
+      break_boolean = false;
     }
 
     // AreaChart 계산
@@ -757,18 +800,20 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
 
   return (
     <Wrapper>
-      <div>
+      {/* <div>
         <video ref={video1} playsInline width="1" height="1" autoPlay muted />
         <canvas ref={canvas1} width="450" height="450" />
-      </div>
-      {/* <VideoDiv /> */}
+      </div> */}
+      <VideoWrap>
+        <VideoDiv />
+      </VideoWrap>
       <GraphDiv>
         <HeaderDiv></HeaderDiv>
         <DonutWrap>
           <DonutChart_today
             data={donutData}
             color={rgbBox}
-            title={'학습 로그'}
+            title={'Today 학습 로그'}
             labels={['학습', '학습 외', '나머지', '현재 시간']}
           />
         </DonutWrap>
@@ -783,19 +828,40 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
             />
           </BarWrap>
           <BreakNextWrap>
-            <BreakTimeDiv></BreakTimeDiv>
+            <BreakTimeDiv>
+              <IconWrap>
+                <Coffee />
+                <div style={{ fontSize: 13, fontWeight: 'bold' }}>Break</div>
+              </IconWrap>
+              <TimeIn>
+                {break_title}
+                <br />
+                {break_time}
+                {break_boolean && (
+                  <Countdown
+                    date={Date.now() + break_countdown}
+                    renderer={({ hours, minutes }) => (
+                      <span style={{ color: 'red' }}>
+                        {hours > 0 && <span>{hours}시간 </span>}
+                        {minutes}분 남음
+                      </span>
+                    )}
+                  />
+                )}
+              </TimeIn>
+            </BreakTimeDiv>
             <NextTimeDiv>
               <IconWrap>
                 <NextSchedule />
-                <div style={{ fontSize: 13, fontWeight: 'bold' }}>next</div>
+                <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
               </IconWrap>
-              <NextTimeIn>
+              <TimeIn>
                 {nextTitle1}
                 <br />
                 {nextTitle2}
                 <br />
                 {next_TimeText}
-              </NextTimeIn>
+              </TimeIn>
             </NextTimeDiv>
           </BreakNextWrap>
         </NowNextWrap>
