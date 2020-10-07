@@ -28,47 +28,66 @@ const UPDATE_EXISTTOGGLE = gql`
 
 const Wrapper = styled.div`
   display: flex;
+  width: 960px;
+  height: 500px;
+  margin: 30px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const VideoWrap = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 480px;
+  height: 500px;
+  padding: 20px 10px 20px 20px;
 `;
 
 const VideoDiv = styled.div`
-  width: 430px;
-  height: 430px;
-  margin: 10px;
+  width: 100%;
+  height: 100%;
   background-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
+
 const GraphDiv = styled.div`
-  width: 450px;
-  border: 1px solid ${(props) => props.theme.classicBlue};
+  width: 480px;
+  height: 500px;
+  padding: 10px;
+  /* border: 1px solid ${(props) => props.theme.classicBlue}; */
 `;
 
 const HeaderDiv = styled.div`
   height: 60px;
   width: 100%;
+  margin-bottom: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const DonutWrap = styled.div`
   width: 100%;
   height: 240px;
-  /* border: 1px solid red; */
+  margin-bottom: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const NowNextWrap = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 150px;
+  height: 160px;
+  margin-bottom: 10px;
 `;
 
 const BarWrap = styled.div`
   width: 60%;
   height: 100%;
-  /* border: 1px solid red; */
+  margin-right: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const BreakNextWrap = styled.div`
@@ -84,7 +103,9 @@ const BreakTimeDiv = styled.div`
   align-items: center;
   width: 100%;
   height: 50%;
-  /* border: 1px solid red; */
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  margin-bottom: 10px;
 `;
 
 const NextTimeDiv = styled.div`
@@ -93,7 +114,8 @@ const NextTimeDiv = styled.div`
   align-items: center;
   width: 100%;
   height: 50%;
-  /* border: 1px solid red; */
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const TimeIn = styled.div`
@@ -116,7 +138,7 @@ const IconWrap = styled.div`
   align-items: center;
   width: 30%;
   height: 100%;
-  /* border: 1px solid red; */
+  border-right: ${(props) => props.theme.boxBorder};
 `;
 
 let scheduleList_selectDay = [];
@@ -814,7 +836,12 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
             data={donutData}
             color={rgbBox}
             title={'Today 학습 로그'}
-            labels={['학습', '학습 외', '나머지', '현재 시간']}
+            labels={[
+              '학습',
+              '학습 외',
+              '나머지',
+              '현재 시간 ' + '　' + '　' + '　',
+            ]}
           />
         </DonutWrap>
         <NowNextWrap>
