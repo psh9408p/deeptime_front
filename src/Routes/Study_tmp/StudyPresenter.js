@@ -19,6 +19,7 @@ import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
 import { Coffee, NextSchedule } from '../../Components/Icons';
 import Countdown from 'react-countdown';
+import Avatar from '../../Components/Avatar';
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -35,19 +36,21 @@ const Wrapper = styled.div`
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
+const CanvasBox = styled.canvas`
+  width: 450px;
+  height: 460px;
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
 const VideoWrap = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 480px;
-  height: 500px;
-  padding: 20px 10px 20px 20px;
-`;
-
-const VideoDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  background-color: black;
+  width: 470px;
+  height: 480px;
+  margin: 10px 0 10px 10px;
+  padding: 10px 10px 10px 10px;
+  border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
@@ -55,13 +58,16 @@ const GraphDiv = styled.div`
   width: 480px;
   height: 500px;
   padding: 10px;
-  /* border: 1px solid ${(props) => props.theme.classicBlue}; */
 `;
 
 const HeaderDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   height: 60px;
   width: 100%;
   margin-bottom: 10px;
+  padding: 0 0 0 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
@@ -83,7 +89,10 @@ const NowNextWrap = styled.div`
 `;
 
 const BarWrap = styled.div`
-  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 270px;
   height: 100%;
   margin-right: 10px;
   border: ${(props) => props.theme.boxBorder};
@@ -93,7 +102,7 @@ const BarWrap = styled.div`
 const BreakNextWrap = styled.div`
   display: flex;
   flex-direction: column;
-  width: 40%;
+  width: 180px;
   height: 100%;
 `;
 
@@ -575,7 +584,7 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       const endPoint_next = new Date(nextSchedule.end);
       next_TimeText =
         moment(startPoint_next).format('hh:mma') +
-        ' ~ ' +
+        '~' +
         moment(endPoint_next).format('hh:mma');
     } else {
       nextTitle1 = '다음 스케줄 없음';
@@ -602,7 +611,7 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
       }
       break_time =
         moment(startPoint_break).format('hh:mma') +
-        ' ~ ' +
+        '~' +
         moment(endPoint_break).format('hh:mma');
     } else {
       break_title = '다음 휴식 없음';
@@ -822,20 +831,26 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
 
   return (
     <Wrapper>
-      {/* <div>
-        <video ref={video1} playsInline width="1" height="1" autoPlay muted />
-        <canvas ref={canvas1} width="450" height="450" />
-      </div> */}
       <VideoWrap>
-        <VideoDiv />
+        {/* <div>
+          <video ref={video1} playsInline width="0" height="0" autoPlay muted />
+          <CanvasBox ref={canvas1} />
+        </div> */}
       </VideoWrap>
       <GraphDiv>
-        <HeaderDiv></HeaderDiv>
+        <HeaderDiv>
+          <Avatar size="sm2" url={myInfoData.avatar} />
+          <span
+            style={{ marginLeft: '10px', fontSize: '15px', fontWeight: 'bold' }}
+          >
+            {myInfoData.username}
+          </span>
+        </HeaderDiv>
         <DonutWrap>
           <DonutChart_today
             data={donutData}
             color={rgbBox}
-            title={'Today 학습 로그'}
+            title={'Today Study Log'}
             labels={[
               '학습',
               '학습 외',

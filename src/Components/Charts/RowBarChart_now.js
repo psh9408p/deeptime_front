@@ -34,7 +34,7 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
         text: [title1, title2],
       },
       legend: {
-        display: true,
+        display: false,
         labels: {
           filter: function (legendItem, data) {
             return legendItem.datasetIndex != 2;
@@ -52,6 +52,10 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
             },
             gridLines: {
               display: true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '시간 (분)',
             },
           },
         ],
@@ -74,7 +78,6 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
           borderWidth: 2,
           color: 'black',
           display: function (context) {
-            console.log(context, 'bb');
             var dataset = context.dataset;
             var datasetIndex = context.datasetIndex;
             var value = dataset.data[context.dataIndex];
@@ -83,8 +86,16 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
           font: {
             weight: 'bold',
           },
-          formatter: (value) => {
-            return value + '%';
+          formatter: (value, ctx) => {
+            let sum = 0;
+            let dataArr = ctx.chart.data.datasets;
+            dataArr.map((data, index) => {
+              if (index !== 2) {
+                sum += data.data[0];
+              }
+            });
+            let percentage = ((value * 100) / sum).toFixed(0) + '%';
+            return percentage;
           },
         },
       },
@@ -113,6 +124,9 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
     updateDataset(1, data_2);
     updateDataset(2, total_value === 0 ? 1 : 0);
     chartInstance.options.title.text = [title1, title2];
+    chartInstance.data.datasets[0].backgroundColor = scheduleColor;
+    // chartInstance.legend.legendItems[0].fillStyle = scheduleColor;
+    // chartInstance.legend.legendItems[0].strokeStyle = scheduleColor;
     chartInstance.update();
     // console.log(chartInstance, '2');
     // updateDataset(0, data_tmp_1);
@@ -126,7 +140,7 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
       return;
     }
     AreaChartUpdate();
-  }, [data_1, data_2]);
+  }, [data_1, data_2, title1, title2]);
 
   return <canvas ref={chartContainer} />;
 };

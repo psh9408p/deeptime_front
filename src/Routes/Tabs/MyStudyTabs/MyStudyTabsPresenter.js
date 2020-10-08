@@ -16,21 +16,21 @@ export default ({
   }, []);
 
   if (pageIndex === 0) {
-    startPolling(Number(refreshTerm.value) * 1000);
-    return (
-      <MyStatistics
-        myInfoData={myInfoData}
-        networkStatus={networkStatus}
-        refreshTerm={refreshTerm}
-      />
-    );
-  } else if (pageIndex === 1) {
     stopPolling();
     return (
       <MySchedule
         myInfoData={myInfoData}
         myInfoRefetch={myInfoRefetch}
         networkStatus={networkStatus}
+      />
+    );
+  } else if (pageIndex === 1) {
+    startPolling(Number(refreshTerm.value) * 1000);
+    return (
+      <MyStatistics
+        myInfoData={myInfoData}
+        networkStatus={networkStatus}
+        refreshTerm={refreshTerm}
       />
     );
   }

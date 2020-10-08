@@ -65,6 +65,7 @@ export default ({ data, color, title, labels }) => {
       labels,
     },
     options: {
+      tooltips: false,
       legend: {
         display: true,
         position: 'right',
