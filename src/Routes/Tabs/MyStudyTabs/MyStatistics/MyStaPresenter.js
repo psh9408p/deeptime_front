@@ -110,6 +110,40 @@ const DonutChartValue = styled.div`
   right: 0;
 `;
 
+const TotalTime = styled.div`
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  padding-top: 177px;
+  padding-left: 267px;
+  font-size: 13px;
+  font-weight: bold;
+  color: ${(props) => props.theme.classicBlue};
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const TargetTime = styled(TotalTime)`
+  padding-top: 192px;
+  padding-left: 300px;
+  color: black;
+`;
+
+const DonutPercent = styled(TotalTime)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-size: 25px;
+  margin-top: 128px;
+  margin-left: 267px;
+  padding: 0;
+  width: 100px;
+  height: 50px;
+`;
+
 const ClockBox = styled.div`
   width: 100%;
   height: 100%;
@@ -277,6 +311,10 @@ let self_percent = [];
 let lecture_percent = [];
 let self_percentT = [];
 let lecture_percentT = [];
+let target_min = 0;
+let target_hour = 0;
+let total_min = 0;
+let total_hour = 0;
 
 export default ({
   StaTabs,
@@ -799,7 +837,7 @@ export default ({
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
     existTime_tmp = existTime_tmp / 60;
-    const targetTime = SumArray(taskArray_scheduleT_week) * 60;
+    let targetTime = SumArray(taskArray_scheduleT_week) * 60;
     if (targetTime === 0) {
       donutData_1 = 0;
       donutData_2 = 1;
@@ -807,8 +845,15 @@ export default ({
     } else {
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
-      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    target_hour = String(Math.floor(targetTime / 60));
+    targetTime = targetTime - target_hour * 60;
+    target_min = String(Math.floor(targetTime));
+    total_hour = String(Math.floor(existTime_tmp / 60));
+    existTime_tmp = existTime_tmp - total_hour * 60;
+    total_min = String(Math.floor(existTime_tmp));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -1027,7 +1072,7 @@ export default ({
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
     existTime_tmp = existTime_tmp / 60;
-    const targetTime = SumArray(taskArray_scheduleT_month) * 60;
+    let targetTime = SumArray(taskArray_scheduleT_month) * 60;
     if (targetTime === 0) {
       donutData_1 = 0;
       donutData_2 = 1;
@@ -1035,8 +1080,15 @@ export default ({
     } else {
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
-      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    target_hour = String(Math.floor(targetTime / 60));
+    targetTime = targetTime - target_hour * 60;
+    target_min = String(Math.floor(targetTime));
+    total_hour = String(Math.floor(existTime_tmp / 60));
+    existTime_tmp = existTime_tmp - total_hour * 60;
+    total_min = String(Math.floor(existTime_tmp));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -1309,7 +1361,15 @@ export default ({
                   labels={['학습', '목표']}
                 />
               </ChartWrap>
-              <DonutChartValue>{donutPercent}%</DonutChartValue>
+              <TotalTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TotalTime>
+              <TargetTime>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TargetTime>
+              <DonutPercent>{donutPercent}%</DonutPercent>
               {weekCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
@@ -1440,7 +1500,15 @@ export default ({
                   labels={['학습', '목표']}
                 />
               </ChartWrap>
-              <DonutChartValue>{donutPercent}%</DonutChartValue>
+              <TotalTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TotalTime>
+              <TargetTime>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TargetTime>
+              <DonutPercent>{donutPercent}%</DonutPercent>
               {monthCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />

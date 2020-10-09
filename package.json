@@ -42,6 +42,7 @@
     "react-google-login": "5.1.1",
     "react-helmet": "^5.2.0",
     "react-id-swiper": "3.0.0",
+    "react-input-switch": "^2.2.2",
     "react-numeric-input": "2.2.3",
     "react-phone-input-2": "^2.13.3",
     "react-router-dom": "5.1.2",

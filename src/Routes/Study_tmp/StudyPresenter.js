@@ -17,14 +17,71 @@ import twoArraySum from '../../Components/twoArraySum';
 import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
-import { Coffee, NextSchedule } from '../../Components/Icons';
+import { Coffee, NextSchedule, Setting, Refresh } from '../../Components/Icons';
+import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
 import Avatar from '../../Components/Avatar';
+import Switch from 'react-input-switch';
+import Popup from 'reactjs-popup';
+import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import FatText from '../../Components/FatText';
+import Input_100 from '../../Components/Input_100';
+import Button_custom from '../../Components/Buttons/Button_custom';
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
     update_existToggle(email: $email, existToggle: $existToggle)
   }
+`;
+
+const ClockBox = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  padding-top: 27px;
+  padding-right: 160px;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const TodayTime = styled.div`
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  padding-top: 131px;
+  padding-left: 107px;
+  font-size: 13px;
+  font-weight: bold;
+  color: ${(props) => props.theme.classicBlue};
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const TodayTime_total = styled(TodayTime)`
+  padding-top: 146px;
+  padding-left: 129px;
+  color: black;
+`;
+
+const TodayPercent = styled(TodayTime)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-size: 25px;
+  margin-top: 87px;
+  margin-left: 101px;
+  padding: 0;
+  width: 100px;
+  height: 50px;
 `;
 
 const Wrapper = styled.div`
@@ -67,12 +124,12 @@ const HeaderDiv = styled.div`
   height: 60px;
   width: 100%;
   margin-bottom: 10px;
-  padding: 0 0 0 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const DonutWrap = styled.div`
+  position: relative;
   width: 100%;
   height: 240px;
   margin-bottom: 10px;
@@ -150,6 +207,106 @@ const IconWrap = styled.div`
   border-right: ${(props) => props.theme.boxBorder};
 `;
 
+const AvatarDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 0 0 15px;
+`;
+
+const SetDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 15px 0 0;
+`;
+
+const RefreshButton = styled.button`
+  font-size: 24px;
+  padding: 3px 10px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: ${(props) => props.theme.classicGray};
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px #999;
+  :hover {
+    background-color: ${(props) => props.theme.lightGreyColor};
+  }
+  :active {
+    background-color: ${(props) => props.theme.lightGreyColor};
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+  }
+`;
+
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 460px !important;
+    height: 250px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const PBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
+`;
+
+const PTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const ButtonDiv = styled.div`
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const SetContentWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const SetContentBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+`;
+
+const RefreshInputWrap = styled.div`
+  width: 70px;
+  height: 30px;
+`;
+
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
 let taskArray = [];
@@ -182,8 +339,20 @@ let break_title = '';
 let break_time = '';
 let break_boolean = false;
 let break_countdown = 0;
+let target_min = 0;
+let target_hour = 0;
+let total_min = 0;
+let total_hour = 0;
 
-export default ({ myInfoData, networkStatus, startPolling }) => {
+export default ({
+  myInfoData,
+  networkStatus,
+  autoSwitch,
+  refreshBool,
+  myInfoRefetch,
+  refreshTerm,
+  TermChange,
+}) => {
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -457,9 +626,8 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
   // useMouseLeave(donleaveme);
 
   useEffect(() => {
-    // LoadCamera();
-    // LoadModel();
-    startPolling(10000);
+    LoadCamera();
+    LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -798,8 +966,17 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
     if (targetTime === 0) {
       donutPercent = 0;
     } else {
-      donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(1);
+      donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    let targetTime_min = targetTime / 60;
+    let existTime_min = todayTime.existTime / 60;
+    target_hour = String(Math.floor(targetTime_min / 60));
+    targetTime_min = targetTime_min - target_hour * 60;
+    target_min = String(Math.floor(targetTime_min));
+    total_hour = String(Math.floor(existTime_min / 60));
+    existTime_min = existTime_min - total_hour * 60;
+    total_min = String(Math.floor(existTime_min));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -826,25 +1003,94 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
   if (7 === networkStatus) {
     todaySchedule_calculate();
     todayGraph_calculate();
-    // todayCalLoading.current = false;
+    // CalLoading.current = false;
   }
 
   return (
     <Wrapper>
       <VideoWrap>
-        {/* <div>
+        <div>
           <video ref={video1} playsInline width="0" height="0" autoPlay muted />
           <CanvasBox ref={canvas1} />
-        </div> */}
+        </div>
       </VideoWrap>
       <GraphDiv>
         <HeaderDiv>
-          <Avatar size="sm2" url={myInfoData.avatar} />
-          <span
-            style={{ marginLeft: '10px', fontSize: '15px', fontWeight: 'bold' }}
-          >
-            {myInfoData.username}
-          </span>
+          <AvatarDiv>
+            <Avatar size="sm2" url={myInfoData.avatar} />
+            <span
+              style={{
+                marginLeft: '10px',
+                fontSize: '15px',
+                fontWeight: 'bold',
+              }}
+            >
+              {myInfoData.username}
+            </span>
+          </AvatarDiv>
+          <SetDiv>
+            <RefreshButton
+              onClick={() => {
+                myInfoRefetch();
+              }}
+            >
+              <Refresh />
+            </RefreshButton>
+            <PopupCustom
+              trigger={
+                <div style={{ cursor: 'pointer' }}>
+                  <Setting />
+                </div>
+              }
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => {
+                return (
+                  <PBody>
+                    <PTitle text={'학습 세팅'} />
+                    <SetContentWrap>
+                      <SetContentBox>
+                        자동 새로고침 on/off :　
+                        <Switch
+                          on={true}
+                          off={false}
+                          value={refreshBool}
+                          onChange={autoSwitch}
+                        />{' '}
+                      </SetContentBox>
+                      <SetContentBox>
+                        자동 새로고침 간격 :　
+                        <RefreshInputWrap>
+                          <Input_100
+                            placeholder={''}
+                            {...refreshTerm}
+                            type={'number'}
+                          />
+                        </RefreshInputWrap>
+                        초
+                        <Button_custom
+                          text={'적용'}
+                          onClick={() => {
+                            TermChange();
+                          }}
+                        />
+                      </SetContentBox>
+                    </SetContentWrap>
+                    <ButtonDiv>
+                      <PopupButton_solo
+                        type="button"
+                        onClick={() => {
+                          close();
+                        }}
+                        text={'닫기'}
+                      />
+                    </ButtonDiv>
+                  </PBody>
+                );
+              }}
+            </PopupCustom>
+          </SetDiv>
         </HeaderDiv>
         <DonutWrap>
           <DonutChart_today
@@ -858,6 +1104,18 @@ export default ({ myInfoData, networkStatus, startPolling }) => {
               '현재 시간 ' + '　' + '　' + '　',
             ]}
           />
+          <ClockBox>
+            <Clock24 />
+          </ClockBox>
+          <TodayTime>
+            {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+            {total_min.length === 1 ? '0' + total_min : total_min}m
+          </TodayTime>
+          <TodayTime_total>
+            / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+            {target_min.length === 1 ? '0' + target_min : target_min}m
+          </TodayTime_total>
+          <TodayPercent>{donutPercent}%</TodayPercent>
         </DonutWrap>
         <NowNextWrap>
           <BarWrap>

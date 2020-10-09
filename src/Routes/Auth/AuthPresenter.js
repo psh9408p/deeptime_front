@@ -111,6 +111,7 @@ const PopupCustom = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
@@ -121,6 +122,7 @@ const PopupSign = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 

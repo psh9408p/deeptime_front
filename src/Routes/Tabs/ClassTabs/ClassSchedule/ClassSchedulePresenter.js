@@ -110,6 +110,7 @@ const PopupCustom = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
@@ -120,6 +121,7 @@ const PopupCustom2 = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
@@ -130,6 +132,7 @@ const PopupCustom3 = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
@@ -140,6 +143,7 @@ const PopupCustom4 = styled(Popup)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
