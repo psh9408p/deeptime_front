@@ -101,6 +101,7 @@ export default () => {
   // 클릭 스크롤 정의
   const focusTarget = useRef([]);
   const scrollToRef = (value) => {
+    console.log(focusTarget.current);
     focusTarget.current[value].scrollIntoView({
       offset: { top: 68 },
       behavior: 'smooth',

@@ -14,6 +14,7 @@ export default () => {
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
   const [refreshBool, setRefreshBool] = useState(true);
+  const [studyBool, setStudyBool] = useState(false);
 
   const {
     data: myInfoData,
@@ -68,6 +69,8 @@ export default () => {
         myInfoRefetch={myInfoRefetch}
         refreshTerm={refreshTerm}
         TermChange={TermChange}
+        studyBool={studyBool}
+        setStudyBool={setStudyBool}
       />
     );
   }

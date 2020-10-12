@@ -1,3 +1,4 @@
+import { imageTensorToCanvas } from 'face-api.js';
 import React from 'react';
 
 export const Setting = () => (
@@ -52,6 +53,14 @@ export const User = () => (
     width="24"
     height="24"
   />
+);
+
+export const Study_true = () => (
+  <img src="/icon/study_true.png" alt="shutter" width="40" height="40" />
+);
+
+export const Study_false = () => (
+  <img src="/icon/study_false.png" alt="shutter" width="40" height="40" />
 );
 
 export const Comment = () => (

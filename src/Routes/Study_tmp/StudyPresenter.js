@@ -17,7 +17,15 @@ import twoArraySum from '../../Components/twoArraySum';
 import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
-import { Coffee, NextSchedule, Setting, Refresh } from '../../Components/Icons';
+import {
+  Coffee,
+  NextSchedule,
+  Setting,
+  Refresh,
+  Study_true,
+  Study_false,
+  Study_tmp,
+} from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
 import Avatar from '../../Components/Avatar';
@@ -27,6 +35,7 @@ import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
+import html2canvas from 'html2canvas';
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -307,6 +316,12 @@ const RefreshInputWrap = styled.div`
   height: 30px;
 `;
 
+const StatusSpan = styled.span`
+  margin-left: 10px;
+  font-size: 15px;
+  font-weight: bold;
+`;
+
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
 let taskArray = [];
@@ -352,6 +367,8 @@ export default ({
   myInfoRefetch,
   refreshTerm,
   TermChange,
+  studyBool,
+  setStudyBool,
 }) => {
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
@@ -372,6 +389,25 @@ export default ({
   const canvas1 = createRef();
 
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
+
+  const onImgSave = () => {
+    const saveAs = (uri, filename) => {
+      var link = document.createElement('a');
+      if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        window.open(uri);
+      }
+    };
+
+    html2canvas(document.querySelector('#capture')).then((canvas) => {
+      saveAs(canvas.toDataURL('image/png'), 'capture-test.png');
+    });
+  };
 
   const LoadModel = async () => {
     console.log('Load model');
@@ -585,6 +621,7 @@ export default ({
         if (finalDecision === true && decision.length === 3) {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: true } })
           console.log('Final decision : true');
+          setStudyBool(true);
           existToggleMutation({
             variables: { email: userEmail, existToggle: true },
           });
@@ -593,6 +630,7 @@ export default ({
         } else if (finalDecision === false) {
           // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: false } })
           console.log('Final decision : false');
+          setStudyBool(false);
           existToggleMutation({
             variables: { email: userEmail, existToggle: false },
           });
@@ -1007,7 +1045,7 @@ export default ({
   }
 
   return (
-    <Wrapper>
+    <Wrapper id="capture">
       <VideoWrap>
         <div>
           <video ref={video1} playsInline width="0" height="0" autoPlay muted />
@@ -1017,18 +1055,36 @@ export default ({
       <GraphDiv>
         <HeaderDiv>
           <AvatarDiv>
-            <Avatar size="sm2" url={myInfoData.avatar} />
-            <span
+            {/* <Avatar size="sm2" url={myInfoData.avatar} /> */}
+            {/* <span
               style={{
                 marginLeft: '10px',
                 fontSize: '15px',
                 fontWeight: 'bold',
               }}
-            >
+              >
               {myInfoData.username}
-            </span>
+            </span> */}
+            {studyBool ? (
+              <>
+                <Study_true />
+                <StatusSpan>학습중</StatusSpan>
+              </>
+            ) : (
+              <>
+                <Study_false />
+                <StatusSpan>부재중</StatusSpan>
+              </>
+            )}
           </AvatarDiv>
           <SetDiv>
+            <button
+              onClick={() => {
+                onImgSave();
+              }}
+            >
+              test
+            </button>
             <RefreshButton
               onClick={() => {
                 myInfoRefetch();

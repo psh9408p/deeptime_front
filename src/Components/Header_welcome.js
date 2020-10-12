@@ -155,7 +155,7 @@ export default withRouter(() => {
             <WelcomeLink to="/" replace>
               IAM
             </WelcomeLink>
-            <WelcomeLink to="/userguide/student/connectseat" replace>
+            <WelcomeLink to="/userguide/schedule" replace>
               사용가이드
             </WelcomeLink>
             <WelcomeLink to="/shopping" replace>
