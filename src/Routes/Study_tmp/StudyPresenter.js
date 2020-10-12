@@ -58,7 +58,7 @@ const TodayTime = styled.div`
   padding-left: 107px;
   font-size: 13px;
   font-weight: bold;
-  color: ${(props) => props.theme.classicBlue};
+  color: ${(props) => props.theme.skyBlue};
   top: 0;
   bottom: 0;
   left: 0;
@@ -924,7 +924,7 @@ export default ({
           const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
           if (lastZeroTime.length - lastIndex === 0) {
             // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
-            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
+            rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
             break; // 현재 이전시간으로 끝남
           } else {
             const grayTime = lastZeroTime.slice(
@@ -937,7 +937,7 @@ export default ({
             slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
             slicedTimeBox.push(blueTime);
             rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
+            rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
             break; // 현재 이전시간으로 끝남
           }
         }
@@ -951,12 +951,12 @@ export default ({
         const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
         if (index_tmp2 === -1) {
           slicedTimeBox.push(slicedTimes);
-          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
+          rgbBox.push('#7BA9EB'); // 스카이 블루 학습시간
           break; // 학습시간으로 끝남
         } else {
           const studyTime = slicedTimes.slice(0, index_tmp2);
           slicedTimeBox.push(studyTime);
-          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
+          rgbBox.push('#7BA9EB'); // 스카이 블루 학습시간
           slicedTimes = slicedTimes.slice(index_tmp2);
         }
       }
@@ -1097,12 +1097,7 @@ export default ({
             data={donutData}
             color={rgbBox}
             title={'Today Study Log'}
-            labels={[
-              '학습',
-              '학습 외',
-              '나머지',
-              '현재 시간 ' + '　' + '　' + '　',
-            ]}
+            labels={['학습', '학습 외 ' + '　' + '　' + '　' + '　', '나머지']}
           />
           <ClockBox>
             <Clock24 />

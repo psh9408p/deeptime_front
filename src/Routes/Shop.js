@@ -177,7 +177,7 @@ export default () => {
             onClick={
               // billingOnClick
               () => {
-                alert('개인용 서비스는 준비 중 입니다.');
+                alert('지금은 무료로 모든 서비스 사용이 가능합니다.');
               }
             }
           />

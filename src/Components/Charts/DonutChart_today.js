@@ -35,12 +35,12 @@ export default ({ data, color, title, labels }) => {
         {
           data: currentTime_data,
           backgroundColor: [
-            'rgba(15,76,130, 1)',
+            '#7BA9EB',
             'rgba(233, 236, 244, 1)',
-            'rgba(123, 169, 235, 1)',
-            'rgba(255, 118, 117, 1)',
+            '#EAD6D4',
             'rgba(0, 0, 0, 0)',
-            'rgba(255, 118, 117, 1)',
+            'rgba(0, 0, 0, 0)',
+            'rgba(0, 0, 0, 0)',
             'rgba(0, 0, 0, 0)',
           ],
           borderColor: [
@@ -49,10 +49,10 @@ export default ({ data, color, title, labels }) => {
             'rgba(15,76,130, 0)',
             'rgba(255, 118, 117, 0)',
             'rgba(0, 0, 0, 0)',
-            'rgba(255, 118, 117, 1)',
+            'rgba(0, 0, 0, 0)',
             'rgba(0, 0, 0, 0)',
           ],
-          borderWidth: 1,
+          borderWidth: 0.5,
         },
         {
           data,
