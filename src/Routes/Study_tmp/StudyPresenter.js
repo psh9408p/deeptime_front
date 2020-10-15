@@ -24,11 +24,10 @@ import {
   Refresh,
   Study_true,
   Study_false,
-  Study_tmp,
+  Film,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
-import Avatar from '../../Components/Avatar';
 import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
@@ -36,6 +35,8 @@ import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
 import html2canvas from 'html2canvas';
+
+const Whammy = require('whammy/whammy');
 
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
@@ -270,6 +271,17 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
+const PopupCustom2 = styled(Popup)`
+  &-content {
+    width: 460px !important;
+    height: 250px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -393,6 +405,7 @@ export default ({
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
       var link = document.createElement('a');
+      console.log(link);
       if (typeof link.download === 'string') {
         link.href = uri;
         link.download = filename;
@@ -405,6 +418,7 @@ export default ({
     };
 
     html2canvas(document.querySelector('#capture')).then((canvas) => {
+      // document.body.appendChild(canvas);
       saveAs(canvas.toDataURL('image/png'), 'capture-test.png');
     });
   };
@@ -663,9 +677,174 @@ export default ({
 
   // useMouseLeave(donleaveme);
 
+  const TimeLapseFuc = () => {
+    var drag = document.getElementById('drag');
+    var fbutton = document.getElementById('fbutton');
+    var createvideo = document.getElementById('createvideo');
+    var files = document.getElementById('filesinput');
+
+    var ctx = 0;
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    //image to video via Whammy
+    var video = new Whammy.Video(15);
+
+    var filesarr = [];
+
+    createvideo.addEventListener(
+      'click',
+      function () {
+        document.getElementById('status').innerHTML = 'Working... Please Wait.';
+
+        document.getElementById('awesome').src = '';
+        ctx = 0;
+
+        canvas.width = document.getElementById('width').value;
+        canvas.height = document.getElementById('height').value;
+        video = new Whammy.Video(document.getElementById('framerate').value);
+
+        //if we have images loaded
+        if (filesarr.length > 0) {
+          //loop through them and process
+          for (let i = 0; i < filesarr.length; i++) {
+            var file = filesarr[i];
+            if (file.type.match(/image.*/)) {
+              process(file);
+            } else {
+              document.getElementById('status').innerHTML =
+                'This file does not seem to be a image.';
+            }
+          }
+        } else {
+          document.getElementById('status').innerHTML =
+            'Please select some images.';
+        }
+      },
+      false,
+    );
+
+    fbutton.addEventListener(
+      'click',
+      function () {
+        document.getElementById('filesinput').click();
+      },
+      false,
+    );
+
+    drag.ondragover = function (e) {
+      e.preventDefault();
+    };
+    drag.ondrop = function (e) {
+      e.preventDefault();
+      filesarr = e.dataTransfer.items;
+      document.getElementById('status').innerHTML =
+        'Please select options and click on Create Video.';
+    };
+
+    //process files VIA INPUT
+    files.addEventListener(
+      'change',
+      function (e) {
+        filesarr = e.target.files;
+        document.getElementById('status').innerHTML =
+          'Please select options and click on Create Video.';
+      },
+      false,
+    );
+
+    /* main process function */
+    function process(file) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var dataUri = event.target.result;
+        var img = new Image();
+
+        //load image and drop into canvas
+        img.onload = function () {
+          //a custom fade in and out slideshow
+          context.globalAlpha = 0.2;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.4;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.6;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.8;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 1;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          //this should be a loop based on some user input
+          video.add(context);
+          video.add(context);
+          video.add(context);
+          video.add(context);
+          video.add(context);
+          video.add(context);
+          video.add(context);
+
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.8;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.6;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          context.globalAlpha = 0.4;
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          video.add(context);
+
+          ctx++;
+          finalizeVideo();
+        };
+        img.src = dataUri;
+      };
+
+      reader.onerror = function (event) {
+        console.error(
+          'File could not be read! Code ' + event.target.error.code,
+        );
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function finalizeVideo() {
+      //check if its ready
+      if (ctx == filesarr.length) {
+        var start_time = +new Date();
+        var output = video.compile();
+        var end_time = +new Date();
+        var url = URL.createObjectURL(output);
+
+        document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
+        document.getElementById('download').style.display = '';
+        document.getElementById('download').href = url;
+        document.getElementById('status').innerHTML =
+          'Compiled Video in ' +
+          (end_time - start_time) +
+          'ms, file size: ' +
+          Math.ceil(output.size / 1024) +
+          'KB';
+      }
+    }
+  };
+
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    // LoadCamera();
+    // LoadModel();
+    TimeLapseFuc();
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1092,6 +1271,95 @@ export default ({
             >
               <Refresh />
             </RefreshButton>
+            <PopupCustom2
+              trigger={
+                <div style={{ cursor: 'pointer', marginRight: '10px' }}>
+                  <Film />
+                </div>
+              }
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => {
+                return (
+                  <PBody>
+                    <h1>HTML5 Video Editor and Photo SlideShow Creator</h1>
+
+                    <p>
+                      Select some photos, set some options, and watch how a
+                      video is generated using your images as a slideshow. Check
+                      out the source to see how it works.{' '}
+                      <a href="http://techslides.com/convert-images-to-video-with-javascript/">
+                        Back to Article
+                      </a>
+                    </p>
+                    <br />
+
+                    <span id="status">Select some images.</span>
+                    <br />
+                    <br />
+
+                    <div id="drag">
+                      DROP!
+                      <button id="fbutton">Select Image(s)</button>
+                      <div id="small">
+                        <div>
+                          <label>Width:</label>
+                          <input
+                            id="width"
+                            type="number"
+                            step="1"
+                            value="500"
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div>
+                          <label>Height:</label>
+                          <input
+                            id="height"
+                            type="number"
+                            step="1"
+                            value="300"
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div>
+                          <label>Video Frame Rate:</label>
+                          <input
+                            id="framerate"
+                            type="number"
+                            step="1"
+                            value="300"
+                            onChange={() => {}}
+                          />
+                        </div>
+                      </div>
+                      <button id="createvideo">Create Video</button>
+                    </div>
+                    <input
+                      type="file"
+                      id="filesinput"
+                      onChange={() => {}}
+                      multiple
+                    />
+
+                    <br />
+                    <video id="awesome" controls autoPlay loop></video>
+                    <br />
+
+                    <a
+                      style={{ display: 'none' }}
+                      id="download"
+                      download="video.mp4"
+                    >
+                      Download WebM
+                    </a>
+
+                    <canvas id="canvas" style={{ display: 'none' }}></canvas>
+                  </PBody>
+                );
+              }}
+            </PopupCustom2>
             <PopupCustom
               trigger={
                 <div style={{ cursor: 'pointer' }}>

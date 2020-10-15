@@ -52,7 +52,6 @@ export default () => {
     alert(`자동 새로고침이 ${refreshTerm.value}초 간격으로 활성화 됐습니다.`);
   };
 
-  console.log(networkStatus, 'zzz');
   if (networkStatus === 1) {
     return (
       <LoaderWrapper>

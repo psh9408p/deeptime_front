@@ -67,7 +67,7 @@ const AiBox = styled.div`
   align-items: center;
   padding: 10px 15px;
   height: 45px;
-  width: 162px;
+  width: 194px;
   border: 1px solid ${(props) => props.theme.classicBlue};
   border-radius: 3px;
 `;
@@ -184,8 +184,8 @@ export default withRouter(() => {
                 >
                   학습
                 </PotalButton>
-                <AiHeaderLink to="/attendance" replace>
-                  출석
+                <AiHeaderLink to="/timelapse" replace>
+                  타임랩스
                 </AiHeaderLink>
               </AiBox>
             )}
@@ -239,12 +239,6 @@ export default withRouter(() => {
           )}
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
-              <HeaderLink target="_blank" to="/userguide/schedule" replace>
-                <VisualLong>사용가이드</VisualLong>
-                <VisualShort>
-                  <Guide />
-                </VisualShort>
-              </HeaderLink>
               <HeaderLink to="/" replace>
                 <VisualLong>나의 학습</VisualLong>
                 <VisualShort>
@@ -259,8 +253,11 @@ export default withRouter(() => {
               >
                 클래스 학습
               </TmpButton> */}
-              <HeaderLink to="/shop">
-                <Shop />
+              <HeaderLink target="_blank" to="/userguide/schedule" replace>
+                <VisualLong>사용가이드</VisualLong>
+                <VisualShort>
+                  <Guide />
+                </VisualShort>
               </HeaderLink>
               {!data.me ? (
                 <HeaderLink to="/#">

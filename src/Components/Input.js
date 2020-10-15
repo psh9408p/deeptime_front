@@ -6,7 +6,7 @@ const Container = styled.input`
   border: 0;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.bgColor};
   width: 100%;
   height: 35px;
   font-size: 12px;
@@ -20,6 +20,7 @@ const Input = ({
   onChange,
   type = 'text',
   className,
+  bgColor = '#FAFAFA',
 }) => (
   <Container
     className={className}
@@ -28,6 +29,7 @@ const Input = ({
     value={value}
     onChange={onChange}
     type={type}
+    bgColor={bgColor}
   />
 );
 

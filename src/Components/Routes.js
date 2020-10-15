@@ -37,6 +37,7 @@ import Account from '../Routes/Account';
 import Upload_tmp from '../Routes/Upload_tmp';
 import Experience from '../Routes/Experience';
 import UserGuide from '../Routes/UserGuide';
+import Timelapse from '../Routes/Timelapse';
 import { gql } from 'apollo-boost';
 
 export const MEPOSITION = gql`
@@ -64,7 +65,8 @@ const LoggedInRoutes = () => {
         <Switch>
           <Route path="/study" component={Study_tmp} />
           <Route path="/userguide" component={UserGuide} />
-          <Route path="/attendance" component={Attendance} />
+          <Route path="/timelapse" component={Timelapse} />
+          {/* <Route path="/attendance" component={Attendance} /> */}
           <Route exact path="/" component={MyStudy} />
           <Route path="/classstudy" component={ClassStudy} />
           <Route path="/shop" component={Shop} />
