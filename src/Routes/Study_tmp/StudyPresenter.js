@@ -103,7 +103,7 @@ const Wrapper = styled.div`
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
-const CanvasBox = styled.canvas`
+const VideoBox = styled.video`
   width: 450px;
   height: 460px;
   border-radius: ${(props) => props.theme.borderRadius};
@@ -271,17 +271,6 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
-const PopupCustom2 = styled(Popup)`
-  &-content {
-    width: 460px !important;
-    height: 250px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
-  }
-`;
-
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -370,6 +359,32 @@ let target_min = 0;
 let target_hour = 0;
 let total_min = 0;
 let total_hour = 0;
+//영상처리
+let time = new Date().getTime();
+let interval = 0;
+let decision = [true, true, true, true, true, true];
+let detection_area = [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+];
+let finalDecision = 1; //1.공부 2. 부재중 3. 잠
+let timeCount = 0;
 
 export default ({
   myInfoData,
@@ -389,17 +404,16 @@ export default ({
   const [detectButton, setDetectbutton] = useState(true);
   const [poseButton, setPosebutton] = useState(true);
   // const [faceButton, setFacebutton] = useState(true)
-  const [decision, setDecision] = useState([true]);
-  const [finalDecision, setFinalDecision] = useState(true);
+
   const [Mutation, setMutation] = useState(true);
 
-  const [timeCount, setTimeCount] = useState(0);
   const [cameraLoad, setCameraLoad] = useState(false);
   const [modelLoad, setModelLoad] = useState(false);
 
   const video1 = useRef();
-  const canvas1 = createRef();
+  // const canvas1 = createRef();
 
+  const [ctx, setCtx] = useState();
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   const onImgSave = () => {
@@ -422,6 +436,14 @@ export default ({
       saveAs(canvas.toDataURL('image/png'), 'capture-test.png');
     });
   };
+
+  function updateTime() {
+    const newTime = new Date().getTime();
+    interval = interval + (newTime - time);
+    console.log(interval / 1000);
+
+    time = newTime;
+  }
 
   const LoadModel = async () => {
     console.log('Load model');
@@ -471,36 +493,34 @@ export default ({
           });
       }
     }
-    setCameraLoad(true);
   };
 
-  const detectFromVideoFrame = async (video, canvas) => {
+  const loadCtx = async (canvas) => {
+    const temp = canvas.current.getContext('2d');
+    setCtx(temp);
+  };
+
+  const detectFromVideoFrame = async (video) => {
     try {
-      console.log(timeCount);
-      const ctx = canvas.current.getContext('2d');
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.drawImage(video, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+      // const ctx = canvas.current.getContext('2d');
+      // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // ctx.drawImage(video, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
 
-      // if (poseButton) {
+      const posePredictions = await modelPose.estimateMultiplePoses(video, {
+        flipHorizontal: false,
+        maxDetections: 1,
+        minPoseConfidence: 0.15,
+        minPartConfidence: 0.1,
+        scoreThreshold: 0.5,
+        nmsRadius: 30,
+      });
 
-      const posePredictions = await modelPose.estimateMultiplePoses(
-        canvas.current,
-        {
-          flipHorizontal: false,
-          maxDetections: 1,
-          minPoseConfidence: 0.15,
-          minPartConfidence: 0.1,
-          scoreThreshold: 0.5,
-          nmsRadius: 30,
-        },
-      );
-
-      const objectPredictions = await modelDetect.detect(canvas.current);
+      const objectPredictions = await modelDetect.detect(video);
       const personDetections = objectPredictions.filter(
         (p) => p.class === 'person',
       );
 
-      showDetections(canvas, posePredictions, personDetections);
+      // showDetections(posePredictions, personDetections);
       const Finaldecision = await ConcludeFinaldecision(
         posePredictions,
         personDetections,
@@ -512,75 +532,97 @@ export default ({
     }
   };
 
-  const showDetections = (canvas, posePredictions, objectPredictions) => {
-    console.log('Show detect');
+  // const showDetections = (posePredictions, objectPredictions) => {
+  //   console.log('Show detect');
 
-    const ctx = canvas.current.getContext('2d');
-    const font = '20px Arial';
-    ctx.font = font;
-    if (poseButton) {
-      posePredictions.forEach((poses) => {
-        const area_data = 3;
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 4;
+  //   // const ctx = canvas.current.getContext('2d');
+  //   const font = '20px Arial';
+  //   ctx.font = font;
+  //   if (poseButton) {
+  //     posePredictions.forEach((poses) => {
+  //       const area_data = 3;
+  //       ctx.strokeStyle = '0F4C81';
+  //       ctx.lineWidth = 4;
 
-        const area = new Array(area_data);
-        for (var i = 0; i < area.length; i++) {
-          area[i] = false;
-        }
-        //   const img_width = video.webcamVideoElement.width
-        const img_width = canvas.current.width;
-        ctx.strokeStyle = '#00FFFF';
-        ctx.lineWidth = 4;
-        for (var j = 0; j < poses.keypoints.length; j++) {
-          ctx.strokeRect(
-            poses.keypoints[j].position.x,
-            poses.keypoints[j].position.y,
-            1,
-            1,
-          );
-          area[
-            Math.floor(
-              (poses.keypoints[0].position.x / img_width) * area.length,
-            )
-          ] = true;
-        }
-      });
-    }
-    if (detectButton) {
-      objectPredictions.forEach((prediction) => {
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(...prediction.bbox);
+  //       const area = new Array(area_data);
+  //       for (var i = 0; i < area.length; i++) {
+  //         area[i] = false;
+  //       }
+  //       //   const img_width = video.webcamVideoElement.width
+  //       const img_width = canvas1.current.width;
+  //       ctx.strokeStyle = '#0F4C81';
+  //       ctx.lineWidth = 4;
+  //       for (var j = 0; j < poses.keypoints.length; j++) {
+  //         ctx.strokeRect(
+  //           poses.keypoints[j].position.x,
+  //           poses.keypoints[j].position.y,
+  //           1,
+  //           1,
+  //         );
+  //         area[
+  //           Math.floor(
+  //             (poses.keypoints[0].position.x / img_width) * area.length,
+  //           )
+  //         ] = true;
+  //       }
+  //     });
+  //   }
+  //   if (detectButton) {
+  //     objectPredictions.forEach((prediction) => {
+  //       ctx.strokeStyle = '#0F4C81';
+  //       ctx.lineWidth = 4;
+  //       ctx.strokeRect(...prediction.bbox);
 
-        const x = prediction.bbox[0];
-        const y = prediction.bbox[1];
-        const height = prediction.bbox[3];
-        const label = prediction.class;
-        // console.log(prediction.class)
-        ctx.fillStyle = 'red';
-        const textWidth = ctx.measureText(label).width;
-        const textHeight = parseInt(font, 10);
-        ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
-        // ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
+  //       const x = prediction.bbox[0];
+  //       const y = prediction.bbox[1];
+  //       const height = prediction.bbox[3];
+  //       const label = prediction.class;
+  //       // console.log(prediction.class)
+  //       ctx.fillStyle = '#0F4C81';
+  //       const textWidth = ctx.measureText(label).width;
+  //       const textHeight = parseInt(font, 10);
+  //       ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
+  //       // ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
 
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(label, x, y + textHeight);
-        // ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
-      });
-    }
+  //       ctx.fillStyle = '#FFFFFF';
+  //       ctx.fillText(label, x, y + textHeight);
+  //       // ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
+  //     });
+  //   }
+  // };
+  const createPredictionArray = (prediction) => {
+    const bbox = prediction.bbox;
+    const len_x = bbox[2];
+    const len_y = bbox[3];
+    return len_x; //x값을 이용하여 가장 크게 잡힌 객체 감지
   };
 
   const ConcludeFinaldecision = (posePredictions, objectPredictions) => {
+    // 1. 모든 사람 인식 결과를 array 데이터로 변환
+    // 2. 가장큰 사람 인식 결과 판단
+    // 3. objectPrediction에 판단 결과 저장 1. 공부중 2. 부재중 3. 잠
     let result = [];
-
-    if (objectPredictions.length > 0 && posePredictions.length > 0) {
+    let maxBboxArea = 100000;
+    if (objectPredictions.length > 0) {
+      const temp = objectPredictions.map(createPredictionArray);
+      const maxObject = objectPredictions[temp.indexOf(Math.max(...temp))];
+      maxBboxArea = maxObject.bbox[2] * maxObject.bbox[3];
+      console.log(maxBboxArea);
+      detection_area = detection_area.slice(1);
+      detection_area = [...detection_area, maxBboxArea];
+    }
+    if (
+      objectPredictions.length > 0 &&
+      posePredictions.length > 0 &&
+      maxBboxArea > 90000
+    ) {
       result = true;
     } else {
       result = false;
     }
-    setTimeCount(timeCount + 1);
-    setDecision([...decision, result]);
+
+    decision = decision.slice(1);
+    decision = [...decision, result];
 
     const temp = decision.reduce((obj, value, index, array) => {
       if (obj.hasOwnProperty(value)) {
@@ -590,70 +632,59 @@ export default ({
       }
       return obj;
     }, {});
-    console.log(temp);
-    if (decision.length === 3) {
-      console.log(decision);
-      // setDecision([])
-      // console.log(decision)
 
-      if (temp.true > 1) {
-        setFinalDecision(true);
-        console.log(finalDecision);
-      } else {
-        setFinalDecision(false);
-        console.log(finalDecision);
-      }
+    if (temp.true > 2) {
+      finalDecision = 1; //공부
+      console.log(finalDecision);
+      setStudyBool(true);
+    } else {
+      finalDecision = 2; //부재중
+      console.log(finalDecision);
+      setStudyBool(false);
     }
   };
   useInterval(() => {
-    console.log(timeCount);
-    console.log(decision);
-    console.log(canvas1.current);
-    console.log(video1.current);
+    // console.log(timeCount);
+    updateTime();
     if (
       modelPose !== null &&
-      modelDetect !== null &&
-      canvas1.current !== null &&
-      video1.current !== null
+      modelDetect !== null
+      // canvas1.current !== null &&
+      // canvas1 !== null
     ) {
-      if (timeCount % 20 === 1) {
-        detectFromVideoFrame(video1.current, canvas1);
+      if (timeCount % 10 === 1) {
+        detectFromVideoFrame(video1.current);
+        console.log(decision);
+        timeCount = timeCount + 1;
       } else {
-        const ctx = canvas1.current.getContext('2d');
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(
-          video1.current,
-          0,
-          0,
-          ctx.canvas.width,
-          ctx.canvas.height,
-        );
-        setTimeCount(timeCount + 1);
+        // const ctx = canvas1.current.getContext('2d');
+        // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        // ctx.drawImage(
+        //   video1.current,
+        //   0,
+        //   0,
+        //   ctx.canvas.width,
+        //   ctx.canvas.height,
+        // );
+
+        timeCount = timeCount + 1;
       }
-      // setTimeCount(timeCount + 1)
-      if (Mutation === true) {
-        if (finalDecision === true && decision.length === 3) {
-          // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: true } })
+      if (Mutation === true && interval > 59 * 1000) {
+        interval = interval - 59 * 1000;
+        if (finalDecision === 1) {
           console.log('Final decision : true');
-          setStudyBool(true);
           existToggleMutation({
             variables: { email: userEmail, existToggle: true },
           });
-          setDecision([]);
-          // setFinalDecision([])
-        } else if (finalDecision === false) {
-          // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: false } })
+        } else if (finalDecision === 2) {
           console.log('Final decision : false');
-          setStudyBool(false);
           existToggleMutation({
             variables: { email: userEmail, existToggle: false },
           });
-          setDecision([]);
-          // setFinalDecision([])
         }
       }
     }
-  }, 5000);
+  }, 1000);
 
   const Toggle = (toggleValue, togglesetValue, toggleName) => {
     const toggle = () => togglesetValue(!toggleValue);
@@ -675,176 +706,11 @@ export default ({
 
   // useMouseEnter(whatNee);
 
-  // useMouseLeave(donleaveme);
-
-  const TimeLapseFuc = () => {
-    var drag = document.getElementById('drag');
-    var fbutton = document.getElementById('fbutton');
-    var createvideo = document.getElementById('createvideo');
-    var files = document.getElementById('filesinput');
-
-    var ctx = 0;
-
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-
-    //image to video via Whammy
-    var video = new Whammy.Video(15);
-
-    var filesarr = [];
-
-    createvideo.addEventListener(
-      'click',
-      function () {
-        document.getElementById('status').innerHTML = 'Working... Please Wait.';
-
-        document.getElementById('awesome').src = '';
-        ctx = 0;
-
-        canvas.width = document.getElementById('width').value;
-        canvas.height = document.getElementById('height').value;
-        video = new Whammy.Video(document.getElementById('framerate').value);
-
-        //if we have images loaded
-        if (filesarr.length > 0) {
-          //loop through them and process
-          for (let i = 0; i < filesarr.length; i++) {
-            var file = filesarr[i];
-            if (file.type.match(/image.*/)) {
-              process(file);
-            } else {
-              document.getElementById('status').innerHTML =
-                'This file does not seem to be a image.';
-            }
-          }
-        } else {
-          document.getElementById('status').innerHTML =
-            'Please select some images.';
-        }
-      },
-      false,
-    );
-
-    fbutton.addEventListener(
-      'click',
-      function () {
-        document.getElementById('filesinput').click();
-      },
-      false,
-    );
-
-    drag.ondragover = function (e) {
-      e.preventDefault();
-    };
-    drag.ondrop = function (e) {
-      e.preventDefault();
-      filesarr = e.dataTransfer.items;
-      document.getElementById('status').innerHTML =
-        'Please select options and click on Create Video.';
-    };
-
-    //process files VIA INPUT
-    files.addEventListener(
-      'change',
-      function (e) {
-        filesarr = e.target.files;
-        document.getElementById('status').innerHTML =
-          'Please select options and click on Create Video.';
-      },
-      false,
-    );
-
-    /* main process function */
-    function process(file) {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        var dataUri = event.target.result;
-        var img = new Image();
-
-        //load image and drop into canvas
-        img.onload = function () {
-          //a custom fade in and out slideshow
-          context.globalAlpha = 0.2;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.4;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.6;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.8;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 1;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-          //this should be a loop based on some user input
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.8;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.6;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.4;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-
-          ctx++;
-          finalizeVideo();
-        };
-        img.src = dataUri;
-      };
-
-      reader.onerror = function (event) {
-        console.error(
-          'File could not be read! Code ' + event.target.error.code,
-        );
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    function finalizeVideo() {
-      //check if its ready
-      if (ctx == filesarr.length) {
-        var start_time = +new Date();
-        var output = video.compile();
-        var end_time = +new Date();
-        var url = URL.createObjectURL(output);
-
-        document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
-        document.getElementById('download').style.display = '';
-        document.getElementById('download').href = url;
-        document.getElementById('status').innerHTML =
-          'Compiled Video in ' +
-          (end_time - start_time) +
-          'ms, file size: ' +
-          Math.ceil(output.size / 1024) +
-          'KB';
-      }
-    }
-  };
+  // useMouseLeave(donleaveme)
 
   useEffect(() => {
-    // LoadCamera();
-    // LoadModel();
-    TimeLapseFuc();
+    LoadCamera();
+    LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1227,23 +1093,12 @@ export default ({
     <Wrapper id="capture">
       <VideoWrap>
         <div>
-          <video ref={video1} playsInline width="0" height="0" autoPlay muted />
-          <CanvasBox ref={canvas1} />
+          <VideoBox ref={video1} playsInline autoPlay muted />
         </div>
       </VideoWrap>
       <GraphDiv>
         <HeaderDiv>
           <AvatarDiv>
-            {/* <Avatar size="sm2" url={myInfoData.avatar} /> */}
-            {/* <span
-              style={{
-                marginLeft: '10px',
-                fontSize: '15px',
-                fontWeight: 'bold',
-              }}
-              >
-              {myInfoData.username}
-            </span> */}
             {studyBool ? (
               <>
                 <Study_true />
@@ -1271,95 +1126,6 @@ export default ({
             >
               <Refresh />
             </RefreshButton>
-            <PopupCustom2
-              trigger={
-                <div style={{ cursor: 'pointer', marginRight: '10px' }}>
-                  <Film />
-                </div>
-              }
-              closeOnDocumentClick={false}
-              modal
-            >
-              {(close) => {
-                return (
-                  <PBody>
-                    <h1>HTML5 Video Editor and Photo SlideShow Creator</h1>
-
-                    <p>
-                      Select some photos, set some options, and watch how a
-                      video is generated using your images as a slideshow. Check
-                      out the source to see how it works.{' '}
-                      <a href="http://techslides.com/convert-images-to-video-with-javascript/">
-                        Back to Article
-                      </a>
-                    </p>
-                    <br />
-
-                    <span id="status">Select some images.</span>
-                    <br />
-                    <br />
-
-                    <div id="drag">
-                      DROP!
-                      <button id="fbutton">Select Image(s)</button>
-                      <div id="small">
-                        <div>
-                          <label>Width:</label>
-                          <input
-                            id="width"
-                            type="number"
-                            step="1"
-                            value="500"
-                            onChange={() => {}}
-                          />
-                        </div>
-                        <div>
-                          <label>Height:</label>
-                          <input
-                            id="height"
-                            type="number"
-                            step="1"
-                            value="300"
-                            onChange={() => {}}
-                          />
-                        </div>
-                        <div>
-                          <label>Video Frame Rate:</label>
-                          <input
-                            id="framerate"
-                            type="number"
-                            step="1"
-                            value="300"
-                            onChange={() => {}}
-                          />
-                        </div>
-                      </div>
-                      <button id="createvideo">Create Video</button>
-                    </div>
-                    <input
-                      type="file"
-                      id="filesinput"
-                      onChange={() => {}}
-                      multiple
-                    />
-
-                    <br />
-                    <video id="awesome" controls autoPlay loop></video>
-                    <br />
-
-                    <a
-                      style={{ display: 'none' }}
-                      id="download"
-                      download="video.mp4"
-                    >
-                      Download WebM
-                    </a>
-
-                    <canvas id="canvas" style={{ display: 'none' }}></canvas>
-                  </PBody>
-                );
-              }}
-            </PopupCustom2>
             <PopupCustom
               trigger={
                 <div style={{ cursor: 'pointer' }}>

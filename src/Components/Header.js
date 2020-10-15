@@ -184,6 +184,9 @@ export default withRouter(() => {
                 >
                   학습
                 </PotalButton>
+                {/* <AiHeaderLink target="_blank" to="/study" replace>
+                  학습
+                </AiHeaderLink> */}
                 <AiHeaderLink to="/timelapse" replace>
                   타임랩스
                 </AiHeaderLink>
