@@ -521,8 +521,8 @@ export default ({
       );
     }
     // 도넛차트 계산
-    let targetTime = SumArray(taskArray_scheduleT) * 60;
-    let existTime_tmp = todayTime.existTime;
+    let targetTime = SumArray(taskArray_scheduleT);
+    let existTime_tmp = todayTime.existTime / 60;
     if (targetTime === 0) {
       donutData_1 = existTime_tmp > 0 ? 1 : 0;
       donutData_2 = existTime_tmp > 0 ? 0 : 1;
