@@ -30,18 +30,34 @@ const HeaderWrapper = styled.div`
 
 const HeaderColumn = styled.div`
   width: 33%;
+  display: flex;
   text-align: center;
+  align-items: center;
   &:first-child {
     margin-right: auto;
     text-align: left;
     display: inline-flex;
     -webkit-box-align: center;
     align-items: center;
+    @media (max-width: 945px) {
+      width: 10%;
+      min-width: 95px;
+    }
+  }
+  &:nth-child(2) {
+    justify-content: center;
+    @media (max-width: 945px) {
+      width: 80%;
+    }
   }
   &:last-child {
     margin-left: auto;
     justify-content: flex-end;
     display: inline-flex;
+    @media (max-width: 945px) {
+      width: 10%;
+      min-width: 95px;
+    }
   }
 `;
 
@@ -56,6 +72,9 @@ const HeaderLink = styled(Link)`
   cursor: pointer;
   &:not(:last-child) {
     margin-right: 30px;
+    @media (max-width: 945px) {
+      margin-right: 5px;
+    }
   }
   display: inline-flex;
   -webkit-box-align: center;
@@ -69,10 +88,15 @@ const WelcomeLink = styled(Link)`
   cursor: pointer;
   &:not(:last-child) {
     margin-right: 30px;
+    @media (max-width: 945px) {
+      margin-right: 15px;
+    }
   }
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
+  white-space: nowrap;
+  height: 45px;
   font-size: 16px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
@@ -83,8 +107,14 @@ const WelcomeLink = styled(Link)`
 `;
 
 const IamText = styled.div`
-  font-size: 18px;
-  margin: 0px 8px 0px 10px;
+  font-size: 16px;
+  margin: 0px 0px 0px 10px;
+`;
+
+const DisplayDiv = styled.div`
+  @media (max-width: 945px) {
+    display: none;
+  }
 `;
 
 const PotalButton = styled.button`
@@ -99,7 +129,8 @@ const PotalButton = styled.button`
   background: none;
   border: 1px solid ${(props) => props.theme.classicBlue};
   border-radius: 3px;
-  padding: 0px 10px;
+  /* padding: 0px 10px; */
+  height: 40px;
 `;
 
 export default withRouter(() => {
@@ -124,7 +155,7 @@ export default withRouter(() => {
             <WelcomeLink to="/" replace>
               IAM
             </WelcomeLink>
-            <WelcomeLink to="/userguide/student/connectseat" replace>
+            <WelcomeLink to="/userguide/schedule" replace>
               사용가이드
             </WelcomeLink>
             <WelcomeLink to="/shopping" replace>
@@ -141,7 +172,9 @@ export default withRouter(() => {
           </HeaderLink>
           <PotalButton type="button" onClick={onClickPotal_student}>
             <Shutter />
-            <IamText>IAM</IamText>체험하기
+            <DisplayDiv>
+              <IamText>체험하기</IamText>
+            </DisplayDiv>
           </PotalButton>
         </HeaderColumn>
       </HeaderWrapper>

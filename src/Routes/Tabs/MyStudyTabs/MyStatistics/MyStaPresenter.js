@@ -1,12 +1,10 @@
 import React, { forwardRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Loader from '../../../../Components/Loader';
-import { Clock24 } from '../../../../Components/Image';
 import AreaChart from '../../../../Components/Charts/AreaChart';
 import RowBarChart from '../../../../Components/Charts/RowBarChart';
 import RowBarChart_selfPercent from '../../../../Components/Charts/RowBarChart_selfPercent';
 import DonutChart from '../../../../Components/Charts/DonutChart';
-import DonutChart_today from '../../../../Components/Charts/DonutChart_today';
 import PieChart from '../../../../Components/Charts/PieChart';
 import twoArraySum from '../../../../Components/twoArraySum';
 import SumArray from '../../../../Components/Array/SumArray';
@@ -94,36 +92,38 @@ const ChartWrap_percentBar = styled.div`
   height: 100%;
 `;
 
-const DonutChartValue = styled.div`
-  width: 100%;
-  height: 100%;
+const TotalTime = styled.div`
   position: absolute;
   z-index: 2;
   display: flex;
-  justify-content: center;
-  font-size: 30px;
-  font-weight: 600;
-  padding-top: 160px;
+  padding-top: 177px;
+  padding-left: 267px;
+  font-size: 13px;
+  font-weight: bold;
+  color: ${(props) => props.theme.skyBlue};
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 `;
 
-const ClockBox = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 2;
+const TargetTime = styled(TotalTime)`
+  padding-top: 192px;
+  padding-left: 300px;
+  color: black;
+`;
+
+const DonutPercent = styled(TotalTime)`
   display: flex;
-  padding-top: 59px;
-  padding-right: 3px;
   justify-content: center;
   align-items: center;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  color: black;
+  font-size: 25px;
+  margin-top: 128px;
+  margin-left: 267px;
+  padding: 0;
+  width: 100px;
+  height: 50px;
 `;
 
 const ClassButton = styled.button`
@@ -265,7 +265,6 @@ let schedule_color = [];
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_week = [[], [], [], [], [], [], []];
 let scheduleList_selectDay_month = [];
-let donutData = [];
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
@@ -277,6 +276,10 @@ let self_percent = [];
 let lecture_percent = [];
 let self_percentT = [];
 let lecture_percentT = [];
+let target_min = 0;
+let target_hour = 0;
+let total_min = 0;
+let total_hour = 0;
 
 export default ({
   StaTabs,
@@ -362,7 +365,6 @@ export default ({
     // console.log(scheduleList_selectDay);
     // 초기화
     taskArray = new Array(24).fill(0);
-    donutData = [];
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
@@ -519,70 +521,28 @@ export default ({
       );
     }
     // 도넛차트 계산
-    let slicedTimeBox = [];
-    // console.log(todayTime.time_24);
-    let slicedTimes = ObjectCopy(todayTime.time_24);
-    while (true) {
-      const index_tmp = slicedTimes.findIndex((i) => i > 0);
-      if (index_tmp === -1) {
-        slicedTimeBox.push(slicedTimes);
-        const nowDateMin_count =
-          Math.floor(
-            (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
-          ) + 1;
-        if (nowDateMin_count === 288) {
-          // 지금이 23시 55분 이상이라는 뜻
-          rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-          break; // 빈시간으로 끝남
-        } else {
-          const lastIndex = 288 - nowDateMin_count; // 아직 지나지 않은 시간이 몇칸인지 알려주는 변수
-          const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
-          if (lastZeroTime.length - lastIndex === 0) {
-            // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
-            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
-            break; // 현재 이전시간으로 끝남
-          } else {
-            const grayTime = lastZeroTime.slice(
-              0,
-              lastZeroTime.length - lastIndex,
-            );
-            const blueTime = lastZeroTime.slice(
-              lastZeroTime.length - lastIndex,
-            );
-            slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
-            slicedTimeBox.push(blueTime);
-            rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-            rgbBox.push('rgba(123, 169, 235, 1)'); // 파란색 지금 이전 시간
-            break; // 현재 이전시간으로 끝남
-          }
-        }
-      } else {
-        if (index_tmp !== 0) {
-          // 0인 시간이 하나라도 있어야 빈시간을 넣지
-          slicedTimeBox.push(slicedTimes.slice(0, index_tmp));
-          rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-          slicedTimes = slicedTimes.slice(index_tmp);
-        }
-        const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
-        if (index_tmp2 === -1) {
-          slicedTimeBox.push(slicedTimes);
-          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
-          break; // 학습시간으로 끝남
-        } else {
-          const studyTime = slicedTimes.slice(0, index_tmp2);
-          slicedTimeBox.push(studyTime);
-          rgbBox.push('rgba(15,76,130, 1)'); // 클래식 블루 학습시간
-          slicedTimes = slicedTimes.slice(index_tmp2);
-        }
-      }
-    }
-    donutData = slicedTimeBox.map((a) => a.length * 5);
-    const targetTime = SumArray(taskArray_scheduleT) * 60;
+    let targetTime = SumArray(taskArray_scheduleT) * 60;
+    let existTime_tmp = todayTime.existTime;
     if (targetTime === 0) {
+      donutData_1 = existTime_tmp > 0 ? 1 : 0;
+      donutData_2 = existTime_tmp > 0 ? 0 : 1;
       donutPercent = 0;
+    } else if (targetTime - existTime_tmp < 0) {
+      donutData_1 = 1;
+      donutData_2 = 0;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     } else {
-      donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(1);
+      donutData_1 = existTime_tmp;
+      donutData_2 = targetTime - existTime_tmp;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    target_hour = String(Math.floor(targetTime / 60));
+    targetTime = targetTime - target_hour * 60;
+    target_min = String(Math.floor(targetTime));
+    total_hour = String(Math.floor(existTime_tmp / 60));
+    existTime_tmp = existTime_tmp - total_hour * 60;
+    total_min = String(Math.floor(existTime_tmp));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -798,17 +758,28 @@ export default ({
     for (let j = 0; j < 7; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
-    const targetTime = SumArray(taskArray_scheduleT_week) * 60;
-
+    existTime_tmp = existTime_tmp / 60;
+    let targetTime = SumArray(taskArray_scheduleT_week) * 60;
     if (targetTime === 0) {
-      donutData_1 = 0;
-      donutData_2 = 1;
+      donutData_1 = existTime_tmp > 0 ? 1 : 0;
+      donutData_2 = existTime_tmp > 0 ? 0 : 1;
       donutPercent = 0;
+    } else if (targetTime - existTime_tmp < 0) {
+      donutData_1 = 1;
+      donutData_2 = 0;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     } else {
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
-      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    target_hour = String(Math.floor(targetTime / 60));
+    targetTime = targetTime - target_hour * 60;
+    target_min = String(Math.floor(targetTime));
+    total_hour = String(Math.floor(existTime_tmp / 60));
+    existTime_tmp = existTime_tmp - total_hour * 60;
+    total_min = String(Math.floor(existTime_tmp));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -1026,16 +997,28 @@ export default ({
     for (let j = 0; j < lastMonthDate; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
-    const targetTime = SumArray(taskArray_scheduleT_month) * 60;
+    existTime_tmp = existTime_tmp / 60;
+    let targetTime = SumArray(taskArray_scheduleT_month) * 60;
     if (targetTime === 0) {
-      donutData_1 = 0;
-      donutData_2 = 1;
+      donutData_1 = existTime_tmp > 0 ? 1 : 0;
+      donutData_2 = existTime_tmp > 0 ? 0 : 1;
       donutPercent = 0;
+    } else if (targetTime - existTime_tmp < 0) {
+      donutData_1 = 1;
+      donutData_2 = 0;
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     } else {
       donutData_1 = existTime_tmp;
       donutData_2 = targetTime - existTime_tmp;
-      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(1);
+      donutPercent = ((existTime_tmp / targetTime) * 100).toFixed(0);
     }
+    //도넛 안 시간 계산
+    target_hour = String(Math.floor(targetTime / 60));
+    targetTime = targetTime - target_hour * 60;
+    target_min = String(Math.floor(targetTime));
+    total_hour = String(Math.floor(existTime_tmp / 60));
+    existTime_tmp = existTime_tmp - total_hour * 60;
+    total_min = String(Math.floor(existTime_tmp));
     //자습 강의 비율 계산
     const total_self = SumArray(selfStudy_box);
     const total_lecture = SumArray(lectureStudy_box);
@@ -1167,17 +1150,22 @@ export default ({
             </StatisRow>
             <StatisRow>
               <ChartWrap>
-                <DonutChart_today
-                  data={donutData}
-                  color={rgbBox}
-                  title={'학습 로그'}
-                  labels={['학습', '학습 외', '나머지', '현재 시간']}
+                <DonutChart
+                  data_1={donutData_1}
+                  data_2={donutData_2}
+                  title={'학습 성취도'}
+                  labels={['학습', '목표']}
                 />
               </ChartWrap>
-              <DonutChartValue>{donutPercent}%</DonutChartValue>
-              <ClockBox>
-                <Clock24 />
-              </ClockBox>
+              <TotalTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TotalTime>
+              <TargetTime>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TargetTime>
+              <DonutPercent>{donutPercent}%</DonutPercent>
               {todayCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
@@ -1308,7 +1296,15 @@ export default ({
                   labels={['학습', '목표']}
                 />
               </ChartWrap>
-              <DonutChartValue>{donutPercent}%</DonutChartValue>
+              <TotalTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TotalTime>
+              <TargetTime>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TargetTime>
+              <DonutPercent>{donutPercent}%</DonutPercent>
               {weekCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />
@@ -1439,7 +1435,15 @@ export default ({
                   labels={['학습', '목표']}
                 />
               </ChartWrap>
-              <DonutChartValue>{donutPercent}%</DonutChartValue>
+              <TotalTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TotalTime>
+              <TargetTime>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TargetTime>
+              <DonutPercent>{donutPercent}%</DonutPercent>
               {monthCalLoading.current && (
                 <LoaderWrapper>
                   <Loader />

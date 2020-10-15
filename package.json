@@ -23,6 +23,7 @@
     "face-api.js": "0.22.1",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.3",
+    "html2canvas": "^1.0.0-rc.7",
     "memoize-one": "5.1.1",
     "moment": "2.24.0",
     "opencv.js": "1.2.1",
@@ -34,7 +35,7 @@
     "react-autosize-textarea": "7.0.0",
     "react-color": "2.18.1",
     "react-copy-to-clipboard": "5.0.2",
-    "react-countdown": "2.2.1",
+    "react-countdown": "2.2.2",
     "react-datepicker": "2.14.1",
     "react-dom": "16.13.1",
     "react-facebook-login": "4.1.1",
@@ -42,6 +43,7 @@
     "react-google-login": "5.1.1",
     "react-helmet": "^5.2.0",
     "react-id-swiper": "3.0.0",
+    "react-input-switch": "^2.2.2",
     "react-numeric-input": "2.2.3",
     "react-phone-input-2": "^2.13.3",
     "react-router-dom": "5.1.2",
@@ -59,6 +61,7 @@
     "swiper": "5.3.8",
     "uncontrollable": "^7.1.1",
     "warning": "^4.0.3",
+    "whammy": "0.0.1",
     "yarn": "1.22.4"
   },
   "scripts": {

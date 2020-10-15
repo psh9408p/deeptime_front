@@ -12,6 +12,7 @@ import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
 import Profile_M from '../Routes/Profile_M';
 import Study from '../Routes/Study';
+import Study_tmp from '../Routes/Study_tmp';
 import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
 import Loader from './Loader';
@@ -36,6 +37,7 @@ import Account from '../Routes/Account';
 import Upload_tmp from '../Routes/Upload_tmp';
 import Experience from '../Routes/Experience';
 import UserGuide from '../Routes/UserGuide';
+import Timelapse from '../Routes/Timelapse';
 import { gql } from 'apollo-boost';
 
 export const MEPOSITION = gql`
@@ -61,9 +63,10 @@ const LoggedInRoutes = () => {
     if (Mydata.me.loginPosition === 'student') {
       return (
         <Switch>
-          <Route path="/study" component={Study} />
+          <Route path="/study" component={Study_tmp} />
           <Route path="/userguide" component={UserGuide} />
-          <Route path="/attendance" component={Attendance} />
+          <Route path="/timelapse" component={Timelapse} />
+          {/* <Route path="/attendance" component={Attendance} /> */}
           <Route exact path="/" component={MyStudy} />
           <Route path="/classstudy" component={ClassStudy} />
           <Route path="/shop" component={Shop} />
