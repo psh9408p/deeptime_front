@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, useLocation } from 'react-router-dom';
 import Auth from '../Routes/Auth';
 import Attendance from '../Routes/Attendance';
 import Supervision from '../Routes/Supervision';
@@ -39,13 +39,21 @@ import Experience from '../Routes/Experience';
 import UserGuide from '../Routes/UserGuide';
 import Timelapse from '../Routes/Timelapse';
 import { gql } from 'apollo-boost';
+import ChannelService from './ChannelService';
 
 export const MEPOSITION = gql`
   query me {
     me {
       id
+      fullName
       email
+      phoneNumber
       loginPosition
+      studyGroup
+      studyGroup2
+      studyGroup3
+      address1
+      address2
     }
   }
 `;
@@ -57,10 +65,33 @@ const LoaderWrapper = styled.div`
 export let userEmail = '';
 
 const LoggedInRoutes = () => {
+  let location = useLocation();
+  const pageName = location.pathname.split('/')[1];
   const { data: Mydata, loading, refetch: MyRefetch } = useQuery(MEPOSITION);
+
   if (!loading && Mydata && Mydata.me) {
     userEmail = Mydata.me.email;
     if (Mydata.me.loginPosition === 'student') {
+      // 학습을 제외한 페이지에서 채널톡 실행
+      if (pageName !== 'study') {
+        ChannelService.boot({
+          pluginKey: '8a97f0ce-c8f6-4d13-baf0-d9f488b7246f', //please fill with your plugin key
+          profile: {
+            name: Mydata.me.fullName, //fill with user name
+            username: Mydata.me.username,
+            email: Mydata.me.email,
+            mobileNumber: Mydata.me.phoneNumber,
+            studyGroup:
+              Mydata.me.studyGroup +
+              '/' +
+              Mydata.me.studyGroup2 +
+              '/' +
+              Mydata.me.studyGroup3,
+            address: Mydata.me.address1 + '/' + Mydata.me.address2,
+          },
+        });
+      }
+
       return (
         <Switch>
           <Route path="/study" component={Study_tmp} />

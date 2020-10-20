@@ -5,12 +5,14 @@ import StudyPresenter from './StudyPresenter';
 import { ME } from '../Tabs/MyStudyTabs/MyStudyTabsQueries';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
+import ChannelService from '../../Components/ChannelService';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
 export default () => {
+  ChannelService.shutdown();
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
   const [refreshBool, setRefreshBool] = useState(true);
