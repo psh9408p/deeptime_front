@@ -21,6 +21,8 @@ export default ({ data_1, data_2, title, labels }) => {
     options: {
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: title,
       },
       plugins: {

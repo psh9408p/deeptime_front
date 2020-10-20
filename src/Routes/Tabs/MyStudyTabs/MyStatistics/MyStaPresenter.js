@@ -11,9 +11,9 @@ import SumArray from '../../../../Components/Array/SumArray';
 import SplitArray from '../../../../Components/Array/SplitArray';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Input_100 from '../../../../Components/Input_100';
 import WeekRange from '../../../../Components/Date/WeekRange';
 import ObjectCopy from '../../../../Components/ObjectCopy';
+import Button_refresh from '../../../../Components/Buttons/Button_refresh';
 
 const Wrapper = styled.div`
   display: flex;
@@ -183,7 +183,7 @@ const RefreshDiv = styled.div`
   width: 50%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   span {
     font-weight: 600;
@@ -235,7 +235,7 @@ const ChangeButton = styled.button`
   border-radius: 25px;
   background-color: ${(props) =>
     props.styleBoolean
-      ? (props) => props.theme.skyBlue
+      ? (props) => props.theme.classicBlue
       : (props) => props.theme.classicGray};
   color: ${(props) => (props.styleBoolean ? 'white' : 'black')};
   font-weight: 600;
@@ -287,8 +287,8 @@ export default ({
   nextDate,
   setSelectDate,
   myInfoData,
+  myInfoRefetch,
   networkStatus,
-  refreshTerm,
   oneDayHours,
   todayCalLoading,
   weekCalLoading,
@@ -1066,6 +1066,7 @@ export default ({
     );
   });
 
+  console.log(networkStatus, 'bbbb');
   return (
     <Wrapper>
       <BigBox>
@@ -1078,13 +1079,14 @@ export default ({
             />
           </DatePickDiv>
           <RefreshDiv>
-            <span>자동 새로고침:&nbsp;</span>
-            <RefreshInputWrap>
-              <Input_100 placeholder={''} {...refreshTerm} type={'number'} />
-            </RefreshInputWrap>
-            <span>(Sec)&nbsp;</span>
+            <span>새로고침 :&nbsp;&nbsp;</span>
+            <Button_refresh
+              onClick={() => {
+                myInfoRefetch();
+              }}
+            />
             {networkStatus === 7 && <IngSpan></IngSpan>}
-            {networkStatus === 6 && <IngSpan>ing...</IngSpan>}
+            {networkStatus === 4 && <IngSpan>ing...</IngSpan>}
           </RefreshDiv>
         </StatisRow>
         <StatisRow>
@@ -1137,7 +1139,7 @@ export default ({
                 <AreaChart
                   data_1={taskArray}
                   labels={oneDayHours}
-                  title={'시간별 학습 시간'}
+                  title={'시간대별 학습 시간'}
                   title_y={'학습 시간(분)'}
                   dateRange={'today'}
                 />

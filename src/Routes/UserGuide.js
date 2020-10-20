@@ -100,9 +100,15 @@ export default () => {
 
   // 클릭 스크롤 정의
   const focusTarget = useRef([]);
+  const focusTarget2 = useRef([]);
   const scrollToRef = (value) => {
-    console.log(focusTarget.current);
-    focusTarget.current[value].scrollIntoView({
+    let selectRef = null;
+    if (pageName === 'schedule') {
+      selectRef = focusTarget;
+    } else if (pageName === 'statistics') {
+      selectRef = focusTarget2;
+    }
+    selectRef.current[value].scrollIntoView({
       offset: { top: 68 },
       behavior: 'smooth',
     });
@@ -130,7 +136,7 @@ export default () => {
                 scrollToRef(0);
               }}
             >
-              <NavText>스케줄러 찾기</NavText>
+              <NavText>[TOP] 스케줄 관리</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -138,7 +144,7 @@ export default () => {
                 scrollToRef(1);
               }}
             >
-              <NavText>스케줄러 기본 설명</NavText>
+              <NavText>스케줄러 찾기</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -146,7 +152,7 @@ export default () => {
                 scrollToRef(2);
               }}
             >
-              <NavText>과목 북마크(즐겨찾기)</NavText>
+              <NavText>스케줄러 기본 설명</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -154,7 +160,7 @@ export default () => {
                 scrollToRef(3);
               }}
             >
-              <NavText>과목 추가</NavText>
+              <NavText>과목 북마크(즐겨찾기)</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -162,7 +168,7 @@ export default () => {
                 scrollToRef(4);
               }}
             >
-              <NavText>과목 수정</NavText>
+              <NavText>과목 추가</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -170,7 +176,7 @@ export default () => {
                 scrollToRef(5);
               }}
             >
-              <NavText>과목 삭제</NavText>
+              <NavText>과목 수정</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -178,7 +184,7 @@ export default () => {
                 scrollToRef(6);
               }}
             >
-              <NavText>스케줄 추가</NavText>
+              <NavText>과목 삭제</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -186,7 +192,7 @@ export default () => {
                 scrollToRef(7);
               }}
             >
-              <NavText>스케줄 수정</NavText>
+              <NavText>스케줄 추가</NavText>
             </NavItem>
             <NavItem
               eventKey="schedule"
@@ -194,7 +200,84 @@ export default () => {
                 scrollToRef(8);
               }}
             >
+              <NavText>스케줄 수정</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="schedule"
+              onClick={() => {
+                scrollToRef(9);
+              }}
+            >
               <NavText>스케줄 삭제</NavText>
+            </NavItem>
+          </NavItem>
+          <NavItem eventKey="statistics">
+            <NavText>
+              <NavTextWrap>학습 통계</NavTextWrap>
+            </NavText>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(0);
+              }}
+            >
+              <NavText>[TOP] 학습 통계</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(1);
+              }}
+            >
+              <NavText>학습 통계 찾기</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(2);
+              }}
+            >
+              <NavText>통계 기본 설명</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(3);
+              }}
+            >
+              <NavText>과목별 학습 시간</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(4);
+              }}
+            >
+              <NavText>시간대별 학습 시간</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(5);
+              }}
+            >
+              <NavText>학습 성취도</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(6);
+              }}
+            >
+              <NavText>과목별 시간 비율</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="statistics"
+              onClick={() => {
+                scrollToRef(7);
+              }}
+            >
+              <NavText>자습&amp;강의 시간 비율</NavText>
             </NavItem>
           </NavItem>
           {/* <NavItem eventKey="manager">
@@ -211,53 +294,9 @@ export default () => {
         </SideNav.Nav>
       </SideWrap>
       <TmpDiv>
-        {pageName === 'student/connectseat' && (
-          <>
-            <Title_h1>좌석 연결</Title_h1>
-            <TitleContent>
-              사용자의 회원 아이디와 개인 좌석에 설치된 &lsquo;메타(학습시간
-              측정 기기)&rsquo;를 연결하는 작업입니다.
-            </TitleContent>
-            <TitleImg>회원가입이 되어 있지 않은 경우</TitleImg>
-            <ImgDiv
-              src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/1.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_1).jpg'
-              }
-            />
-            <Content_ol>
-              <li>로그인 클릭 후 회원가입을 먼저 해야 합니다.</li>
-            </Content_ol>
-            <TitleImg>회원가입이 되어 있는 경우</TitleImg>
-            <ImgDiv
-              src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/2.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_1-1).JPG'
-              }
-            />
-            <Content_ol>
-              <li>로그인 후 프로필 클릭</li>
-            </Content_ol>
-            <ImgDiv
-              src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/3.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_2).jpg'
-              }
-            />
-            <Content_ol>
-              <li>개인 클릭</li>
-              <li>독서실 좌석 연결</li>
-            </Content_ol>
-            <ImgDiv
-              src={
-                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/4.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_3).jpg'
-              }
-            />
-            <Content_ol>
-              <li>메타에 부착된 시리얼넘버 입력</li>
-              <li>독서실 관리자에게 받은 가입번호(6자리) 입력</li>
-            </Content_ol>
-          </>
-        )}
         {pageName === 'schedule' && (
           <>
+            <ScrollPoint ref={(el) => (focusTarget.current[0] = el)} />
             <Title_h1>스케줄 관리</Title_h1>
             <TitleContent>
               IAM 서비스는 학습자의 계획을 기준으로 학습시간 확인 및 분석합니다.
@@ -267,7 +306,7 @@ export default () => {
               <br />
               스케줄은 주 단위로 작성 가능합니다.
             </TitleContent>
-            <ScrollPoint ref={(el) => (focusTarget.current[0] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[1] = el)} />
             <TitleImg>스케줄러 찾기</TitleImg>
             <ImgDiv
               src={
@@ -278,7 +317,7 @@ export default () => {
               <li>나의 학습 클릭</li>
               <li>나의 스케줄 클릭</li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[1] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[2] = el)} />
             <TitleImg>스케줄러 기본 설명</TitleImg>
             <ImgDiv
               src={
@@ -294,7 +333,7 @@ export default () => {
               </li>
               <li>날짜&amp;시간 별 스케줄 배정 칸</li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[2] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[3] = el)} />
             <TitleImg>과목 북마크(즐겨찾기)</TitleImg>
             <ImgDiv
               src={
@@ -315,7 +354,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[3] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[4] = el)} />
             <TitleImg>과목 추가</TitleImg>
             <ImgDiv
               src={
@@ -337,7 +376,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[4] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[5] = el)} />
             <TitleImg>과목 수정</TitleImg>
             <ImgDiv
               src={
@@ -361,7 +400,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[5] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[6] = el)} />
             <TitleImg>과목 삭제</TitleImg>
             <ImgDiv
               src={
@@ -383,7 +422,7 @@ export default () => {
                 </SubContent>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[6] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[7] = el)} />
             <TitleImg>스케줄 추가</TitleImg>
             <ImgDiv
               src={
@@ -430,7 +469,7 @@ export default () => {
                 </span>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[7] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[8] = el)} />
             <TitleImg>스케줄 수정</TitleImg>
             <ImgDiv
               src={
@@ -459,7 +498,7 @@ export default () => {
                 </span>
               </li>
             </Content_ol>
-            <ScrollPoint ref={(el) => (focusTarget.current[8] = el)} />
+            <ScrollPoint ref={(el) => (focusTarget.current[9] = el)} />
             <TitleImg>스케줄 삭제</TitleImg>
             <ImgDiv
               src={
@@ -478,8 +517,172 @@ export default () => {
             </Content_ol>
           </>
         )}
-        {pageName === 'manager' && <div>자료 준비 중 입니다.</div>}
+        {pageName === 'statistics' && (
+          <>
+            <ScrollPoint ref={(el) => (focusTarget2.current[0] = el)} />
+            <Title_h1>학습 통계</Title_h1>
+            <TitleContent>
+              IAM 서비스는 시간대별 학습 시간과 스케줄 데이터를 따로 관리합니다.
+              <br />
+              통계 데이터는 시간대별 학습 시간과 스케줄을 비교하여 산출됩니다.
+              <br />
+              시간대별 학습 시간은 고정되어 있어서 스케줄을 수정하면 통계
+              데이터도 그에 따라 변경됩니다.
+            </TitleContent>
+            <ScrollPoint ref={(el) => (focusTarget2.current[1] = el)} />
+            <TitleImg>학습 통계 찾기</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_1.png'
+              }
+            />
+            <Content_ol>
+              <li>나의 학습 클릭</li>
+              <li>나의 통계 클릭</li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[2] = el)} />
+            <TitleImg>통계 기본 설명</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_2.png'
+              }
+            />
+            <Content_ol>
+              <li>날짜 선택 (해당 날짜 기준으로 통계 분석)</li>
+              <li>데이터 새로고침</li>
+              <li>통계 범위 선택 (선택한 날짜 기준으로 범위 설정)</li>
+              <li>5가지의 학습 통계 자료</li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[3] = el)} />
+            <TitleImg>과목별 학습 시간</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_3.png'
+              }
+            />
+            <Content_ol>
+              <li>
+                과목별 학습 시간 (채색: 학습 시간, 음영색: 스케줄 목표 시간)
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    시간대별 학습 시간과 스케줄 비교 통계 자료
+                  </span>
+                </SubContent>
+              </li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[4] = el)} />
+            <TitleImg>시간대별 학습 시간</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_4.png'
+              }
+            />
+            <Content_ol>
+              <li>
+                1시간 단위의 시간대별 학습 시간
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    스케줄과 상관없이 공부한 학습 시간 통계 자료
+                  </span>
+                </SubContent>
+              </li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[5] = el)} />
+            <TitleImg>학습 성취도</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_5.png'
+              }
+            />
+            <Content_ol>
+              <li>목표 시간 대비 학습 시간의 비율</li>
+              <li>
+                학습 시간 (스케줄과 상관없는 학습 시간) / 목표 시간 (스케줄로
+                작성된 목표 시간)
+                <SubContent>
+                  &#8251;{' '}
+                  <span style={{ color: '#7BA9EB' }}>
+                    목표 시간만 스케줄을 반영한 통계 자료
+                  </span>
+                </SubContent>
+              </li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[6] = el)} />
+            <TitleImg>과목별 시간 비율</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_6.png'
+              }
+            />
+            <Content_ol>
+              <li>목표 클릭 → 스케줄로 작성된 과목별 목표 시간 비율</li>
+              <li>학습 클릭 → 스케줄로 작성된 시간내 과목별 학습 시간 비율</li>
+            </Content_ol>
+            <ScrollPoint ref={(el) => (focusTarget2.current[7] = el)} />
+            <TitleImg>자습&amp;강의 시간 비율</TitleImg>
+            <ImgDiv
+              src={
+                'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/statistics/statistics_7.png'
+              }
+            />
+            <Content_ol>
+              <li>목표 클릭 → 스케줄로 작성된 자습&amp;강의 목표 시간 비율</li>
+              <li>
+                학습 클릭 → 스케줄로 작성된 시간내 자습&amp;강의 학습 시간 비율
+              </li>
+            </Content_ol>
+          </>
+        )}
+        {/* {pageName === 'manager' && <div>자료 준비 중 입니다.</div>} */}
       </TmpDiv>
     </>
   );
 };
+
+// {pageName === 'student/connectseat' && (
+//   <>
+//     <Title_h1>좌석 연결</Title_h1>
+//     <TitleContent>
+//       사용자의 회원 아이디와 개인 좌석에 설치된 &lsquo;메타(학습시간
+//       측정 기기)&rsquo;를 연결하는 작업입니다.
+//     </TitleContent>
+//     <TitleImg>회원가입이 되어 있지 않은 경우</TitleImg>
+//     <ImgDiv
+//       src={
+//         'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/1.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_1).jpg'
+//       }
+//     />
+//     <Content_ol>
+//       <li>로그인 클릭 후 회원가입을 먼저 해야 합니다.</li>
+//     </Content_ol>
+//     <TitleImg>회원가입이 되어 있는 경우</TitleImg>
+//     <ImgDiv
+//       src={
+//         'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/2.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_1-1).JPG'
+//       }
+//     />
+//     <Content_ol>
+//       <li>로그인 후 프로필 클릭</li>
+//     </Content_ol>
+//     <ImgDiv
+//       src={
+//         'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/3.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_2).jpg'
+//       }
+//     />
+//     <Content_ol>
+//       <li>개인 클릭</li>
+//       <li>독서실 좌석 연결</li>
+//     </Content_ol>
+//     <ImgDiv
+//       src={
+//         'https://slog-iam.s3.ap-northeast-2.amazonaws.com/userguide/student/4.%EC%A2%8C%EC%84%9D%EC%97%B0%EA%B2%B0_3).jpg'
+//       }
+//     />
+//     <Content_ol>
+//       <li>메타에 부착된 시리얼넘버 입력</li>
+//       <li>독서실 관리자에게 받은 가입번호(6자리) 입력</li>
+//     </Content_ol>
+//   </>
+// )}

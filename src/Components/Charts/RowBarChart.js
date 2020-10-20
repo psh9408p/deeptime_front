@@ -45,6 +45,8 @@ export default ({
     options: {
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: title,
       },
       plugins: {

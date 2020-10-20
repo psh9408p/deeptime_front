@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
 
-export default ({ myInfoData, networkStatus, refreshTerm }) => {
+export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
   const StaTabs = useTabs(0, StaTabContents);
   const [selectDate, setSelectDate] = useState(new Date());
@@ -33,8 +33,8 @@ export default ({ myInfoData, networkStatus, refreshTerm }) => {
       nextDate={nextDate}
       setSelectDate={setSelectDate}
       myInfoData={myInfoData.me}
+      myInfoRefetch={myInfoRefetch}
       networkStatus={networkStatus}
-      refreshTerm={refreshTerm}
       oneDayHours={oneDayHours}
       todayCalLoading={todayCalLoading}
       weekCalLoading={weekCalLoading}

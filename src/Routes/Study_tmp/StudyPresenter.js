@@ -21,7 +21,6 @@ import {
   Coffee,
   NextSchedule,
   Setting,
-  Refresh,
   Study_true,
   Study_false,
   Film,
@@ -34,6 +33,7 @@ import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
+import Button_refresh from '../../Components/Buttons/Button_refresh';
 import html2canvas from 'html2canvas';
 
 const Whammy = require('whammy/whammy');
@@ -233,31 +233,6 @@ const SetDiv = styled.div`
   justify-content: flex-end;
   align-items: center;
   padding: 0 15px 0 0;
-`;
-
-const RefreshButton = styled.button`
-  font-size: 24px;
-  padding: 3px 10px;
-  margin-right: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  cursor: pointer;
-  outline: none;
-  color: #fff;
-  background-color: ${(props) => props.theme.classicGray};
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 3px #999;
-  :hover {
-    background-color: ${(props) => props.theme.lightGreyColor};
-  }
-  :active {
-    background-color: ${(props) => props.theme.lightGreyColor};
-    box-shadow: 0 3px #666;
-    transform: translateY(4px);
-  }
 `;
 
 const PopupCustom = styled(Popup)`
@@ -1119,13 +1094,11 @@ export default ({
             >
               test
             </button>
-            <RefreshButton
+            <Button_refresh
               onClick={() => {
                 myInfoRefetch();
               }}
-            >
-              <Refresh />
-            </RefreshButton>
+            />
             <PopupCustom
               trigger={
                 <div style={{ cursor: 'pointer' }}>

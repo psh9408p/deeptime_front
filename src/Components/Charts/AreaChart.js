@@ -61,6 +61,8 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
       stacked: false,
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: title,
       },
       plugins: {

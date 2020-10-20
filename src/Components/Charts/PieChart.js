@@ -19,6 +19,8 @@ export default ({ data, dataColor, title, labels, updateBoolean }) => {
       responsive: true,
       title: {
         display: true,
+        fontSize: 13,
+        fontColor: 'black',
         text: title,
       },
       plugins: {
