@@ -138,7 +138,7 @@ const LoggedInRoutes = () => {
 
 const LoggedOutRoutes = () => {
   ChannelService.boot({
-    pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN, //please fill with your plugin key
+    pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN,
   });
   return (
     <Switch>
