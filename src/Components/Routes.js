@@ -75,7 +75,7 @@ const LoggedInRoutes = () => {
       // 학습을 제외한 페이지에서 채널톡 실행
       if (pageName !== 'study') {
         ChannelService.boot({
-          pluginKey: '8a97f0ce-c8f6-4d13-baf0-d9f488b7246f', //please fill with your plugin key
+          pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN, //please fill with your plugin key
           profile: {
             name: Mydata.me.fullName, //fill with user name
             username: Mydata.me.username,
@@ -136,21 +136,26 @@ const LoggedInRoutes = () => {
   }
 };
 
-const LoggedOutRoutes = () => (
-  <Switch>
-    <Route exact path="/" component={Introduce} />
-    <Route path="/userguide" component={UserGuide} />
-    <Route path="/shopping" component={Shopping} />
-    <Route path="/support" component={Support} />
-    <Route path="/auth" component={Auth} />
-    <Route path="/experience" component={Experience} />
-    <Route path="/tos" component={TermsOfService} />
-    <Route path="/tosm" component={TermsOfService_M} />
-    <Route path="/top" component={TermsOfPrivacy} />
-    <Route path="/tom" component={TermsOfMarketing} />
-    <Redirect from="*" to="/" />
-  </Switch>
-);
+const LoggedOutRoutes = () => {
+  ChannelService.boot({
+    pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN, //please fill with your plugin key
+  });
+  return (
+    <Switch>
+      <Route exact path="/" component={Introduce} />
+      <Route path="/userguide" component={UserGuide} />
+      <Route path="/shopping" component={Shopping} />
+      <Route path="/support" component={Support} />
+      <Route path="/auth" component={Auth} />
+      <Route path="/experience" component={Experience} />
+      <Route path="/tos" component={TermsOfService} />
+      <Route path="/tosm" component={TermsOfService_M} />
+      <Route path="/top" component={TermsOfPrivacy} />
+      <Route path="/tom" component={TermsOfMarketing} />
+      <Redirect from="*" to="/" />
+    </Switch>
+  );
+};
 
 const AppRouter = ({ isLoggedIn }) =>
   isLoggedIn ? <LoggedInRoutes /> : <LoggedOutRoutes />;
