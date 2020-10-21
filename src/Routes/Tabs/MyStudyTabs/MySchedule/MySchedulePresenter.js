@@ -347,11 +347,11 @@ export default ({
 
   const onSubmitAdd = async () => {
     if (subjectName.value === '') {
-      alert('과목 이름을 입력하세요.');
+      alert('TASK 이름을 입력하세요.');
       return;
     }
     try {
-      toast.info('새로운 과목을 추가 중...');
+      toast.info('새로운 TASK를 추가 중...');
       const {
         data: { addSubject },
       } = await addSubjectMutation({
@@ -361,11 +361,11 @@ export default ({
         },
       });
       if (!addSubject) {
-        alert('과목을 추가할 수 없습니다.');
+        alert('TASK를 추가할 수 없습니다.');
       } else {
         await subjectRefetch();
         await subjectClear();
-        toast.success('새로운 과목이 추가되었습니다.');
+        toast.success('새로운 TASK가 추가되었습니다.');
         return true;
       }
     } catch (e) {
@@ -377,7 +377,7 @@ export default ({
 
   const onSubmitEdit = async () => {
     if (subjectName.value === '') {
-      alert('과목 이름을 입력하세요.');
+      alert('TASK 이름을 입력하세요.');
       return;
     }
     if (
@@ -386,7 +386,7 @@ export default ({
       ) === true
     ) {
       try {
-        toast.info('과목을 수정 중...');
+        toast.info('TASK를 수정 중...');
         const {
           data: { editSubject },
         } = await editSubjectMutation({
@@ -397,11 +397,11 @@ export default ({
           },
         });
         if (!editSubject) {
-          alert('과목을 수정할 수 없습니다.');
+          alert('TASK를 수정할 수 없습니다.');
         } else {
           await subjectRefetch();
           await subjectClear();
-          toast.success('과목이 수정되었습니다.');
+          toast.success('TASK가 수정되었습니다.');
           return true;
         }
       } catch (e) {
@@ -415,11 +415,11 @@ export default ({
   const onSubmitDelete = async () => {
     if (
       window.confirm(
-        '해당 과목이 기존 스케줄에서 삭제됩니다.\n그래도 삭제하시겠습니까?',
+        '해당 TASK가 기존 스케줄에서 삭제됩니다.\n그래도 삭제하시겠습니까?',
       ) === true
     ) {
       try {
-        toast.info('해당 과목을 삭제 중...');
+        toast.info('해당 TASK를 삭제 중...');
         const {
           data: { deleteSubject },
         } = await deleteSubjectMutation({
@@ -428,12 +428,12 @@ export default ({
           },
         });
         if (!deleteSubject) {
-          alert('해당 과목을 삭제할 수 없습니다.');
+          alert('해당 TASK를 삭제할 수 없습니다.');
         } else {
           await subjectRefetch();
           await myRefetch();
           await subjectClear();
-          toast.success('해당 과목이 삭제되었습니다.');
+          toast.success('해당 TASK가 삭제되었습니다.');
           return true;
         }
       } catch (e) {
@@ -443,7 +443,7 @@ export default ({
       }
     }
   };
-  //과목 종류 넣기
+  //TASK 종류 넣기
   const inputCalendars = () => {
     const calendars_tmp = subjectList.map((subject) => {
       if (subject.bookMark) {
@@ -845,7 +845,7 @@ export default ({
     },
   };
 
-  // 과목 즐겨찾기 관련
+  // TASK 즐겨찾기 관련
   const [bookMarkCh, setBookMarkCh] = useState(
     subjectList.map((_, index) => {
       return subjectList[index].bookMark;
@@ -895,13 +895,13 @@ export default ({
     }
   };
 
-  // 맨처음 스케줄, 과목 넣기
+  // 맨처음 스케줄, TASK 넣기
   if (isFirstRun) {
     isFirstRun = false;
     inputCalendars();
     inputSchedules();
   }
-  // 과목의 리페치가 완료되야지만 새로운 과목&스케줄 넣기
+  // TASK의 리페치가 완료되야지만 새로운 TASK&스케줄 넣기
   if (subjectnetwork === 4) {
     isRefectRun2 = true;
   }
@@ -944,29 +944,29 @@ export default ({
         <SelectDiv>
           <SubjectButtonDiv2>
             <PopupCustom4
-              trigger={<PopButton_100 text={'과목 관리'} />}
+              trigger={<PopButton_100 text={'TASK 관리'} />}
               closeOnDocumentClick={false}
               modal
             >
               {(close) => (
                 <PBody>
                   <FrontDiv>
-                    <PTitle text={'과목 관리'} />
+                    <PTitle text={'TASK 관리'} />
                     <ThreeButtonWrap>
                       <SpaceDiv />
                       <SubjectButtonDiv>
                         <PopupCustom5
-                          trigger={<PopButton_100 text={'과목 북마크'} />}
+                          trigger={<PopButton_100 text={'북마크'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
                           {(close) => (
                             <PBody>
                               <SubjectForm>
-                                <PTitle text={'과목 북마크'} />
+                                <PTitle text={'TASK 북마크'} />
                                 <BookMarkTitle>
                                   <BookLeft>체크</BookLeft>
-                                  <BookRight>과목 이름</BookRight>
+                                  <BookRight>TASK</BookRight>
                                 </BookMarkTitle>
                                 <ListWrap>
                                   <BookmarkList
@@ -1009,22 +1009,24 @@ export default ({
                       </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom
-                          trigger={<PopButton_100 text={'과목 추가'} />}
+                          trigger={<PopButton_100 text={'추가'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
                           {(close) => (
                             <PBody>
                               <SubjectForm2>
-                                <PTitle text={'과목 추가'} />
+                                <PTitle text={'TASK 추가'} />
                                 <InputWrapper>
                                   <Input
-                                    placeholder={'과목 이름 (예: 음악 or 미술)'}
+                                    placeholder={
+                                      'TASK 이름 (예: 국어 or 문서작업)'
+                                    }
                                     {...subjectName}
                                   />
                                 </InputWrapper>
                                 <ColorWrapper>
-                                  <SubTitle text={'과목 색상 선택'} />
+                                  <SubTitle text={'색상 선택'} />
                                   <SwatchesPicker
                                     color={subjectColor}
                                     onChangeComplete={handleChangeComplete}
@@ -1057,16 +1059,16 @@ export default ({
                       </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom2
-                          trigger={<PopButton_100 text={'과목 수정'} />}
+                          trigger={<PopButton_100 text={'수정'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
                           {(close) => (
                             <PBody>
                               <SubjectForm2>
-                                <PTitle text={'과목 수정'} />
+                                <PTitle text={'TASK 수정'} />
                                 <SelectWrapDiv2>
-                                  <SubTitle text={`수정할 과목:　`} />
+                                  <SubTitle text={`수정할 TASK:　`} />
                                   <SelectWrapper2>
                                     <Select
                                       {...mySubjectList}
@@ -1083,12 +1085,14 @@ export default ({
                                 </SelectWrapDiv2>
                                 <InputWrapper>
                                   <Input
-                                    placeholder={'과목 이름 (예: 음악 or 미술)'}
+                                    placeholder={
+                                      'TASK 이름 (예: 국어 or 문서작업)'
+                                    }
                                     {...subjectName}
                                   />
                                 </InputWrapper>
                                 <ColorWrapper>
-                                  <SubTitle text={'과목 색상 선택'} />
+                                  <SubTitle text={'색상 선택'} />
                                   <SwatchesPicker
                                     color={subjectColor}
                                     onChangeComplete={handleChangeComplete}
@@ -1121,14 +1125,14 @@ export default ({
                       </SubjectButtonDiv>
                       <SubjectButtonDiv>
                         <PopupCustom3
-                          trigger={<PopButton_100 text={'과목 삭제'} />}
+                          trigger={<PopButton_100 text={'삭제'} />}
                           closeOnDocumentClick={false}
                           modal
                         >
                           {(close) => (
                             <PBody>
                               <SubjectForm2>
-                                <PTitle text={'과목 삭제'} />
+                                <PTitle text={'TASK 삭제'} />
                                 <SelectWrapDiv>
                                   <SelectWrapper>
                                     <Select

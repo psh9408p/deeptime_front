@@ -710,12 +710,12 @@ export default ({
     }
     scheduleList_selectDay_length = scheduleList_selectDay.length;
 
-    // 현재 과목 찾기
+    // 현재 TASK 찾기
     const nowDate = new Date();
     const findShedule = (i) =>
       new Date(i.start) <= nowDate && new Date(i.end) > nowDate;
     nowScheduleIndex = scheduleList_selectDay.findIndex(findShedule);
-    // 다음 과목 찾기
+    // 다음 TASK 찾기
     const findShedule_next = (i) => nowDate < new Date(i.start);
     nextScheduleIndex = scheduleList_selectDay.findIndex(findShedule_next);
   };
@@ -886,14 +886,14 @@ export default ({
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay[j].subject
           ? scheduleList_selectDay[j].subject.name
-          : '과목 없음',
+          : 'TASK 없음',
       );
-      // 중복되는 과목 인덱스 체크
+      // 중복되는 TASK 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(
           scheduleList_selectDay[j].subject
             ? scheduleList_selectDay[j].subject.name
-            : '과목 없음',
+            : 'TASK 없음',
         );
         schedule_color.push(
           scheduleList_selectDay[j].subject
@@ -934,7 +934,7 @@ export default ({
         taskArray_schedule[index] = item / 60;
       });
     }
-    // 스케줄(과목) 시간 퍼센트 계산
+    // 스케줄(TASK) 시간 퍼센트 계산
     const totalExsitTime = SumArray(taskArray_schedule);
     const totalTargetTime = SumArray(taskArray_scheduleT);
     if (schedule_label.length === 0) {
