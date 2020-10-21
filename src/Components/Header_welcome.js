@@ -158,12 +158,12 @@ export default withRouter(() => {
             <WelcomeLink to="/userguide/schedule" replace>
               사용가이드
             </WelcomeLink>
-            <WelcomeLink to="/shopping" replace>
+            {/* <WelcomeLink to="/shopping" replace>
               구매하기
             </WelcomeLink>
             <WelcomeLink to="/support" replace>
               고객센터
-            </WelcomeLink>
+            </WelcomeLink> */}
           </AiBox>
         </HeaderColumn>
         <HeaderColumn>

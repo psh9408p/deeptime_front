@@ -65,7 +65,7 @@ const LoaderWrapper = styled.div`
 export let userEmail = '';
 
 const LoggedInRoutes = () => {
-  let location = useLocation();
+  const location = useLocation();
   const pageName = location.pathname.split('/')[1];
   const { data: Mydata, loading, refetch: MyRefetch } = useQuery(MEPOSITION);
 
@@ -137,9 +137,13 @@ const LoggedInRoutes = () => {
 };
 
 const LoggedOutRoutes = () => {
-  ChannelService.boot({
-    pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN,
-  });
+  const location = useLocation();
+  const pageName = location.pathname.split('/')[1];
+  if (pageName !== 'experience') {
+    ChannelService.boot({
+      pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN,
+    });
+  }
   return (
     <Switch>
       <Route exact path="/" component={Introduce} />
