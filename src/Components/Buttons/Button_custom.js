@@ -7,7 +7,8 @@ const Container = styled.button`
   height: ${(props) => props.height};
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
-  color: black;
+  background-color: ${(props) => props.bgColor};
+  color: ${(props) => props.color};
   font-weight: 600;
   text-align: center;
   padding: ${(props) => props.padding};
@@ -23,6 +24,8 @@ const Button = ({
   height = '30px',
   margin = '0 0 0 20px',
   padding = '7px 0px',
+  bgColor = '#efefef',
+  color = 'black',
 }) => (
   <Container
     type="button"
@@ -31,6 +34,8 @@ const Button = ({
     height={height}
     margin={margin}
     padding={padding}
+    bgColor={bgColor}
+    color={color}
   >
     {text}
   </Container>

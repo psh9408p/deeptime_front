@@ -11,6 +11,10 @@ import {
   MY_SUBJECT,
   EDIT_SUBJECT,
   BOOKMARK_SUBJECT,
+  MY_TODOLIST,
+  ADD_TODOLIST,
+  DELETE_TODOLIST,
+  FINISH_TODOLIST,
 } from './MyScheduleQueries';
 
 const LoaderWrapper = styled.div`
@@ -22,6 +26,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
   const subjectName = useInput('');
+  const todolistName = useInput('');
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
@@ -29,18 +34,26 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
   const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
   const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
+  const [addTodolistMutation] = useMutation(ADD_TODOLIST);
+  const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
+  const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
   const {
     data: subjectData,
     loading: subjectLoading,
     refetch: subjectRefetch,
     networkStatus: subjectnetwork,
   } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
+  const {
+    data: todolistData,
+    loading: todolistLoading,
+    refetch: todolistRefetch,
+  } = useQuery(MY_TODOLIST);
 
   const handleChangeComplete = (color, event) => {
     setSubjectColor(color.hex);
   };
 
-  if (subjectnetwork === 7 || subjectnetwork === 4) {
+  if ((subjectnetwork === 7 || subjectnetwork === 4) && !todolistLoading) {
     return (
       <MySchedulePresenter
         cal={cal}
@@ -53,6 +66,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         saveScheduleMutation={saveScheduleMutation}
         subjectList={subjectData.mySubject}
         subjectName={subjectName}
+        todolistName={todolistName}
         subjectColor={subjectColor}
         setSubjectColor={setSubjectColor}
         handleChangeComplete={handleChangeComplete}
@@ -63,6 +77,11 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         subjectRefetch={subjectRefetch}
         networkStatus={networkStatus}
         subjectnetwork={subjectnetwork}
+        todolistData={todolistData.myTodolist}
+        addTodolistMutation={addTodolistMutation}
+        todolistRefetch={todolistRefetch}
+        deleteTodolistMutation={deleteTodolistMutation}
+        finishTodolistMutation={finishTodolistMutation}
       />
     );
   } else {

@@ -30,6 +30,24 @@ export const BOOKMARK_SUBJECT = gql`
   }
 `;
 
+export const ADD_TODOLIST = gql`
+  mutation addTodolist($name: String!, $subjectId: String!) {
+    addTodolist(name: $name, subjectId: $subjectId)
+  }
+`;
+
+export const DELETE_TODOLIST = gql`
+  mutation deleteTodolist($todolistId: String!) {
+    deleteTodolist(todolistId: $todolistId)
+  }
+`;
+
+export const FINISH_TODOLIST = gql`
+  mutation finishTodolist($todolistId: String!) {
+    finishTodolist(todolistId: $todolistId)
+  }
+`;
+
 export const MY_SUBJECT = gql`
   query mySubject {
     mySubject {
@@ -40,6 +58,22 @@ export const MY_SUBJECT = gql`
       dragBgColor
       borderColor
       bookMark
+    }
+  }
+`;
+
+export const MY_TODOLIST = gql`
+  query myTodolist {
+    myTodolist {
+      id
+      name
+      finish
+      finishAt
+      subject {
+        id
+        name
+        bgColor
+      }
     }
   }
 `;

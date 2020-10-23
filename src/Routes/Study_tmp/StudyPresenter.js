@@ -94,11 +94,58 @@ const TodayPercent = styled(TodayTime)`
   height: 50px;
 `;
 
+const TopWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   width: 960px;
   height: 500px;
-  margin: 30px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const Wrapper_b = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 960px;
+  height: 150px;
+  margin-top: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const TodoWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 470px;
+  height: 130px;
+  margin: 10px 0 10px 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ScheStart = styled.div`
+  width: 180px;
+  height: 130px;
+  margin: 10px 0 10px 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ControlWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 270px;
+  height: 130px;
+  margin: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
@@ -161,7 +208,7 @@ const BarWrap = styled.div`
   align-items: center;
   width: 270px;
   height: 100%;
-  margin-right: 10px;
+  margin-left: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
@@ -684,8 +731,8 @@ export default ({
   // useMouseLeave(donleaveme)
 
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    // LoadCamera();
+    // LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1065,165 +1112,176 @@ export default ({
   }
 
   return (
-    <Wrapper id="capture">
-      <VideoWrap>
-        <div>
-          <VideoBox ref={video1} playsInline autoPlay muted />
-        </div>
-      </VideoWrap>
-      <GraphDiv>
-        <HeaderDiv>
-          <AvatarDiv>
-            {studyBool ? (
-              <>
-                <Study_true />
-                <StatusSpan>학습중</StatusSpan>
-              </>
-            ) : (
-              <>
-                <Study_false />
-                <StatusSpan>부재중</StatusSpan>
-              </>
-            )}
-          </AvatarDiv>
-          <SetDiv>
-            <button
-              onClick={() => {
-                onImgSave();
-              }}
-            >
-              test
-            </button>
-            <Button_refresh
-              onClick={() => {
-                myInfoRefetch();
-              }}
-            />
-            <PopupCustom
-              trigger={
-                <div style={{ cursor: 'pointer' }}>
-                  <Setting />
-                </div>
-              }
-              closeOnDocumentClick={false}
-              modal
-            >
-              {(close) => {
-                return (
-                  <PBody>
-                    <PTitle text={'학습 세팅'} />
-                    <SetContentWrap>
-                      <SetContentBox>
-                        자동 새로고침 on/off :　
-                        <Switch
-                          on={true}
-                          off={false}
-                          value={refreshBool}
-                          onChange={autoSwitch}
-                        />{' '}
-                      </SetContentBox>
-                      <SetContentBox>
-                        자동 새로고침 간격 :　
-                        <RefreshInputWrap>
-                          <Input_100
-                            placeholder={''}
-                            {...refreshTerm}
-                            type={'number'}
+    <TopWrap>
+      <Wrapper id="capture">
+        <VideoWrap>
+          <div>
+            <VideoBox ref={video1} playsInline autoPlay muted />
+          </div>
+        </VideoWrap>
+        <GraphDiv>
+          <HeaderDiv>
+            <AvatarDiv>
+              {studyBool ? (
+                <>
+                  <Study_true />
+                  <StatusSpan>학습중</StatusSpan>
+                </>
+              ) : (
+                <>
+                  <Study_false />
+                  <StatusSpan>부재중</StatusSpan>
+                </>
+              )}
+            </AvatarDiv>
+            <SetDiv>
+              <button
+                onClick={() => {
+                  onImgSave();
+                }}
+              >
+                test
+              </button>
+              <Button_refresh
+                onClick={() => {
+                  myInfoRefetch();
+                }}
+              />
+              <PopupCustom
+                trigger={
+                  <div style={{ cursor: 'pointer' }}>
+                    <Setting />
+                  </div>
+                }
+                closeOnDocumentClick={false}
+                modal
+              >
+                {(close) => {
+                  return (
+                    <PBody>
+                      <PTitle text={'학습 세팅'} />
+                      <SetContentWrap>
+                        <SetContentBox>
+                          자동 새로고침 on/off :　
+                          <Switch
+                            on={true}
+                            off={false}
+                            value={refreshBool}
+                            onChange={autoSwitch}
+                          />{' '}
+                        </SetContentBox>
+                        <SetContentBox>
+                          자동 새로고침 간격 :　
+                          <RefreshInputWrap>
+                            <Input_100
+                              placeholder={''}
+                              {...refreshTerm}
+                              type={'number'}
+                            />
+                          </RefreshInputWrap>
+                          초
+                          <Button_custom
+                            text={'적용'}
+                            onClick={() => {
+                              TermChange();
+                            }}
                           />
-                        </RefreshInputWrap>
-                        초
-                        <Button_custom
-                          text={'적용'}
+                        </SetContentBox>
+                      </SetContentWrap>
+                      <ButtonDiv>
+                        <PopupButton_solo
+                          type="button"
                           onClick={() => {
-                            TermChange();
+                            close();
                           }}
+                          text={'닫기'}
                         />
-                      </SetContentBox>
-                    </SetContentWrap>
-                    <ButtonDiv>
-                      <PopupButton_solo
-                        type="button"
-                        onClick={() => {
-                          close();
-                        }}
-                        text={'닫기'}
-                      />
-                    </ButtonDiv>
-                  </PBody>
-                );
-              }}
-            </PopupCustom>
-          </SetDiv>
-        </HeaderDiv>
-        <DonutWrap>
-          <DonutChart_today
-            data={donutData}
-            color={rgbBox}
-            title={'Today Study Log'}
-            labels={['학습', '학습 외 ' + '　' + '　' + '　' + '　', '나머지']}
-          />
-          <ClockBox>
-            <Clock24 />
-          </ClockBox>
-          <TodayTime>
-            {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-            {total_min.length === 1 ? '0' + total_min : total_min}m
-          </TodayTime>
-          <TodayTime_total>
-            / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-            {target_min.length === 1 ? '0' + target_min : target_min}m
-          </TodayTime_total>
-          <TodayPercent>{donutPercent}%</TodayPercent>
-        </DonutWrap>
-        <NowNextWrap>
-          <BarWrap>
-            <RowBarChart_now
-              title1={nowTitle1}
-              title2={nowTitle2}
-              data_1={nowScheduleTime}
-              data_2={nowScheduleTimeT}
-              scheduleColor={nowScheduleColor}
+                      </ButtonDiv>
+                    </PBody>
+                  );
+                }}
+              </PopupCustom>
+            </SetDiv>
+          </HeaderDiv>
+          <DonutWrap>
+            <DonutChart_today
+              data={donutData}
+              color={rgbBox}
+              title={'Today Study Log'}
+              labels={[
+                '학습',
+                '학습 외 ' + '　' + '　' + '　' + '　',
+                '나머지',
+              ]}
             />
-          </BarWrap>
-          <BreakNextWrap>
-            <BreakTimeDiv>
-              <IconWrap>
-                <Coffee />
-                <div style={{ fontSize: 13, fontWeight: 'bold' }}>Break</div>
-              </IconWrap>
-              <TimeIn>
-                {break_title}
-                <br />
-                {break_time}
-                {break_boolean && (
-                  <Countdown
-                    date={Date.now() + break_countdown}
-                    renderer={({ hours, minutes }) => (
-                      <span style={{ color: 'red' }}>
-                        {hours > 0 && <span>{hours}시간 </span>}
-                        {minutes}분 남음
-                      </span>
-                    )}
-                  />
-                )}
-              </TimeIn>
-            </BreakTimeDiv>
-            <NextTimeDiv>
-              <IconWrap>
-                <NextSchedule />
-                <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
-              </IconWrap>
-              <TimeIn>
-                {nextTitle1}
-                <br />
-                {nextTitle2}
-                <br />
-                {next_TimeText}
-              </TimeIn>
-            </NextTimeDiv>
-          </BreakNextWrap>
-        </NowNextWrap>
-      </GraphDiv>
-    </Wrapper>
+            <ClockBox>
+              <Clock24 />
+            </ClockBox>
+            <TodayTime>
+              {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+              {total_min.length === 1 ? '0' + total_min : total_min}m
+            </TodayTime>
+            <TodayTime_total>
+              / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+              {target_min.length === 1 ? '0' + target_min : target_min}m
+            </TodayTime_total>
+            <TodayPercent>{donutPercent}%</TodayPercent>
+          </DonutWrap>
+          <NowNextWrap>
+            <BreakNextWrap>
+              <BreakTimeDiv>
+                <IconWrap>
+                  <Coffee />
+                  <div style={{ fontSize: 13, fontWeight: 'bold' }}>Break</div>
+                </IconWrap>
+                <TimeIn>
+                  {break_title}
+                  <br />
+                  {break_time}
+                  {break_boolean && (
+                    <Countdown
+                      date={Date.now() + break_countdown}
+                      renderer={({ hours, minutes }) => (
+                        <span style={{ color: 'red' }}>
+                          {hours > 0 && <span>{hours}시간 </span>}
+                          {minutes}분 남음
+                        </span>
+                      )}
+                    />
+                  )}
+                </TimeIn>
+              </BreakTimeDiv>
+              <NextTimeDiv>
+                <IconWrap>
+                  <NextSchedule />
+                  <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
+                </IconWrap>
+                <TimeIn>
+                  {nextTitle1}
+                  <br />
+                  {nextTitle2}
+                  <br />
+                  {next_TimeText}
+                </TimeIn>
+              </NextTimeDiv>
+            </BreakNextWrap>
+            <BarWrap>
+              <RowBarChart_now
+                title1={nowTitle1}
+                title2={nowTitle2}
+                data_1={nowScheduleTime}
+                data_2={nowScheduleTimeT}
+                scheduleColor={nowScheduleColor}
+              />
+            </BarWrap>
+          </NowNextWrap>
+        </GraphDiv>
+      </Wrapper>
+      <Wrapper_b>
+        <TodoWrap></TodoWrap>
+        <ScheStart></ScheStart>
+        <ControlWrap></ControlWrap>
+      </Wrapper_b>
+    </TopWrap>
   );
 };
