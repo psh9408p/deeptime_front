@@ -6,6 +6,7 @@ import { ME } from '../Tabs/MyStudyTabs/MyStudyTabsQueries';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
 import ChannelService from '../../Components/ChannelService';
+import { MY_TODOLIST } from '../Tabs/MyStudyTabs/MySchedule/MyScheduleQueries';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -28,6 +29,12 @@ export default () => {
   } = useQuery(ME, {
     notifyOnNetworkStatusChange: true,
   });
+
+  const {
+    data: todolistData,
+    loading: todolistLoading,
+    refetch: todolistRefetch,
+  } = useQuery(MY_TODOLIST);
 
   const autoSwitch = () => {
     if (refreshBool) {
@@ -54,7 +61,7 @@ export default () => {
     alert(`자동 새로고침이 ${refreshTerm.value}초 간격으로 활성화 됐습니다.`);
   };
 
-  if (networkStatus === 1) {
+  if (networkStatus === 1 || todolistLoading) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -72,6 +79,7 @@ export default () => {
         TermChange={TermChange}
         studyBool={studyBool}
         setStudyBool={setStudyBool}
+        todolistData={todolistData.myTodolist}
       />
     );
   }

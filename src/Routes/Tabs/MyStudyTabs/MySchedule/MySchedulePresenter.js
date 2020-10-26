@@ -857,6 +857,7 @@ export default ({
         alert('스케줄을 변경할 수 없습니다.');
       } else {
         await myRefetch();
+        await todolistRefetch();
         newScheduleArray = [];
         toast.success('변경된 스케줄이 저장되었습니다.');
       }
@@ -867,6 +868,10 @@ export default ({
   };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
+    if (scheduleData.calendarId === undefined) {
+      alert('TASK 선택은 필수입니다.\nTASK 추가 및 북마크를 진행하세요.');
+    }
+
     let overlap = false;
     schedules.map((sch) => {
       if (

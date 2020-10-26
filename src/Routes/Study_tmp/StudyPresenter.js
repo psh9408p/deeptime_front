@@ -24,6 +24,8 @@ import {
   Study_true,
   Study_false,
   Film,
+  Flag,
+  Delete,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -35,6 +37,8 @@ import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
 import Button_refresh from '../../Components/Buttons/Button_refresh';
 import html2canvas from 'html2canvas';
+import { FixedSizeGrid as TodolistGrid } from 'react-window';
+import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
 
 const Whammy = require('whammy/whammy');
 
@@ -345,6 +349,39 @@ const StatusSpan = styled.span`
   font-weight: bold;
 `;
 
+const IndiTodoWrap = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  padding-left: ${(props) => (props.isOdd ? '12px' : '18px')};
+  /* border: ${(props) => props.theme.boxBorder};
+  border-color: black; */
+`;
+
+const RoundTodo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 200px;
+  height: 32px;
+  border-radius: 16px;
+  padding: 0 5px;
+  background-color: ${(props) => props.bgColor};
+  color: ${(props) => props.color};
+  /* border: ${(props) => props.theme.boxBorder};
+  border-color: black; */
+`;
+
+const RoundNameDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 100%;
+  font-weight: 600;
+`;
+
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
 let taskArray = [];
@@ -418,6 +455,7 @@ export default ({
   TermChange,
   studyBool,
   setStudyBool,
+  todolistData,
 }) => {
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
@@ -1111,6 +1149,25 @@ export default ({
     // CalLoading.current = false;
   }
 
+  const todolistRow = ({ columnIndex, rowIndex, style }) => {
+    const index = rowIndex * 2 + columnIndex;
+    const rgb_tmp = hexToRgb(todolistData[index].subject.bgColor);
+    const fontColor = fontColor_dependBg(rgb_tmp);
+    console.log(todolistData[index].subject, rgb_tmp);
+    return (
+      <IndiTodoWrap key={index} style={style} isOdd={Boolean(columnIndex % 2)}>
+        <RoundTodo
+          bgColor={todolistData[index].subject.bgColor}
+          color={fontColor}
+        >
+          <RoundNameDiv>{todolistData[index].name}</RoundNameDiv>
+          <Flag margin={'0 5px 0 0'} />
+          <Delete />
+        </RoundTodo>
+      </IndiTodoWrap>
+    );
+  };
+
   return (
     <TopWrap>
       <Wrapper id="capture">
@@ -1278,7 +1335,18 @@ export default ({
         </GraphDiv>
       </Wrapper>
       <Wrapper_b>
-        <TodoWrap></TodoWrap>
+        <TodoWrap>
+          <TodolistGrid
+            height={130}
+            width={470}
+            columnWidth={225}
+            rowHeight={44}
+            rowCount={5}
+            columnCount={2}
+          >
+            {todolistRow}
+          </TodolistGrid>
+        </TodoWrap>
         <ScheStart></ScheStart>
         <ControlWrap></ControlWrap>
       </Wrapper_b>
