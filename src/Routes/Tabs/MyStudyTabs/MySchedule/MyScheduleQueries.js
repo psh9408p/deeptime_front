@@ -73,6 +73,7 @@ export const MY_TODOLIST = gql`
         id
         name
         bgColor
+        bookMark
       }
     }
   }

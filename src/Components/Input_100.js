@@ -6,9 +6,9 @@ const Container = styled.input`
   border: 0;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.bgColor};
-  width: 100%;
-  height: 100%;
+  background-color: ${(props) => props.bgColor};
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
   font-size: 12px;
   padding: 0px 15px;
 `;
@@ -20,6 +20,10 @@ const Input = ({
   onChange,
   type = 'text',
   className,
+  width = '100%',
+  height = '100%',
+  step,
+  bgColor,
 }) => (
   <Container
     className={className}
@@ -28,6 +32,10 @@ const Input = ({
     value={value}
     onChange={onChange}
     type={type}
+    step={step}
+    width={width}
+    height={height}
+    bgColor={bgColor}
   />
 );
 

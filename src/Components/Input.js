@@ -8,7 +8,7 @@ const Container = styled.input`
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.bgColor};
   width: 100%;
-  height: 35px;
+  height: ${(props) => props.height};
   font-size: 12px;
   padding: 0px 15px;
 `;
@@ -19,6 +19,7 @@ const Input = ({
   value,
   onChange,
   type = 'text',
+  height = '35px',
   className,
   bgColor = '#FAFAFA',
 }) => (
@@ -29,6 +30,7 @@ const Input = ({
     value={value}
     onChange={onChange}
     type={type}
+    height={height}
     bgColor={bgColor}
   />
 );

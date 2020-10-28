@@ -44,15 +44,9 @@ export const fontColor_dependBg = (RGBStr) => {
   var match = RGBStr.match(
     /rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/,
   );
-  console.log(
-    RGBStr,
-    match,
-    match[1] * 0.299 + match[2] * 0.587 + match[3] * 0.114,
-    'zzzzzzzz',
-  );
   const conclue =
-    match[1] * 0.299 + match[2] * 0.587 + match[3] * 0.114 > 186
-      ? '#000000'
-      : '#ffffff';
+    match[1] * 0.2126 + match[2] * 0.7152 + match[3] * 0.0722 > 0.179
+      ? '#ffffff'
+      : '#000000';
   return conclue;
 };

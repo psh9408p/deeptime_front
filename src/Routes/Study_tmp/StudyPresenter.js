@@ -39,6 +39,11 @@ import Button_refresh from '../../Components/Buttons/Button_refresh';
 import html2canvas from 'html2canvas';
 import { FixedSizeGrid as TodolistGrid } from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
+import { toast } from 'react-toastify';
+import useSelect from '../../Hooks/useSelect';
+import useInput from '../../Hooks/useInput';
+import Select from '../../Components/Select';
+import Input from '../../Components/Input';
 
 const Whammy = require('whammy/whammy');
 
@@ -136,6 +141,10 @@ const TodoWrap = styled.div`
 `;
 
 const ScheStart = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 180px;
   height: 130px;
   margin: 10px 0 10px 10px;
@@ -145,6 +154,7 @@ const ScheStart = styled.div`
 
 const ControlWrap = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 270px;
@@ -152,6 +162,29 @@ const ControlWrap = styled.div`
   margin: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ControlTop = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 270px;
+  height: 85px;
+  margin-bottom: 10px;
+  /* border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius}; */
+`;
+
+const ControlBottom = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 270px;
+  height: 35px;
+  padding-top: 3px;
+  /* border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius}; */
 `;
 
 const VideoBox = styled.video`
@@ -297,6 +330,16 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
+const PopupCustom2 = styled(Popup)`
+  &-content {
+    width: 470px !important;
+    height: 130px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -374,12 +417,69 @@ const RoundTodo = styled.div`
 `;
 
 const RoundNameDiv = styled.div`
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 150px;
   height: 100%;
   font-weight: 600;
+`;
+
+const RoundNameDiv2 = styled(RoundNameDiv)`
+  width: 100%;
+`;
+
+const NewTodoDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 450px;
+  height: 40px;
+`;
+
+const NewTopDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const NewBottomDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SelectWrapper = styled.div`
+  width: 123px;
+  height: 35px;
+`;
+
+const NewScheContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 160px;
+  height: 25px;
+  margin-bottom: 5px;
+`;
+
+const SelectInL = styled.div`
+  width: 100px;
+  height: 25px;
+  margin-right: 10px;
+`;
+
+const SelectInR = styled.div`
+  width: 50px;
+  height: 25px;
+`;
+
+const InputWrapper = styled.div`
+  margin-left: 10px;
+  width: 225px;
 `;
 
 let scheduleList_selectDay = [];
@@ -456,7 +556,21 @@ export default ({
   studyBool,
   setStudyBool,
   todolistData,
+  todolistRefetch,
+  subjectData,
+  deleteTodolistMutation,
+  finishTodolistMutation,
+  addTodolistMutation,
+  startScheduleMutation,
+  stopScheduleMutation,
+  todolistName,
+  newTodoView,
+  setNewTodoView,
+  scheduleTitle,
 }) => {
+  const [defaultMin, setDefaultMin] = useState(30);
+  const minValue_5 = (value) => value >= 5;
+  const scheduleTerm = useInput(defaultMin, minValue_5);
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -475,6 +589,56 @@ export default ({
 
   const [ctx, setCtx] = useState();
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
+
+  // todolist 미완료&북마크 된거 구분
+  let todolistData_new = [];
+  todolistData.map((todolist) => {
+    if (!todolist.finish && todolist.subject.bookMark) {
+      todolistData_new.push(todolist);
+    }
+  });
+  // todolistData_new 오름차순 정렬 (만든 순서대로는 백앤드에서 이미 반영)
+  todolistData_new.sort(function (a, b) {
+    return a.subject.name < b.subject.name
+      ? -1
+      : a.subject.name > b.subject.name
+      ? 1
+      : 0;
+  });
+  // todolistData_new Task 없음이 위로오게
+  todolistData_new.sort(function (a, b) {
+    const word = 'TASK 없음';
+    return a.subject.name === word && b.subject.name !== word
+      ? -1
+      : a.subject.name !== word && b.subject.name === word
+      ? 1
+      : 0;
+  });
+
+  // 북마크 된 TASK(subject)
+  let task_tmp = subjectData.map((subject) => {
+    if (subject.bookMark) {
+      return subject;
+    }
+  });
+  task_tmp = task_tmp.filter(function (el) {
+    return el != undefined;
+  });
+  // TASK(subject) 오름차순 정렬
+  task_tmp.sort(function (a, b) {
+    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+  });
+  const listName_tmp = task_tmp.map((List) => `${List.name}`);
+  const listId_tmp = task_tmp.map((List) => `${List.id}`);
+  const mySubjectList = useSelect(
+    ['TASK 없음', ...listName_tmp],
+    ['', ...listId_tmp],
+  );
+  const mySubjectList2 = useSelect(
+    ['TASK 없음', ...listName_tmp],
+    ['', ...listId_tmp],
+  );
+  const stateList = useSelect(['자습', '인강'], ['자습', '인강']);
 
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
@@ -495,6 +659,231 @@ export default ({
       // document.body.appendChild(canvas);
       saveAs(canvas.toDataURL('image/png'), 'capture-test.png');
     });
+  };
+
+  const maxTimeCal = (nowDate) => {
+    let maxTermMin = 0;
+    const totalMin_now =
+      Math.floor((nowDate.getHours() * 60 + nowDate.getMinutes()) / 5) * 5;
+
+    // 오늘 다음 스케줄이 있으면 부터
+    if (nextScheduleIndex !== -1) {
+      const nextSchedule = scheduleList_selectDay[nextScheduleIndex];
+      const nextDate = new Date(nextSchedule.start);
+      // 5분 단위 외 찌꺼기 시간 버림
+      const totalMin_next = nextDate.getHours() * 60 + nextDate.getMinutes();
+      maxTermMin = totalMin_next - totalMin_now;
+    } else {
+      //24시간은 1440분
+      maxTermMin = 1440 - totalMin_now;
+    }
+    return maxTermMin;
+  };
+
+  const onStopSchedule = async () => {
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('현재 스케줄을 마치는 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex === -1) {
+      alert('현재 진행 중인 스케줄이 없습니다.');
+      return;
+    }
+    // 끝나는 시간 계산
+    const end_origin = new Date();
+    const end = new Date();
+    end.setTime(end_origin.getTime());
+    end.setSeconds(0);
+    end.setMilliseconds(0);
+    end.setMinutes(Math.floor(end.getMinutes() / 5) * 5);
+    // 스케줄 시작과 지금 사이가 0~5 사이면 스케줄을 그냥 삭제
+    let deleteBool = false;
+    const start_schedule = new Date(
+      scheduleList_selectDay[nowScheduleIndex].start,
+    );
+    if (end_origin.getTime() - start_schedule.getTime() < 300000) {
+      if (
+        window.confirm(
+          '현재 스케줄이 시작된 지 5분 이내여서 삭제됩니다.\n그래도 스케줄을 멈추시겠습니까?',
+        ) === true
+      ) {
+        deleteBool = true;
+      } else {
+        return;
+      }
+    }
+
+    try {
+      const {
+        data: { stopSchedule_study },
+      } = await stopScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          end,
+          deleteBool,
+        },
+      });
+      if (!stopSchedule_study) {
+        alert('현재 스케줄을 마칠 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('현재 스케줄을 마쳤습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onStartSchedule = async () => {
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('새로운 스케줄을 시작 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex !== -1) {
+      alert(
+        '현재 진행 중인 스케줄이 있습니다.\n현재 스케줄 마무리 후 시도해주세요.',
+      );
+      return;
+    }
+    // 사전 점검
+    if (scheduleTitle.value === '') {
+      alert('To Do List를 입력하세요.');
+      return;
+    }
+    if (scheduleTitle.value.includes('/')) {
+      alert(
+        "To Do List는 1개만 입력 가능합니다.\n즉, '/'는 입력이 불가능합니다.",
+      );
+      return;
+    }
+    // 입력 시간이 최대 시간이내 인지 점검
+    const nowDate = new Date();
+    const maxTime = maxTimeCal(nowDate);
+    if (maxTime < scheduleTerm.value) {
+      alert(`현재 가능한 최대 설정 시간은 ${maxTime}분 입니다.`);
+      scheduleTerm.setValue(maxTime);
+      return;
+    }
+    // todolist 중복 체크
+    const findTodo = (i) =>
+      i.subject.id === mySubjectList2.option && i.name === scheduleTitle.value;
+    const existIndex = todolistData_new.findIndex(findTodo);
+    const existTodo = existIndex === -1 ? false : true;
+    // 입력 시간 계산
+    const start = new Date();
+    start.setTime(nowDate.getTime());
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
+    const end = new Date();
+    end.setTime(start.getTime());
+    end.setMinutes(end.getMinutes() + scheduleTerm.value);
+
+    try {
+      const {
+        data: { startSchedule_study },
+      } = await startScheduleMutation({
+        variables: {
+          title: scheduleTitle.value,
+          start,
+          end,
+          totalTime: (end.getTime() - start.getTime()) / 1000,
+          calendarId: mySubjectList2.option,
+          state: stateList.option,
+          existTodo,
+        },
+      });
+      if (!startSchedule_study) {
+        alert('스케줄을 시작할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        await todolistRefetch();
+        mySubjectList2.setOption('');
+        stateList.setOption('자습');
+        scheduleTitle.setValue('');
+        scheduleTerm.setValue(30);
+        toast.success('새로운 스케줄이 시작되었습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onTodolistAdd = async () => {
+    if (todolistName.value === '') {
+      alert('내용을 입력하세요.');
+      return;
+    }
+    try {
+      toast.info('새로운 To Do List를 추가 중...');
+      const {
+        data: { addTodolist },
+      } = await addTodolistMutation({
+        variables: {
+          name: todolistName.value,
+          subjectId: mySubjectList.option,
+        },
+      });
+      if (!addTodolist) {
+        alert('To Do List를 추가할 수 없습니다.');
+      } else {
+        await todolistRefetch();
+        toast.success('새로운 To DO List가 추가되었습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    } finally {
+      setNewTodoView(false);
+    }
+  };
+
+  const onTodolistDelete = async (todolistId) => {
+    try {
+      toast.info('To Do List를 제거 중...');
+      const {
+        data: { deleteTodolist },
+      } = await deleteTodolistMutation({
+        variables: {
+          todolistId,
+        },
+      });
+      if (!deleteTodolist) {
+        alert('To Do List를 제거할 수 없습니다.');
+      } else {
+        await todolistRefetch();
+        toast.success('To DO List가 제거되었습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onTodolistFinish = async (todolistId) => {
+    try {
+      toast.info('To Do List를 완료 중...');
+      const {
+        data: { finishTodolist },
+      } = await finishTodolistMutation({
+        variables: {
+          todolistId,
+        },
+      });
+      if (!finishTodolist) {
+        alert('To Do List를 완료할 수 없습니다.');
+      } else {
+        await todolistRefetch();
+        toast.success('To DO List가 완료되었습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
   };
 
   function updateTime() {
@@ -769,8 +1158,8 @@ export default ({
   // useMouseLeave(donleaveme)
 
   useEffect(() => {
-    // LoadCamera();
-    // LoadModel();
+    LoadCamera();
+    LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1151,21 +1540,60 @@ export default ({
 
   const todolistRow = ({ columnIndex, rowIndex, style }) => {
     const index = rowIndex * 2 + columnIndex;
-    const rgb_tmp = hexToRgb(todolistData[index].subject.bgColor);
-    const fontColor = fontColor_dependBg(rgb_tmp);
-    console.log(todolistData[index].subject, rgb_tmp);
-    return (
-      <IndiTodoWrap key={index} style={style} isOdd={Boolean(columnIndex % 2)}>
-        <RoundTodo
-          bgColor={todolistData[index].subject.bgColor}
-          color={fontColor}
+    if (index === 0) {
+      return (
+        <IndiTodoWrap
+          key={index}
+          style={style}
+          isOdd={Boolean(columnIndex % 2)}
         >
-          <RoundNameDiv>{todolistData[index].name}</RoundNameDiv>
-          <Flag margin={'0 5px 0 0'} />
-          <Delete />
-        </RoundTodo>
-      </IndiTodoWrap>
-    );
+          <RoundTodo
+            bgColor={'#DDE7E9'}
+            color={'black'}
+            onClick={() => {
+              setNewTodoView(true);
+            }}
+          >
+            <RoundNameDiv2>To Do List 추가 👆</RoundNameDiv2>
+          </RoundTodo>
+        </IndiTodoWrap>
+      );
+    } else {
+      if (todolistData_new[index - 1] === undefined) {
+        return <div></div>;
+      }
+      const rgb_tmp = hexToRgb(todolistData_new[index - 1].subject.bgColor);
+      const fontColor = fontColor_dependBg(rgb_tmp);
+      return (
+        <IndiTodoWrap
+          key={index}
+          style={style}
+          isOdd={Boolean(columnIndex % 2)}
+        >
+          <RoundTodo
+            bgColor={todolistData_new[index - 1].subject.bgColor}
+            color={fontColor}
+            onClick={() => {
+              mySubjectList2.setOption(todolistData_new[index - 1].subject.id);
+              scheduleTitle.setValue(todolistData_new[index - 1].name);
+            }}
+          >
+            <RoundNameDiv>{todolistData_new[index - 1].name}</RoundNameDiv>
+            <Flag
+              fill={fontColor}
+              margin={'0 5px 0 0'}
+              onClick={() => onTodolistFinish(todolistData_new[index - 1].id)}
+            />
+            <Delete
+              fill={fontColor}
+              onClick={() => {
+                onTodolistDelete(todolistData_new[index - 1].id);
+              }}
+            />
+          </RoundTodo>
+        </IndiTodoWrap>
+      );
+    }
   };
 
   return (
@@ -1336,19 +1764,139 @@ export default ({
       </Wrapper>
       <Wrapper_b>
         <TodoWrap>
-          <TodolistGrid
-            height={130}
-            width={470}
-            columnWidth={225}
-            rowHeight={44}
-            rowCount={5}
-            columnCount={2}
-          >
-            {todolistRow}
-          </TodolistGrid>
+          {newTodoView ? (
+            <NewTodoDiv>
+              <NewTopDiv>
+                <SelectWrapper>
+                  <Select {...mySubjectList} id={'mySubject_id_study'} />
+                </SelectWrapper>
+                <InputWrapper>
+                  <Input
+                    placeholder={'내용 (예: 1단원 암기)'}
+                    bgColor={'white'}
+                    {...todolistName}
+                  />
+                </InputWrapper>
+              </NewTopDiv>
+              <NewBottomDiv>
+                <Button_custom
+                  text={'추가'}
+                  width={'100px'}
+                  height={'35px'}
+                  bgColor={'#0F4C82'}
+                  color={'white'}
+                  margin={'0 60px 0 0'}
+                  onClick={() => {
+                    onTodolistAdd();
+                  }}
+                />
+                <Button_custom
+                  text={'닫기'}
+                  width={'100px'}
+                  height={'35px'}
+                  bgColor={'#0F4C82'}
+                  color={'white'}
+                  margin={'0'}
+                  onClick={() => {
+                    setNewTodoView(false);
+                  }}
+                />
+              </NewBottomDiv>
+            </NewTodoDiv>
+          ) : (
+            <TodolistGrid
+              height={130}
+              width={470}
+              columnWidth={225}
+              rowHeight={44}
+              rowCount={Math.floor(todolistData_new.length / 2) + 1}
+              columnCount={2}
+            >
+              {todolistRow}
+            </TodolistGrid>
+          )}
         </TodoWrap>
-        <ScheStart></ScheStart>
-        <ControlWrap></ControlWrap>
+        <ScheStart>
+          <NewScheContent>
+            <SelectInL>
+              <Select {...mySubjectList2} id={'mySubject_id_study'} />
+            </SelectInL>
+            <SelectInR>
+              <Select {...stateList} id={'mySubject_state_study'} />
+            </SelectInR>
+          </NewScheContent>
+          <NewScheContent>
+            <Input
+              placeholder={'To Do list (예: 1장 복습)'}
+              height={'25px'}
+              bgColor={'white'}
+              {...scheduleTitle}
+            />
+          </NewScheContent>
+          <NewScheContent>
+            <Input_100
+              placeholder={''}
+              {...scheduleTerm}
+              type={'number'}
+              step={5}
+              width={'80px'}
+              height={'25px'}
+              bgColor={'white'}
+            />
+            분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button_custom
+              text={'Max'}
+              margin={'0'}
+              width={'50px'}
+              height={'25px'}
+              onClick={() => {
+                const maxTime_tmp = maxTimeCal(new Date());
+                scheduleTerm.setValue(maxTime_tmp);
+              }}
+            />
+          </NewScheContent>
+          <Button_custom
+            text={'스케줄 시작'}
+            width={'160px'}
+            height={'25px'}
+            margin={'0'}
+            bgColor={'#0F4C82'}
+            color={'white'}
+            padding={'0'}
+            onClick={() => {
+              onStartSchedule();
+            }}
+          />
+        </ScheStart>
+        <ControlWrap>
+          <ControlTop></ControlTop>
+          <ControlBottom>
+            <Button_custom
+              text={'현재 스케줄 마침'}
+              width={'120px'}
+              height={'25px'}
+              margin={'0 10px 0 0'}
+              bgColor={'#DB4437'}
+              color={'black'}
+              padding={'0'}
+              onClick={() => {
+                onStopSchedule();
+              }}
+            />
+            <Button_custom
+              text={'다음 스케줄 당김'}
+              width={'120px'}
+              height={'25px'}
+              margin={'0'}
+              bgColor={'#0F4C82'}
+              color={'white'}
+              padding={'0'}
+              onClick={() => {
+                // onStartSchedule();
+              }}
+            />
+          </ControlBottom>
+        </ControlWrap>
       </Wrapper_b>
     </TopWrap>
   );

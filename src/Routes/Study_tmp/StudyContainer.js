@@ -1,12 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import StudyPresenter from './StudyPresenter';
 import { ME } from '../Tabs/MyStudyTabs/MyStudyTabsQueries';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
 import ChannelService from '../../Components/ChannelService';
-import { MY_TODOLIST } from '../Tabs/MyStudyTabs/MySchedule/MyScheduleQueries';
+import {
+  MY_TODOLIST,
+  FINISH_TODOLIST,
+  DELETE_TODOLIST,
+  MY_SUBJECT,
+  ADD_TODOLIST,
+} from '../Tabs/MyStudyTabs/MySchedule/MyScheduleQueries';
+import { START_SCHEDULE, STOP_SCHEDULE } from './StudyQueries';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -16,9 +23,18 @@ export default () => {
   ChannelService.shutdown();
   const minValue_10 = (value) => value >= 10;
   const refreshTerm = useInput(10, minValue_10);
+
+  const todolistName = useInput('');
+  const scheduleTitle = useInput('');
   const [refreshBool, setRefreshBool] = useState(true);
   const [studyBool, setStudyBool] = useState(false);
+  const [newTodoView, setNewTodoView] = useState(false);
 
+  const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
+  const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
+  const [addTodolistMutation] = useMutation(ADD_TODOLIST);
+  const [startScheduleMutation] = useMutation(START_SCHEDULE);
+  const [stopScheduleMutation] = useMutation(STOP_SCHEDULE);
   const {
     data: myInfoData,
     loading: myInfoLoading,
@@ -29,12 +45,16 @@ export default () => {
   } = useQuery(ME, {
     notifyOnNetworkStatusChange: true,
   });
-
   const {
     data: todolistData,
     loading: todolistLoading,
     refetch: todolistRefetch,
   } = useQuery(MY_TODOLIST);
+  const {
+    data: subjectData,
+    loading: subjectLoading,
+    refetch: subjectRefetch,
+  } = useQuery(MY_SUBJECT);
 
   const autoSwitch = () => {
     if (refreshBool) {
@@ -61,7 +81,7 @@ export default () => {
     alert(`자동 새로고침이 ${refreshTerm.value}초 간격으로 활성화 됐습니다.`);
   };
 
-  if (networkStatus === 1 || todolistLoading) {
+  if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -80,6 +100,17 @@ export default () => {
         studyBool={studyBool}
         setStudyBool={setStudyBool}
         todolistData={todolistData.myTodolist}
+        todolistRefetch={todolistRefetch}
+        subjectData={subjectData.mySubject}
+        deleteTodolistMutation={deleteTodolistMutation}
+        finishTodolistMutation={finishTodolistMutation}
+        addTodolistMutation={addTodolistMutation}
+        startScheduleMutation={startScheduleMutation}
+        stopScheduleMutation={stopScheduleMutation}
+        todolistName={todolistName}
+        newTodoView={newTodoView}
+        setNewTodoView={setNewTodoView}
+        scheduleTitle={scheduleTitle}
       />
     );
   }

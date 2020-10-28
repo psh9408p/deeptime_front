@@ -51,7 +51,13 @@ export default () => {
             </Wrapper>
           </>
         </Router>
-        <ToastContainer position={toast.POSITION.BOTTOM_LEFT} />
+        <ToastContainer
+          position={
+            window.location.hash !== '#/study'
+              ? toast.POSITION.BOTTOM_LEFT
+              : toast.POSITION.TOP_LEFT
+          }
+        />
       </>
     </ThemeProvider>
   );

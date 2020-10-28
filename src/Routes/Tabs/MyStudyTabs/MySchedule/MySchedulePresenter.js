@@ -870,6 +870,7 @@ export default ({
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
     if (scheduleData.calendarId === undefined) {
       alert('TASK 선택은 필수입니다.\nTASK 추가 및 북마크를 진행하세요.');
+      return;
     }
 
     let overlap = false;

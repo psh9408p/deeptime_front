@@ -23,12 +23,13 @@ export const Compass = () => (
   </svg>
 );
 
-export const Delete = ({ onClick }) => (
+export const Delete = ({ onClick, fill }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
     viewBox="0 0 20 20"
+    fill={fill}
     onClick={onClick}
     style={{ cursor: 'pointer' }}
   >
@@ -36,12 +37,13 @@ export const Delete = ({ onClick }) => (
   </svg>
 );
 
-export const Flag = ({ onClick, margin = '0' }) => (
+export const Flag = ({ onClick, fill, margin = '0' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
     viewBox="0 0 20 20"
+    fill={fill}
     onClick={onClick}
     style={{ cursor: 'pointer', margin }}
   >
