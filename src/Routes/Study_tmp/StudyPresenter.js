@@ -1165,8 +1165,8 @@ export default ({
   // useMouseLeave(donleaveme)
 
   useEffect(() => {
-    // LoadCamera();
-    // LoadModel();
+    LoadCamera();
+    LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
