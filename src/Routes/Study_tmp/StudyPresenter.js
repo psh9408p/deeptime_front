@@ -569,8 +569,8 @@ export default ({
   scheduleTitle,
 }) => {
   const [defaultMin, setDefaultMin] = useState(30);
-  const minValue_5 = (value) => value >= 5;
-  const scheduleTerm = useInput(defaultMin, minValue_5);
+  const fiveStepMin = (value) => value >= 5 && value % 5 === 0;
+  const scheduleTerm = useInput(defaultMin);
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -737,6 +737,14 @@ export default ({
   };
 
   const onStartSchedule = async () => {
+    // 5분 단위 최소 5분 검증
+    if (scheduleTerm.value < 5) {
+      alert('스케줄을 시작하기 위한 최소 시간은 5분입니다.');
+      return;
+    } else if (scheduleTerm.value % 5 !== 0) {
+      alert('스케줄 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+      return;
+    }
     // 업데이트 오래걸릴 수 있어 toast 위로
     toast.info('새로운 스케줄을 시작 중...');
     // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
@@ -1157,8 +1165,8 @@ export default ({
   // useMouseLeave(donleaveme)
 
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    // LoadCamera();
+    // LoadModel();
   }, []);
 
   const scheduleList = myInfoData.schedules;
