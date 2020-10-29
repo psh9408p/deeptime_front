@@ -779,8 +779,7 @@ export default ({
     start.setMilliseconds(0);
     start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
     const end = new Date();
-    end.setTime(start.getTime());
-    end.setMinutes(end.getMinutes() + scheduleTerm.value);
+    end.setTime(start.getTime() + scheduleTerm.value * 60000);
 
     try {
       const {
