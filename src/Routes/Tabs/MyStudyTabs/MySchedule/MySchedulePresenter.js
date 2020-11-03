@@ -24,6 +24,7 @@ import { FixedSizeList as BookmarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
 import { Delete, Flag } from '../../../../Components/Icons';
+import { Button_refresh } from '../../../../Components/Buttons/Button_click';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -1336,6 +1337,13 @@ export default ({
           {startRange}~{endRange}
         </DateRangeWrap>
         <SelectDiv>
+          <Button_refresh
+            onClick={() => {
+              myRefetch();
+              subjectRefetch();
+              todolistRefetch();
+            }}
+          />
           <PopupCustom7
             trigger={<PopButton_custom widht={'80px'} text={'To Do List'} />}
             closeOnDocumentClick={false}

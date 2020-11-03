@@ -31,11 +31,14 @@ import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
 import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
-import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import PopupButton from '../../Components/Buttons/PopupButton';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
-import Button_refresh from '../../Components/Buttons/Button_refresh';
+import {
+  Button_refresh,
+  Button_capture,
+} from '../../Components/Buttons/Button_click';
 import html2canvas from 'html2canvas';
 import { FixedSizeGrid as TodolistGrid } from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
@@ -341,21 +344,11 @@ const SetDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 460px !important;
-    height: 250px !important;
+    height: 350px !important;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: ${(props) => props.theme.borderRadius};
-  }
-`;
-
-const PopupCustom2 = styled(Popup)`
-  &-content {
-    width: 470px !important;
-    height: 130px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 `;
 
@@ -568,11 +561,7 @@ let timeCount = 0;
 export default ({
   myInfoData,
   networkStatus,
-  autoSwitch,
-  refreshBool,
   myInfoRefetch,
-  refreshTerm,
-  TermChange,
   studyBool,
   setStudyBool,
   todolistData,
@@ -586,14 +575,45 @@ export default ({
   pullScheduleMutation,
   cutScheduleMutation,
   extensionScheduleMutation,
+  editStudySetMutation,
   todolistName,
   newTodoView,
   setNewTodoView,
   scheduleTitle,
+  startPolling,
+  stopPolling,
 }) => {
-  const [defaultMin, setDefaultMin] = useState(30);
-  const scheduleTerm = useInput(defaultMin);
-  const extensionTerm = useInput(5);
+  const minValue_10 = (value) => value >= 10;
+  const minValue_5 = (value) => value >= 5;
+  const [autoRefresh, setAutoRefresh] = useState(
+    myInfoData.studyDefaultSet.autoRefresh,
+  );
+  const autoRefreshTerm = useInput(
+    myInfoData.studyDefaultSet.autoRefreshTerm,
+    minValue_10,
+  );
+  const startScheduleTerm = useInput(
+    myInfoData.studyDefaultSet.startScheduleTerm,
+  );
+  const extensionTerm = useInput(myInfoData.studyDefaultSet.cutExtenTerm);
+  const startScheduleTerm_forSet = useInput(
+    myInfoData.studyDefaultSet.startScheduleTerm,
+    minValue_5,
+  );
+  const extensionTerm_forSet = useInput(
+    myInfoData.studyDefaultSet.cutExtenTerm,
+    minValue_5,
+  );
+
+  const autoSwitch = () => {
+    if (autoRefresh) {
+      setAutoRefresh(false);
+    } else {
+      setAutoRefresh(true);
+    }
+  };
+
+  // 영상 처리 변수
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -701,6 +721,52 @@ export default ({
       maxTermMin = 1440 - totalMin_now;
     }
     return maxTermMin;
+  };
+
+  const onSaveSet = async () => {
+    if (startScheduleTerm_forSet.value % 5 !== 0) {
+      alert(
+        '스케줄 시작(생성) 기간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+      );
+      return;
+    } else if (extensionTerm_forSet.value % 5 !== 0) {
+      alert(
+        '스케줄 단축&연장 기간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+      );
+      return;
+    }
+
+    try {
+      toast.info('학습 세팅 적용 중...');
+      const {
+        data: { editStudySet },
+      } = await editStudySetMutation({
+        variables: {
+          autoRefresh,
+          autoRefreshTerm: Number(autoRefreshTerm.value),
+          startScheduleTerm: Number(startScheduleTerm_forSet.value),
+          cutExtenTerm: Number(extensionTerm_forSet.value),
+        },
+      });
+      if (!editStudySet) {
+        alert('학습 세팅을 적용할 수 없습니다.');
+      } else {
+        if (autoRefresh) {
+          startPolling(autoRefreshTerm.value * 1000);
+        } else {
+          stopPolling();
+        }
+        startScheduleTerm.setValue(startScheduleTerm_forSet.value);
+        extensionTerm.setValue(extensionTerm_forSet.value);
+        await myInfoRefetch();
+        toast.success('새로운 학습 세팅을 적용하였습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
   };
 
   const onExtensionSchedule = async () => {
@@ -950,10 +1016,10 @@ export default ({
 
   const onStartSchedule = async () => {
     // 5분 단위 최소 5분 검증
-    if (scheduleTerm.value < 5) {
+    if (startScheduleTerm.value < 5) {
       alert('스케줄을 시작하기 위한 최소 시간은 5분입니다.');
       return;
-    } else if (scheduleTerm.value % 5 !== 0) {
+    } else if (startScheduleTerm.value % 5 !== 0) {
       alert('스케줄 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
       return;
     }
@@ -982,9 +1048,9 @@ export default ({
     // 입력 시간이 최대 시간이내 인지 점검
     const nowDate = new Date();
     const maxTime = maxTimeCal(nowDate);
-    if (maxTime < scheduleTerm.value) {
+    if (maxTime < startScheduleTerm.value) {
       alert(`현재 가능한 최대 설정 시간은 ${maxTime}분 입니다.`);
-      scheduleTerm.setValue(maxTime);
+      startScheduleTerm.setValue(maxTime);
       return;
     }
     // todolist 중복 체크
@@ -999,7 +1065,7 @@ export default ({
     start.setMilliseconds(0);
     start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
     const end = new Date();
-    end.setTime(start.getTime() + scheduleTerm.value * 60000);
+    end.setTime(start.getTime() + startScheduleTerm.value * 60000);
 
     try {
       const {
@@ -1023,7 +1089,7 @@ export default ({
         mySubjectList2.setOption('');
         stateList.setOption('자습');
         scheduleTitle.setValue('');
-        scheduleTerm.setValue(30);
+        startScheduleTerm.setValue(30);
         toast.success('새로운 스케줄이 시작되었습니다.');
       }
     } catch (e) {
@@ -1376,9 +1442,17 @@ export default ({
 
   // useMouseLeave(donleaveme)
 
+  const isFirstRun = useRef(true);
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    if (isFirstRun.current) {
+      if (myInfoData.studyDefaultSet.autoRefresh) {
+        startPolling(autoRefreshTerm.value * 1000);
+      }
+      // LoadCamera();
+      // LoadModel();
+      isFirstRun.current = false;
+      return;
+    }
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1839,13 +1913,11 @@ export default ({
               )}
             </AvatarDiv>
             <SetDiv>
-              <button
+              <Button_capture
                 onClick={() => {
                   onImgSave();
                 }}
-              >
-                test
-              </button>
+              />
               <Button_refresh
                 onClick={() => {
                   myInfoRefetch();
@@ -1863,37 +1935,65 @@ export default ({
                 {(close) => {
                   return (
                     <PBody>
-                      <PTitle text={'학습 세팅'} />
+                      <PTitle text={'학습 기본값 세팅'} />
                       <SetContentWrap>
                         <SetContentBox>
                           자동 새로고침 on/off :　
                           <Switch
                             on={true}
                             off={false}
-                            value={refreshBool}
+                            value={autoRefresh}
                             onChange={autoSwitch}
-                          />{' '}
+                          />
                         </SetContentBox>
                         <SetContentBox>
-                          자동 새로고침 간격 :　
+                          자동 새로고침 기간 :　
                           <RefreshInputWrap>
                             <Input_100
                               placeholder={''}
-                              {...refreshTerm}
+                              {...autoRefreshTerm}
                               type={'number'}
                             />
                           </RefreshInputWrap>
                           초
-                          <Button_custom
-                            text={'적용'}
-                            onClick={() => {
-                              TermChange();
-                            }}
-                          />
+                        </SetContentBox>
+                        <SetContentBox>
+                          스케줄 시작(생성) 기간 :　
+                          <RefreshInputWrap>
+                            <Input_100
+                              placeholder={''}
+                              {...startScheduleTerm_forSet}
+                              type={'number'}
+                              step={5}
+                            />
+                          </RefreshInputWrap>
+                          분
+                        </SetContentBox>
+                        <SetContentBox>
+                          스케줄 단축&amp;연장 기간 :　
+                          <RefreshInputWrap>
+                            <Input_100
+                              placeholder={''}
+                              {...extensionTerm_forSet}
+                              type={'number'}
+                              step={5}
+                            />
+                          </RefreshInputWrap>
+                          분
                         </SetContentBox>
                       </SetContentWrap>
                       <ButtonDiv>
-                        <PopupButton_solo
+                        <PopupButton
+                          type="button"
+                          onClick={async () => {
+                            const fucResult = await onSaveSet();
+                            if (fucResult) {
+                              close();
+                            }
+                          }}
+                          text={'적용'}
+                        />
+                        <PopupButton
                           type="button"
                           onClick={() => {
                             close();
@@ -2055,7 +2155,7 @@ export default ({
           <NewScheContent>
             <Input_100
               placeholder={''}
-              {...scheduleTerm}
+              {...startScheduleTerm}
               type={'number'}
               step={5}
               width={'80px'}
@@ -2070,7 +2170,7 @@ export default ({
               height={'25px'}
               onClick={() => {
                 const maxTime_tmp = maxTimeCal(new Date());
-                scheduleTerm.setValue(maxTime_tmp);
+                startScheduleTerm.setValue(maxTime_tmp);
               }}
             />
           </NewScheContent>

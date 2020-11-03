@@ -54,6 +54,12 @@ export const ME = gql`
           bgColor
         }
       }
+      studyDefaultSet {
+        autoRefresh
+        autoRefreshTerm
+        startScheduleTerm
+        cutExtenTerm
+      }
     }
   }
 `;

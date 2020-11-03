@@ -75,3 +75,19 @@ export const EXTENSION_SCHEDULE = gql`
     )
   }
 `;
+
+export const EDIT_STUDYSET = gql`
+  mutation editStudySet(
+    $autoRefresh: Boolean!
+    $autoRefreshTerm: Int!
+    $startScheduleTerm: Int!
+    $cutExtenTerm: Int!
+  ) {
+    editStudySet(
+      autoRefresh: $autoRefresh
+      autoRefreshTerm: $autoRefreshTerm
+      startScheduleTerm: $startScheduleTerm
+      cutExtenTerm: $cutExtenTerm
+    )
+  }
+`;

@@ -19,6 +19,7 @@ import {
   PULL_SCHEDULE,
   CUT_SCHEDULE,
   EXTENSION_SCHEDULE,
+  EDIT_STUDYSET,
 } from './StudyQueries';
 
 const LoaderWrapper = styled.div`
@@ -27,12 +28,9 @@ const LoaderWrapper = styled.div`
 
 export default () => {
   ChannelService.shutdown();
-  const minValue_10 = (value) => value >= 10;
-  const refreshTerm = useInput(10, minValue_10);
 
   const todolistName = useInput('');
   const scheduleTitle = useInput('');
-  const [refreshBool, setRefreshBool] = useState(true);
   const [studyBool, setStudyBool] = useState(false);
   const [newTodoView, setNewTodoView] = useState(false);
 
@@ -44,6 +42,7 @@ export default () => {
   const [pullScheduleMutation] = useMutation(PULL_SCHEDULE);
   const [cutScheduleMutation] = useMutation(CUT_SCHEDULE);
   const [extensionScheduleMutation] = useMutation(EXTENSION_SCHEDULE);
+  const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const {
     data: myInfoData,
     loading: myInfoLoading,
@@ -65,31 +64,6 @@ export default () => {
     refetch: subjectRefetch,
   } = useQuery(MY_SUBJECT);
 
-  const autoSwitch = () => {
-    if (refreshBool) {
-      stopPolling();
-      setRefreshBool(false);
-    } else {
-      startPolling(refreshTerm.value * 1000);
-      setRefreshBool(true);
-    }
-  };
-
-  const isFirstRun = useRef(true);
-  useEffect(() => {
-    if (isFirstRun.current) {
-      startPolling(refreshTerm.value * 1000);
-      isFirstRun.current = false;
-      return;
-    }
-  }, []);
-
-  const TermChange = () => {
-    startPolling(refreshTerm.value * 1000);
-    setRefreshBool(true);
-    alert(`자동 새로고침이 ${refreshTerm.value}초 간격으로 활성화 됐습니다.`);
-  };
-
   if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
       <LoaderWrapper>
@@ -101,11 +75,7 @@ export default () => {
       <StudyPresenter
         myInfoData={myInfoData.me}
         networkStatus={networkStatus}
-        autoSwitch={autoSwitch}
-        refreshBool={refreshBool}
         myInfoRefetch={myInfoRefetch}
-        refreshTerm={refreshTerm}
-        TermChange={TermChange}
         studyBool={studyBool}
         setStudyBool={setStudyBool}
         todolistData={todolistData.myTodolist}
@@ -119,10 +89,13 @@ export default () => {
         pullScheduleMutation={pullScheduleMutation}
         cutScheduleMutation={cutScheduleMutation}
         extensionScheduleMutation={extensionScheduleMutation}
+        editStudySetMutation={editStudySetMutation}
         todolistName={todolistName}
         newTodoView={newTodoView}
         setNewTodoView={setNewTodoView}
         scheduleTitle={scheduleTitle}
+        startPolling={startPolling}
+        stopPolling={stopPolling}
       />
     );
   }
