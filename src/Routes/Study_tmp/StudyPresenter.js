@@ -160,31 +160,50 @@ const ControlWrap = styled.div`
   width: 270px;
   height: 130px;
   margin: 10px;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
+  /* border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius}; */
 `;
 
 const ControlTop = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 270px;
-  height: 85px;
+  height: 80px;
   margin-bottom: 10px;
-  /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const ControlBottom = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   width: 270px;
-  height: 35px;
-  padding-top: 3px;
-  /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  height: 40px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ControlTop1 = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  width: 100%;
+  height: 50%;
+`;
+
+const ControlTop2 = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
 `;
 
 const VideoBox = styled.video`
@@ -464,6 +483,7 @@ const NewScheContent = styled.div`
   width: 160px;
   height: 25px;
   margin-bottom: 5px;
+  font-weight: 600;
 `;
 
 const SelectInL = styled.div`
@@ -563,14 +583,17 @@ export default ({
   addTodolistMutation,
   startScheduleMutation,
   stopScheduleMutation,
+  pullScheduleMutation,
+  cutScheduleMutation,
+  extensionScheduleMutation,
   todolistName,
   newTodoView,
   setNewTodoView,
   scheduleTitle,
 }) => {
   const [defaultMin, setDefaultMin] = useState(30);
-  const fiveStepMin = (value) => value >= 5 && value % 5 === 0;
   const scheduleTerm = useInput(defaultMin);
+  const extensionTerm = useInput(5);
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -680,9 +703,198 @@ export default ({
     return maxTermMin;
   };
 
+  const onExtensionSchedule = async () => {
+    // 5분 단위 최소 5분 검증
+    if (extensionTerm.value < 5) {
+      alert('스케줄을 연장하기 위한 최소 시간은 5분입니다.');
+      return;
+    } else if (extensionTerm.value % 5 !== 0) {
+      alert('연장 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+      return;
+    }
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('현재 스케줄 연장 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex === -1) {
+      alert('현재 진행 중인 스케줄이 없습니다.');
+      return;
+    }
+    // 최대 연장시간 점검
+    const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
+    console.log(end.getHours(), end.getMinutes(), 'aad');
+    const posibleMin = 1440 - (end.getHours() * 60 + end.getMinutes());
+    if (end.getHours() === 0 && end.getMinutes() === 0) {
+      alert('현재 스케줄은 더는 연장이 불가능합니다.');
+      return;
+    } else if (posibleMin < extensionTerm.value) {
+      alert(`오늘 연장 가능한 최대 시간은 ${posibleMin}분입니다.`);
+      extensionTerm.setValue(posibleMin);
+      return;
+    }
+    // 연장시간
+    const start = new Date(scheduleList_selectDay[nowScheduleIndex].start);
+    let deleteArray = [];
+    let cutId = '';
+    end.setTime(end.getTime() + extensionTerm.value * 60000);
+    // 삭제할 단축할 스케줄 계산
+    for (var i = 0; i < scheduleList_selectDay.length; i++) {
+      const start_tmp = new Date(scheduleList_selectDay[i].start);
+      const end_tmp = new Date(scheduleList_selectDay[i].end);
+      if (start < start_tmp && end >= end_tmp) {
+        deleteArray.push({ id: scheduleList_selectDay[i].id });
+      } else if (start < start_tmp && end > start_tmp) {
+        cutId = scheduleList_selectDay[i].id;
+      }
+    }
+    if (deleteArray.length !== 0 || cutId !== '') {
+      if (
+        window.confirm(
+          '스케줄 연장 시 시간이 중복돼 단축(삭제)되는 스케줄이 존재합니다.\n그래도 스케줄 연장을 진행하시겠습니까?',
+        ) === false
+      ) {
+        return;
+      }
+    }
+
+    try {
+      const {
+        data: { extensionSchedule_study },
+      } = await extensionScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          end,
+          cutId,
+          deleteArray,
+        },
+      });
+      if (!extensionSchedule_study) {
+        alert('현재 스케줄을 연장할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('현재 스케줄을 연장했습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onCutSchedule = async () => {
+    // 5분 단위 최소 5분 검증
+    if (extensionTerm.value < 5) {
+      alert('스케줄을 단축하기 위한 최소 시간은 5분입니다.');
+      return;
+    } else if (extensionTerm.value % 5 !== 0) {
+      alert('단축 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+      return;
+    }
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('현재 스케줄 단축 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex === -1) {
+      alert('현재 진행 중인 스케줄이 없습니다.');
+      return;
+    }
+    // 축소시 남은 시간 계산 5분 이하면 삭제 불리언 true
+    let deleteBool = false;
+    if (
+      scheduleList_selectDay[nowScheduleIndex].totalTime / 60 -
+        extensionTerm.value <
+      5
+    ) {
+      if (
+        window.confirm(
+          '현재 스케줄이 5분 미만으로 축소돼 삭제됩니다.\n그래도 스케줄 단축을 진행하시겠습니까?',
+        ) === true
+      ) {
+        deleteBool = true;
+      } else {
+        return;
+      }
+    }
+
+    const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
+    end.setTime(end.getTime() - extensionTerm.value * 60000);
+
+    try {
+      const {
+        data: { cutSchedule_study },
+      } = await cutScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          end,
+          deleteBool,
+        },
+      });
+      if (!cutSchedule_study) {
+        alert('현재 스케줄을 단축할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        if (deleteBool) {
+          toast.success('현재 스케줄을 삭제했습니다.');
+        } else {
+          toast.success('현재 스케줄을 단축했습니다.');
+        }
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onPullSchedule = async () => {
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('다음 스케줄 당기는 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex !== -1) {
+      alert('현재 스케줄이 없을 때 사용 가능합니다.');
+      return;
+    } else if (nextScheduleIndex === -1) {
+      alert('다음 스케줄이 없습니다.');
+      return;
+    }
+    // 시작 시간 계산
+    const start = new Date();
+    const end = new Date();
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
+    end.setTime(
+      start.getTime() +
+        scheduleList_selectDay[nextScheduleIndex].totalTime * 1000,
+    );
+
+    try {
+      const {
+        data: { pullSchedule_study },
+      } = await pullScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nextScheduleIndex].id,
+          start,
+          end,
+        },
+      });
+      if (!pullSchedule_study) {
+        alert('다음 스케줄을 당길 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('다음 스케줄을 당겼습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
   const onStopSchedule = async () => {
     // 업데이트 오래걸릴 수 있어 toast 위로
-    toast.info('현재 스케줄을 마치는 중...');
+    toast.info('현재 스케줄 마치는 중...');
     // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
     await myInfoRefetch();
     await todayGraph_calculate();
@@ -1876,7 +2088,48 @@ export default ({
           />
         </ScheStart>
         <ControlWrap>
-          <ControlTop></ControlTop>
+          <ControlTop>
+            <ControlTop1>
+              현재 스케줄을&nbsp;&nbsp;
+              <Input_100
+                placeholder={''}
+                {...extensionTerm}
+                type={'number'}
+                step={5}
+                width={'80px'}
+                height={'25px'}
+                bgColor={'white'}
+              />
+              분
+            </ControlTop1>
+            <ControlTop2>
+              {' '}
+              <Button_custom
+                text={'단축'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0 10px 0 0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onCutSchedule();
+                }}
+              />{' '}
+              <Button_custom
+                text={'연장'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onExtensionSchedule();
+                }}
+              />
+            </ControlTop2>
+          </ControlTop>
           <ControlBottom>
             <Button_custom
               text={'현재 스케줄 마침'}
@@ -1899,7 +2152,7 @@ export default ({
               color={'white'}
               padding={'0'}
               onClick={() => {
-                // onStartSchedule();
+                onPullSchedule();
               }}
             />
           </ControlBottom>

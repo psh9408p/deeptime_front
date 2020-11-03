@@ -35,3 +35,43 @@ export const STOP_SCHEDULE = gql`
     )
   }
 `;
+
+export const PULL_SCHEDULE = gql`
+  mutation pullSchedule_study(
+    $scheduleId: String!
+    $start: String!
+    $end: String!
+  ) {
+    pullSchedule_study(scheduleId: $scheduleId, start: $start, end: $end)
+  }
+`;
+
+export const CUT_SCHEDULE = gql`
+  mutation cutSchedule_study(
+    $scheduleId: String!
+    $end: String!
+    $deleteBool: Boolean!
+  ) {
+    cutSchedule_study(
+      scheduleId: $scheduleId
+      end: $end
+      deleteBool: $deleteBool
+    )
+  }
+`;
+
+export const EXTENSION_SCHEDULE = gql`
+  mutation extensionSchedule_study(
+    $scheduleId: String!
+    $end: String!
+    $cutId: String!
+    $deleteArray: [schedule_delete!]!
+  ) {
+    extensionSchedule_study(
+      scheduleId: $scheduleId
+      end: $end
+      cutId: $cutId
+      deleteArray: $deleteArray
+    )
+  }
+`;

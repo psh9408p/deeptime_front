@@ -13,7 +13,13 @@ import {
   MY_SUBJECT,
   ADD_TODOLIST,
 } from '../Tabs/MyStudyTabs/MySchedule/MyScheduleQueries';
-import { START_SCHEDULE, STOP_SCHEDULE } from './StudyQueries';
+import {
+  START_SCHEDULE,
+  STOP_SCHEDULE,
+  PULL_SCHEDULE,
+  CUT_SCHEDULE,
+  EXTENSION_SCHEDULE,
+} from './StudyQueries';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -35,6 +41,9 @@ export default () => {
   const [addTodolistMutation] = useMutation(ADD_TODOLIST);
   const [startScheduleMutation] = useMutation(START_SCHEDULE);
   const [stopScheduleMutation] = useMutation(STOP_SCHEDULE);
+  const [pullScheduleMutation] = useMutation(PULL_SCHEDULE);
+  const [cutScheduleMutation] = useMutation(CUT_SCHEDULE);
+  const [extensionScheduleMutation] = useMutation(EXTENSION_SCHEDULE);
   const {
     data: myInfoData,
     loading: myInfoLoading,
@@ -107,6 +116,9 @@ export default () => {
         addTodolistMutation={addTodolistMutation}
         startScheduleMutation={startScheduleMutation}
         stopScheduleMutation={stopScheduleMutation}
+        pullScheduleMutation={pullScheduleMutation}
+        cutScheduleMutation={cutScheduleMutation}
+        extensionScheduleMutation={extensionScheduleMutation}
         todolistName={todolistName}
         newTodoView={newTodoView}
         setNewTodoView={setNewTodoView}
