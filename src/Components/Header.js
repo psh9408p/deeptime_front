@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
-import { Logo, Shutter, User, Shop, Guide, MyStudy } from './Icons';
+import { Logo, User, Shop, Guide, MyStudy, Play, Timelapse } from './Icons';
 import Avatar from './Avatar';
 import { useQuery } from '@apollo/react-hooks';
 import { ME } from '../SharedQueries';
@@ -63,13 +63,17 @@ const HeaderColumn = styled.div`
 `;
 
 const AiBox = styled.div`
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${(props) => props.theme.classicBlue};
   padding: 10px 15px;
   height: 45px;
-  width: 194px;
+  width: 100px;
   border: 1px solid ${(props) => props.theme.classicBlue};
-  border-radius: 3px;
+  border-radius: 23px;
 `;
 
 const HeaderLink = styled(Link)`
@@ -171,25 +175,16 @@ export default withRouter(() => {
           </HeaderColumn>
           <HeaderColumn>
             {data.me && data.me.loginPosition === 'student' && (
-              <AiBox>
-                <Shutter />
-                <PotalButton
-                  type="button"
-                  onClick={
-                    onClickPotal_student
-                    // () => {
-                    //   alert('개인용 서비스는 준비 중 입니다.');
-                    // }
-                  }
-                >
-                  학습
-                </PotalButton>
-                {/* <AiHeaderLink target="_blank" to="/study" replace>
-                  학습
+              <AiBox
+                onClick={() => {
+                  onClickPotal_student();
+                }}
+              >
+                <Play fill={'#0F4C82'} margin={'0 5px 0 0'} />
+                Start
+                {/* <AiHeaderLink oncli to="/timelapse" replace>
+                  <Timelapse fill={'#0F4C82'} />
                 </AiHeaderLink> */}
-                <AiHeaderLink to="/timelapse" replace>
-                  타임랩스
-                </AiHeaderLink>
               </AiBox>
             )}
             {/* {data.me && data.me.loginPosition.includes('manager') && (
@@ -243,7 +238,7 @@ export default withRouter(() => {
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
               <HeaderLink to="/" replace>
-                <VisualLong>나의 학습</VisualLong>
+                <VisualLong>My</VisualLong>
                 <VisualShort>
                   <MyStudy />
                 </VisualShort>
@@ -257,7 +252,7 @@ export default withRouter(() => {
                 클래스 학습
               </TmpButton> */}
               <HeaderLink target="_blank" to="/userguide/schedule" replace>
-                <VisualLong>사용가이드</VisualLong>
+                <VisualLong>Guide</VisualLong>
                 <VisualShort>
                   <Guide />
                 </VisualShort>

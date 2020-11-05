@@ -51,6 +51,34 @@ export const Flag = ({ onClick, fill, margin = '0' }) => (
   </svg>
 );
 
+export const Play = ({ onClick, fill, margin = '0' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill={fill}
+    onClick={onClick}
+    style={{ cursor: 'pointer', margin }}
+  >
+    <path d="M3 22v-20l18 10-18 10z" />
+  </svg>
+);
+
+export const Timelapse = ({ onClick, fill, margin = '0' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill={fill}
+    onClick={onClick}
+    style={{ cursor: 'pointer', margin }}
+  >
+    <path d="M0 1v22h24v-22h-24zm4 20h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm14 12h-12v-10h12v10zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2v-2h2v2zm-12 10v-6l5 3-5 3z" />
+  </svg>
+);
+
 export const HeartEmpty = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

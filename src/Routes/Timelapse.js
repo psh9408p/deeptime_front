@@ -249,7 +249,7 @@ export default () => {
 
   return (
     <Wrapper>
-      <Title>학습 이미지를 타이랩스 영상으로 만들어보세요~!</Title>
+      <Title>캡쳐한 이미지를 타이랩스 영상으로 만들어보세요~!</Title>
       <br />
       <br />
       <SubTitle id="status" style={{ color: 'red' }}>

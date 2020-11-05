@@ -13,7 +13,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import WeekRange from '../../../../Components/Date/WeekRange';
 import ObjectCopy from '../../../../Components/ObjectCopy';
-import { Button_refresh } from '../../../../Components/Buttons/Button_click';
+import {
+  Button_refresh,
+  Button_capture,
+} from '../../../../Components/Buttons/Button_click';
 
 const Wrapper = styled.div`
   display: flex;
@@ -43,14 +46,14 @@ const BigBox = styled.div`
     border: ${(props) => props.theme.boxBorder};
     border-radius: ${(props) => props.theme.borderRadius};
     width: 654.5px;
-    height: 1475px;
+    height: 1500px;
+    padding: 10px;
     position: relative;
   }
 `;
 
 const StatisRow = styled.div`
   width: 634.5px;
-  margin: 10px 10px 0px 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   display: flex;
@@ -59,25 +62,32 @@ const StatisRow = styled.div`
   position: relative;
 
   &:first-child {
-    height: 50px;
+    height: 60px;
+    z-index: 90;
   }
   &:nth-child(2) {
-    height: 50px;
+    height: 60px;
   }
   &:nth-child(3) {
-    height: 290px;
+    height: 310px;
   }
   &:nth-child(4) {
-    height: 270px;
+    height: 280px;
   }
-  &:nth-child(5) {
-    height: 295px;
+  &:not(:last-child) {
+    margin-bottom: 10px;
   }
-  &:nth-child(6) {
+`;
+
+const StatisRow2 = styled(StatisRow)`
+  &:nth-child(1) {
+    height: 290px;
+  }
+  &:nth-child(2) {
     height: 295px;
   }
   &:last-child {
-    height: 145px;
+    height: 125px;
     margin-bottom: 10px;
   }
 `;
@@ -88,8 +98,8 @@ const ChartWrap = styled.div`
 `;
 
 const ChartWrap_percentBar = styled.div`
-  width: 300px;
-  height: 100%;
+  width: 250px;
+  height: 125px;
 `;
 
 const TotalTime = styled.div`
@@ -137,25 +147,13 @@ const ClassButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   &:not(:last-child) {
-    margin-right: 60px;
+    margin-right: 30px;
   }
 `;
 
-const ClassButton_Blue = styled.button`
-  width: 100px;
-  border: 0;
-  outline-color: black;
+const ClassButton_Blue = styled(ClassButton)`
   background-color: ${(props) => props.theme.skyBlue};
   color: white;
-  border-radius: ${(props) => props.theme.borderRadius};
-  font-weight: 600;
-  text-align: center;
-  padding: 7px 0px;
-  font-size: 14px;
-  cursor: pointer;
-  &:not(:last-child) {
-    margin-right: 60px;
-  }
 `;
 
 const DatePickButton = styled.button`
@@ -188,11 +186,6 @@ const RefreshDiv = styled.div`
   span {
     font-weight: 600;
   }
-`;
-
-const RefreshInputWrap = styled.div`
-  width: 70px;
-  height: 30px;
 `;
 
 const Animation = keyframes`
@@ -297,6 +290,7 @@ export default ({
   setSelectPercent,
   selectPercent2,
   setSelectPercent2,
+  onImgSave,
 }) => {
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
@@ -1066,10 +1060,9 @@ export default ({
     );
   });
 
-  console.log(networkStatus, 'bbbb');
-  return (
-    <Wrapper>
-      <BigBox>
+  const TopStatisRow = () => {
+    return (
+      <>
         <StatisRow>
           <DatePickDiv>
             <DatePicker
@@ -1079,14 +1072,18 @@ export default ({
             />
           </DatePickDiv>
           <RefreshDiv>
-            <span>새로고침 :&nbsp;&nbsp;</span>
+            <Button_capture
+              onClick={() => {
+                onImgSave();
+              }}
+            />
             <Button_refresh
               onClick={() => {
                 myInfoRefetch();
               }}
             />
-            {networkStatus === 7 && <IngSpan></IngSpan>}
-            {networkStatus === 4 && <IngSpan>ing...</IngSpan>}
+            {/* {networkStatus === 7 && <IngSpan></IngSpan>}
+            {networkStatus === 4 && <IngSpan>ing...</IngSpan>} */}
           </RefreshDiv>
         </StatisRow>
         <StatisRow>
@@ -1112,421 +1109,479 @@ export default ({
             }
           })}
         </StatisRow>
+      </>
+    );
+  };
+
+  return (
+    <Wrapper>
+      <BigBox id="staCapture_all">
         {StaTabs.currentIndex === 0 && (
           <>
-            <StatisRow>
-              <ChartWrap>
-                <RowBarChart
-                  data_1={taskArray_schedule}
-                  data_2={taskArray_scheduleT}
-                  data_color={schedule_color}
-                  labels={schedule_label}
-                  label_1={'학습'}
-                  label_2={'목표'}
-                  title={'TASK별 학습 시간'}
-                  title_x={'시간(분)'}
-                  dateRange={'today'}
-                />
-              </ChartWrap>
-              {todayCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <AreaChart
-                  data_1={taskArray}
-                  labels={oneDayHours}
-                  title={'시간대별 학습 시간'}
-                  title_y={'학습 시간(분)'}
-                  dateRange={'today'}
-                />
-              </ChartWrap>
-              {todayCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <DonutChart
-                  data_1={donutData_1}
-                  data_2={donutData_2}
-                  title={'학습 성취도'}
-                  labels={['학습', '목표']}
-                />
-              </ChartWrap>
-              <TotalTime>
-                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                {total_min.length === 1 ? '0' + total_min : total_min}m
-              </TotalTime>
-              <TargetTime>
-                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-                {target_min.length === 1 ? '0' + target_min : target_min}m
-              </TargetTime>
-              <DonutPercent>{donutPercent}%</DonutPercent>
-              {todayCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <PieChart
-                  data={selectPercent ? taskArray_percentT : taskArray_percent}
-                  dataColor={schedule_color}
-                  labels={schedule_label}
-                  title={
-                    selectPercent
-                      ? 'TASK별 목표 시간 비율'
-                      : 'TASK별 학습 시간 비율'
-                  }
-                  updateBoolean={selectPercent}
-                />
-              </ChartWrap>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(true);
-                  }}
-                  styleBoolean={selectPercent}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(false);
-                  }}
-                  styleBoolean={!selectPercent}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {todayCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap_percentBar>
-                <RowBarChart_selfPercent
-                  title={
-                    selectPercent2
-                      ? '목표 시간 자습&강의 비율'
-                      : '학습 시간 자습&강의 비율'
-                  }
-                  data_1={selectPercent2 ? self_percentT : self_percent}
-                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
-                  updateBoolean={selectPercent2}
-                />
-              </ChartWrap_percentBar>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(true);
-                  }}
-                  styleBoolean={selectPercent2}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(false);
-                  }}
-                  styleBoolean={!selectPercent2}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {todayCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
+            <div
+              id="staCapture_top"
+              style={{
+                width: '634.5px',
+                height: '740px',
+                marginBottom: '10px',
+              }}
+            >
+              <TopStatisRow />
+              <StatisRow>
+                <ChartWrap>
+                  <DonutChart
+                    data_1={donutData_1}
+                    data_2={donutData_2}
+                    title={'Total Deep Time'}
+                    labels={['Real', 'Plan']}
+                  />
+                </ChartWrap>
+                <TotalTime>
+                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                  {total_min.length === 1 ? '0' + total_min : total_min}m
+                </TotalTime>
+                <TargetTime>
+                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
+                  h{target_min.length === 1 ? '0' + target_min : target_min}m
+                </TargetTime>
+                <DonutPercent>{donutPercent}%</DonutPercent>
+                {todayCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+              <StatisRow>
+                <ChartWrap>
+                  <AreaChart
+                    data_1={taskArray}
+                    labels={oneDayHours}
+                    title={'시간대별 Deep Time'}
+                    title_y={'Deep Time(분)'}
+                    dateRange={'today'}
+                  />
+                </ChartWrap>
+                {todayCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+            </div>
+            <div
+              id="staCapture_bottom"
+              style={{ width: '634.5px', height: '730px' }}
+            >
+              <StatisRow2>
+                <ChartWrap>
+                  <RowBarChart
+                    data_1={taskArray_schedule}
+                    data_2={taskArray_scheduleT}
+                    data_color={schedule_color}
+                    labels={schedule_label}
+                    label_1={'Real'}
+                    label_2={'Plan'}
+                    title={'TASK별 Deep Time'}
+                    title_x={'시간(분)'}
+                    dateRange={'today'}
+                  />
+                </ChartWrap>
+                {todayCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap>
+                  <PieChart
+                    data={
+                      selectPercent ? taskArray_percentT : taskArray_percent
+                    }
+                    dataColor={schedule_color}
+                    labels={schedule_label}
+                    title={
+                      selectPercent
+                        ? 'TASK별 Plan Time 비율'
+                        : 'TASK별 Real Time 비율'
+                    }
+                    updateBoolean={selectPercent}
+                  />
+                </ChartWrap>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(false);
+                    }}
+                    styleBoolean={!selectPercent}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {todayCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap_percentBar>
+                  <RowBarChart_selfPercent
+                    title={
+                      selectPercent2
+                        ? 'Plan Time 자습&강의 비율'
+                        : 'Deep Time 자습&강의 비율'
+                    }
+                    data_1={selectPercent2 ? self_percentT : self_percent}
+                    data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                    updateBoolean={selectPercent2}
+                  />
+                </ChartWrap_percentBar>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(false);
+                    }}
+                    styleBoolean={!selectPercent2}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {todayCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+            </div>
           </>
         )}
         {StaTabs.currentIndex === 1 && (
           <>
-            <StatisRow>
-              <ChartWrap>
-                <RowBarChart
-                  data_1={taskArray_schedule_week}
-                  data_2={taskArray_scheduleT_week}
-                  data_color={schedule_color}
-                  labels={schedule_label}
-                  label_1={'학습'}
-                  label_2={'목표'}
-                  title={'TASK별 학습 시간'}
-                  title_x={'시간(시)'}
-                  dateRange={'week'}
-                />
-              </ChartWrap>
-              {weekCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <AreaChart
-                  data_1={taskArray_week}
-                  labels={['일', '월', '화', '수', '목', '금', '토']}
-                  title={'요일별 학습 시간'}
-                  title_y={'시간(시)'}
-                  dateRange={'week'}
-                />
-              </ChartWrap>
-              {weekCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <DonutChart
-                  data_1={donutData_1}
-                  data_2={donutData_2}
-                  title={'학습 성취도'}
-                  labels={['학습', '목표']}
-                />
-              </ChartWrap>
-              <TotalTime>
-                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                {total_min.length === 1 ? '0' + total_min : total_min}m
-              </TotalTime>
-              <TargetTime>
-                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-                {target_min.length === 1 ? '0' + target_min : target_min}m
-              </TargetTime>
-              <DonutPercent>{donutPercent}%</DonutPercent>
-              {weekCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <PieChart
-                  data={selectPercent ? taskArray_percentT : taskArray_percent}
-                  dataColor={schedule_color}
-                  labels={schedule_label}
-                  title={
-                    selectPercent
-                      ? 'TASK별 목표 시간 비율'
-                      : 'TASK별 학습 시간 비율'
-                  }
-                  updateBoolean={selectPercent}
-                />
-              </ChartWrap>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(true);
-                  }}
-                  styleBoolean={selectPercent}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(false);
-                  }}
-                  styleBoolean={!selectPercent}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {weekCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap_percentBar>
-                <RowBarChart_selfPercent
-                  title={
-                    selectPercent2
-                      ? '목표 시간 자습&강의 비율'
-                      : '학습 시간 자습&강의 비율'
-                  }
-                  data_1={selectPercent2 ? self_percentT : self_percent}
-                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
-                  updateBoolean={selectPercent2}
-                />
-              </ChartWrap_percentBar>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(true);
-                  }}
-                  styleBoolean={selectPercent2}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(false);
-                  }}
-                  styleBoolean={!selectPercent2}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {weekCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
+            <div
+              id="staCapture_top"
+              style={{
+                width: '634.5px',
+                height: '740px',
+                marginBottom: '10px',
+              }}
+            >
+              <TopStatisRow />
+              <StatisRow>
+                <ChartWrap>
+                  <DonutChart
+                    data_1={donutData_1}
+                    data_2={donutData_2}
+                    title={'Total Deep Time'}
+                    labels={['Real', 'Plan']}
+                  />
+                </ChartWrap>
+                <TotalTime>
+                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                  {total_min.length === 1 ? '0' + total_min : total_min}m
+                </TotalTime>
+                <TargetTime>
+                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
+                  h{target_min.length === 1 ? '0' + target_min : target_min}m
+                </TargetTime>
+                <DonutPercent>{donutPercent}%</DonutPercent>
+                {weekCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+              <StatisRow>
+                <ChartWrap>
+                  <AreaChart
+                    data_1={taskArray_week}
+                    labels={['일', '월', '화', '수', '목', '금', '토']}
+                    title={'요일별 Deep Time'}
+                    title_y={'시간(시)'}
+                    dateRange={'week'}
+                  />
+                </ChartWrap>
+                {weekCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+            </div>
+            <div
+              id="staCapture_bottom"
+              style={{ width: '634.5px', height: '730px' }}
+            >
+              <StatisRow2>
+                <ChartWrap>
+                  <RowBarChart
+                    data_1={taskArray_schedule_week}
+                    data_2={taskArray_scheduleT_week}
+                    data_color={schedule_color}
+                    labels={schedule_label}
+                    label_1={'Real'}
+                    label_2={'Plan'}
+                    title={'TASK별 Deep Time'}
+                    title_x={'시간(시)'}
+                    dateRange={'week'}
+                  />
+                </ChartWrap>
+                {weekCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap>
+                  <PieChart
+                    data={
+                      selectPercent ? taskArray_percentT : taskArray_percent
+                    }
+                    dataColor={schedule_color}
+                    labels={schedule_label}
+                    title={
+                      selectPercent
+                        ? 'TASK별 Plan Time 비율'
+                        : 'TASK별 Real Time 비율'
+                    }
+                    updateBoolean={selectPercent}
+                  />
+                </ChartWrap>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(false);
+                    }}
+                    styleBoolean={!selectPercent}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {weekCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap_percentBar>
+                  <RowBarChart_selfPercent
+                    title={
+                      selectPercent2
+                        ? 'Plan Time 자습&강의 비율'
+                        : 'Plan Time 자습&강의 비율'
+                    }
+                    data_1={selectPercent2 ? self_percentT : self_percent}
+                    data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                    updateBoolean={selectPercent2}
+                  />
+                </ChartWrap_percentBar>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(false);
+                    }}
+                    styleBoolean={!selectPercent2}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {weekCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+            </div>
           </>
         )}
         {StaTabs.currentIndex === 2 && (
           <>
-            <StatisRow>
-              <ChartWrap>
-                <RowBarChart
-                  data_1={taskArray_schedule_month}
-                  data_2={taskArray_scheduleT_month}
-                  data_color={schedule_color}
-                  labels={schedule_label}
-                  label_1={'학습'}
-                  label_2={'목표'}
-                  title={'TASK별 학습 시간'}
-                  title_x={'시간(시)'}
-                  dateRange={'month'}
-                />
-              </ChartWrap>
-              {monthCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <AreaChart
-                  data_1={taskArray_month}
-                  labels={daysOfMonth}
-                  title={'일별 학습 시간'}
-                  title_y={'시간(시)'}
-                  dateRange={'month'}
-                />
-              </ChartWrap>
-              {monthCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <DonutChart
-                  data_1={donutData_1}
-                  data_2={donutData_2}
-                  title={'학습 성취도'}
-                  labels={['학습', '목표']}
-                />
-              </ChartWrap>
-              <TotalTime>
-                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                {total_min.length === 1 ? '0' + total_min : total_min}m
-              </TotalTime>
-              <TargetTime>
-                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-                {target_min.length === 1 ? '0' + target_min : target_min}m
-              </TargetTime>
-              <DonutPercent>{donutPercent}%</DonutPercent>
-              {monthCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap>
-                <PieChart
-                  data={selectPercent ? taskArray_percentT : taskArray_percent}
-                  dataColor={schedule_color}
-                  labels={schedule_label}
-                  title={
-                    selectPercent
-                      ? 'TASK별 목표 시간 비율'
-                      : 'TASK별 학습 시간 비율'
-                  }
-                  updateBoolean={selectPercent}
-                />
-              </ChartWrap>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(true);
-                  }}
-                  styleBoolean={selectPercent}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent(false);
-                  }}
-                  styleBoolean={!selectPercent}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {monthCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
-            <StatisRow>
-              <ChartWrap_percentBar>
-                <RowBarChart_selfPercent
-                  title={
-                    selectPercent2
-                      ? '목표 시간 자습&강의 비율'
-                      : '학습 시간 자습&강의 비율'
-                  }
-                  data_1={selectPercent2 ? self_percentT : self_percent}
-                  data_2={selectPercent2 ? lecture_percentT : lecture_percent}
-                  updateBoolean={selectPercent2}
-                />
-              </ChartWrap_percentBar>
-              <ChangeWrap>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(true);
-                  }}
-                  styleBoolean={selectPercent2}
-                >
-                  목표
-                </ChangeButton>
-                <ChangeButton
-                  onClick={() => {
-                    setSelectPercent2(false);
-                  }}
-                  styleBoolean={!selectPercent2}
-                >
-                  학습
-                </ChangeButton>
-              </ChangeWrap>
-              {monthCalLoading.current && (
-                <LoaderWrapper>
-                  <Loader />
-                </LoaderWrapper>
-              )}
-            </StatisRow>
+            <div
+              id="staCapture_top"
+              style={{
+                width: '634.5px',
+                height: '740px',
+                marginBottom: '10px',
+              }}
+            >
+              <TopStatisRow />
+              <StatisRow>
+                <ChartWrap>
+                  <DonutChart
+                    data_1={donutData_1}
+                    data_2={donutData_2}
+                    title={'Total Deep Time'}
+                    labels={['Real', 'Plan']}
+                  />
+                </ChartWrap>
+                <TotalTime>
+                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                  {total_min.length === 1 ? '0' + total_min : total_min}m
+                </TotalTime>
+                <TargetTime>
+                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
+                  h{target_min.length === 1 ? '0' + target_min : target_min}m
+                </TargetTime>
+                <DonutPercent>{donutPercent}%</DonutPercent>
+                {monthCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+              <StatisRow>
+                <ChartWrap>
+                  <AreaChart
+                    data_1={taskArray_month}
+                    labels={daysOfMonth}
+                    title={'일별 Deep Time'}
+                    title_y={'시간(시)'}
+                    dateRange={'month'}
+                  />
+                </ChartWrap>
+                {monthCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow>
+            </div>
+            <div
+              id="staCapture_bottom"
+              style={{ width: '634.5px', height: '730px' }}
+            >
+              <StatisRow2>
+                <ChartWrap>
+                  <RowBarChart
+                    data_1={taskArray_schedule_month}
+                    data_2={taskArray_scheduleT_month}
+                    data_color={schedule_color}
+                    labels={schedule_label}
+                    label_1={'Real'}
+                    label_2={'Plan'}
+                    title={'TASK별 Deep Time'}
+                    title_x={'시간(시)'}
+                    dateRange={'month'}
+                  />
+                </ChartWrap>
+                {monthCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap>
+                  <PieChart
+                    data={
+                      selectPercent ? taskArray_percentT : taskArray_percent
+                    }
+                    dataColor={schedule_color}
+                    labels={schedule_label}
+                    title={
+                      selectPercent
+                        ? 'TASK별 Plan Time 비율'
+                        : 'TASK별 Real Time 비율'
+                    }
+                    updateBoolean={selectPercent}
+                  />
+                </ChartWrap>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(false);
+                    }}
+                    styleBoolean={!selectPercent}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {monthCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+              <StatisRow2>
+                <ChartWrap_percentBar>
+                  <RowBarChart_selfPercent
+                    title={
+                      selectPercent2
+                        ? 'Plan Time 자습&강의 비율'
+                        : 'Real Time 자습&강의 비율'
+                    }
+                    data_1={selectPercent2 ? self_percentT : self_percent}
+                    data_2={selectPercent2 ? lecture_percentT : lecture_percent}
+                    updateBoolean={selectPercent2}
+                  />
+                </ChartWrap_percentBar>
+                <ChangeWrap>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    Plan
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(false);
+                    }}
+                    styleBoolean={!selectPercent2}
+                  >
+                    Real
+                  </ChangeButton>
+                </ChangeWrap>
+                {monthCalLoading.current && (
+                  <LoaderWrapper>
+                    <Loader />
+                  </LoaderWrapper>
+                )}
+              </StatisRow2>
+            </div>
           </>
         )}
       </BigBox>

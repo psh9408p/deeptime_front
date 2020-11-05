@@ -562,7 +562,7 @@ export default () => {
             />
             <Content_ol>
               <li>
-                과목별 학습 시간 (채색: 학습 시간, 음영색: 스케줄 목표 시간)
+                과목별 학습 시간 (채색: 학습 시간, 음영색: 스케줄 Plan Time)
                 <SubContent>
                   &#8251;{' '}
                   <span style={{ color: '#7BA9EB' }}>
@@ -597,14 +597,14 @@ export default () => {
               }
             />
             <Content_ol>
-              <li>목표 시간 대비 학습 시간의 비율</li>
+              <li>Plan Time 대비 학습 시간의 비율</li>
               <li>
-                학습 시간 (스케줄과 상관없는 학습 시간) / 목표 시간 (스케줄로
-                작성된 목표 시간)
+                학습 시간 (스케줄과 상관없는 학습 시간) / Plan Time (스케줄로
+                작성된 Plan Time)
                 <SubContent>
                   &#8251;{' '}
                   <span style={{ color: '#7BA9EB' }}>
-                    목표 시간만 스케줄을 반영한 통계 자료
+                    Plan Time만 스케줄을 반영한 통계 자료
                   </span>
                 </SubContent>
               </li>
@@ -617,7 +617,7 @@ export default () => {
               }
             />
             <Content_ol>
-              <li>목표 클릭 → 스케줄로 작성된 과목별 목표 시간 비율</li>
+              <li>Plan 클릭 → 스케줄로 작성된 과목별 Plan Time 비율</li>
               <li>학습 클릭 → 스케줄로 작성된 시간내 과목별 학습 시간 비율</li>
             </Content_ol>
             <ScrollPoint ref={(el) => (focusTarget2.current[7] = el)} />
@@ -628,7 +628,7 @@ export default () => {
               }
             />
             <Content_ol>
-              <li>목표 클릭 → 스케줄로 작성된 자습&amp;강의 목표 시간 비율</li>
+              <li>Plan 클릭 → 스케줄로 작성된 자습&amp;강의 Plan Time 비율</li>
               <li>
                 학습 클릭 → 스케줄로 작성된 시간내 자습&amp;강의 학습 시간 비율
               </li>

@@ -63,7 +63,7 @@ const ClockBox = styled.div`
   z-index: 2;
   display: flex;
   padding-top: 27px;
-  padding-right: 160px;
+  padding-right: 168px;
   justify-content: center;
   align-items: center;
   top: 0;
@@ -77,7 +77,7 @@ const TodayTime = styled.div`
   z-index: 2;
   display: flex;
   padding-top: 131px;
-  padding-left: 107px;
+  padding-left: 102px;
   font-size: 13px;
   font-weight: bold;
   color: ${(props) => props.theme.skyBlue};
@@ -89,7 +89,7 @@ const TodayTime = styled.div`
 
 const TodayTime_total = styled(TodayTime)`
   padding-top: 146px;
-  padding-left: 129px;
+  padding-left: 125px;
   color: black;
 `;
 
@@ -100,9 +100,9 @@ const TodayPercent = styled(TodayTime)`
   color: black;
   font-size: 25px;
   margin-top: 87px;
-  margin-left: 101px;
+  margin-left: 100px;
   padding: 0;
-  width: 100px;
+  width: 97px;
   height: 50px;
 `;
 
@@ -583,26 +583,26 @@ export default ({
   startPolling,
   stopPolling,
 }) => {
-  const minValue_10 = (value) => value >= 10;
-  const minValue_5 = (value) => value >= 5;
+  const absenceArray = [
+    'Where are you...?',
+    '어디 갔니...?',
+    '언제 오니...?',
+    '빨리 돌아와~',
+  ];
+  // const minValue_5 = (value) => value >= 5;
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
-  const autoRefreshTerm = useInput(
-    myInfoData.studyDefaultSet.autoRefreshTerm,
-    minValue_10,
-  );
+  const autoRefreshTerm = useInput(myInfoData.studyDefaultSet.autoRefreshTerm);
   const startScheduleTerm = useInput(
     myInfoData.studyDefaultSet.startScheduleTerm,
   );
   const extensionTerm = useInput(myInfoData.studyDefaultSet.cutExtenTerm);
   const startScheduleTerm_forSet = useInput(
     myInfoData.studyDefaultSet.startScheduleTerm,
-    minValue_5,
   );
   const extensionTerm_forSet = useInput(
     myInfoData.studyDefaultSet.cutExtenTerm,
-    minValue_5,
   );
 
   const autoSwitch = () => {
@@ -724,20 +724,31 @@ export default ({
   };
 
   const onSaveSet = async () => {
-    if (startScheduleTerm_forSet.value % 5 !== 0) {
+    if (autoRefreshTerm.value < 10) {
+      alert('자동 새로고침 최소 기간은 10초입니다.');
+      autoRefreshTerm.setValue(10);
+      return;
+    }
+    if (
+      startScheduleTerm_forSet.value % 5 !== 0 ||
+      startScheduleTerm_forSet.value < 5
+    ) {
       alert(
-        '스케줄 시작(생성) 기간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+        '스케줄 시작(생성) 기간은 최소 5분, 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
       );
       return;
-    } else if (extensionTerm_forSet.value % 5 !== 0) {
+    } else if (
+      extensionTerm_forSet.value % 5 !== 0 ||
+      extensionTerm_forSet.value < 5
+    ) {
       alert(
-        '스케줄 단축&연장 기간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+        '스케줄 단축&연장 기간은 최소 5분, 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
       );
       return;
     }
 
     try {
-      toast.info('학습 세팅 적용 중...');
+      toast.info('기본값 세팅 적용 중...');
       const {
         data: { editStudySet },
       } = await editStudySetMutation({
@@ -749,7 +760,7 @@ export default ({
         },
       });
       if (!editStudySet) {
-        alert('학습 세팅을 적용할 수 없습니다.');
+        alert('기본값 세팅을 적용할 수 없습니다.');
       } else {
         if (autoRefresh) {
           startPolling(autoRefreshTerm.value * 1000);
@@ -759,7 +770,7 @@ export default ({
         startScheduleTerm.setValue(startScheduleTerm_forSet.value);
         extensionTerm.setValue(extensionTerm_forSet.value);
         await myInfoRefetch();
-        toast.success('새로운 학습 세팅을 적용하였습니다.');
+        toast.success('새로운 기본값 세팅을 적용하였습니다.');
         return true;
       }
     } catch (e) {
@@ -1448,8 +1459,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
+      LoadCamera();
+      LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -1903,12 +1914,14 @@ export default ({
               {studyBool ? (
                 <>
                   <Study_true />
-                  <StatusSpan>학습중</StatusSpan>
+                  <StatusSpan>Deep Time</StatusSpan>
                 </>
               ) : (
                 <>
                   <Study_false />
-                  <StatusSpan>부재중</StatusSpan>
+                  <StatusSpan>
+                    {absenceArray[Math.floor(Math.random() * 4)]}
+                  </StatusSpan>
                 </>
               )}
             </AvatarDiv>
@@ -1935,7 +1948,7 @@ export default ({
                 {(close) => {
                   return (
                     <PBody>
-                      <PTitle text={'학습 기본값 세팅'} />
+                      <PTitle text={'기본값 세팅'} />
                       <SetContentWrap>
                         <SetContentBox>
                           자동 새로고침 on/off :　
@@ -2011,11 +2024,11 @@ export default ({
             <DonutChart_today
               data={donutData}
               color={rgbBox}
-              title={'Today Study Log'}
+              title={'Today Deep Time Log'}
               labels={[
-                '학습',
-                '학습 외 ' + '　' + '　' + '　' + '　',
-                '나머지',
+                'Deep Time',
+                '부재 시간' + '　' + '　' + '　' + '　',
+                '나머지 시간',
               ]}
             />
             <ClockBox>

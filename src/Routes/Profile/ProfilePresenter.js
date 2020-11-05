@@ -292,7 +292,7 @@ export default ({
             </UsernameRow>
             <Counts>
               <Count>
-                <FatText text={'학습 그룹:'} />
+                <FatText text={'사용 목적:'} />
               </Count>
               <Count>{studyGroup},</Count>
               <Count>{studyGroup2},</Count>

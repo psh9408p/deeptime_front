@@ -464,15 +464,15 @@ export default ({
                 </PopupCustom>
               </VerficationInputDiv>
               <SelectDiv>
-                <span>학습 그룹 1</span>
+                <span>사용 목적 1</span>
                 <Select {...studyGroup} id={'studyGroup_id'} />
               </SelectDiv>
               <SelectDiv>
-                <span>학습 그룹 2</span>
+                <span>사용 목적 2</span>
                 <Select {...studyGroup2} id={'studyGroup2_id'} />
               </SelectDiv>
               <SelectDiv>
-                <span>학습 그룹 3</span>
+                <span>사용 목적 3</span>
                 <Select {...studyGroup3} id={'studyGroup3_id'} />
               </SelectDiv>
               <SelectDiv>

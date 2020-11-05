@@ -174,7 +174,12 @@ export default ({ paymentSetData, SubCancel, ReSub, billingChange }) => {
             <RightDiv>만료</RightDiv>
           </ContentDiv>
           <LastDiv>
-            <Link to="/shop">
+            {/* <Link to="/shop"> */}
+            <Link
+              onClick={() => {
+                alert('구독(유료화) 준비 중 입니다.');
+              }}
+            >
               <ButtonDiv>
                 <Button_blue text={'구독 신청하기'} />
               </ButtonDiv>
