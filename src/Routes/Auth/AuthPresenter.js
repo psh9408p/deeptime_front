@@ -99,6 +99,20 @@ const SelectDiv = styled.div`
   }
 `;
 
+const SelectDiv_P = styled(SelectDiv)`
+  width: 105%;
+  span {
+    width: 114px;
+  }
+`;
+
+const SelectWrap_P = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+`;
+
 const VerficationInputDiv = styled.div`
   width: 100%;
   display: flex;
@@ -108,6 +122,17 @@ const PopupCustom = styled(Popup)`
   &-content {
     width: 500px !important;
     height: 250px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const PopupCustom2 = styled(Popup)`
+  &-content {
+    width: 450px !important;
+    height: 300px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -255,6 +280,20 @@ const InputWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
+const PurposeContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 20px;
+  span {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+`;
+
 export default ({
   setAction,
   action,
@@ -292,6 +331,7 @@ export default ({
   allClear,
   sEmailOnClick_findPassword,
   managerSecret,
+  studyPurpose,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -463,18 +503,59 @@ export default ({
                   )}
                 </PopupCustom>
               </VerficationInputDiv>
-              <SelectDiv>
-                <span>학습 그룹 1</span>
-                <Select {...studyGroup} id={'studyGroup_id'} />
-              </SelectDiv>
-              <SelectDiv>
-                <span>학습 그룹 2</span>
-                <Select {...studyGroup2} id={'studyGroup2_id'} />
-              </SelectDiv>
-              <SelectDiv>
-                <span>학습 그룹 3</span>
-                <Select {...studyGroup3} id={'studyGroup3_id'} />
-              </SelectDiv>
+              <SelectWrap_P>
+                <SelectDiv_P>
+                  <span>사용 목적</span>
+                  <Select {...studyPurpose} id={'studyPurpose_id'} />
+                </SelectDiv_P>
+                <PopupCustom2
+                  trigger={<PopButton_auth text={'❓'} type={'button'} />}
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => (
+                    <PBody>
+                      <PurposeContent>
+                        <span>학습</span> 스케줄을 크게 '자습', '강의' 2가지로
+                        구분 가능
+                        <br />
+                        (자습과 인강 수강 위주의 생활패턴 사용자에게 적합)
+                      </PurposeContent>
+                      <PurposeContent>
+                        <span>업무</span> 스케줄을 크게 '업무', '개인' 2가지로
+                        구분 가능
+                        <br />
+                        (직장 업무 및 자기 개발 위주의 생활패턴 사용자에게 적합)
+                      </PurposeContent>
+                      <ButtonDiv>
+                        <PopupButton_solo
+                          type="button"
+                          onClick={() => {
+                            close();
+                          }}
+                          text={'닫기'}
+                        />
+                      </ButtonDiv>
+                    </PBody>
+                  )}
+                </PopupCustom2>
+              </SelectWrap_P>
+              {studyPurpose.option === '학습' && (
+                <>
+                  <SelectDiv>
+                    <span>사용 범주 1</span>
+                    <Select {...studyGroup} id={'studyGroup_id'} />
+                  </SelectDiv>
+                  <SelectDiv>
+                    <span>사용 범주 2</span>
+                    <Select {...studyGroup2} id={'studyGroup2_id'} />
+                  </SelectDiv>
+                  <SelectDiv>
+                    <span>사용 범주 3</span>
+                    <Select {...studyGroup3} id={'studyGroup3_id'} />
+                  </SelectDiv>{' '}
+                </>
+              )}
               <SelectDiv>
                 <span>주소</span>
                 <Select {...myAddress1} id={'myAddress1_id'} />
@@ -956,7 +1037,58 @@ export default ({
           <>
             <BottomDiv>
               아직 계정이 없으신가요?&nbsp;
-              <PopupSign
+              <SignLink
+                onClick={() => {
+                  setAction('signUp');
+                  allClear();
+                }}
+              >
+                회원가입
+              </SignLink>
+            </BottomDiv>
+            <BottomDiv>
+              Email이 기억나지 않습니까?&nbsp;
+              <SignLink
+                onClick={() => {
+                  setAction('findEmail');
+                  allClear();
+                }}
+              >
+                Email 찾기
+              </SignLink>
+            </BottomDiv>
+            <BottomDiv>
+              비밀번호가 기억나지 않습니까?&nbsp;
+              <SignLink
+                onClick={() => {
+                  setAction('findPassword');
+                  allClear();
+                }}
+              >
+                비밀번호 찾기
+              </SignLink>
+            </BottomDiv>
+          </>
+        ) : (
+          <>
+            이미 계정이 있으신가요?{' '}
+            <SignLink
+              onClick={() => {
+                setAction('logIn');
+                allClear();
+              }}
+            >
+              로그인
+            </SignLink>
+          </>
+        )}
+      </StateChanger>
+    </Wrapper>
+  );
+};
+
+{
+  /* <PopupSign
                 trigger={<SignLink>회원가입</SignLink>}
                 closeOnDocumentClick={false}
                 modal
@@ -1034,45 +1166,5 @@ export default ({
                     )}
                   </PBody>
                 )}
-              </PopupSign>
-            </BottomDiv>
-            <BottomDiv>
-              Email이 기억나지 않습니까?&nbsp;
-              <SignLink
-                onClick={() => {
-                  setAction('findEmail');
-                  allClear();
-                }}
-              >
-                Email 찾기
-              </SignLink>
-            </BottomDiv>
-            <BottomDiv>
-              비밀번호가 기억나지 않습니까?&nbsp;
-              <SignLink
-                onClick={() => {
-                  setAction('findPassword');
-                  allClear();
-                }}
-              >
-                비밀번호 찾기
-              </SignLink>
-            </BottomDiv>
-          </>
-        ) : (
-          <>
-            이미 계정이 있으신가요?{' '}
-            <SignLink
-              onClick={() => {
-                setAction('logIn');
-                allClear();
-              }}
-            >
-              로그인
-            </SignLink>
-          </>
-        )}
-      </StateChanger>
-    </Wrapper>
-  );
-};
+              </PopupSign> */
+}

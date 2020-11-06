@@ -41,18 +41,23 @@ export default ({ pageIndex, meData, meRefetch }) => {
   const password = useInput('', '', minLen_6);
   const passChk = (value) => value !== password.value;
   const password2 = useInput('', '', passChk);
-
+  console.log(meData.studyPurpose);
+  const studyPurpose = useSelect(
+    ['학습', '업무'],
+    ['학습', '업무'],
+    meData.studyPurpose,
+  );
   const studyGroup = useSelect(
     studyOption_group,
     studyOption_group,
-    meData.studyGroup,
+    meData.studyPurpose === '학습' ? meData.studyGroup : '중학생',
   );
   const studyGroup2 = useSelect_dynamic(
     studyOption_group2,
     studyOption_group2,
     studyGroup.optionList,
     studyGroup.option,
-    meData.studyGroup2,
+    meData.studyPurpose === '학습' ? meData.studyGroup2 : '1학년',
   );
   const studyGroup3 = useSelect_dynamic2(
     studyOption_group3,
@@ -61,7 +66,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
     studyGroup.option,
     studyGroup2.optionList,
     studyGroup2.option,
-    meData.studyGroup3,
+    meData.studyPurpose === '학습' ? meData.studyGroup3 : '해당 없음',
   );
   const myAddress1 = useSelect(
     address1,
@@ -124,9 +129,13 @@ export default ({ pageIndex, meData, meRefetch }) => {
             username: username.value,
             email: email.value,
             phoneNumber: phoneNumber.value,
-            studyGroup: studyGroup.option,
-            studyGroup2: studyGroup2.option,
-            studyGroup3: studyGroup3.option,
+            studyPurpose: studyPurpose.option,
+            studyGroup:
+              studyPurpose.option === '학습' ? studyGroup.option : '해당 없음',
+            studyGroup2:
+              studyPurpose.option === '학습' ? studyGroup2.option : '해당 없음',
+            studyGroup3:
+              studyPurpose.option === '학습' ? studyGroup3.option : '해당 없음',
             address1: myAddress1.option,
             address2: myAddress2.option,
             termsOfMarketing: marketing,
@@ -299,6 +308,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
       password_pre={password_pre}
       password={password}
       password2={password2}
+      studyPurpose={studyPurpose}
     />
   );
 };

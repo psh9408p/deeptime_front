@@ -44,7 +44,7 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
         //   pointRadius: 0,
         // },
         {
-          label: '학습량',
+          label: 'Deep Time',
           data: data_1,
           backgroundColor: ['rgba(123, 169, 235, 0)'],
           borderColor: ['rgba(123, 169, 235, 1)'],

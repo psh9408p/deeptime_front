@@ -295,7 +295,7 @@ export default ({
             {student.classesOfAcademy[0].name})
           </DetailInfo>
           <DetailInfo>
-            <FatText text="학습 그룹: " />
+            <FatText text="사용 목적: " />
             {student.studyGroup}
           </DetailInfo>
           <DetailInfo>

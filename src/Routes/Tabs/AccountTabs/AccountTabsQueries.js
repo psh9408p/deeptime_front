@@ -7,6 +7,7 @@ export const EDIT_ACCOUNT = gql`
     $username: String!
     $email: String!
     $phoneNumber: String!
+    $studyPurpose: String!
     $studyGroup: String!
     $studyGroup2: String!
     $studyGroup3: String!
@@ -20,6 +21,7 @@ export const EDIT_ACCOUNT = gql`
       username: $username
       email: $email
       phoneNumber: $phoneNumber
+      studyPurpose: $studyPurpose
       studyGroup: $studyGroup
       studyGroup2: $studyGroup2
       studyGroup3: $studyGroup3

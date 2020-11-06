@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
+import html2canvas from 'html2canvas';
 
 export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
@@ -14,6 +15,31 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const todayCalLoading = useRef(true);
   const weekCalLoading = useRef(true);
   const monthCalLoading = useRef(true);
+
+  const onImgSave = () => {
+    const saveAs = (uri, filename) => {
+      var link = document.createElement('a');
+      console.log(link);
+      if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        window.open(uri);
+      }
+    };
+
+    html2canvas(document.querySelector('#staCapture_top')).then((canvas) => {
+      // document.body.appendChild(canvas);
+      saveAs(canvas.toDataURL('image/png'), 'capture-test1.png');
+    });
+    html2canvas(document.querySelector('#staCapture_bottom')).then((canvas) => {
+      // document.body.appendChild(canvas);
+      saveAs(canvas.toDataURL('image/png'), 'capture-test2.png');
+    });
+  };
 
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -43,6 +69,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
       setSelectPercent={setSelectPercent}
       selectPercent2={selectPercent2}
       setSelectPercent2={setSelectPercent2}
+      onImgSave={onImgSave}
     />
   );
 };

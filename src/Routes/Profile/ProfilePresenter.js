@@ -207,6 +207,7 @@ export default ({
         isSelf,
         bio,
         email,
+        studyPurpose,
         studyGroup,
         studyGroup2,
         studyGroup3,
@@ -292,11 +293,15 @@ export default ({
             </UsernameRow>
             <Counts>
               <Count>
-                <FatText text={'학습 그룹:'} />
+                <FatText text={'사용 범주:'} />
               </Count>
               <Count>{studyGroup},</Count>
-              <Count>{studyGroup2},</Count>
-              <Count>{studyGroup3}</Count>
+              {studyGroup !== '해당 없음' && (
+                <>
+                  <Count>{studyGroup2},</Count>
+                  <Count>{studyGroup3}</Count>
+                </>
+              )}
             </Counts>
             <SubInfoDiv>
               <FatBox text={fullName} />

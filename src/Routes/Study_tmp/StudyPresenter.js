@@ -31,11 +31,14 @@ import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
 import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
-import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import PopupButton from '../../Components/Buttons/PopupButton';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Button_custom from '../../Components/Buttons/Button_custom';
-import Button_refresh from '../../Components/Buttons/Button_refresh';
+import {
+  Button_refresh,
+  Button_capture,
+} from '../../Components/Buttons/Button_click';
 import html2canvas from 'html2canvas';
 import { FixedSizeGrid as TodolistGrid } from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
@@ -60,7 +63,7 @@ const ClockBox = styled.div`
   z-index: 2;
   display: flex;
   padding-top: 27px;
-  padding-right: 160px;
+  padding-right: 168px;
   justify-content: center;
   align-items: center;
   top: 0;
@@ -74,7 +77,7 @@ const TodayTime = styled.div`
   z-index: 2;
   display: flex;
   padding-top: 131px;
-  padding-left: 107px;
+  padding-left: 102px;
   font-size: 13px;
   font-weight: bold;
   color: ${(props) => props.theme.skyBlue};
@@ -86,7 +89,7 @@ const TodayTime = styled.div`
 
 const TodayTime_total = styled(TodayTime)`
   padding-top: 146px;
-  padding-left: 129px;
+  padding-left: 125px;
   color: black;
 `;
 
@@ -97,9 +100,9 @@ const TodayPercent = styled(TodayTime)`
   color: black;
   font-size: 25px;
   margin-top: 87px;
-  margin-left: 101px;
+  margin-left: 100px;
   padding: 0;
-  width: 100px;
+  width: 97px;
   height: 50px;
 `;
 
@@ -160,31 +163,50 @@ const ControlWrap = styled.div`
   width: 270px;
   height: 130px;
   margin: 10px;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
+  /* border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius}; */
 `;
 
 const ControlTop = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 270px;
-  height: 85px;
+  height: 80px;
   margin-bottom: 10px;
-  /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const ControlBottom = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   width: 270px;
-  height: 35px;
-  padding-top: 3px;
-  /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  height: 40px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ControlTop1 = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  width: 100%;
+  height: 50%;
+`;
+
+const ControlTop2 = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
 `;
 
 const VideoBox = styled.video`
@@ -322,21 +344,11 @@ const SetDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 460px !important;
-    height: 250px !important;
+    height: 350px !important;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: ${(props) => props.theme.borderRadius};
-  }
-`;
-
-const PopupCustom2 = styled(Popup)`
-  &-content {
-    width: 470px !important;
-    height: 130px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 `;
 
@@ -464,6 +476,7 @@ const NewScheContent = styled.div`
   width: 160px;
   height: 25px;
   margin-bottom: 5px;
+  font-weight: 600;
 `;
 
 const SelectInL = styled.div`
@@ -548,11 +561,7 @@ let timeCount = 0;
 export default ({
   myInfoData,
   networkStatus,
-  autoSwitch,
-  refreshBool,
   myInfoRefetch,
-  refreshTerm,
-  TermChange,
   studyBool,
   setStudyBool,
   todolistData,
@@ -563,14 +572,48 @@ export default ({
   addTodolistMutation,
   startScheduleMutation,
   stopScheduleMutation,
+  pullScheduleMutation,
+  cutScheduleMutation,
+  extensionScheduleMutation,
+  editStudySetMutation,
   todolistName,
   newTodoView,
   setNewTodoView,
   scheduleTitle,
+  startPolling,
+  stopPolling,
 }) => {
-  const [defaultMin, setDefaultMin] = useState(30);
-  const fiveStepMin = (value) => value >= 5 && value % 5 === 0;
-  const scheduleTerm = useInput(defaultMin);
+  const absenceArray = [
+    'Where are you...?',
+    '어디 갔니...?',
+    '언제 오니...?',
+    '빨리 돌아와~',
+  ];
+  // const minValue_5 = (value) => value >= 5;
+  const [autoRefresh, setAutoRefresh] = useState(
+    myInfoData.studyDefaultSet.autoRefresh,
+  );
+  const autoRefreshTerm = useInput(myInfoData.studyDefaultSet.autoRefreshTerm);
+  const startScheduleTerm = useInput(
+    myInfoData.studyDefaultSet.startScheduleTerm,
+  );
+  const extensionTerm = useInput(myInfoData.studyDefaultSet.cutExtenTerm);
+  const startScheduleTerm_forSet = useInput(
+    myInfoData.studyDefaultSet.startScheduleTerm,
+  );
+  const extensionTerm_forSet = useInput(
+    myInfoData.studyDefaultSet.cutExtenTerm,
+  );
+
+  const autoSwitch = () => {
+    if (autoRefresh) {
+      setAutoRefresh(false);
+    } else {
+      setAutoRefresh(true);
+    }
+  };
+
+  // 영상 처리 변수
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
   // const [modelFace, setModelFace] = useState(null)
@@ -638,7 +681,9 @@ export default ({
     ['TASK 없음', ...listName_tmp],
     ['', ...listId_tmp],
   );
-  const stateList = useSelect(['자습', '인강'], ['자습', '인강']);
+  const stateBox =
+    myInfoData.studyPurpose === '학습' ? ['자습', '강의'] : ['업무', '개인'];
+  const stateList = useSelect(stateBox, stateBox);
 
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
@@ -680,9 +725,255 @@ export default ({
     return maxTermMin;
   };
 
+  const onSaveSet = async () => {
+    if (autoRefreshTerm.value < 10) {
+      alert('자동 새로고침 최소 기간은 10초입니다.');
+      autoRefreshTerm.setValue(10);
+      return;
+    }
+    if (
+      startScheduleTerm_forSet.value % 5 !== 0 ||
+      startScheduleTerm_forSet.value < 5
+    ) {
+      alert(
+        '스케줄 시작(생성) 기간은 최소 5분, 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+      );
+      return;
+    } else if (
+      extensionTerm_forSet.value % 5 !== 0 ||
+      extensionTerm_forSet.value < 5
+    ) {
+      alert(
+        '스케줄 단축&연장 기간은 최소 5분, 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...',
+      );
+      return;
+    }
+
+    try {
+      toast.info('기본값 세팅 적용 중...');
+      const {
+        data: { editStudySet },
+      } = await editStudySetMutation({
+        variables: {
+          autoRefresh,
+          autoRefreshTerm: Number(autoRefreshTerm.value),
+          startScheduleTerm: Number(startScheduleTerm_forSet.value),
+          cutExtenTerm: Number(extensionTerm_forSet.value),
+        },
+      });
+      if (!editStudySet) {
+        alert('기본값 세팅을 적용할 수 없습니다.');
+      } else {
+        if (autoRefresh) {
+          startPolling(autoRefreshTerm.value * 1000);
+        } else {
+          stopPolling();
+        }
+        startScheduleTerm.setValue(startScheduleTerm_forSet.value);
+        extensionTerm.setValue(extensionTerm_forSet.value);
+        await myInfoRefetch();
+        toast.success('새로운 기본값 세팅을 적용하였습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
+  const onExtensionSchedule = async () => {
+    // 5분 단위 최소 5분 검증
+    if (extensionTerm.value < 5) {
+      alert('스케줄을 연장하기 위한 최소 시간은 5분입니다.');
+      return;
+    } else if (extensionTerm.value % 5 !== 0) {
+      alert('연장 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+      return;
+    }
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('현재 스케줄 연장 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex === -1) {
+      alert('현재 진행 중인 스케줄이 없습니다.');
+      return;
+    }
+    // 최대 연장시간 점검
+    const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
+    console.log(end.getHours(), end.getMinutes(), 'aad');
+    const posibleMin = 1440 - (end.getHours() * 60 + end.getMinutes());
+    if (end.getHours() === 0 && end.getMinutes() === 0) {
+      alert('현재 스케줄은 더는 연장이 불가능합니다.');
+      return;
+    } else if (posibleMin < extensionTerm.value) {
+      alert(`오늘 연장 가능한 최대 시간은 ${posibleMin}분입니다.`);
+      extensionTerm.setValue(posibleMin);
+      return;
+    }
+    // 연장시간
+    const start = new Date(scheduleList_selectDay[nowScheduleIndex].start);
+    let deleteArray = [];
+    let cutId = '';
+    end.setTime(end.getTime() + extensionTerm.value * 60000);
+    // 삭제할 단축할 스케줄 계산
+    for (var i = 0; i < scheduleList_selectDay.length; i++) {
+      const start_tmp = new Date(scheduleList_selectDay[i].start);
+      const end_tmp = new Date(scheduleList_selectDay[i].end);
+      if (start < start_tmp && end >= end_tmp) {
+        deleteArray.push({ id: scheduleList_selectDay[i].id });
+      } else if (start < start_tmp && end > start_tmp) {
+        cutId = scheduleList_selectDay[i].id;
+      }
+    }
+    if (deleteArray.length !== 0 || cutId !== '') {
+      if (
+        window.confirm(
+          '스케줄 연장 시 시간이 중복돼 단축(삭제)되는 스케줄이 존재합니다.\n그래도 스케줄 연장을 진행하시겠습니까?',
+        ) === false
+      ) {
+        return;
+      }
+    }
+
+    try {
+      const {
+        data: { extensionSchedule_study },
+      } = await extensionScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          end,
+          cutId,
+          deleteArray,
+        },
+      });
+      if (!extensionSchedule_study) {
+        alert('현재 스케줄을 연장할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('현재 스케줄을 연장했습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onCutSchedule = async () => {
+    // 5분 단위 최소 5분 검증
+    if (extensionTerm.value < 5) {
+      alert('스케줄을 단축하기 위한 최소 시간은 5분입니다.');
+      return;
+    } else if (extensionTerm.value % 5 !== 0) {
+      alert('단축 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+      return;
+    }
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('현재 스케줄 단축 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex === -1) {
+      alert('현재 진행 중인 스케줄이 없습니다.');
+      return;
+    }
+    // 축소시 남은 시간 계산 5분 이하면 삭제 불리언 true
+    let deleteBool = false;
+    if (
+      scheduleList_selectDay[nowScheduleIndex].totalTime / 60 -
+        extensionTerm.value <
+      5
+    ) {
+      if (
+        window.confirm(
+          '현재 스케줄이 5분 미만으로 축소돼 삭제됩니다.\n그래도 스케줄 단축을 진행하시겠습니까?',
+        ) === true
+      ) {
+        deleteBool = true;
+      } else {
+        return;
+      }
+    }
+
+    const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
+    end.setTime(end.getTime() - extensionTerm.value * 60000);
+
+    try {
+      const {
+        data: { cutSchedule_study },
+      } = await cutScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          end,
+          deleteBool,
+        },
+      });
+      if (!cutSchedule_study) {
+        alert('현재 스케줄을 단축할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        if (deleteBool) {
+          toast.success('현재 스케줄을 삭제했습니다.');
+        } else {
+          toast.success('현재 스케줄을 단축했습니다.');
+        }
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onPullSchedule = async () => {
+    // 업데이트 오래걸릴 수 있어 toast 위로
+    toast.info('다음 스케줄 당기는 중...');
+    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+    await myInfoRefetch();
+    await todayGraph_calculate();
+    if (nowScheduleIndex !== -1) {
+      alert('현재 스케줄이 없을 때 사용 가능합니다.');
+      return;
+    } else if (nextScheduleIndex === -1) {
+      alert('다음 스케줄이 없습니다.');
+      return;
+    }
+    // 시작 시간 계산
+    const start = new Date();
+    const end = new Date();
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
+    end.setTime(
+      start.getTime() +
+        scheduleList_selectDay[nextScheduleIndex].totalTime * 1000,
+    );
+
+    try {
+      const {
+        data: { pullSchedule_study },
+      } = await pullScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nextScheduleIndex].id,
+          start,
+          end,
+        },
+      });
+      if (!pullSchedule_study) {
+        alert('다음 스케줄을 당길 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('다음 스케줄을 당겼습니다.');
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
   const onStopSchedule = async () => {
     // 업데이트 오래걸릴 수 있어 toast 위로
-    toast.info('현재 스케줄을 마치는 중...');
+    toast.info('현재 스케줄 마치는 중...');
     // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
     await myInfoRefetch();
     await todayGraph_calculate();
@@ -738,10 +1029,10 @@ export default ({
 
   const onStartSchedule = async () => {
     // 5분 단위 최소 5분 검증
-    if (scheduleTerm.value < 5) {
+    if (startScheduleTerm.value < 5) {
       alert('스케줄을 시작하기 위한 최소 시간은 5분입니다.');
       return;
-    } else if (scheduleTerm.value % 5 !== 0) {
+    } else if (startScheduleTerm.value % 5 !== 0) {
       alert('스케줄 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
       return;
     }
@@ -770,9 +1061,9 @@ export default ({
     // 입력 시간이 최대 시간이내 인지 점검
     const nowDate = new Date();
     const maxTime = maxTimeCal(nowDate);
-    if (maxTime < scheduleTerm.value) {
+    if (maxTime < startScheduleTerm.value) {
       alert(`현재 가능한 최대 설정 시간은 ${maxTime}분 입니다.`);
-      scheduleTerm.setValue(maxTime);
+      startScheduleTerm.setValue(maxTime);
       return;
     }
     // todolist 중복 체크
@@ -787,7 +1078,7 @@ export default ({
     start.setMilliseconds(0);
     start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
     const end = new Date();
-    end.setTime(start.getTime() + scheduleTerm.value * 60000);
+    end.setTime(start.getTime() + startScheduleTerm.value * 60000);
 
     try {
       const {
@@ -809,9 +1100,11 @@ export default ({
         await myInfoRefetch();
         await todolistRefetch();
         mySubjectList2.setOption('');
-        stateList.setOption('자습');
+        stateList.setOption(
+          myInfoData.studyPurpose === '학습' ? '자습' : '업무',
+        );
         scheduleTitle.setValue('');
-        scheduleTerm.setValue(30);
+        startScheduleTerm.setValue(30);
         toast.success('새로운 스케줄이 시작되었습니다.');
       }
     } catch (e) {
@@ -1164,9 +1457,17 @@ export default ({
 
   // useMouseLeave(donleaveme)
 
+  const isFirstRun = useRef(true);
   useEffect(() => {
-    LoadCamera();
-    LoadModel();
+    if (isFirstRun.current) {
+      if (myInfoData.studyDefaultSet.autoRefresh) {
+        startPolling(autoRefreshTerm.value * 1000);
+      }
+      LoadCamera();
+      LoadModel();
+      isFirstRun.current = false;
+      return;
+    }
   }, []);
 
   const scheduleList = myInfoData.schedules;
@@ -1390,7 +1691,8 @@ export default ({
           resultArray_scheduleT[duplIndex] + totalMin;
       }
       // 자습 강의 구분하여 시간 넣기
-      if (scheduleList_selectDay[j].state === '자습') {
+      const myState = myInfoData.studyPurpose === '학습' ? '자습' : '업무';
+      if (scheduleList_selectDay[j].state === myState) {
         selfStudy_box.push(SumArray(slicedTime));
         selfStudy_boxT.push(totalMin);
       } else {
@@ -1617,23 +1919,23 @@ export default ({
               {studyBool ? (
                 <>
                   <Study_true />
-                  <StatusSpan>학습중</StatusSpan>
+                  <StatusSpan>Deep Time</StatusSpan>
                 </>
               ) : (
                 <>
                   <Study_false />
-                  <StatusSpan>부재중</StatusSpan>
+                  <StatusSpan>
+                    {absenceArray[Math.floor(Math.random() * 4)]}
+                  </StatusSpan>
                 </>
               )}
             </AvatarDiv>
             <SetDiv>
-              <button
+              <Button_capture
                 onClick={() => {
                   onImgSave();
                 }}
-              >
-                test
-              </button>
+              />
               <Button_refresh
                 onClick={() => {
                   myInfoRefetch();
@@ -1651,37 +1953,65 @@ export default ({
                 {(close) => {
                   return (
                     <PBody>
-                      <PTitle text={'학습 세팅'} />
+                      <PTitle text={'기본값 세팅'} />
                       <SetContentWrap>
                         <SetContentBox>
                           자동 새로고침 on/off :　
                           <Switch
                             on={true}
                             off={false}
-                            value={refreshBool}
+                            value={autoRefresh}
                             onChange={autoSwitch}
-                          />{' '}
+                          />
                         </SetContentBox>
                         <SetContentBox>
-                          자동 새로고침 간격 :　
+                          자동 새로고침 기간 :　
                           <RefreshInputWrap>
                             <Input_100
                               placeholder={''}
-                              {...refreshTerm}
+                              {...autoRefreshTerm}
                               type={'number'}
                             />
                           </RefreshInputWrap>
                           초
-                          <Button_custom
-                            text={'적용'}
-                            onClick={() => {
-                              TermChange();
-                            }}
-                          />
+                        </SetContentBox>
+                        <SetContentBox>
+                          스케줄 시작(생성) 기간 :　
+                          <RefreshInputWrap>
+                            <Input_100
+                              placeholder={''}
+                              {...startScheduleTerm_forSet}
+                              type={'number'}
+                              step={5}
+                            />
+                          </RefreshInputWrap>
+                          분
+                        </SetContentBox>
+                        <SetContentBox>
+                          스케줄 단축&amp;연장 기간 :　
+                          <RefreshInputWrap>
+                            <Input_100
+                              placeholder={''}
+                              {...extensionTerm_forSet}
+                              type={'number'}
+                              step={5}
+                            />
+                          </RefreshInputWrap>
+                          분
                         </SetContentBox>
                       </SetContentWrap>
                       <ButtonDiv>
-                        <PopupButton_solo
+                        <PopupButton
+                          type="button"
+                          onClick={async () => {
+                            const fucResult = await onSaveSet();
+                            if (fucResult) {
+                              close();
+                            }
+                          }}
+                          text={'적용'}
+                        />
+                        <PopupButton
                           type="button"
                           onClick={() => {
                             close();
@@ -1699,11 +2029,11 @@ export default ({
             <DonutChart_today
               data={donutData}
               color={rgbBox}
-              title={'Today Study Log'}
+              title={'Today Deep Time Log'}
               labels={[
-                '학습',
-                '학습 외 ' + '　' + '　' + '　' + '　',
-                '나머지',
+                'Deep Time',
+                '부재 시간' + '　' + '　' + '　' + '　',
+                '나머지 시간',
               ]}
             />
             <ClockBox>
@@ -1843,7 +2173,7 @@ export default ({
           <NewScheContent>
             <Input_100
               placeholder={''}
-              {...scheduleTerm}
+              {...startScheduleTerm}
               type={'number'}
               step={5}
               width={'80px'}
@@ -1858,7 +2188,7 @@ export default ({
               height={'25px'}
               onClick={() => {
                 const maxTime_tmp = maxTimeCal(new Date());
-                scheduleTerm.setValue(maxTime_tmp);
+                startScheduleTerm.setValue(maxTime_tmp);
               }}
             />
           </NewScheContent>
@@ -1876,7 +2206,48 @@ export default ({
           />
         </ScheStart>
         <ControlWrap>
-          <ControlTop></ControlTop>
+          <ControlTop>
+            <ControlTop1>
+              현재 스케줄을&nbsp;&nbsp;
+              <Input_100
+                placeholder={''}
+                {...extensionTerm}
+                type={'number'}
+                step={5}
+                width={'80px'}
+                height={'25px'}
+                bgColor={'white'}
+              />
+              분
+            </ControlTop1>
+            <ControlTop2>
+              {' '}
+              <Button_custom
+                text={'단축'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0 10px 0 0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onCutSchedule();
+                }}
+              />{' '}
+              <Button_custom
+                text={'연장'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onExtensionSchedule();
+                }}
+              />
+            </ControlTop2>
+          </ControlTop>
           <ControlBottom>
             <Button_custom
               text={'현재 스케줄 마침'}
@@ -1899,7 +2270,7 @@ export default ({
               color={'white'}
               padding={'0'}
               onClick={() => {
-                // onStartSchedule();
+                onPullSchedule();
               }}
             />
           </ControlBottom>

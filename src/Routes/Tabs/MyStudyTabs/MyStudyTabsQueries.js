@@ -29,6 +29,7 @@ export const ME = gql`
       fullName
       avatar
       existToggle
+      studyPurpose
       todayTime {
         attendanceStatus
         absenceReason
@@ -53,6 +54,12 @@ export const ME = gql`
           name
           bgColor
         }
+      }
+      studyDefaultSet {
+        autoRefresh
+        autoRefreshTerm
+        startScheduleTerm
+        cutExtenTerm
       }
     }
   }

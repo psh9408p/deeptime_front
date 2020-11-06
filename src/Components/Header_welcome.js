@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
-import { Logo, Shutter } from './Icons';
+import { Logo, Play } from './Icons';
 
 const Header = styled.header`
   width: 100%;
@@ -79,7 +79,7 @@ const HeaderLink = styled(Link)`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
 `;
@@ -101,14 +101,12 @@ const WelcomeLink = styled(Link)`
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
   color: ${(props) => props.theme.classicBlue};
-  &:first-child {
-    font-size: 18px;
-  }
+  font-size: 20px;
 `;
 
 const IamText = styled.div`
-  font-size: 16px;
-  margin: 0px 0px 0px 10px;
+  font-size: 18px;
+  margin: 0px 0px 0px 5px;
 `;
 
 const DisplayDiv = styled.div`
@@ -122,15 +120,15 @@ const PotalButton = styled.button`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
-  font-size: 16px;
   outline: none;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
   background: none;
   border: 1px solid ${(props) => props.theme.classicBlue};
-  border-radius: 3px;
+  border-radius: 20px;
   /* padding: 0px 10px; */
   height: 40px;
+  padding: 0 10px;
 `;
 
 export default withRouter(() => {
@@ -156,7 +154,7 @@ export default withRouter(() => {
               IAM
             </WelcomeLink>
             <WelcomeLink to="/userguide/schedule" replace>
-              사용가이드
+              Guide
             </WelcomeLink>
             {/* <WelcomeLink to="/shopping" replace>
               구매하기
@@ -171,7 +169,7 @@ export default withRouter(() => {
             로그인
           </HeaderLink>
           <PotalButton type="button" onClick={onClickPotal_student}>
-            <Shutter />
+            <Play />
             <DisplayDiv>
               <IamText>체험하기</IamText>
             </DisplayDiv>

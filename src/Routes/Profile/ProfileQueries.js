@@ -9,6 +9,7 @@ export const GET_USER = gql`
       fullName
       isSelf
       email
+      studyPurpose
       studyGroup
       studyGroup2
       studyGroup3

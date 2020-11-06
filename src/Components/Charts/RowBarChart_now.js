@@ -10,12 +10,12 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
     data: {
       datasets: [
         {
-          label: '학습(분)',
+          label: 'Real(분)',
           backgroundColor: scheduleColor,
           data: [data_1],
         },
         {
-          label: '목표(분)',
+          label: 'Plan(분)',
           backgroundColor: 'rgba(233, 236, 244, 1)',
           data: [data_2],
         },
