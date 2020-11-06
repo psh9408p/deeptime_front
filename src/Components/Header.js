@@ -66,7 +66,7 @@ const AiBox = styled.div`
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: ${(props) => props.theme.classicBlue};
   padding: 10px 15px;
@@ -84,7 +84,7 @@ const HeaderLink = styled(Link)`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
   height: 45px;
@@ -180,7 +180,7 @@ export default withRouter(() => {
                   onClickPotal_student();
                 }}
               >
-                <Play fill={'#0F4C82'} margin={'0 5px 0 0'} />
+                <Play fill={'black'} margin={'0 5px 0 0'} />
                 Start
                 {/* <AiHeaderLink oncli to="/timelapse" replace>
                   <Timelapse fill={'#0F4C82'} />
@@ -263,7 +263,7 @@ export default withRouter(() => {
                 </HeaderLink>
               ) : (
                 <HeaderLink to={'/' + data.me.username} replace>
-                  <Avatar size="sm" url={data.me.avatar} />
+                  <Avatar size="sm2" url={data.me.avatar} />
                 </HeaderLink>
               )}
             </HeaderColumn>
