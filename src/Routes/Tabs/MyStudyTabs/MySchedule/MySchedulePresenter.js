@@ -1156,10 +1156,10 @@ export default ({
       return _getTimeTemplate(schedule, false);
     },
     popupStateFree: function () {
-      return '강의';
+      return myData.studyPurpose === '학습' ? '강의' : '개인';
     },
     popupStateBusy: function () {
-      return '자습';
+      return myData.studyPurpose === '학습' ? '자습' : '업무';
     },
     popupSave: function () {
       return '입력';

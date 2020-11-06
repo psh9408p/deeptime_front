@@ -681,7 +681,9 @@ export default ({
     ['TASK 없음', ...listName_tmp],
     ['', ...listId_tmp],
   );
-  const stateList = useSelect(['자습', '인강'], ['자습', '인강']);
+  const stateBox =
+    myInfoData.studyPurpose === '학습' ? ['자습', '강의'] : ['업무', '개인'];
+  const stateList = useSelect(stateBox, stateBox);
 
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
@@ -1098,7 +1100,9 @@ export default ({
         await myInfoRefetch();
         await todolistRefetch();
         mySubjectList2.setOption('');
-        stateList.setOption('자습');
+        stateList.setOption(
+          myInfoData.studyPurpose === '학습' ? '자습' : '업무',
+        );
         scheduleTitle.setValue('');
         startScheduleTerm.setValue(30);
         toast.success('새로운 스케줄이 시작되었습니다.');
@@ -1687,7 +1691,8 @@ export default ({
           resultArray_scheduleT[duplIndex] + totalMin;
       }
       // 자습 강의 구분하여 시간 넣기
-      if (scheduleList_selectDay[j].state === '자습') {
+      const myState = myInfoData.studyPurpose === '학습' ? '자습' : '업무';
+      if (scheduleList_selectDay[j].state === myState) {
         selfStudy_box.push(SumArray(slicedTime));
         selfStudy_boxT.push(totalMin);
       } else {

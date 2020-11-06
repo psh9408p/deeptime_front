@@ -292,6 +292,8 @@ export default ({
   setSelectPercent2,
   onImgSave,
 }) => {
+  const myState =
+    myInfoData.studyPurpose === '학습' ? ['자습', '강의'] : ['업무', '개인'];
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
   const lastMonthDate = new Date(
@@ -462,10 +464,10 @@ export default ({
           resultArray_scheduleT[duplIndex] + totalMin;
       }
       // 자습 강의 구분하여 시간 넣기
-      if (scheduleList_selectDay[j].state === '자습') {
+      if (scheduleList_selectDay[j].state === myState[0]) {
         selfStudy_box.push(SumArray(slicedTime));
         selfStudy_boxT.push(totalMin);
-      } else {
+      } else if (scheduleList_selectDay[j].state === myState[1]) {
         lectureStudy_box.push(SumArray(slicedTime));
         lectureStudy_boxT.push(totalMin);
       }
@@ -686,10 +688,10 @@ export default ({
             resultArray_scheduleT[duplIndex] + totalMin;
         }
         // 자습 강의 구분해서 시간 넣기
-        if (scheduleList_selectDay_week[k][j].state === '자습') {
+        if (scheduleList_selectDay_week[k][j].state === myState[0]) {
           selfStudy_box.push(SumArray(slicedTime));
           selfStudy_boxT.push(totalMin);
-        } else {
+        } else if (scheduleList_selectDay_week[k][j].state === myState[1]) {
           lectureStudy_box.push(SumArray(slicedTime));
           lectureStudy_boxT.push(totalMin);
         }
@@ -926,10 +928,10 @@ export default ({
           resultArray_scheduleT[duplIndex] + totalMin;
       }
       // 자습 강의 구분하여 시간 넣기
-      if (scheduleList_selectDay_month[j].state === '자습') {
+      if (scheduleList_selectDay_month[j].state === myState[0]) {
         selfStudy_box.push(SumArray(slicedTime));
         selfStudy_boxT.push(totalMin);
-      } else {
+      } else if (scheduleList_selectDay_month[j].state === myState[1]) {
         lectureStudy_box.push(SumArray(slicedTime));
         lectureStudy_boxT.push(totalMin);
       }
@@ -1132,7 +1134,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'Total Deep Time'}
+                    title={'총 Deep Time'}
                     labels={['Real', 'Plan']}
                   />
                 </ChartWrap>
@@ -1202,8 +1204,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Time 비율'
-                        : 'TASK별 Real Time 비율'
+                        ? 'TASK별 Plan Deep Time 비율'
+                        : 'TASK별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1237,12 +1239,13 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? 'Plan Time 자습&강의 비율'
-                        : 'Deep Time 자습&강의 비율'
+                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
+                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>
@@ -1288,7 +1291,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'Total Deep Time'}
+                    title={'총 Deep Time'}
                     labels={['Real', 'Plan']}
                   />
                 </ChartWrap>
@@ -1358,8 +1361,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Time 비율'
-                        : 'TASK별 Real Time 비율'
+                        ? 'TASK별 Plan Deep Time 비율'
+                        : 'TASK별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1393,12 +1396,13 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? 'Plan Time 자습&강의 비율'
-                        : 'Plan Time 자습&강의 비율'
+                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
+                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>
@@ -1444,7 +1448,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'Total Deep Time'}
+                    title={'총 Deep Time'}
                     labels={['Real', 'Plan']}
                   />
                 </ChartWrap>
@@ -1514,8 +1518,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Time 비율'
-                        : 'TASK별 Real Time 비율'
+                        ? 'TASK별 Plan Deep Time 비율'
+                        : 'TASK별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1549,12 +1553,13 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? 'Plan Time 자습&강의 비율'
-                        : 'Real Time 자습&강의 비율'
+                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
+                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>

@@ -29,6 +29,7 @@ export const ME = gql`
       fullName
       avatar
       existToggle
+      studyPurpose
       todayTime {
         attendanceStatus
         absenceReason

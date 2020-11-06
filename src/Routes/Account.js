@@ -15,6 +15,7 @@ const ACCOUNT_ME = gql`
       username
       email
       phoneNumber
+      studyPurpose
       studyGroup
       studyGroup2
       studyGroup3

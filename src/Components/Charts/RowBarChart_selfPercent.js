@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 import 'chartjs-plugin-datalabels';
 
-export default ({ data_1, data_2, title, updateBoolean }) => {
+export default ({ data_1, data_2, title, updateBoolean, state }) => {
   // 값이 모두 0 검증
   const total_value = data_1 + data_2;
   const chartConfig = {
@@ -10,12 +10,12 @@ export default ({ data_1, data_2, title, updateBoolean }) => {
     data: {
       datasets: [
         {
-          label: '자습',
+          label: state === '학습' ? '자습' : '업무',
           backgroundColor: 'rgba(123, 169, 235, 1)',
           data: [data_1],
         },
         {
-          label: '강의',
+          label: state === '학습' ? '강의' : '개인',
           backgroundColor: 'rgba(255, 118, 117, 1)',
           data: [data_2],
         },

@@ -39,6 +39,7 @@ export default () => {
   const [tos, setTos] = useState(false);
   const [top, setTop] = useState(false);
   const [marketing, setMarketing] = useState(false);
+  const studyPurpose = useSelect(['학습', '업무'], ['학습', '업무']);
   const studyGroup = useSelect(studyOption_group, studyOption_group);
   const studyGroup2 = useSelect_dynamic(
     studyOption_group2,
@@ -89,9 +90,13 @@ export default () => {
       address1: myAddress1.option,
       address2: myAddress2.option,
       termsOfMarketing: marketing,
-      studyGroup: studyGroup.option,
-      studyGroup2: studyGroup2.option,
-      studyGroup3: studyGroup3.option,
+      studyPurpose: studyPurpose.option,
+      studyGroup:
+        studyPurpose.option === '학습' ? studyGroup.option : '해당 없음',
+      studyGroup2:
+        studyPurpose.option === '학습' ? studyGroup2.option : '해당 없음',
+      studyGroup3:
+        studyPurpose.option === '학습' ? studyGroup3.option : '해당 없음',
     },
   });
   const [createAccount_M_Mutation] = useMutation(CREATE_ACCOUNT_M, {
@@ -443,6 +448,7 @@ export default () => {
       allClear={allClear}
       sEmailOnClick_findPassword={sEmailOnClick_findPassword}
       managerSecret={managerSecret}
+      studyPurpose={studyPurpose}
     />
   );
 };
