@@ -956,7 +956,58 @@ export default ({
           <>
             <BottomDiv>
               아직 계정이 없으신가요?&nbsp;
-              <PopupSign
+              <SignLink
+                onClick={() => {
+                  setAction('signUp');
+                  allClear();
+                }}
+              >
+                회원가입
+              </SignLink>
+            </BottomDiv>
+            <BottomDiv>
+              Email이 기억나지 않습니까?&nbsp;
+              <SignLink
+                onClick={() => {
+                  setAction('findEmail');
+                  allClear();
+                }}
+              >
+                Email 찾기
+              </SignLink>
+            </BottomDiv>
+            <BottomDiv>
+              비밀번호가 기억나지 않습니까?&nbsp;
+              <SignLink
+                onClick={() => {
+                  setAction('findPassword');
+                  allClear();
+                }}
+              >
+                비밀번호 찾기
+              </SignLink>
+            </BottomDiv>
+          </>
+        ) : (
+          <>
+            이미 계정이 있으신가요?{' '}
+            <SignLink
+              onClick={() => {
+                setAction('logIn');
+                allClear();
+              }}
+            >
+              로그인
+            </SignLink>
+          </>
+        )}
+      </StateChanger>
+    </Wrapper>
+  );
+};
+
+{
+  /* <PopupSign
                 trigger={<SignLink>회원가입</SignLink>}
                 closeOnDocumentClick={false}
                 modal
@@ -1034,45 +1085,5 @@ export default ({
                     )}
                   </PBody>
                 )}
-              </PopupSign>
-            </BottomDiv>
-            <BottomDiv>
-              Email이 기억나지 않습니까?&nbsp;
-              <SignLink
-                onClick={() => {
-                  setAction('findEmail');
-                  allClear();
-                }}
-              >
-                Email 찾기
-              </SignLink>
-            </BottomDiv>
-            <BottomDiv>
-              비밀번호가 기억나지 않습니까?&nbsp;
-              <SignLink
-                onClick={() => {
-                  setAction('findPassword');
-                  allClear();
-                }}
-              >
-                비밀번호 찾기
-              </SignLink>
-            </BottomDiv>
-          </>
-        ) : (
-          <>
-            이미 계정이 있으신가요?{' '}
-            <SignLink
-              onClick={() => {
-                setAction('logIn');
-                allClear();
-              }}
-            >
-              로그인
-            </SignLink>
-          </>
-        )}
-      </StateChanger>
-    </Wrapper>
-  );
-};
+              </PopupSign> */
+}
