@@ -631,21 +631,11 @@ export default ({
   // 영상 처리 변수
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
-  // const [modelFace, setModelFace] = useState(null)
-  // const [modelFaceMatcher, setModelFaceMatcher] = useState(null)
-  const [detectButton, setDetectbutton] = useState(true);
-  const [poseButton, setPosebutton] = useState(true);
-  // const [faceButton, setFacebutton] = useState(true)
-
   const [Mutation, setMutation] = useState(true);
-
-  const [cameraLoad, setCameraLoad] = useState(false);
-  const [modelLoad, setModelLoad] = useState(false);
 
   const video1 = useRef();
   const canvas1 = useRef();
 
-  // const [ctx, setCtx] = useState();
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   // todolist 미완료&북마크 된거 구분
@@ -1268,10 +1258,6 @@ export default ({
 
   const detectFromVideoFrame = async (video) => {
     try {
-      // const ctx = canvas.current.getContext('2d');
-      // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      // ctx.drawImage(video, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
-
       const posePredictions = await modelPose.estimateMultiplePoses(video, {
         flipHorizontal: false,
         maxDetections: 1,
@@ -1356,6 +1342,7 @@ export default ({
   //     });
   //   }
   // };
+
   const createPredictionArray = (prediction) => {
     const bbox = prediction.bbox;
     const len_x = bbox[2];
@@ -1412,12 +1399,7 @@ export default ({
   useInterval(() => {
     // console.log(timeCount);
     updateTime();
-    if (
-      modelPose !== null &&
-      modelDetect !== null
-      // canvas1.current !== null &&
-      // canvas1 !== null
-    ) {
+    if (modelPose !== null && modelDetect !== null) {
       if (timeCount % 10 === 1) {
         detectFromVideoFrame(video1.current);
         console.log(decision);
@@ -1432,7 +1414,6 @@ export default ({
         //   ctx.canvas.width,
         //   ctx.canvas.height,
         // );
-
         timeCount = timeCount + 1;
       }
       if (Mutation === true && interval > 59 * 1000) {
@@ -1451,16 +1432,6 @@ export default ({
       }
     }
   }, 1000);
-
-  const Toggle = (toggleValue, togglesetValue, toggleName) => {
-    const toggle = () => togglesetValue(!toggleValue);
-    return (
-      <div>
-        {toggleName}
-        <button onClick={toggle}>{toggleValue ? 'ON' : 'OFF'}</button>
-      </div>
-    );
-  };
 
   const whatNee = () => {
     console.log('왔니?');
