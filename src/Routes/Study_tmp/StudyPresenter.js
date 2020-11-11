@@ -210,12 +210,22 @@ const ControlTop2 = styled.div`
 `;
 
 const VideoBox = styled.video`
+  z-index: 2;
   width: 450px;
-  height: 460px;
+  height: 340px;
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const CanvasBox = styled.canvas`
+  position: absolute;
+  z-index: 1;
+  width: 450px;
+  height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
 const VideoWrap = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -583,12 +593,6 @@ export default ({
   startPolling,
   stopPolling,
 }) => {
-  const absenceArray = [
-    'Where are you...?',
-    '어디 갔니...?',
-    '언제 오니...?',
-    '빨리 돌아와~',
-  ];
   // const minValue_5 = (value) => value >= 5;
   const [nonScheduleRecord, setNonScheduleRecord] = useState(
     myInfoData.studyDefaultSet.nonScheduleRecord,
@@ -639,9 +643,9 @@ export default ({
   const [modelLoad, setModelLoad] = useState(false);
 
   const video1 = useRef();
-  // const canvas1 = createRef();
+  const canvas1 = useRef();
 
-  const [ctx, setCtx] = useState();
+  // const [ctx, setCtx] = useState();
   const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   // todolist 미완료&북마크 된거 구분
@@ -697,6 +701,10 @@ export default ({
   const stateList = useSelect(stateBox, stateBox);
 
   const onImgSave = () => {
+    const ctx = canvas1.current.getContext('2d');
+    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+
     const saveAs = (uri, filename) => {
       var link = document.createElement('a');
       console.log(link);
@@ -1258,11 +1266,6 @@ export default ({
     }
   };
 
-  const loadCtx = async (canvas) => {
-    const temp = canvas.current.getContext('2d');
-    setCtx(temp);
-  };
-
   const detectFromVideoFrame = async (video) => {
     try {
       // const ctx = canvas.current.getContext('2d');
@@ -1477,8 +1480,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
+      LoadCamera();
+      LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -1929,9 +1932,8 @@ export default ({
     <TopWrap>
       <Wrapper id="capture">
         <VideoWrap>
-          <div>
-            <VideoBox ref={video1} playsInline autoPlay muted />
-          </div>
+          <VideoBox ref={video1} playsInline autoPlay muted />
+          <CanvasBox ref={canvas1} />
         </VideoWrap>
         <GraphDiv>
           <HeaderDiv>
@@ -1944,9 +1946,7 @@ export default ({
               ) : (
                 <>
                   <Study_false />
-                  <StatusSpan>
-                    {absenceArray[Math.floor(Math.random() * 4)]}
-                  </StatusSpan>
+                  <StatusSpan>Where are you...?</StatusSpan>
                 </>
               )}
             </AvatarDiv>
