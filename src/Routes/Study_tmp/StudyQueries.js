@@ -78,12 +78,14 @@ export const EXTENSION_SCHEDULE = gql`
 
 export const EDIT_STUDYSET = gql`
   mutation editStudySet(
+    $nonScheduleRecord: Boolean!
     $autoRefresh: Boolean!
     $autoRefreshTerm: Int!
     $startScheduleTerm: Int!
     $cutExtenTerm: Int!
   ) {
     editStudySet(
+      nonScheduleRecord: $nonScheduleRecord
       autoRefresh: $autoRefresh
       autoRefreshTerm: $autoRefreshTerm
       startScheduleTerm: $startScheduleTerm

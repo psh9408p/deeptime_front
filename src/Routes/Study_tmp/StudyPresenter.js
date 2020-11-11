@@ -344,7 +344,7 @@ const SetDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 460px !important;
-    height: 350px !important;
+    height: 400px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -419,9 +419,9 @@ const RoundTodo = styled.div`
   flex-direction: row;
   align-items: center;
   width: 200px;
-  height: 32px;
+  height: 35px;
   border-radius: 16px;
-  padding: 0 5px;
+  padding: 0 5px 0 10px;
   background-color: ${(props) => props.bgColor};
   color: ${(props) => props.color};
   /* border: ${(props) => props.theme.boxBorder};
@@ -590,6 +590,9 @@ export default ({
     '빨리 돌아와~',
   ];
   // const minValue_5 = (value) => value >= 5;
+  const [nonScheduleRecord, setNonScheduleRecord] = useState(
+    myInfoData.studyDefaultSet.nonScheduleRecord,
+  );
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
@@ -604,6 +607,14 @@ export default ({
   const extensionTerm_forSet = useInput(
     myInfoData.studyDefaultSet.cutExtenTerm,
   );
+
+  const recordSwitch = () => {
+    if (nonScheduleRecord) {
+      setNonScheduleRecord(false);
+    } else {
+      setNonScheduleRecord(true);
+    }
+  };
 
   const autoSwitch = () => {
     if (autoRefresh) {
@@ -755,6 +766,7 @@ export default ({
         data: { editStudySet },
       } = await editStudySetMutation({
         variables: {
+          nonScheduleRecord,
           autoRefresh,
           autoRefreshTerm: Number(autoRefreshTerm.value),
           startScheduleTerm: Number(startScheduleTerm_forSet.value),
@@ -1132,6 +1144,8 @@ export default ({
         alert('To Do List를 추가할 수 없습니다.');
       } else {
         await todolistRefetch();
+        todolistName.setValue('');
+        mySubjectList.setOption('');
         toast.success('새로운 To DO List가 추가되었습니다.');
       }
     } catch (e) {
@@ -1463,8 +1477,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      LoadCamera();
-      LoadModel();
+      // LoadCamera();
+      // LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -1568,10 +1582,16 @@ export default ({
       }
       nowScheduleTime = SumArray(slicedTime_now) / 60;
       nowScheduleTimeT = nowSchedule.totalTime / 60 - nowScheduleTime;
-      nowScheduleColor = nowSchedule.subject?.bgColor;
+      nowScheduleColor = nowSchedule.subject
+        ? nowSchedule.subject.bgColor
+        : 'rgba(123, 169, 235, 1)';
       const startPoint = new Date(nowSchedule.start);
       const endPoint = new Date(nowSchedule.end);
-      nowTitle1 = nowSchedule.subject?.name + ' (' + nowSchedule.title + ')';
+      nowTitle1 =
+        (nowSchedule.subject ? nowSchedule.subject.name : 'TASK 없음') +
+        ' (' +
+        nowSchedule.title +
+        ')';
       nowTitle2 =
         moment(startPoint).format('hh:mma') +
         ' ~ ' +
@@ -1955,6 +1975,15 @@ export default ({
                     <PBody>
                       <PTitle text={'기본값 세팅'} />
                       <SetContentWrap>
+                        <SetContentBox>
+                          현재 스케줄 부재시 시간 기록 on/off :　
+                          <Switch
+                            on={true}
+                            off={false}
+                            value={nonScheduleRecord}
+                            onChange={recordSwitch}
+                          />
+                        </SetContentBox>
                         <SetContentBox>
                           자동 새로고침 on/off :　
                           <Switch
