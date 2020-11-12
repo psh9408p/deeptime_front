@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Camera, Refresh } from '../Icons';
+import { Camera, Refresh, Setting } from '../Icons';
 
 const Container = styled.button`
   font-size: 24px;
   padding: 3px 5px;
-  margin-right: 10px;
+  margin: ${(props) => props.margin};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,15 +27,21 @@ const Container = styled.button`
   }
 `;
 
-export const Button_refresh = ({ onClick }) => (
-  <Container onClick={onClick}>
+export const Button_refresh = ({ onClick, margin = '0 10px 0 0' }) => (
+  <Container onClick={onClick} margin={margin}>
     <Refresh />
   </Container>
 );
 
-export const Button_capture = ({ onClick }) => (
-  <Container onClick={onClick}>
+export const Button_capture = ({ onClick, margin = '0 10px 0 0' }) => (
+  <Container onClick={onClick} margin={margin}>
     <Camera />
+  </Container>
+);
+
+export const Button_setting = ({ onClick, margin = '0 10px 0 0' }) => (
+  <Container onClick={onClick} margin={margin}>
+    <Setting />
   </Container>
 );
 

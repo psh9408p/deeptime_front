@@ -38,6 +38,7 @@ import Button_custom from '../../Components/Buttons/Button_custom';
 import {
   Button_refresh,
   Button_capture,
+  Button_setting,
 } from '../../Components/Buttons/Button_click';
 import html2canvas from 'html2canvas';
 import { FixedSizeGrid as TodolistGrid } from 'react-window';
@@ -507,20 +508,11 @@ const InputWrapper = styled.div`
 
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
-let taskArray = [];
-let taskArray_percent = [];
-let taskArray_percentT = [];
 let taskArray_schedule = [];
 let taskArray_scheduleT = [];
 let donutData = [];
-let donutData_1 = 0;
-let donutData_2 = 0;
 let donutPercent = 0;
 let rgbBox = [];
-let self_percent = [];
-let lecture_percent = [];
-let self_percentT = [];
-let lecture_percentT = [];
 let schedule_label = [];
 let schedule_color = [];
 let nowScheduleIndex = -1;
@@ -1491,12 +1483,8 @@ export default ({
   };
 
   const todayGraph_calculate = () => {
-    // console.log(scheduleList_selectDay);
     // 초기화
-    taskArray = new Array(24).fill(0);
     donutData = [];
-    donutData_1 = 0;
-    donutData_2 = 0;
     donutPercent = 0;
     rgbBox = [];
     // 오늘 생선된 시간이 있는 인덱스 구하기
@@ -1621,23 +1609,11 @@ export default ({
       break_boolean = false;
     }
 
-    // AreaChart 계산
-    const arrayBox = SplitArray(todayTime.time_24, 12);
-    let resultArray = arrayBox.map((a) => SumArray(a));
-    taskArray = twoArraySum(taskArray, resultArray);
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
     schedule_label = [];
     schedule_color = [];
-    self_percent = [];
-    lecture_percent = [];
-    self_percentT = [];
-    lecture_percentT = [];
-    let selfStudy_box = [];
-    let lectureStudy_box = [];
-    let selfStudy_boxT = [];
-    let lectureStudy_boxT = [];
     for (let j = 0; j < scheduleList_selectDay_length; j++) {
       // console.log(scheduleList_selectDay);
       const totalMin = scheduleList_selectDay[j].totalTime / 60;
@@ -1684,15 +1660,6 @@ export default ({
         resultArray_scheduleT[duplIndex] =
           resultArray_scheduleT[duplIndex] + totalMin;
       }
-      // 자습 강의 구분하여 시간 넣기
-      const myState = myInfoData.studyPurpose === '학습' ? '자습' : '업무';
-      if (scheduleList_selectDay[j].state === myState) {
-        selfStudy_box.push(SumArray(slicedTime));
-        selfStudy_boxT.push(totalMin);
-      } else {
-        lectureStudy_box.push(SumArray(slicedTime));
-        lectureStudy_boxT.push(totalMin);
-      }
     }
     taskArray_schedule = new Array(resultArray_schedule.length).fill(0);
     taskArray_scheduleT = new Array(resultArray_scheduleT.length).fill(0);
@@ -1701,43 +1668,6 @@ export default ({
       taskArray_scheduleT,
       resultArray_scheduleT,
     );
-    // AreaChart 계산
-    taskArray.forEach(function (item, index) {
-      taskArray[index] = item / 60;
-    });
-    // 스케줄 그래프 계산
-    if (taskArray_schedule !== []) {
-      taskArray_schedule.forEach(function (item, index) {
-        taskArray_schedule[index] = item / 60;
-      });
-    }
-    // 스케줄(TASK) 시간 퍼센트 계산
-    const totalExsitTime = SumArray(taskArray_schedule);
-    const totalTargetTime = SumArray(taskArray_scheduleT);
-    if (schedule_label.length === 0) {
-      taskArray_percent = [1];
-      schedule_color.push('rgba(233, 236, 244, 1)');
-    } else if (totalExsitTime === 0) {
-      taskArray_percent = taskArray_schedule.map(() => 0);
-      taskArray_percent.push(1);
-      schedule_color.push('rgba(233, 236, 244, 1)');
-    } else {
-      taskArray_percent = taskArray_schedule.map((time) =>
-        Math.floor((time / totalExsitTime) * 100),
-      );
-    }
-    if (schedule_label.length === 0) {
-      taskArray_percentT = [1];
-      schedule_color.push('rgba(233, 236, 244, 1)');
-    } else if (totalTargetTime === 0) {
-      taskArray_percentT = taskArray_scheduleT.map(() => 0);
-      taskArray_percentT.push(1);
-      schedule_color.push('rgba(233, 236, 244, 1)');
-    } else {
-      taskArray_percentT = taskArray_scheduleT.map((time) =>
-        Math.floor((time / totalTargetTime) * 100),
-      );
-    }
     // 도넛차트 계산
     let slicedTimeBox = [];
     // console.log(todayTime.time_24);
@@ -1812,33 +1742,11 @@ export default ({
     total_hour = String(Math.floor(existTime_min / 60));
     existTime_min = existTime_min - total_hour * 60;
     total_min = String(Math.floor(existTime_min));
-    //자습 강의 비율 계산
-    const total_self = SumArray(selfStudy_box);
-    const total_lecture = SumArray(lectureStudy_box);
-    const total_value = total_self + total_lecture;
-    const total_selfT = SumArray(selfStudy_boxT);
-    const total_lectureT = SumArray(lectureStudy_boxT);
-    const total_valueT = total_selfT + total_lectureT;
-    if (total_value === 0) {
-      self_percent = 0;
-      lecture_percent = 0;
-    } else {
-      self_percent = Math.round((total_self / total_value) * 100);
-      lecture_percent = 100 - self_percent;
-    }
-    if (total_valueT === 0) {
-      self_percentT = 0;
-      lecture_percentT = 0;
-    } else {
-      self_percentT = Math.round((total_selfT / total_valueT) * 100);
-      lecture_percentT = 100 - self_percentT;
-    }
   };
 
   if (7 === networkStatus) {
     todaySchedule_calculate();
     todayGraph_calculate();
-    // CalLoading.current = false;
   }
 
   const todolistRow = ({ columnIndex, rowIndex, style }) => {
@@ -1933,11 +1841,7 @@ export default ({
                 }}
               />
               <PopupCustom
-                trigger={
-                  <div style={{ cursor: 'pointer' }}>
-                    <Setting />
-                  </div>
-                }
+                trigger={<Button_setting margin={'0'} />}
                 closeOnDocumentClick={false}
                 modal
               >
