@@ -41,7 +41,6 @@ export default ({ pageIndex, meData, meRefetch }) => {
   const password = useInput('', '', minLen_6);
   const passChk = (value) => value !== password.value;
   const password2 = useInput('', '', passChk);
-  console.log(meData.studyPurpose);
   const studyPurpose = useSelect(
     ['학습', '업무'],
     ['학습', '업무'],

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default (defaultValue, validator, checker) => {
+export default (defaultValue, validator, checker, numberChk) => {
   const [value, setValue] = useState(defaultValue);
   const [errorChk, setErrorChk] = useState(false);
 
@@ -14,7 +14,11 @@ export default (defaultValue, validator, checker) => {
       willUpdate = validator(value);
     }
     if (willUpdate) {
-      setValue(value);
+      if (numberChk === true) {
+        setValue(Number(value));
+      } else {
+        setValue(value);
+      }
     }
 
     let willCheck = true; // true가 정상인 상태 (예, 실시간 비밀번호 조건 체크문용)

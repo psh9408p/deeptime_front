@@ -181,7 +181,7 @@ export default withRouter(() => {
                 }}
               >
                 <Play fill={'black'} margin={'0 5px 0 0'} />
-                Start
+                Play
                 {/* <AiHeaderLink oncli to="/timelapse" replace>
                   <Timelapse fill={'#0F4C82'} />
                 </AiHeaderLink> */}

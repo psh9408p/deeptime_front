@@ -48,6 +48,7 @@ import useSelect from '../../Hooks/useSelect';
 import useInput from '../../Hooks/useInput';
 import Select from '../../Components/Select';
 import Input from '../../Components/Input';
+import videoCanvas from 'video-canvas';
 
 const Whammy = require('whammy/whammy');
 
@@ -211,6 +212,7 @@ const ControlTop2 = styled.div`
 `;
 
 const VideoBox = styled.video`
+  position: absolute;
   z-index: 2;
   width: 450px;
   height: 340px;
@@ -537,26 +539,7 @@ let total_hour = 0;
 let time = new Date().getTime();
 let interval = 0;
 let decision = [true, true, true, true, true, true];
-let detection_area = [
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-];
+let detection_area = Array.from({ length: 18 }, (_, i) => i + 1);
 let finalDecision = 1; //1.공부 2. 부재중 3. 잠
 let timeCount = 0;
 
@@ -585,23 +568,42 @@ export default ({
   startPolling,
   stopPolling,
 }) => {
-  // const minValue_5 = (value) => value >= 5;
+  const prevent_float = (value) => value % 1 === 0;
   const [nonScheduleRecord, setNonScheduleRecord] = useState(
     myInfoData.studyDefaultSet.nonScheduleRecord,
   );
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
-  const autoRefreshTerm = useInput(myInfoData.studyDefaultSet.autoRefreshTerm);
+  const autoRefreshTerm = useInput(
+    myInfoData.studyDefaultSet.autoRefreshTerm,
+    prevent_float,
+    undefined,
+    true,
+  );
   const startScheduleTerm = useInput(
     myInfoData.studyDefaultSet.startScheduleTerm,
+    prevent_float,
+    undefined,
+    true,
   );
-  const extensionTerm = useInput(myInfoData.studyDefaultSet.cutExtenTerm);
+  const extensionTerm = useInput(
+    myInfoData.studyDefaultSet.cutExtenTerm,
+    prevent_float,
+    undefined,
+    true,
+  );
   const startScheduleTerm_forSet = useInput(
     myInfoData.studyDefaultSet.startScheduleTerm,
+    prevent_float,
+    undefined,
+    true,
   );
   const extensionTerm_forSet = useInput(
     myInfoData.studyDefaultSet.cutExtenTerm,
+    prevent_float,
+    undefined,
+    true,
   );
 
   const recordSwitch = () => {
@@ -683,13 +685,15 @@ export default ({
   const stateList = useSelect(stateBox, stateBox);
 
   const onImgSave = () => {
-    const ctx = canvas1.current.getContext('2d');
+    // const ctx = canvas1.current.getContext('2d');
     // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+    // ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+    videoCanvas(video1.current, {
+      canvas: canvas1.current,
+    });
 
     const saveAs = (uri, filename) => {
       var link = document.createElement('a');
-      console.log(link);
       if (typeof link.download === 'string') {
         link.href = uri;
         link.download = filename;
@@ -701,9 +705,14 @@ export default ({
       }
     };
 
+    const now_Date = new Date();
+    const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
     html2canvas(document.querySelector('#capture')).then((canvas) => {
       // document.body.appendChild(canvas);
-      saveAs(canvas.toDataURL('image/png'), 'capture-test.png');
+      saveAs(
+        canvas.toDataURL('image/png'),
+        'deeptime_play_' + file_tail + '.png',
+      );
     });
   };
 
@@ -727,9 +736,9 @@ export default ({
   };
 
   const onSaveSet = async () => {
-    if (autoRefreshTerm.value < 10) {
-      alert('자동 새로고침 최소 기간은 10초입니다.');
-      autoRefreshTerm.setValue(10);
+    if (autoRefreshTerm.value < 60) {
+      alert('자동 새로고침 최소 기간은 60초입니다.');
+      autoRefreshTerm.setValue(60);
       return;
     }
     if (
@@ -804,7 +813,6 @@ export default ({
     }
     // 최대 연장시간 점검
     const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
-    console.log(end.getHours(), end.getMinutes(), 'aad');
     const posibleMin = 1440 - (end.getHours() * 60 + end.getMinutes());
     if (end.getHours() === 0 && end.getMinutes() === 0) {
       alert('현재 스케줄은 더는 연장이 불가능합니다.');
@@ -818,6 +826,7 @@ export default ({
     const start = new Date(scheduleList_selectDay[nowScheduleIndex].start);
     let deleteArray = [];
     let cutId = '';
+    let cutTotalTime = 0;
     end.setTime(end.getTime() + extensionTerm.value * 60000);
     // 삭제할 단축할 스케줄 계산
     for (var i = 0; i < scheduleList_selectDay.length; i++) {
@@ -827,6 +836,7 @@ export default ({
         deleteArray.push({ id: scheduleList_selectDay[i].id });
       } else if (start < start_tmp && end > start_tmp) {
         cutId = scheduleList_selectDay[i].id;
+        cutTotalTime = (end_tmp.getTime() - end.getTime()) / 1000;
       }
     }
     if (deleteArray.length !== 0 || cutId !== '') {
@@ -845,8 +855,10 @@ export default ({
       } = await extensionScheduleMutation({
         variables: {
           scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          totalTime: (end.getTime() - start.getTime()) / 1000,
           end,
           cutId,
+          cutTotalTime,
           deleteArray,
         },
       });
@@ -898,6 +910,7 @@ export default ({
       }
     }
 
+    const start = new Date(scheduleList_selectDay[nowScheduleIndex].start);
     const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
     end.setTime(end.getTime() - extensionTerm.value * 60000);
 
@@ -907,6 +920,7 @@ export default ({
       } = await cutScheduleMutation({
         variables: {
           scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          totalTime: deleteBool ? 0 : (end.getTime() - start.getTime()) / 1000,
           end,
           deleteBool,
         },
@@ -1013,6 +1027,9 @@ export default ({
       } = await stopScheduleMutation({
         variables: {
           scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          totalTime: deleteBool
+            ? 0
+            : (end.getTime() - start_schedule.getTime()) / 1000,
           end,
           deleteBool,
         },
@@ -1812,7 +1829,7 @@ export default ({
       <Wrapper id="capture">
         <VideoWrap>
           <VideoBox ref={video1} playsInline autoPlay muted />
-          <CanvasBox ref={canvas1} />
+          <CanvasBox id="CanvasBox" ref={canvas1} />
         </VideoWrap>
         <GraphDiv>
           <HeaderDiv>

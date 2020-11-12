@@ -8,7 +8,7 @@ import FollowButton from '../../Components/FollowButton';
 import Button from '../../Components/Buttons/Button';
 import ProfileTabs from '../Tabs/ProfileTabs';
 import { Link } from 'react-router-dom';
-import { Setting } from '../../Components/Icons';
+import { Button_setting } from '../../Components/Buttons/Button_click';
 import Popup from 'reactjs-popup';
 import PopupButton_triple from '../../Components/Buttons/PopupButton_triple';
 
@@ -283,7 +283,7 @@ export default ({
                   <SettingWrap>
                     <Button onClick={logOut} text="로그아웃" />
                     <SettingLink to="/account" replace>
-                      <Setting />
+                      <Button_setting />
                     </SettingLink>
                   </SettingWrap>
                 ) : (

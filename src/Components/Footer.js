@@ -67,6 +67,8 @@ export default () => (
         <Link href="#">language</Link>
       </ListItem> */}
     </List>
-    <Copyright>&copy; {new Date().getFullYear()} IAM FROM SLOG</Copyright>
+    <Copyright>
+      &copy; {new Date().getFullYear()} DEEPTIME FROM DEEPSTARS
+    </Copyright>
   </Footer>
 );

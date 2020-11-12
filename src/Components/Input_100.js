@@ -40,7 +40,6 @@ const Input = ({
 );
 
 Input.propTypes = {
-  placeholder: PropTypes.string.isRequired,
   required: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   type: PropTypes.string,

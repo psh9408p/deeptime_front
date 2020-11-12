@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
 import html2canvas from 'html2canvas';
+import moment from 'moment';
 
 export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
@@ -31,13 +32,21 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
       }
     };
 
+    const now_Date = new Date();
+    const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
     html2canvas(document.querySelector('#staCapture_top')).then((canvas) => {
       // document.body.appendChild(canvas);
-      saveAs(canvas.toDataURL('image/png'), 'capture-test1.png');
+      saveAs(
+        canvas.toDataURL('image/png'),
+        'deeptime_stats_' + file_tail + '_1.png',
+      );
     });
     html2canvas(document.querySelector('#staCapture_bottom')).then((canvas) => {
       // document.body.appendChild(canvas);
-      saveAs(canvas.toDataURL('image/png'), 'capture-test2.png');
+      saveAs(
+        canvas.toDataURL('image/png'),
+        'deeptime_stats_' + file_tail + '_2.png',
+      );
     });
   };
 

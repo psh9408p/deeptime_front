@@ -61,6 +61,8 @@ export const ME = gql`
         autoRefreshTerm
         startScheduleTerm
         cutExtenTerm
+        scheduleStart
+        scheduleEnd
       }
     }
   }

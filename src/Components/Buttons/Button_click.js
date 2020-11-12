@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import { Camera, Refresh, Setting } from '../Icons';
 
@@ -39,10 +39,12 @@ export const Button_capture = ({ onClick, margin = '0 10px 0 0' }) => (
   </Container>
 );
 
-export const Button_setting = ({ onClick, margin = '0 10px 0 0' }) => (
-  <Container onClick={onClick} margin={margin}>
-    <Setting />
-  </Container>
+export const Button_setting = forwardRef(
+  ({ onClick, margin = '0 10px 0 0' }, ref) => (
+    <Container ref={ref} onClick={onClick} margin={margin}>
+      <Setting />
+    </Container>
+  ),
 );
 
 export default Button_capture;

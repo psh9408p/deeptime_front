@@ -12,7 +12,6 @@ import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
 import Profile_M from '../Routes/Profile_M';
 import Study from '../Routes/Study';
-import Study_tmp from '../Routes/Study_tmp';
 import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
 import Loader from './Loader';
@@ -59,7 +58,7 @@ export const MEPOSITION = gql`
 `;
 
 const LoaderWrapper = styled.div`
-  margin: 100px 0px;
+  margin: ${(props) => props.margin};
 `;
 
 export let userEmail = '';
@@ -94,7 +93,7 @@ const LoggedInRoutes = () => {
 
       return (
         <Switch>
-          <Route path="/study" component={Study_tmp} />
+          <Route path="/study" component={Study} />
           <Route path="/userguide" component={UserGuide} />
           <Route path="/timelapse" component={Timelapse} />
           {/* <Route path="/attendance" component={Attendance} /> */}
@@ -129,7 +128,7 @@ const LoggedInRoutes = () => {
     }
   } else {
     return (
-      <LoaderWrapper>
+      <LoaderWrapper margin={pageName === 'study' ? '300px 0' : '100px 0'}>
         <Loader />
       </LoaderWrapper>
     );

@@ -15,18 +15,35 @@ import {
   ADD_TODOLIST,
   DELETE_TODOLIST,
   FINISH_TODOLIST,
+  EDIT_STUDYSET,
 } from './MyScheduleQueries';
+import { toast } from 'react-toastify';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
 export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
+  const start_range = (value) => value >= 0 && value <= 23 && value % 1 === 0;
+  const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
+
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
   const subjectName = useInput('');
   const todolistName = useInput('');
+  const scheduleStart = useInput(
+    myInfoData.me.studyDefaultSet.scheduleStart,
+    start_range,
+    undefined,
+    true,
+  );
+  const scheduleEnd = useInput(
+    myInfoData.me.studyDefaultSet.scheduleEnd,
+    end_range,
+    undefined,
+    true,
+  );
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
@@ -37,6 +54,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [addTodolistMutation] = useMutation(ADD_TODOLIST);
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
+  const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const {
     data: subjectData,
     loading: subjectLoading,
@@ -51,6 +69,37 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
 
   const handleChangeComplete = (color, event) => {
     setSubjectColor(color.hex);
+  };
+
+  const onSaveSet = async () => {
+    if (scheduleStart.value >= scheduleEnd.value) {
+      alert('스케줄러 끝 시간이 시작 시간과 같거나 빠를 수 없습니다.');
+      scheduleEnd.setValue(scheduleStart.value + 1);
+      return;
+    }
+
+    try {
+      toast.info('기본값 세팅 적용 중...');
+      const {
+        data: { editStudySet },
+      } = await editStudySetMutation({
+        variables: {
+          scheduleStart: scheduleStart.value,
+          scheduleEnd: scheduleEnd.value,
+        },
+      });
+      if (!editStudySet) {
+        alert('기본값 세팅을 적용할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        toast.success('새로운 기본값 세팅을 적용하였습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
   };
 
   if ((subjectnetwork === 7 || subjectnetwork === 4) && !todolistLoading) {
@@ -82,6 +131,9 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         todolistRefetch={todolistRefetch}
         deleteTodolistMutation={deleteTodolistMutation}
         finishTodolistMutation={finishTodolistMutation}
+        scheduleStart={scheduleStart}
+        scheduleEnd={scheduleEnd}
+        onSaveSet={onSaveSet}
       />
     );
   } else {

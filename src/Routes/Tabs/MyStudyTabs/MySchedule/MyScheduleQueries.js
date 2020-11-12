@@ -78,3 +78,25 @@ export const MY_TODOLIST = gql`
     }
   }
 `;
+
+export const EDIT_STUDYSET = gql`
+  mutation editStudySet(
+    $nonScheduleRecord: Boolean
+    $autoRefresh: Boolean
+    $autoRefreshTerm: Int
+    $startScheduleTerm: Int
+    $cutExtenTerm: Int
+    $scheduleStart: Int
+    $scheduleEnd: Int
+  ) {
+    editStudySet(
+      nonScheduleRecord: $nonScheduleRecord
+      autoRefresh: $autoRefresh
+      autoRefreshTerm: $autoRefreshTerm
+      startScheduleTerm: $startScheduleTerm
+      cutExtenTerm: $cutExtenTerm
+      scheduleStart: $scheduleStart
+      scheduleEnd: $scheduleEnd
+    )
+  }
+`;

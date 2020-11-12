@@ -12,6 +12,7 @@ import Button_blue from '../../../../Components/Buttons/Button_blue';
 import Button_red from '../../../../Components/Buttons/Button_red';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
 import Input from '../../../../Components/Input';
+import Input_100 from '../../../../Components/Input_100';
 import PopupButton from '../../../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../../../Components/Buttons/PopupButton_solo';
 import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
@@ -24,7 +25,10 @@ import { FixedSizeList as BookmarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
 import { Delete, Flag } from '../../../../Components/Icons';
-import { Button_refresh } from '../../../../Components/Buttons/Button_click';
+import {
+  Button_refresh,
+  Button_setting,
+} from '../../../../Components/Buttons/Button_click';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -186,6 +190,17 @@ const PopupCustom7 = styled(Popup)`
   }
 `;
 
+const PopupCustom8 = styled(Popup)`
+  &-content {
+    width: 460px !important;
+    height: 200px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
 const FrontDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -194,6 +209,13 @@ const FrontDiv = styled.div`
 `;
 
 const PBody = styled.div``;
+
+const PBody2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px 20px;
+`;
 
 const PTitle = styled(FatText)`
   font-size: 18px;
@@ -464,6 +486,33 @@ const TodoFinishDiv = styled.div`
   border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')};
 `;
 
+const SetContentWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const SetContentBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+`;
+
+const RefreshInputWrap = styled.div`
+  width: 70px;
+  height: 30px;
+`;
+
 let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
@@ -499,6 +548,9 @@ export default ({
   todolistRefetch,
   deleteTodolistMutation,
   finishTodolistMutation,
+  scheduleStart,
+  scheduleEnd,
+  onSaveSet,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1174,7 +1226,7 @@ export default ({
       return '삭제';
     },
     titlePlaceholder: function () {
-      return '제목';
+      return 'To Do List';
     },
     locationPlaceholder: function () {
       return '위치';
@@ -1344,6 +1396,61 @@ export default ({
               todolistRefetch();
             }}
           />
+          <PopupCustom8
+            trigger={<Button_setting />}
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => {
+              return (
+                <PBody2>
+                  <PTitle text={'기본값 세팅'} />
+                  <SetContentWrap>
+                    <SetContentBox>
+                      스케줄러 시작 :　
+                      <RefreshInputWrap>
+                        <Input_100
+                          placeholder={''}
+                          {...scheduleStart}
+                          type={'number'}
+                          step={1}
+                        />
+                      </RefreshInputWrap>
+                      시　/　끝 :　
+                      <RefreshInputWrap>
+                        <Input_100
+                          placeholder={''}
+                          {...scheduleEnd}
+                          type={'number'}
+                          step={1}
+                        />
+                      </RefreshInputWrap>
+                      시
+                    </SetContentBox>
+                  </SetContentWrap>
+                  <ButtonDiv style={{ marginTop: '20px' }}>
+                    <PopupButton
+                      type="button"
+                      onClick={async () => {
+                        const fucResult = await onSaveSet();
+                        if (fucResult) {
+                          close();
+                        }
+                      }}
+                      text={'적용'}
+                    />
+                    <PopupButton
+                      type="button"
+                      onClick={() => {
+                        close();
+                      }}
+                      text={'닫기'}
+                    />
+                  </ButtonDiv>
+                </PBody2>
+              );
+            }}
+          </PopupCustom8>
           <PopupCustom7
             trigger={<PopButton_custom widht={'80px'} text={'To Do List'} />}
             closeOnDocumentClick={false}
@@ -1732,6 +1839,7 @@ export default ({
         taskView={false}
         scheduleView={['allday', 'time']}
         usageStatistics={true}
+        week={{ hourStart: scheduleStart.value, hourEnd: scheduleEnd.value }}
         onClickSchedule={onClickSchedule}
         onBeforeCreateSchedule={onBeforeCreateSchedule}
         onBeforeDeleteSchedule={onBeforeDeleteSchedule}

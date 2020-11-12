@@ -25,11 +25,13 @@ export const START_SCHEDULE = gql`
 export const STOP_SCHEDULE = gql`
   mutation stopSchedule_study(
     $scheduleId: String!
+    $totalTime: Int!
     $end: String!
     $deleteBool: Boolean!
   ) {
     stopSchedule_study(
       scheduleId: $scheduleId
+      totalTime: $totalTime
       end: $end
       deleteBool: $deleteBool
     )
@@ -49,11 +51,13 @@ export const PULL_SCHEDULE = gql`
 export const CUT_SCHEDULE = gql`
   mutation cutSchedule_study(
     $scheduleId: String!
+    $totalTime: Int!
     $end: String!
     $deleteBool: Boolean!
   ) {
     cutSchedule_study(
       scheduleId: $scheduleId
+      totalTime: $totalTime
       end: $end
       deleteBool: $deleteBool
     )
@@ -63,14 +67,18 @@ export const CUT_SCHEDULE = gql`
 export const EXTENSION_SCHEDULE = gql`
   mutation extensionSchedule_study(
     $scheduleId: String!
+    $totalTime: Int!
     $end: String!
     $cutId: String!
+    $cutTotalTime: Int!
     $deleteArray: [schedule_delete!]!
   ) {
     extensionSchedule_study(
       scheduleId: $scheduleId
+      totalTime: $totalTime
       end: $end
       cutId: $cutId
+      cutTotalTime: $cutTotalTime
       deleteArray: $deleteArray
     )
   }
@@ -78,11 +86,13 @@ export const EXTENSION_SCHEDULE = gql`
 
 export const EDIT_STUDYSET = gql`
   mutation editStudySet(
-    $nonScheduleRecord: Boolean!
-    $autoRefresh: Boolean!
-    $autoRefreshTerm: Int!
-    $startScheduleTerm: Int!
-    $cutExtenTerm: Int!
+    $nonScheduleRecord: Boolean
+    $autoRefresh: Boolean
+    $autoRefreshTerm: Int
+    $startScheduleTerm: Int
+    $cutExtenTerm: Int
+    $scheduleStart: Int
+    $scheduleEnd: Int
   ) {
     editStudySet(
       nonScheduleRecord: $nonScheduleRecord
@@ -90,6 +100,8 @@ export const EDIT_STUDYSET = gql`
       autoRefreshTerm: $autoRefreshTerm
       startScheduleTerm: $startScheduleTerm
       cutExtenTerm: $cutExtenTerm
+      scheduleStart: $scheduleStart
+      scheduleEnd: $scheduleEnd
     )
   }
 `;
