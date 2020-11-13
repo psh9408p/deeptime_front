@@ -153,7 +153,7 @@ export default () => {
   const [modelDetect, setModelDetect] = useState(null);
   const [studyBool, setStudyBool] = useState(false);
   const [existTime, setExistTime] = useState(0);
-  const [targetTime, setTargetTime] = useState(30);
+  const [targetTime, setTargetTime] = useState(10);
   const [finalView, setFinalView] = useState(false);
   const [aniToggle, setAniToggle] = useState(false);
 
@@ -394,7 +394,7 @@ export default () => {
     }
   };
   useInterval(async () => {
-    if (existTime === 30) {
+    if (existTime === 10) {
       alert(
         '스케줄을 완료하여 체험을 종료합니다.\n회원가입 후 더 많은 기능을 경험하세요.',
       );
@@ -482,10 +482,6 @@ export default () => {
           ) : (
             <GuideSpan style={{ color: '#DB4437' }}>사용자 미감지</GuideSpan>
           )}
-          {/* <GuideSpan style={{ color: '#0F4C82' }}>
-            사용자 감지 데이터
-            <CountSpan id="anispan">&nbsp;+1</CountSpan>
-          </GuideSpan> */}
         </HeaderDiv>
         <ChartWrap>
           <RowBarWrap>
