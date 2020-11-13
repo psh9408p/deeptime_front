@@ -177,7 +177,9 @@ export default ({ paymentSetData, SubCancel, ReSub, billingChange }) => {
             {/* <Link to="/shop"> */}
             <Link
               onClick={() => {
-                alert('구독(유료화) 준비 중 입니다.');
+                alert(
+                  '아직은 유료가 아닌 무료 서비스에요. 충분히 즐겨주세요~ 😁',
+                );
               }}
             >
               <ButtonDiv>

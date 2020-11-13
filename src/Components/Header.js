@@ -129,7 +129,9 @@ const TmpButton = styled.button`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
-  font-size: 16px;
+
+  
+  font-size: 18px;
   outline: none;
   color: ${(props) => props.theme.classicBlue};
   font-weight: 600;
@@ -243,20 +245,20 @@ export default withRouter(() => {
                   <MyStudy />
                 </VisualShort>
               </HeaderLink>
-              {/* <TmpButton
+              <TmpButton
                 type="button"
                 onClick={() => {
-                  alert('클래스 학습 서비스는 준비 중 입니다.');
+                  alert('그룹 서비스는 준비 중이니 조금만 더 기다려주세요. 😁');
                 }}
               >
-                클래스 학습
-              </TmpButton> */}
-              <HeaderLink target="_blank" to="/userguide/schedule" replace>
+                Group
+              </TmpButton>
+              {/* <HeaderLink target="_blank" to="/userguide/schedule" replace>
                 <VisualLong>Guide</VisualLong>
                 <VisualShort>
                   <Guide />
                 </VisualShort>
-              </HeaderLink>
+              </HeaderLink> */}
               {!data.me ? (
                 <HeaderLink to="/#">
                   <User />

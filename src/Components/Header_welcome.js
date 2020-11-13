@@ -150,12 +150,12 @@ export default withRouter(() => {
         </HeaderColumn>
         <HeaderColumn>
           <AiBox>
-            <WelcomeLink to="/" replace>
-              IAM
+            {/* <WelcomeLink to="/" replace>
+              DeepTime
             </WelcomeLink>
             <WelcomeLink to="/userguide/schedule" replace>
               Guide
-            </WelcomeLink>
+            </WelcomeLink> */}
             {/* <WelcomeLink to="/shopping" replace>
               구매하기
             </WelcomeLink>
