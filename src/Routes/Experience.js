@@ -1,87 +1,203 @@
-import React, { useEffect, useRef, useState, createRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as posenet from '@tensorflow-models/posenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 // import * as faceapi from "face-api.js"
-import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-import Loader from '../Components/Loader';
-import styled from 'styled-components';
-// import LoadCamera from "../Components/LoadCamera/LoadCamera"
+import styled, { keyframes } from 'styled-components';
 import useInterval from '../Hooks/useInterval';
-import useTabs from '../Hooks/useTabs';
-import useMouseLeave from '../Hooks/useMouseLeave';
-import useMouseEnter from '../Hooks/useMouseEnter';
-// import ClassTabs from '../Components/Tabs/ClassTabs';
-// const UPDATE_EXISTTOGGLETABLE = gql`
-//   mutation update_existToggleTable($email: String!, $existToggle: Boolean!) {
-//     update_existToggleTable(email: $email, existToggle: $existToggle)
-//   }
-// `
-const UPDATE_EXISTTOGGLE = gql`
-  mutation update_existToggle($email: String!, $existToggle: Boolean!) {
-    update_existToggle(email: $email, existToggle: $existToggle)
+import videoCanvas from 'video-canvas';
+import { Study_true, Study_false } from '../Components/Icons';
+import moment from 'moment';
+import html2canvas from 'html2canvas';
+import { Button_capture } from '../Components/Buttons/Button_click';
+import RowBarChart_now from '../Components/Charts/RowBarChart_now';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
+
+const Wrapper = styled.div`
+  display: flex;
+  width: 960px;
+  height: 380px;
+  margin: 20px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const VideoBox = styled.video`
+  position: absolute;
+  z-index: 2;
+  width: 450px;
+  height: 340px;
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const CanvasBox = styled.canvas`
+  position: absolute;
+  z-index: 1;
+  width: 450px;
+  height: 340px;
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const VideoWrap = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 470px;
+  height: 360px;
+  margin: 10px 0 10px 10px;
+  padding: 10px 10px 10px 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const GraphDiv = styled.div`
+  width: 480px;
+  height: 360px;
+  padding: 10px;
+`;
+
+const HeaderDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  width: 100%;
+  margin-bottom: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  &:nth-child(2) {
+    justify-content: center;
   }
 `;
 
-export default function Attendance() {
+const ChartWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 220px;
+  margin-bottom: 10px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const RowBarWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+`;
+
+const AvatarDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 0 0 15px;
+`;
+
+const SetDiv = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 15px 0 0;
+`;
+
+const StatusSpan = styled.span`
+  margin-left: 10px;
+  font-size: 15px;
+  font-weight: bold;
+`;
+
+const GuideSpan = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+const jumpKey = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`;
+
+const CountSpan = styled.span`
+  animation: ${jumpKey} 0.5s ease-in 1;
+`;
+
+const CountSpan2 = styled(CountSpan)``;
+const CountSpan3 = styled(CountSpan)``;
+
+//영상처리
+let decision = new Array(5).fill(false);
+let detection_area = Array.from({ length: 18 }, (_, i) => i + 1);
+let finalDecision = 1; //1.공부 2. 부재중 3. 잠
+let timeCount = 0;
+
+export default () => {
+  // 영상 처리 변수
   const [modelPose, setModelPose] = useState(null);
   const [modelDetect, setModelDetect] = useState(null);
-  // const [modelFace, setModelFace] = useState(null)
-  // const [modelFaceMatcher, setModelFaceMatcher] = useState(null)
-  const [detectButton, setDetectbutton] = useState(true);
-  const [poseButton, setPosebutton] = useState(true);
-  // const [faceButton, setFacebutton] = useState(true)
-  const [decision, setDecision] = useState([true]);
-  const [finalDecision, setFinalDecision] = useState(true);
-  const [Mutation, setMutation] = useState(true);
+  const [studyBool, setStudyBool] = useState(false);
+  const [existTime, setExistTime] = useState(0);
+  const [targetTime, setTargetTime] = useState(30);
+  const [finalView, setFinalView] = useState(false);
+  const [aniToggle, setAniToggle] = useState(false);
 
-  const [timeCount, setTimeCount] = useState(0);
-  const [camearLoad, setCameraLoad] = useState(false);
-  const [modelLoad, setModelLoad] = useState(false);
+  const startDate = new Date();
+  const [chartTitle, setChartTitle] = useState(
+    moment(startDate).format('hh:mma') +
+      ' ~ ' +
+      moment(startDate).add(30, 'minutes').format('hh:mma'),
+  );
 
   const video1 = useRef();
-  const canvas1 = createRef();
+  const canvas1 = useRef();
 
-  const classTabContents = ['클래스 통계', '나의 클래스'];
-  const classTabs = useTabs(0, classTabContents);
+  const onImgSave = () => {
+    // const ctx = canvas1.current.getContext('2d');
+    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+    videoCanvas(video1.current, {
+      canvas: canvas1.current,
+    });
 
-  const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `;
+    const saveAs = (uri, filename) => {
+      var link = document.createElement('a');
+      if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        window.open(uri);
+      }
+    };
 
-  const Tabs = styled.div`
-    display: flex;
-    justify-content: center;
-  `;
-
-  const ClassButton = styled.button`
-    width: 100px;
-    border: 0;
-    outline-color: black;
-    border-radius: ${(props) => props.theme.borderRadius};
-    font-weight: 600;
-    text-align: center;
-    padding: 7px 0px;
-    font-size: 14px;
-    cursor: pointer;
-    &:not(:last-child) {
-      margin-right: 60px;
-    }
-  `;
-
-  const LoaderWrapper = styled.div`
-    margin: 100px 0px;
-  `;
-  // once
-  // 1. LoadModel
-  useEffect(() => {
-    LoadCamera();
-    LoadModel();
-  }, []);
-
-  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
+    const now_Date = new Date();
+    const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
+    html2canvas(document.querySelector('#capture')).then((canvas) => {
+      // document.body.appendChild(canvas);
+      saveAs(
+        canvas.toDataURL('image/png'),
+        'deeptime_play_' + file_tail + '.png',
+      );
+    });
+  };
 
   const LoadModel = async () => {
     console.log('Load model');
@@ -131,36 +247,25 @@ export default function Attendance() {
           });
       }
     }
-    setCameraLoad(true);
   };
 
-  const detectFromVideoFrame = async (video, canvas) => {
+  const detectFromVideoFrame = async (video) => {
     try {
-      console.log(timeCount);
-      const ctx = canvas.current.getContext('2d');
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.drawImage(video, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+      const posePredictions = await modelPose.estimateMultiplePoses(video, {
+        flipHorizontal: false,
+        maxDetections: 1,
+        minPoseConfidence: 0.15,
+        minPartConfidence: 0.1,
+        scoreThreshold: 0.5,
+        nmsRadius: 30,
+      });
 
-      // if (poseButton) {
-
-      const posePredictions = await modelPose.estimateMultiplePoses(
-        canvas.current,
-        {
-          flipHorizontal: false,
-          maxDetections: 1,
-          minPoseConfidence: 0.15,
-          minPartConfidence: 0.1,
-          scoreThreshold: 0.5,
-          nmsRadius: 30,
-        },
-      );
-
-      const objectPredictions = await modelDetect.detect(canvas.current);
+      const objectPredictions = await modelDetect.detect(video);
       const personDetections = objectPredictions.filter(
         (p) => p.class === 'person',
       );
 
-      showDetections(canvas, posePredictions, personDetections);
+      // showDetections(posePredictions, personDetections);
       const Finaldecision = await ConcludeFinaldecision(
         posePredictions,
         personDetections,
@@ -172,75 +277,98 @@ export default function Attendance() {
     }
   };
 
-  const showDetections = (canvas, posePredictions, objectPredictions) => {
-    console.log('Show detect');
+  // const showDetections = (posePredictions, objectPredictions) => {
+  //   console.log('Show detect');
 
-    const ctx = canvas.current.getContext('2d');
-    const font = '20px Arial';
-    ctx.font = font;
-    if (poseButton) {
-      posePredictions.forEach((poses) => {
-        const area_data = 3;
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 4;
+  //   // const ctx = canvas.current.getContext('2d');
+  //   const font = '20px Arial';
+  //   ctx.font = font;
+  //   if (poseButton) {
+  //     posePredictions.forEach((poses) => {
+  //       const area_data = 3;
+  //       ctx.strokeStyle = '0F4C81';
+  //       ctx.lineWidth = 4;
 
-        const area = new Array(area_data);
-        for (var i = 0; i < area.length; i++) {
-          area[i] = false;
-        }
-        //   const img_width = video.webcamVideoElement.width
-        const img_width = canvas.current.width;
-        ctx.strokeStyle = '#00FFFF';
-        ctx.lineWidth = 4;
-        for (var j = 0; j < poses.keypoints.length; j++) {
-          ctx.strokeRect(
-            poses.keypoints[j].position.x,
-            poses.keypoints[j].position.y,
-            1,
-            1,
-          );
-          area[
-            Math.floor(
-              (poses.keypoints[0].position.x / img_width) * area.length,
-            )
-          ] = true;
-        }
-      });
-    }
-    if (detectButton) {
-      objectPredictions.forEach((prediction) => {
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(...prediction.bbox);
+  //       const area = new Array(area_data);
+  //       for (var i = 0; i < area.length; i++) {
+  //         area[i] = false;
+  //       }
+  //       //   const img_width = video.webcamVideoElement.width
+  //       const img_width = canvas1.current.width;
+  //       ctx.strokeStyle = '#0F4C81';
+  //       ctx.lineWidth = 4;
+  //       for (var j = 0; j < poses.keypoints.length; j++) {
+  //         ctx.strokeRect(
+  //           poses.keypoints[j].position.x,
+  //           poses.keypoints[j].position.y,
+  //           1,
+  //           1,
+  //         );
+  //         area[
+  //           Math.floor(
+  //             (poses.keypoints[0].position.x / img_width) * area.length,
+  //           )
+  //         ] = true;
+  //       }
+  //     });
+  //   }
+  //   if (detectButton) {
+  //     objectPredictions.forEach((prediction) => {
+  //       ctx.strokeStyle = '#0F4C81';
+  //       ctx.lineWidth = 4;
+  //       ctx.strokeRect(...prediction.bbox);
 
-        const x = prediction.bbox[0];
-        const y = prediction.bbox[1];
-        const height = prediction.bbox[3];
-        const label = prediction.class;
-        // console.log(prediction.class)
-        ctx.fillStyle = 'red';
-        const textWidth = ctx.measureText(label).width;
-        const textHeight = parseInt(font, 10);
-        ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
-        // ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
+  //       const x = prediction.bbox[0];
+  //       const y = prediction.bbox[1];
+  //       const height = prediction.bbox[3];
+  //       const label = prediction.class;
+  //       // console.log(prediction.class)
+  //       ctx.fillStyle = '#0F4C81';
+  //       const textWidth = ctx.measureText(label).width;
+  //       const textHeight = parseInt(font, 10);
+  //       ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
+  //       // ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
 
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(label, x, y + textHeight);
-        // ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
-      });
-    }
+  //       ctx.fillStyle = '#FFFFFF';
+  //       ctx.fillText(label, x, y + textHeight);
+  //       // ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
+  //     });
+  //   }
+  // };
+
+  const createPredictionArray = (prediction) => {
+    const bbox = prediction.bbox;
+    const len_x = bbox[2];
+    // const len_y = bbox[3];
+    return len_x; //x값을 이용하여 가장 크게 잡힌 객체 감지
   };
 
   const ConcludeFinaldecision = (posePredictions, objectPredictions) => {
+    // 1. 모든 사람 인식 결과를 array 데이터로 변환
+    // 2. 가장큰 사람 인식 결과 판단
+    // 3. objectPrediction에 판단 결과 저장 1. 공부중 2. 부재중 3. 잠
     let result = [];
-
-    if (objectPredictions.length > 0 && posePredictions.length > 0) {
+    let maxBboxArea = 100000;
+    if (objectPredictions.length > 0) {
+      const temp = objectPredictions.map(createPredictionArray);
+      const maxObject = objectPredictions[temp.indexOf(Math.max(...temp))];
+      maxBboxArea = maxObject.bbox[2] * maxObject.bbox[3];
+      // console.log(maxBboxArea);
+      detection_area = detection_area.slice(1);
+      detection_area = [...detection_area, maxBboxArea];
+    }
+    if (
+      objectPredictions.length > 0 &&
+      posePredictions.length > 0 &&
+      maxBboxArea > 90000
+    ) {
       result = true;
     } else {
       result = false;
     }
-    setTimeCount(timeCount + 1);
-    setDecision([...decision, result]);
+
+    decision = decision.slice(1);
+    decision = [...decision, result];
 
     const temp = decision.reduce((obj, value, index, array) => {
       if (obj.hasOwnProperty(value)) {
@@ -250,102 +378,127 @@ export default function Attendance() {
       }
       return obj;
     }, {});
-    console.log(temp);
-    if (decision.length === 5) {
-      console.log(decision);
-      // setDecision([])
-      // console.log(decision)
 
-      if (temp.true > 2) {
-        setFinalDecision(true);
-        console.log(finalDecision);
+    if (temp.true > 2) {
+      finalDecision = 1; //공부
+      setStudyBool(true);
+      if (aniToggle) {
+        setAniToggle(false);
       } else {
-        setFinalDecision(false);
-        console.log(finalDecision);
+        setAniToggle(true);
       }
+    } else {
+      finalDecision = 2; //부재중
+      // console.log(finalDecision);
+      setStudyBool(false);
     }
   };
-  useInterval(() => {
-    console.log(timeCount);
-    console.log(decision);
+  useInterval(async () => {
+    if (existTime === 30) {
+      alert(
+        '스케줄을 완료하여 체험을 종료합니다.\n회원가입 후 더 많은 기능을 경험하세요.',
+      );
+      window.close();
+    }
 
-    if (
-      modelPose !== null &&
-      modelDetect !== null &&
-      canvas1.current !== null
-    ) {
-      if (timeCount % 6 === 1) {
-        detectFromVideoFrame(video1.current, canvas1);
-      } else {
-        const ctx = canvas1.current.getContext('2d');
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(
-          video1.current,
-          0,
-          0,
-          ctx.canvas.width,
-          ctx.canvas.height,
-        );
-        setTimeCount(timeCount + 1);
+    // 2초에 한번 판단 결과 저장해서 10초에 한 번 5개 결과가지고 시간 추가
+    if (modelPose !== null && modelDetect !== null) {
+      timeCount = timeCount + 1;
+      if (timeCount % 2 === 0) {
+        await detectFromVideoFrame(video1.current);
+        // console.log(timeCount);
       }
-      // setTimeCount(timeCount + 1)
-      if (Mutation === true) {
-        if (finalDecision === true && decision.length === 5) {
-          // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: true } })
-          console.log('Final decision : true');
-          // existToggleMutation({
-          //   variables: { email: Mydata.me.email, existToggle: true },
-          // });
-          setDecision([]);
-          // setFinalDecision([])
-        } else if (finalDecision === false) {
-          // existToggleTableMutation({ variables: { email: Mydata.me.email, existToggle: false } })
-          console.log('Final decision : false');
-          // existToggleMutation({
-          //   variables: { email: Mydata.me.email, existToggle: false },
-          // });
-          setDecision([]);
-          // setFinalDecision([])
+      if (timeCount % 10 === 2) {
+        setFinalView(false);
+      }
+
+      if (timeCount % 10 === 0) {
+        if (finalDecision === 1) {
+          // console.log('Final decision : true');
+          setExistTime(existTime + 1 / 6);
+          setFinalView(true);
+        } else if (finalDecision === 2) {
+          // console.log('Final decision : false');
         }
       }
     }
-  }, 2000);
+  }, 1000);
 
-  const Toggle = (toggleValue, togglesetValue, toggleName) => {
-    const toggle = () => togglesetValue(!toggleValue);
-    return (
-      <div>
-        {toggleName}
-        <button onClick={toggle}>{toggleValue ? 'ON' : 'OFF'}</button>
-      </div>
-    );
-  };
-  const whatNee = () => {
-    console.log('왔니?');
-  };
-  const donleaveme = () => {
-    alert('마우스를 화면에 올려 놓으세요!!!');
-    console.log('날 떠나지마');
-  };
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (isFirstRun.current) {
+      LoadCamera();
+      LoadModel();
+      isFirstRun.current = false;
+      return;
+    }
+  }, []);
 
-  // useMouseEnter(whatNee);
-
-  // useMouseLeave(donleaveme);
-
-  if (camearLoad === false) {
-    return (
-      <LoaderWrapper>
-        <Loader />
-      </LoaderWrapper>
-    );
-  } else {
-    return (
-      <div>
-        <div>
-          <video ref={video1} playsInline width="1" height="1" autoPlay muted />
-          <canvas ref={canvas1} width="480" height="360" />
-        </div>
-      </div>
-    );
-  }
-}
+  return (
+    <Wrapper id="capture">
+      <VideoWrap>
+        <VideoBox ref={video1} playsInline autoPlay muted />
+        <CanvasBox ref={canvas1} />
+      </VideoWrap>
+      <GraphDiv>
+        <HeaderDiv>
+          <AvatarDiv>
+            {studyBool ? (
+              <>
+                <Study_true />
+                <StatusSpan>Deep Time</StatusSpan>
+              </>
+            ) : (
+              <>
+                <Study_false />
+                <StatusSpan>Where are you...?</StatusSpan>
+              </>
+            )}
+          </AvatarDiv>
+          <SetDiv>
+            <Button_capture
+              onClick={() => {
+                onImgSave();
+              }}
+              margin={'0'}
+            />
+          </SetDiv>
+        </HeaderDiv>
+        <HeaderDiv>
+          {finalView ? (
+            <GuideSpan style={{ color: '#0F4C82' }}>
+              활동 시간<CountSpan3>&nbsp;추가~!</CountSpan3>
+            </GuideSpan>
+          ) : studyBool ? (
+            aniToggle ? (
+              <GuideSpan style={{ color: '#0F4C82' }}>
+                사용자 감지 데이터 <CountSpan>&nbsp;추가~!</CountSpan>
+              </GuideSpan>
+            ) : (
+              <GuideSpan style={{ color: '#0F4C82' }}>
+                사용자 감지 데이터 <CountSpan2>&nbsp;추가~!</CountSpan2>
+              </GuideSpan>
+            )
+          ) : (
+            <GuideSpan style={{ color: '#DB4437' }}>사용자 미감지</GuideSpan>
+          )}
+          {/* <GuideSpan style={{ color: '#0F4C82' }}>
+            사용자 감지 데이터
+            <CountSpan id="anispan">&nbsp;+1</CountSpan>
+          </GuideSpan> */}
+        </HeaderDiv>
+        <ChartWrap>
+          <RowBarWrap>
+            <RowBarChart_now
+              title1={'영어 (영단어 1~2장 암기)'}
+              title2={chartTitle}
+              data_1={existTime}
+              data_2={targetTime - existTime}
+              scheduleColor={'rgba(123, 169, 235, 1)'}
+            />
+          </RowBarWrap>
+        </ChartWrap>
+      </GraphDiv>
+    </Wrapper>
+  );
+};

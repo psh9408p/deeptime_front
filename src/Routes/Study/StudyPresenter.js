@@ -20,10 +20,8 @@ import moment from 'moment';
 import {
   Coffee,
   NextSchedule,
-  Setting,
   Study_true,
   Study_false,
-  Film,
   Flag,
   Delete,
 } from '../../Components/Icons';
@@ -552,6 +550,7 @@ export default ({
   todolistData,
   todolistRefetch,
   subjectData,
+  subjectRefetch,
   deleteTodolistMutation,
   finishTodolistMutation,
   addTodolistMutation,
@@ -1481,8 +1480,8 @@ export default ({
       if (
         startYear === selectDate.getFullYear() &&
         startMonth === selectDate.getMonth() &&
-        startDate === selectDate.getDate() &&
-        scheduleList[i].isPrivate === false
+        startDate === selectDate.getDate()
+        // scheduleList[i].isPrivate === false
       ) {
         scheduleList_selectDay.push(scheduleList[i]);
       }
@@ -1829,7 +1828,7 @@ export default ({
       <Wrapper id="capture">
         <VideoWrap>
           <VideoBox ref={video1} playsInline autoPlay muted />
-          <CanvasBox id="CanvasBox" ref={canvas1} />
+          <CanvasBox ref={canvas1} />
         </VideoWrap>
         <GraphDiv>
           <HeaderDiv>
@@ -1855,6 +1854,8 @@ export default ({
               <Button_refresh
                 onClick={() => {
                   myInfoRefetch();
+                  subjectRefetch();
+                  todolistRefetch();
                 }}
               />
               <PopupCustom

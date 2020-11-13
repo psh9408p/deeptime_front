@@ -81,6 +81,7 @@ export default () => {
         todolistData={todolistData.myTodolist}
         todolistRefetch={todolistRefetch}
         subjectData={subjectData.mySubject}
+        subjectRefetch={subjectRefetch}
         deleteTodolistMutation={deleteTodolistMutation}
         finishTodolistMutation={finishTodolistMutation}
         addTodolistMutation={addTodolistMutation}
