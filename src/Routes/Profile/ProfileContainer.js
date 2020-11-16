@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
+import Loader from '../../Components/Loader';
 import { withRouter } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import ProfilePresenter from './ProfilePresenter';
@@ -12,6 +14,11 @@ import {
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import imageResize from '../../Components/imageResize';
+
+const LoaderWrapper = styled.div`
+  min-height: 100vh;
+  padding: 100px 0;
+`;
 
 export default withRouter(
   ({
@@ -91,18 +98,25 @@ export default withRouter(
       }
     };
 
-    return (
-      <ProfilePresenter
-        loading={loading}
-        logOut={logOut}
-        data={data}
-        profileTabs={profileTabs}
-        userRefetch={refetch}
-        handleFileInput={handleFileInput}
-        onAvatar={onAvatar}
-        deleteAvatar={deleteAvatar}
-        setSelectFile={setSelectFile}
-      />
-    );
+    if (loading === true) {
+      return (
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      );
+    } else if (!loading && data && data.seeUser) {
+      return (
+        <ProfilePresenter
+          logOut={logOut}
+          userData={data.seeUser}
+          profileTabs={profileTabs}
+          userRefetch={refetch}
+          handleFileInput={handleFileInput}
+          onAvatar={onAvatar}
+          deleteAvatar={deleteAvatar}
+          setSelectFile={setSelectFile}
+        />
+      );
+    }
   },
 );

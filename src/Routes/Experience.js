@@ -452,7 +452,7 @@ export default () => {
         <br />
         <VideoText>카메라 로딩중...</VideoText>
         <span style={{ color: '#DB4437' }}>
-          (로딩 중 조작 및 창 닫기 금지!!!)
+          (로딩 중 조작, 창 닫기 금지!!!)
         </span>
         <VideoBox ref={video1} playsInline autoPlay muted />
         <CanvasBox ref={canvas1} />
