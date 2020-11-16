@@ -32,6 +32,7 @@ import Popup from 'reactjs-popup';
 import PopupButton from '../../Components/Buttons/PopupButton';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
+import Loader from '../../Components/Loader';
 import Button_custom from '../../Components/Buttons/Button_custom';
 import {
   Button_refresh,
@@ -228,14 +229,24 @@ const CanvasBox = styled.canvas`
 const VideoWrap = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 470px;
   height: 480px;
   margin: 10px 0 10px 10px;
   padding: 10px 10px 10px 10px;
+  font-size: 16px;
+  font-weight: 600;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const VideoText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0 10px 0;
 `;
 
 const GraphDiv = styled.div`
@@ -1827,6 +1838,12 @@ export default ({
     <TopWrap>
       <Wrapper id="capture">
         <VideoWrap>
+          <Loader />
+          <br />
+          <VideoText>카메라 로딩중...</VideoText>
+          <span style={{ color: '#DB4437' }}>
+            (로딩 중 조작 및 창 닫기 금지!!!)
+          </span>
           <VideoBox ref={video1} playsInline autoPlay muted />
           <CanvasBox ref={canvas1} />
         </VideoWrap>

@@ -10,6 +10,7 @@ import moment from 'moment';
 import html2canvas from 'html2canvas';
 import { Button_capture } from '../Components/Buttons/Button_click';
 import RowBarChart_now from '../Components/Charts/RowBarChart_now';
+import Loader from '../Components/Loader';
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
@@ -41,14 +42,24 @@ const CanvasBox = styled.canvas`
 const VideoWrap = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 470px;
   height: 360px;
   margin: 10px 0 10px 10px;
   padding: 10px 10px 10px 10px;
+  font-size: 16px;
+  font-weight: 600;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const VideoText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0 10px 0;
 `;
 
 const GraphDiv = styled.div`
@@ -437,6 +448,12 @@ export default () => {
   return (
     <Wrapper id="capture">
       <VideoWrap>
+        <Loader />
+        <br />
+        <VideoText>카메라 로딩중...</VideoText>
+        <span style={{ color: '#DB4437' }}>
+          (로딩 중 조작 및 창 닫기 금지!!!)
+        </span>
         <VideoBox ref={video1} playsInline autoPlay muted />
         <CanvasBox ref={canvas1} />
       </VideoWrap>
