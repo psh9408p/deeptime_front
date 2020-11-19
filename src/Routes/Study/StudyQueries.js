@@ -105,3 +105,9 @@ export const EDIT_STUDYSET = gql`
     )
   }
 `;
+
+export const GO_WITH = gql`
+  mutation goWith($followDateId: String!, $goWithBool: Boolean!) {
+    goWith(followDateId: $followDateId, goWithBool: $goWithBool)
+  }
+`;

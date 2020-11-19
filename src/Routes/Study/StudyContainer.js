@@ -20,6 +20,7 @@ import {
   CUT_SCHEDULE,
   EXTENSION_SCHEDULE,
   EDIT_STUDYSET,
+  GO_WITH,
 } from './StudyQueries';
 
 const LoaderWrapper = styled.div`
@@ -33,6 +34,7 @@ export default () => {
   const scheduleTitle = useInput('');
   const [studyBool, setStudyBool] = useState(false);
   const [newTodoView, setNewTodoView] = useState(false);
+  const [popupView, setPopupView] = useState(false);
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
@@ -43,6 +45,8 @@ export default () => {
   const [cutScheduleMutation] = useMutation(CUT_SCHEDULE);
   const [extensionScheduleMutation] = useMutation(EXTENSION_SCHEDULE);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
+  const [goWithMutation] = useMutation(GO_WITH);
+
   const {
     data: myInfoData,
     loading: myInfoLoading,
@@ -97,6 +101,9 @@ export default () => {
         scheduleTitle={scheduleTitle}
         startPolling={startPolling}
         stopPolling={stopPolling}
+        popupView={popupView}
+        setPopupView={setPopupView}
+        goWithMutation={goWithMutation}
       />
     );
   }

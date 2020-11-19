@@ -260,7 +260,7 @@ export default withRouter(() => {
               >
                 Group
               </TmpButton>
-              {/* <HeaderLink target="_blank" to="/userguide/schedule" replace>
+              {/* <HeaderLink >
                 <VisualLong>Guide</VisualLong>
                 <VisualShort>
                   <Guide />

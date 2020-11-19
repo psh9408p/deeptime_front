@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState, createRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as posenet from '@tensorflow-models/posenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 // import * as faceapi from "face-api.js"
@@ -24,6 +25,7 @@ import {
   Study_false,
   Flag,
   Delete,
+  Add,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -40,7 +42,10 @@ import {
   Button_setting,
 } from '../../Components/Buttons/Button_click';
 import html2canvas from 'html2canvas';
-import { FixedSizeGrid as TodolistGrid } from 'react-window';
+import {
+  FixedSizeGrid as ListGrid,
+  FixedSizeList as FixedList,
+} from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
 import { toast } from 'react-toastify';
 import useSelect from '../../Hooks/useSelect';
@@ -48,6 +53,8 @@ import useInput from '../../Hooks/useInput';
 import Select from '../../Components/Select';
 import Input from '../../Components/Input';
 import videoCanvas from 'video-canvas';
+import Avatar from '../../Components/Avatar';
+import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 
 const Whammy = require('whammy/whammy');
 
@@ -105,6 +112,15 @@ const TodayPercent = styled(TodayTime)`
   padding: 0;
   width: 97px;
   height: 50px;
+`;
+
+const AllWrap = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 `;
 
 const TopWrap = styled.div`
@@ -212,18 +228,29 @@ const ControlTop2 = styled.div`
 
 const VideoBox = styled.video`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: 450px;
   height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
+  margin-top: 90px;
 `;
 
 const CanvasBox = styled.canvas`
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   width: 450px;
   height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
+  margin-top: 90px;
+`;
+
+const AvatarBox = styled.div`
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
 `;
 
 const VideoWrap = styled.div`
@@ -381,6 +408,10 @@ const PBody = styled.div`
   padding: 20px 20px;
 `;
 
+const PBody2 = styled(PBody)`
+  width: 400px;
+`;
+
 const PTitle = styled(FatText)`
   font-size: 18px;
   text-align: center;
@@ -517,6 +548,105 @@ const InputWrapper = styled.div`
   width: 225px;
 `;
 
+const IndiWrap = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 5px 0 5px;
+  span {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+`;
+
+const AddDiv = styled.div`
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 60px;
+  height: 50px;
+  margin-bottom: 25px;
+`;
+
+const PofileLink = styled(Link)`
+  cursor: pointer;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 25px;
+  border-radius: 50%;
+`;
+
+const BlackBack = styled.div`
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 50%;
+`;
+
+const CustomPopup = styled.div`
+  position: absolute;
+  z-index: 11;
+  width: 420px;
+  height: 460px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: white;
+`;
+
+const NonFollow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  height: 300px;
+  margin-bottom: 20px;
+  color: #7f8c8d;
+`;
+
+const IndiviList = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+`;
+
+const IndiviName = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 215px;
+  font-weight: 600;
+  margin-left: 10px;
+  span {
+    margin-top: 3px;
+    font-weight: normal;
+    color: #7f8c8d;
+  }
+`;
+
+const IndiviLink = styled(Link)`
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding-left: 10px;
+  border-radius: 50%;
+`;
+
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
 let taskArray_schedule = [];
@@ -577,7 +707,29 @@ export default ({
   scheduleTitle,
   startPolling,
   stopPolling,
+  popupView,
+  setPopupView,
+  goWithMutation,
 }) => {
+  // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
+  for (let i = 0; i < myInfoData.followDates.length; i++) {
+    const findUser = (a) => a.id === myInfoData.followDates[i].followId;
+    const tmpIndex = myInfoData.following.findIndex(findUser);
+    const createdDate = new Date(myInfoData.followDates[i].createdAt);
+    myInfoData.following[tmpIndex].followingTime = createdDate.getTime();
+    // 동행자인지 정보 넣어주기
+    myInfoData.following[tmpIndex].goWith = myInfoData.followDates[i].goWith;
+    myInfoData.following[tmpIndex].followDateId = myInfoData.followDates[i].id;
+  }
+  // 팔로우한 날짜 순으로 정렬 최신이 위로
+  myInfoData.following.sort(function (a, b) {
+    return b.followingTime - a.followingTime;
+  });
+
+  const [followingLoad, setFollowingLoad] = useState(
+    new Array(myInfoData.following.length).fill(false),
+  );
+
   const prevent_float = (value) => value % 1 === 0;
   const [nonScheduleRecord, setNonScheduleRecord] = useState(
     myInfoData.studyDefaultSet.nonScheduleRecord,
@@ -743,6 +895,36 @@ export default ({
       maxTermMin = 1440 - totalMin_now;
     }
     return maxTermMin;
+  };
+
+  const onChangeLoad = (index, bool) => {
+    let newArr = [...followingLoad];
+    newArr[index] = bool;
+    setFollowingLoad(newArr);
+  };
+
+  const onGoWith = async (index) => {
+    try {
+      onChangeLoad(index, true);
+      const {
+        data: { goWith },
+      } = await goWithMutation({
+        variables: {
+          followDateId: myInfoData.following[index].followDateId,
+          goWithBool: !myInfoData.following[index].goWith,
+        },
+      });
+      if (!goWith) {
+        alert('동행 정보를 변경할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    } finally {
+      onChangeLoad(index, false);
+    }
   };
 
   const onSaveSet = async () => {
@@ -1220,7 +1402,7 @@ export default ({
   function updateTime() {
     const newTime = new Date().getTime();
     interval = interval + (newTime - time);
-    console.log(interval / 1000);
+    // console.log(interval / 1000);
 
     time = newTime;
   }
@@ -1379,7 +1561,7 @@ export default ({
       const temp = objectPredictions.map(createPredictionArray);
       const maxObject = objectPredictions[temp.indexOf(Math.max(...temp))];
       maxBboxArea = maxObject.bbox[2] * maxObject.bbox[3];
-      console.log(maxBboxArea);
+      // console.log(maxBboxArea);
       detection_area = detection_area.slice(1);
       detection_area = [...detection_area, maxBboxArea];
     }
@@ -1407,11 +1589,11 @@ export default ({
 
     if (temp.true > 2) {
       finalDecision = 1; //공부
-      console.log(finalDecision);
+      // console.log(finalDecision);
       setStudyBool(true);
     } else {
       finalDecision = 2; //부재중
-      console.log(finalDecision);
+      // console.log(finalDecision);
       setStudyBool(false);
     }
   };
@@ -1421,7 +1603,7 @@ export default ({
     if (modelPose !== null && modelDetect !== null) {
       if (timeCount % 10 === 1) {
         detectFromVideoFrame(video1.current);
-        console.log(decision);
+        // console.log(decision);
         timeCount = timeCount + 1;
       } else {
         // const ctx = canvas1.current.getContext('2d');
@@ -1438,12 +1620,12 @@ export default ({
       if (Mutation === true && interval > 59 * 1000) {
         interval = interval - 59 * 1000;
         if (finalDecision === 1) {
-          console.log('Final decision : true');
+          // console.log('Final decision : true');
           existToggleMutation({
             variables: { email: userEmail, existToggle: true },
           });
         } else if (finalDecision === 2) {
-          console.log('Final decision : false');
+          // console.log('Final decision : false');
           existToggleMutation({
             variables: { email: userEmail, existToggle: false },
           });
@@ -1834,347 +2016,458 @@ export default ({
     }
   };
 
-  return (
-    <TopWrap>
-      <Wrapper id="capture">
-        <VideoWrap>
-          <Loader />
-          <br />
-          <VideoText>카메라 로딩중...</VideoText>
-          <span style={{ color: '#DB4437' }}>
-            (로딩 중 조작, 창 닫기 금지!!!)
-          </span>
-          <VideoBox ref={video1} playsInline autoPlay muted />
-          <CanvasBox ref={canvas1} />
-        </VideoWrap>
-        <GraphDiv>
-          <HeaderDiv>
-            <AvatarDiv>
-              {studyBool ? (
-                <>
-                  <Study_true />
-                  <StatusSpan>Deep Time</StatusSpan>
-                </>
-              ) : (
-                <>
-                  <Study_false />
-                  <StatusSpan>Where are you...?</StatusSpan>
-                </>
-              )}
-            </AvatarDiv>
-            <SetDiv>
-              <Button_capture
-                onClick={() => {
-                  onImgSave();
-                }}
-              />
-              <Button_refresh
-                onClick={() => {
-                  myInfoRefetch();
-                  subjectRefetch();
-                  todolistRefetch();
-                }}
-              />
-              <PopupCustom
-                trigger={<Button_setting margin={'0'} />}
-                closeOnDocumentClick={false}
-                modal
-              >
-                {(close) => {
-                  return (
-                    <PBody>
-                      <PTitle text={'기본값 세팅'} />
-                      <SetContentWrap>
-                        <SetContentBox>
-                          현재 스케줄 부재시 시간 기록 on/off :　
-                          <Switch
-                            on={true}
-                            off={false}
-                            value={nonScheduleRecord}
-                            onChange={recordSwitch}
-                          />
-                        </SetContentBox>
-                        <SetContentBox>
-                          자동 새로고침 on/off :　
-                          <Switch
-                            on={true}
-                            off={false}
-                            value={autoRefresh}
-                            onChange={autoSwitch}
-                          />
-                        </SetContentBox>
-                        <SetContentBox>
-                          자동 새로고침 기간 :　
-                          <RefreshInputWrap>
-                            <Input_100
-                              placeholder={''}
-                              {...autoRefreshTerm}
-                              type={'number'}
-                            />
-                          </RefreshInputWrap>
-                          초
-                        </SetContentBox>
-                        <SetContentBox>
-                          스케줄 시작(생성) 기간 :　
-                          <RefreshInputWrap>
-                            <Input_100
-                              placeholder={''}
-                              {...startScheduleTerm_forSet}
-                              type={'number'}
-                              step={5}
-                            />
-                          </RefreshInputWrap>
-                          분
-                        </SetContentBox>
-                        <SetContentBox>
-                          스케줄 단축&amp;연장 기간 :　
-                          <RefreshInputWrap>
-                            <Input_100
-                              placeholder={''}
-                              {...extensionTerm_forSet}
-                              type={'number'}
-                              step={5}
-                            />
-                          </RefreshInputWrap>
-                          분
-                        </SetContentBox>
-                      </SetContentWrap>
-                      <ButtonDiv>
-                        <PopupButton
-                          type="button"
-                          onClick={async () => {
-                            const fucResult = await onSaveSet();
-                            if (fucResult) {
-                              close();
-                            }
-                          }}
-                          text={'적용'}
-                        />
-                        <PopupButton
-                          type="button"
-                          onClick={() => {
-                            close();
-                          }}
-                          text={'닫기'}
-                        />
-                      </ButtonDiv>
-                    </PBody>
-                  );
-                }}
-              </PopupCustom>
-            </SetDiv>
-          </HeaderDiv>
-          <DonutWrap>
-            <DonutChart_today
-              data={donutData}
-              color={rgbBox}
-              title={'Today Deep Time Log'}
-              labels={[
-                'Deep Time',
-                '부재 시간' + '　' + '　' + '　' + '　',
-                '나머지 시간',
-              ]}
-            />
-            <ClockBox>
-              <Clock24 />
-            </ClockBox>
-            <TodayTime>
-              {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-              {total_min.length === 1 ? '0' + total_min : total_min}m
-            </TodayTime>
-            <TodayTime_total>
-              / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-              {target_min.length === 1 ? '0' + target_min : target_min}m
-            </TodayTime_total>
-            <TodayPercent>{donutPercent}%</TodayPercent>
-          </DonutWrap>
-          <NowNextWrap>
-            <BreakNextWrap>
-              <BreakTimeDiv>
-                <IconWrap>
-                  <Coffee />
-                  <div style={{ fontSize: 13, fontWeight: 'bold' }}>Break</div>
-                </IconWrap>
-                <TimeIn>
-                  {break_title}
-                  <br />
-                  {break_time}
-                  {break_boolean && (
-                    <Countdown
-                      date={Date.now() + break_countdown}
-                      renderer={({ hours, minutes }) => (
-                        <span style={{ color: 'red' }}>
-                          {hours > 0 && <span>{hours}시간 </span>}
-                          {minutes}분 남음
-                        </span>
-                      )}
-                    />
-                  )}
-                </TimeIn>
-              </BreakTimeDiv>
-              <NextTimeDiv>
-                <IconWrap>
-                  <NextSchedule />
-                  <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
-                </IconWrap>
-                <TimeIn>
-                  {nextTitle1}
-                  <br />
-                  {nextTitle2}
-                  <br />
-                  {next_TimeText}
-                </TimeIn>
-              </NextTimeDiv>
-            </BreakNextWrap>
-            <BarWrap>
-              <RowBarChart_now
-                title1={nowTitle1}
-                title2={nowTitle2}
-                data_1={nowScheduleTime}
-                data_2={nowScheduleTimeT}
-                scheduleColor={nowScheduleColor}
-              />
-            </BarWrap>
-          </NowNextWrap>
-        </GraphDiv>
-      </Wrapper>
-      <Wrapper_b>
-        <TodoWrap>
-          {newTodoView ? (
-            <NewTodoDiv>
-              <NewTopDiv>
-                <SelectWrapper>
-                  <Select {...mySubjectList} id={'mySubject_id_study'} />
-                </SelectWrapper>
-                <InputWrapper>
-                  <Input
-                    placeholder={'내용 (예: 1단원 암기)'}
-                    bgColor={'white'}
-                    {...todolistName}
-                  />
-                </InputWrapper>
-              </NewTopDiv>
-              <NewBottomDiv>
-                <Button_custom
-                  text={'추가'}
-                  width={'100px'}
-                  height={'35px'}
-                  bgColor={'#0F4C82'}
-                  color={'white'}
-                  margin={'0 60px 0 0'}
-                  onClick={() => {
-                    onTodolistAdd();
-                  }}
-                />
-                <Button_custom
-                  text={'닫기'}
-                  width={'100px'}
-                  height={'35px'}
-                  bgColor={'#0F4C82'}
-                  color={'white'}
-                  margin={'0'}
-                  onClick={() => {
-                    setNewTodoView(false);
-                  }}
-                />
-              </NewBottomDiv>
-            </NewTodoDiv>
-          ) : (
-            <TodolistGrid
-              height={130}
-              width={470}
-              columnWidth={225}
-              rowHeight={44}
-              rowCount={Math.floor(todolistData_new.length / 2) + 1}
-              columnCount={2}
-            >
-              {todolistRow}
-            </TodolistGrid>
-          )}
-        </TodoWrap>
-        <ScheStart>
-          <NewScheContent>
-            <SelectInL>
-              <Select {...mySubjectList2} id={'mySubject_id_study'} />
-            </SelectInL>
-            <SelectInR>
-              <Select {...stateList} id={'mySubject_state_study'} />
-            </SelectInR>
-          </NewScheContent>
-          <NewScheContent>
-            <Input
-              placeholder={'To Do list (예: 1장 복습)'}
-              height={'25px'}
-              bgColor={'white'}
-              {...scheduleTitle}
-            />
-          </NewScheContent>
-          <NewScheContent>
-            <Input_100
-              placeholder={''}
-              {...startScheduleTerm}
-              type={'number'}
-              step={5}
-              width={'80px'}
-              height={'25px'}
-              bgColor={'white'}
-            />
-            분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button_custom
-              text={'Max'}
-              margin={'0'}
-              width={'50px'}
-              height={'25px'}
-              onClick={() => {
-                const maxTime_tmp = maxTimeCal(new Date());
-                startScheduleTerm.setValue(maxTime_tmp);
-              }}
-            />
-          </NewScheContent>
-          <Button_custom
-            text={'스케줄 시작'}
-            width={'160px'}
-            height={'25px'}
-            margin={'0'}
-            bgColor={'#0F4C82'}
-            color={'white'}
-            padding={'0'}
-            onClick={() => {
-              onStartSchedule();
-            }}
+  const followingList = ({ index, style }) => {
+    const indiUser = myInfoData.following[index];
+
+    return (
+      <IndiviList key={index} style={style}>
+        <Avatar size="sm" url={indiUser.avatar} />
+        <IndiviName>
+          {indiUser.email}
+          <span>{indiUser.username}</span>
+        </IndiviName>
+        <Button_custom
+          text={indiUser.goWith ? '동행중' : '동행'}
+          width={'60px'}
+          height={'28px'}
+          margin={'0 15px'}
+          padding={'0'}
+          bgColor={indiUser.goWith ? '#c7c7c7' : '#7BA9EB'}
+          color={indiUser.goWith ? 'black' : 'white'}
+          loading={followingLoad[index]}
+          onClick={() => {
+            onGoWith(index);
+          }}
+        />
+        <IndiviLink target="_blank" to={'/' + indiUser.username} replace />
+      </IndiviList>
+    );
+  };
+
+  const Avatars = ({ index, style }) => {
+    if (index === 0) {
+      return (
+        <IndiWrap style={style}>
+          <Avatar
+            size="md"
+            url={myInfoData.avatar}
+            confirmSet={true}
+            exist={studyBool}
           />
-        </ScheStart>
-        <ControlWrap>
-          <ControlTop>
-            <ControlTop1>
-              현재 스케줄을&nbsp;&nbsp;
+          <span>{myInfoData.username}</span>
+          <AddDiv
+            onClick={() => {
+              setPopupView(true);
+            }}
+          >
+            <Add
+              fill={'#0F4C82'}
+              boxShadow={'0 0 0 2px white'}
+              borderRadius={'50%'}
+            />
+          </AddDiv>
+        </IndiWrap>
+      );
+    } else {
+      const index2 = index - 1;
+      const indiUser = myInfoData.withFollowing[index2];
+      return (
+        <IndiWrap style={style}>
+          <Avatar
+            size="md"
+            url={indiUser.avatar}
+            confirmSet={true}
+            exist={indiUser.existToggle}
+          />
+          <span>{indiUser.username}</span>
+          <PofileLink target="_blank" to={'/' + indiUser.username} replace />
+        </IndiWrap>
+      );
+    }
+  };
+
+  return (
+    <AllWrap>
+      <TopWrap>
+        <Wrapper id="capture">
+          <VideoWrap>
+            <Loader />
+            <br />
+            <VideoText>카메라 로딩중...</VideoText>
+            <span style={{ color: '#DB4437' }}>
+              (로딩 중 조작, 창 닫기 금지!!!)
+            </span>
+            <AvatarBox>
+              <FixedList
+                height={110}
+                width={450}
+                layout="horizontal"
+                itemSize={90}
+                itemCount={myInfoData.withFollowing.length + 1}
+              >
+                {Avatars}
+              </FixedList>
+            </AvatarBox>
+            <CanvasBox ref={canvas1} />
+            <VideoBox ref={video1} playsInline autoPlay muted />
+          </VideoWrap>
+          <GraphDiv>
+            <HeaderDiv>
+              <AvatarDiv>
+                {studyBool ? (
+                  <>
+                    <Study_true />
+                    <StatusSpan>Deep Time</StatusSpan>
+                  </>
+                ) : (
+                  <>
+                    <Study_false />
+                    <StatusSpan>Where are you...?</StatusSpan>
+                  </>
+                )}
+              </AvatarDiv>
+              <SetDiv>
+                <Button_capture
+                  onClick={() => {
+                    onImgSave();
+                  }}
+                />
+                <Button_refresh
+                  onClick={() => {
+                    myInfoRefetch();
+                    subjectRefetch();
+                    todolistRefetch();
+                  }}
+                />
+                <PopupCustom
+                  trigger={<Button_setting margin={'0'} />}
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => {
+                    return (
+                      <PBody>
+                        <PTitle text={'기본값 세팅'} />
+                        <SetContentWrap>
+                          <SetContentBox>
+                            현재 스케줄 부재시 시간 기록 on/off :　
+                            <Switch
+                              on={true}
+                              off={false}
+                              value={nonScheduleRecord}
+                              onChange={recordSwitch}
+                            />
+                          </SetContentBox>
+                          <SetContentBox>
+                            자동 새로고침 on/off :　
+                            <Switch
+                              on={true}
+                              off={false}
+                              value={autoRefresh}
+                              onChange={autoSwitch}
+                            />
+                          </SetContentBox>
+                          <SetContentBox>
+                            자동 새로고침 기간 :　
+                            <RefreshInputWrap>
+                              <Input_100
+                                placeholder={''}
+                                {...autoRefreshTerm}
+                                type={'number'}
+                              />
+                            </RefreshInputWrap>
+                            초
+                          </SetContentBox>
+                          <SetContentBox>
+                            스케줄 시작(생성) 기간 :　
+                            <RefreshInputWrap>
+                              <Input_100
+                                placeholder={''}
+                                {...startScheduleTerm_forSet}
+                                type={'number'}
+                                step={5}
+                              />
+                            </RefreshInputWrap>
+                            분
+                          </SetContentBox>
+                          <SetContentBox>
+                            스케줄 단축&amp;연장 기간 :　
+                            <RefreshInputWrap>
+                              <Input_100
+                                placeholder={''}
+                                {...extensionTerm_forSet}
+                                type={'number'}
+                                step={5}
+                              />
+                            </RefreshInputWrap>
+                            분
+                          </SetContentBox>
+                        </SetContentWrap>
+                        <ButtonDiv>
+                          <PopupButton
+                            type="button"
+                            onClick={async () => {
+                              const fucResult = await onSaveSet();
+                              if (fucResult) {
+                                close();
+                              }
+                            }}
+                            text={'적용'}
+                          />
+                          <PopupButton
+                            type="button"
+                            onClick={() => {
+                              close();
+                            }}
+                            text={'닫기'}
+                          />
+                        </ButtonDiv>
+                      </PBody>
+                    );
+                  }}
+                </PopupCustom>
+              </SetDiv>
+            </HeaderDiv>
+            <DonutWrap>
+              <DonutChart_today
+                data={donutData}
+                color={rgbBox}
+                title={'Today Deep Time Log'}
+                labels={[
+                  'Deep Time',
+                  '부재 시간' + '　' + '　' + '　' + '　',
+                  '나머지 시간',
+                ]}
+              />
+              <ClockBox>
+                <Clock24 />
+              </ClockBox>
+              <TodayTime>
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
+                {total_min.length === 1 ? '0' + total_min : total_min}m
+              </TodayTime>
+              <TodayTime_total>
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
+                {target_min.length === 1 ? '0' + target_min : target_min}m
+              </TodayTime_total>
+              <TodayPercent>{donutPercent}%</TodayPercent>
+            </DonutWrap>
+            <NowNextWrap>
+              <BreakNextWrap>
+                <BreakTimeDiv>
+                  <IconWrap>
+                    <Coffee />
+                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>
+                      Break
+                    </div>
+                  </IconWrap>
+                  <TimeIn>
+                    {break_title}
+                    <br />
+                    {break_time}
+                    {break_boolean && (
+                      <Countdown
+                        date={Date.now() + break_countdown}
+                        renderer={({ hours, minutes }) => (
+                          <span style={{ color: 'red' }}>
+                            {hours > 0 && <span>{hours}시간 </span>}
+                            {minutes}분 남음
+                          </span>
+                        )}
+                      />
+                    )}
+                  </TimeIn>
+                </BreakTimeDiv>
+                <NextTimeDiv>
+                  <IconWrap>
+                    <NextSchedule />
+                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
+                  </IconWrap>
+                  <TimeIn>
+                    {nextTitle1}
+                    <br />
+                    {nextTitle2}
+                    <br />
+                    {next_TimeText}
+                  </TimeIn>
+                </NextTimeDiv>
+              </BreakNextWrap>
+              <BarWrap>
+                <RowBarChart_now
+                  title1={nowTitle1}
+                  title2={nowTitle2}
+                  data_1={nowScheduleTime}
+                  data_2={nowScheduleTimeT}
+                  scheduleColor={nowScheduleColor}
+                />
+              </BarWrap>
+            </NowNextWrap>
+          </GraphDiv>
+        </Wrapper>
+        <Wrapper_b>
+          <TodoWrap>
+            {newTodoView ? (
+              <NewTodoDiv>
+                <NewTopDiv>
+                  <SelectWrapper>
+                    <Select {...mySubjectList} id={'mySubject_id_study'} />
+                  </SelectWrapper>
+                  <InputWrapper>
+                    <Input
+                      placeholder={'내용 (예: 1단원 암기)'}
+                      bgColor={'white'}
+                      {...todolistName}
+                    />
+                  </InputWrapper>
+                </NewTopDiv>
+                <NewBottomDiv>
+                  <Button_custom
+                    text={'추가'}
+                    width={'100px'}
+                    height={'35px'}
+                    bgColor={'#0F4C82'}
+                    color={'white'}
+                    margin={'0 60px 0 0'}
+                    onClick={() => {
+                      onTodolistAdd();
+                    }}
+                  />
+                  <Button_custom
+                    text={'닫기'}
+                    width={'100px'}
+                    height={'35px'}
+                    bgColor={'#0F4C82'}
+                    color={'white'}
+                    margin={'0'}
+                    onClick={() => {
+                      setNewTodoView(false);
+                    }}
+                  />
+                </NewBottomDiv>
+              </NewTodoDiv>
+            ) : (
+              <ListGrid
+                height={130}
+                width={470}
+                columnWidth={225}
+                rowHeight={44}
+                rowCount={Math.floor(todolistData_new.length / 2) + 1}
+                columnCount={2}
+              >
+                {todolistRow}
+              </ListGrid>
+            )}
+          </TodoWrap>
+          <ScheStart>
+            <NewScheContent>
+              <SelectInL>
+                <Select {...mySubjectList2} id={'mySubject_id_study'} />
+              </SelectInL>
+              <SelectInR>
+                <Select {...stateList} id={'mySubject_state_study'} />
+              </SelectInR>
+            </NewScheContent>
+            <NewScheContent>
+              <Input
+                placeholder={'To Do list (예: 1장 복습)'}
+                height={'25px'}
+                bgColor={'white'}
+                {...scheduleTitle}
+              />
+            </NewScheContent>
+            <NewScheContent>
               <Input_100
                 placeholder={''}
-                {...extensionTerm}
+                {...startScheduleTerm}
                 type={'number'}
                 step={5}
                 width={'80px'}
                 height={'25px'}
                 bgColor={'white'}
               />
-              분
-            </ControlTop1>
-            <ControlTop2>
-              {' '}
+              분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <Button_custom
-                text={'단축'}
+                text={'Max'}
+                margin={'0'}
+                width={'50px'}
+                height={'25px'}
+                onClick={() => {
+                  const maxTime_tmp = maxTimeCal(new Date());
+                  startScheduleTerm.setValue(maxTime_tmp);
+                }}
+              />
+            </NewScheContent>
+            <Button_custom
+              text={'스케줄 시작'}
+              width={'160px'}
+              height={'25px'}
+              margin={'0'}
+              bgColor={'#0F4C82'}
+              color={'white'}
+              padding={'0'}
+              onClick={() => {
+                onStartSchedule();
+              }}
+            />
+          </ScheStart>
+          <ControlWrap>
+            <ControlTop>
+              <ControlTop1>
+                현재 스케줄을&nbsp;&nbsp;
+                <Input_100
+                  placeholder={''}
+                  {...extensionTerm}
+                  type={'number'}
+                  step={5}
+                  width={'80px'}
+                  height={'25px'}
+                  bgColor={'white'}
+                />
+                분
+              </ControlTop1>
+              <ControlTop2>
+                {' '}
+                <Button_custom
+                  text={'단축'}
+                  width={'120px'}
+                  height={'25px'}
+                  margin={'0 10px 0 0'}
+                  bgColor={'#0F4C82'}
+                  color={'white'}
+                  padding={'0'}
+                  onClick={() => {
+                    onCutSchedule();
+                  }}
+                />{' '}
+                <Button_custom
+                  text={'연장'}
+                  width={'120px'}
+                  height={'25px'}
+                  margin={'0'}
+                  bgColor={'#0F4C82'}
+                  color={'white'}
+                  padding={'0'}
+                  onClick={() => {
+                    onExtensionSchedule();
+                  }}
+                />
+              </ControlTop2>
+            </ControlTop>
+            <ControlBottom>
+              <Button_custom
+                text={'현재 스케줄 마침'}
                 width={'120px'}
                 height={'25px'}
                 margin={'0 10px 0 0'}
-                bgColor={'#0F4C82'}
-                color={'white'}
+                bgColor={'#DB4437'}
+                color={'black'}
                 padding={'0'}
                 onClick={() => {
-                  onCutSchedule();
+                  onStopSchedule();
                 }}
-              />{' '}
+              />
               <Button_custom
-                text={'연장'}
+                text={'다음 스케줄 당김'}
                 width={'120px'}
                 height={'25px'}
                 margin={'0'}
@@ -2182,39 +2475,45 @@ export default ({
                 color={'white'}
                 padding={'0'}
                 onClick={() => {
-                  onExtensionSchedule();
+                  onPullSchedule();
                 }}
               />
-            </ControlTop2>
-          </ControlTop>
-          <ControlBottom>
-            <Button_custom
-              text={'현재 스케줄 마침'}
-              width={'120px'}
-              height={'25px'}
-              margin={'0 10px 0 0'}
-              bgColor={'#DB4437'}
-              color={'black'}
-              padding={'0'}
-              onClick={() => {
-                onStopSchedule();
-              }}
-            />
-            <Button_custom
-              text={'다음 스케줄 당김'}
-              width={'120px'}
-              height={'25px'}
-              margin={'0'}
-              bgColor={'#0F4C82'}
-              color={'white'}
-              padding={'0'}
-              onClick={() => {
-                onPullSchedule();
-              }}
-            />
-          </ControlBottom>
-        </ControlWrap>
-      </Wrapper_b>
-    </TopWrap>
+            </ControlBottom>
+          </ControlWrap>
+        </Wrapper_b>
+      </TopWrap>
+      {popupView && (
+        <>
+          <BlackBack />
+          <CustomPopup>
+            <PBody2>
+              <PTitle text={'동행자 관리'} />
+              {myInfoData.following.length === 0 ? (
+                <NonFollow>팔로잉하는 회원이 없습니다</NonFollow>
+              ) : (
+                <FixedList
+                  height={300}
+                  itemCount={myInfoData.following.length}
+                  itemSize={54}
+                  width={360}
+                  style={{ marginBottom: '20px' }}
+                >
+                  {followingList}
+                </FixedList>
+              )}
+              <ButtonDiv>
+                <PopupButton_solo
+                  type="button"
+                  onClick={() => {
+                    setPopupView(false);
+                  }}
+                  text={'닫기'}
+                />
+              </ButtonDiv>
+            </PBody2>
+          </CustomPopup>
+        </>
+      )}
+    </AllWrap>
   );
 };

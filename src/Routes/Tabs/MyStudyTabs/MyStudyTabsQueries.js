@@ -64,6 +64,24 @@ export const ME = gql`
         scheduleStart
         scheduleEnd
       }
+      followDates {
+        id
+        followId
+        goWith
+        createdAt
+      }
+      withFollowing {
+        id
+        avatar
+        username
+        existToggle
+      }
+      following {
+        id
+        avatar
+        email
+        username
+      }
     }
   }
 `;
