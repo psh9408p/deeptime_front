@@ -11,7 +11,6 @@ const Container = styled.button`
   align-items: center;
   text-align: center;
   cursor: pointer;
-  outline: none;
   color: #fff;
   background-color: ${(props) => props.theme.classicGray};
   border: none;
@@ -19,6 +18,7 @@ const Container = styled.button`
   /* box-shadow: 0 3px #999; */
   :hover {
     background-color: ${(props) => props.theme.lightGreyColor};
+    filter: none;
   }
   :active {
     background-color: ${(props) => props.theme.lightGreyColor};

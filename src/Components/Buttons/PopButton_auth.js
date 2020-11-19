@@ -11,7 +11,6 @@ const Container = styled.button`
   text-align: center;
   padding: 5px 0px;
   font-size: 12px;
-  outline-color: black;
   margin: 0px 0px 7px 10px;
   cursor: pointer;
 `;

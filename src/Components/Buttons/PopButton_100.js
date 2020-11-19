@@ -10,7 +10,6 @@ const Container = styled.button`
   font-weight: 600;
   text-align: center;
   font-size: 14px;
-  outline-color: black;
   cursor: pointer;
   &:not(:last-child) {
     margin-right: 10px;

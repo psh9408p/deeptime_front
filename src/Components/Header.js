@@ -74,6 +74,14 @@ const AiBox = styled.div`
   width: 100px;
   border: 1px solid ${(props) => props.theme.classicBlue};
   border-radius: 23px;
+  :hover {
+    background-color: ${(props) => props.theme.classicGray};
+    filter: none;
+  }
+  :active {
+    background-color: ${(props) => props.theme.classicGray};
+    transform: translateY(4px);
+  }
 `;
 
 const HeaderLink = styled(Link)`
@@ -130,7 +138,6 @@ const TmpButton = styled.button`
   -webkit-box-align: center;
   align-items: center;
 
-  
   font-size: 18px;
   outline: none;
   color: ${(props) => props.theme.classicBlue};

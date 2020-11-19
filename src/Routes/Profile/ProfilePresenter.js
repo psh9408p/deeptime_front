@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Helmet } from 'rl-react-helmet';
 import Avatar from '../../Components/Avatar';
@@ -29,7 +30,6 @@ const Header = styled.header`
 
 const HeaderColumn = styled.div`
   &:first-child {
-    cursor: pointer;
     margin-right: 80px;
   }
 `;
@@ -160,15 +160,15 @@ const PopupCustom = styled(Popup)`
 
 const PopupCustom2 = styled(PopupCustom)`
   &-content {
-    width: 550px !important;
-    height: 500px !important;
+    width: 420px !important;
+    height: 440px !important;
   }
 `;
 
 const PopupCustom3 = styled(PopupCustom)`
   &-content {
     width: 420px !important;
-    height: 500px !important;
+    height: ${(props) => (props.isSelf ? '500px' : '440px')} !important;
   }
 `;
 
@@ -225,6 +225,37 @@ const InputWrapper = styled.div`
   width: 270px;
 `;
 
+const IndiviList = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+`;
+
+const IndiviName = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 215px;
+  font-weight: 600;
+  margin-left: 10px;
+  span {
+    margin-top: 3px;
+    font-weight: normal;
+    color: #7f8c8d;
+  }
+`;
+
+const NonFollow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  height: 300px;
+  margin-bottom: 20px;
+  color: #7f8c8d;
+`;
+
 export default ({
   userData,
   logOut,
@@ -234,37 +265,200 @@ export default ({
   onAvatar,
   deleteAvatar,
   setSelectFile,
+  followInput,
+  onAddFollow,
+  unFollowMuation,
+  followMuation,
 }) => {
-  const followList = ({ index, style }) => (
-    // <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-    //   <ColorBox
-    //     size={'18px'}
-    //     radius={'9px'}
-    //     bgColor={todolistData_new[index].subject.bgColor}
-    //   />
-    //   <TaskName_todo isOdd={Boolean(index % 2)}>
-    //     {todolistData_new[index].subject.name}
-    //   </TaskName_todo>
-    //   <TodoNameDiv isOdd={Boolean(index % 2)}>
-    //     {todolistData_new[index].name}
-    //   </TodoNameDiv>
-    //   <TodoIconDiv2>
-    //     <Flag
-    //       onClick={() => {
-    //         onTodolistFinish(todolistData_new[index].id);
-    //       }}
-    //     />
-    //   </TodoIconDiv2>
-    //   <TodoIconDiv2>
-    //     <Delete
-    //       onClick={() => {
-    //         onTodolistDelete(todolistData_new[index].id);
-    //       }}
-    //     />
-    //   </TodoIconDiv2>
-    // </IndiviList>
-    <div>dd</div>
+  let history = useHistory();
+
+  const [followerLoad, setFollowerLoad] = useState(
+    new Array(userData.followersCount).fill(false),
   );
+  const [followingLoad, setFollowingLoad] = useState(
+    new Array(userData.followingCount).fill(false),
+  );
+
+  // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(seeUser가 언제 팔로우 했는지)
+  for (let i = 0; i < userData.followDates.length; i++) {
+    const findUser = (a) => a.id === userData.followDates[i].followId;
+    const tmpIndex = userData.following.findIndex(findUser);
+    const createdDate = new Date(userData.followDates[i].createdAt);
+    userData.following[tmpIndex].followingTime = createdDate.getTime();
+  }
+  // 팔로우한 날짜 순으로 정렬 최신이 위로
+  userData.following.sort(function (a, b) {
+    return b.followingTime - a.followingTime;
+  });
+
+  // 팔로워 각 유저 데이터에 알맞은 createdAt 넣어주기(각 팔로워가 seeUser를 언제 팔로우 했는지)
+  for (let i = 0; i < userData.followers.length; i++) {
+    const findSeeUser = (a) => a.followId === userData.id;
+    const tmpIndex = userData.followers[i].followDates.findIndex(findSeeUser);
+    const createdDate = new Date(
+      userData.followers[i].followDates[tmpIndex].createdAt,
+    );
+    userData.followers[i].followerTime = createdDate.getTime();
+  }
+  // 팔로워가 seeUser를 팔로우한 날짜 순으로 정렬 최신이 위로
+  userData.followers.sort(function (a, b) {
+    return b.followerTime - a.followerTime;
+  });
+
+  const onChangeLoad_ers = (index, bool) => {
+    let newArr = [...followerLoad];
+    newArr[index] = bool;
+    setFollowerLoad(newArr);
+  };
+  const onChangeLoad_ing = (index, bool) => {
+    let newArr = [...followingLoad];
+    newArr[index] = bool;
+    setFollowingLoad(newArr);
+  };
+
+  const onFollow = async (index, id, isFollowerBox) => {
+    try {
+      if (isFollowerBox) {
+        onChangeLoad_ers(index, true);
+      } else {
+        onChangeLoad_ing(index, true);
+      }
+      const {
+        data: { follow },
+      } = await followMuation({
+        variables: { id },
+      });
+      if (!follow) {
+        alert('팔로우를 추가할 수 없습니다.');
+      } else {
+        await userRefetch();
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    } finally {
+      if (isFollowerBox) {
+        onChangeLoad_ers(index, false);
+      } else {
+        onChangeLoad_ing(index, false);
+      }
+    }
+  };
+
+  const onUnFollow = async (index, id, isFollowerBox) => {
+    if (window.confirm('정말로 팔로우를 취소하시겠습니까?') === false) {
+      return;
+    }
+
+    try {
+      if (isFollowerBox) {
+        onChangeLoad_ers(index, true);
+      } else {
+        onChangeLoad_ing(index, true);
+      }
+      const {
+        data: { unfollow },
+      } = await unFollowMuation({
+        variables: { id },
+      });
+      if (!unfollow) {
+        alert('팔로우를 취소할 수 없습니다.');
+      } else {
+        await userRefetch();
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    } finally {
+      if (isFollowerBox) {
+        onChangeLoad_ers(index, false);
+      } else {
+        onChangeLoad_ing(index, false);
+      }
+    }
+  };
+
+  const followerList = ({ data, index, style }) => {
+    const indiUser = userData.followers[index];
+
+    return (
+      <IndiviList key={index} style={style}>
+        <Avatar
+          size="sm"
+          url={indiUser.avatar}
+          onClick={() => {
+            history.push(`${indiUser.username}`);
+            data();
+          }}
+          cursor={'pointer'}
+        />
+        <IndiviName>
+          {indiUser.email}
+          <span>{indiUser.username}</span>
+        </IndiviName>
+        {!indiUser.isSelf && (
+          <Button_custom
+            text={indiUser.isFollowing ? '팔로잉' : '팔로우'}
+            width={'60px'}
+            height={'28px'}
+            margin={'0 15px'}
+            padding={'0'}
+            bgColor={indiUser.isFollowing ? '#c7c7c7' : '#7BA9EB'}
+            color={indiUser.isFollowing ? 'black' : 'white'}
+            loading={followerLoad[index]}
+            onClick={() => {
+              if (indiUser.isFollowing) {
+                onUnFollow(index, indiUser.id, true);
+              } else {
+                onFollow(index, indiUser.id, true);
+              }
+            }}
+          />
+        )}
+      </IndiviList>
+    );
+  };
+
+  const followingList = ({ data, index, style }) => {
+    const indiUser = userData.following[index];
+
+    return (
+      <IndiviList key={index} style={style}>
+        <Avatar
+          size="sm"
+          url={indiUser.avatar}
+          onClick={() => {
+            history.push(`${indiUser.username}`);
+            data();
+          }}
+          cursor={'pointer'}
+        />
+        <IndiviName>
+          {indiUser.email}
+          <span>{indiUser.username}</span>
+        </IndiviName>
+        {!indiUser.isSelf && (
+          <Button_custom
+            text={indiUser.isFollowing ? '팔로잉' : '팔로우'}
+            width={'60px'}
+            height={'28px'}
+            margin={'0 15px'}
+            padding={'0'}
+            bgColor={indiUser.isFollowing ? '#c7c7c7' : '#7BA9EB'}
+            color={indiUser.isFollowing ? 'black' : 'white'}
+            loading={followingLoad[index]}
+            onClick={() => {
+              if (indiUser.isFollowing) {
+                onUnFollow(index, indiUser.id, false);
+              } else {
+                onFollow(index, indiUser.id, false);
+              }
+            }}
+          />
+        )}
+      </IndiviList>
+    );
+  };
 
   const {
     id,
@@ -275,7 +469,6 @@ export default ({
     isSelf,
     bio,
     email,
-    studyPurpose,
     studyGroup,
     studyGroup2,
     studyGroup3,
@@ -283,65 +476,71 @@ export default ({
   return (
     <Wrapper>
       <Helmet>
-        <title>{username} | SLOG-IAM</title>
+        <title>{username} | DEEPTIME</title>
       </Helmet>
       <Header>
-        <PopupCustom
-          trigger={
-            <HeaderColumn>
-              <Avatar size="lg" url={avatar} />
-            </HeaderColumn>
-          }
-          closeOnDocumentClick={false}
-          modal
-        >
-          {(close) => (
-            <PBody>
-              <PTitle text={'프로필 이미지 설정'} />
-              <SmallDiv>
-                <PreviewImg
-                  id="preview-img"
-                  url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Missing_avatar.svg/1024px-Missing_avatar.svg.png"
-                ></PreviewImg>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileInput(e)}
-                />
-              </SmallDiv>
-              <ButtonDiv>
-                <PopupButton_triple
-                  type="button"
-                  text={'변경'}
-                  onClick={async () => {
-                    const fucResult = await onAvatar();
-                    if (fucResult) {
+        {!isSelf ? (
+          <HeaderColumn>
+            <Avatar size="lg" url={avatar} />
+          </HeaderColumn>
+        ) : (
+          <PopupCustom
+            trigger={
+              <HeaderColumn>
+                <Avatar size="lg" url={avatar} cursor={'pointer'} />
+              </HeaderColumn>
+            }
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => (
+              <PBody>
+                <PTitle text={'프로필 이미지 설정'} />
+                <SmallDiv>
+                  <PreviewImg
+                    id="preview-img"
+                    url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Missing_avatar.svg/1024px-Missing_avatar.svg.png"
+                  ></PreviewImg>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileInput(e)}
+                  />
+                </SmallDiv>
+                <ButtonDiv>
+                  <PopupButton_triple
+                    type="button"
+                    text={'변경'}
+                    onClick={async () => {
+                      const fucResult = await onAvatar();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                  />
+                  <PopupButton_triple
+                    type="button"
+                    onClick={async () => {
+                      const fucResult = await deleteAvatar();
+                      if (fucResult) {
+                        close();
+                      }
+                    }}
+                    text={'기본값'}
+                  />
+                  <PopupButton_triple
+                    type="button"
+                    onClick={() => {
                       close();
-                    }
-                  }}
-                />
-                <PopupButton_triple
-                  type="button"
-                  onClick={async () => {
-                    const fucResult = await deleteAvatar();
-                    if (fucResult) {
-                      close();
-                    }
-                  }}
-                  text={'기본값'}
-                />
-                <PopupButton_triple
-                  type="button"
-                  onClick={() => {
-                    close();
-                    setSelectFile(null);
-                  }}
-                  text={'닫기'}
-                />
-              </ButtonDiv>
-            </PBody>
-          )}
-        </PopupCustom>
+                      setSelectFile(null);
+                    }}
+                    text={'닫기'}
+                  />
+                </ButtonDiv>
+              </PBody>
+            )}
+          </PopupCustom>
+        )}
         <HeaderColumn>
           <UsernameRow>
             <Username>{username}</Username>
@@ -376,21 +575,34 @@ export default ({
           </SubInfoDiv>
           <SubInfoDiv>
             <SubText>
-              게시물<span>3</span>
+              게시물<span>0</span>
             </SubText>
             <PopupCustom2
               trigger={
                 <SubText>
-                  팔로워<span>3</span>
+                  팔로워<span>{userData.followersCount}</span>
                 </SubText>
               }
               closeOnDocumentClick={false}
               modal
             >
               {(close) => (
-                <PBody>
+                <PBody2>
                   <PTitle text={'팔로워'} />
-                  <SmallDiv>ddd</SmallDiv>
+                  {userData.followers.length === 0 ? (
+                    <NonFollow>팔로워하는 회원이 없습니다</NonFollow>
+                  ) : (
+                    <ListApi
+                      height={300}
+                      itemCount={userData.followers.length}
+                      itemSize={54}
+                      width={360}
+                      style={{ marginBottom: '20px' }}
+                      itemData={close}
+                    >
+                      {followerList}
+                    </ListApi>
+                  )}
                   <ButtonDiv>
                     <PopupButton_solo
                       type="button"
@@ -400,13 +612,14 @@ export default ({
                       text={'닫기'}
                     />
                   </ButtonDiv>
-                </PBody>
+                </PBody2>
               )}
             </PopupCustom2>
             <PopupCustom3
+              isSelf={userData.isSelf}
               trigger={
                 <SubText>
-                  팔로우<span>3</span>
+                  팔로우<span>{userData.followingCount}</span>
                 </SubText>
               }
               closeOnDocumentClick={false}
@@ -414,34 +627,41 @@ export default ({
             >
               {(close) => (
                 <PBody2>
-                  <PTitle text={'팔로우'} />
-                  <NewFollowDiv>
-                    <InputWrapper>
-                      <Input
-                        placeholder={'Email 또는 닉네임'}
-                        // {...todolistName}
+                  <PTitle text={'팔로잉'} />
+                  {userData.isSelf && (
+                    <NewFollowDiv>
+                      <InputWrapper>
+                        <Input
+                          placeholder={'Email 또는 닉네임'}
+                          {...followInput}
+                        />
+                      </InputWrapper>
+                      <Button_custom
+                        text={'팔로우'}
+                        width={'70px'}
+                        height={'35px'}
+                        bgColor={'#0F4C82'}
+                        color={'white'}
+                        onClick={() => {
+                          onAddFollow();
+                        }}
                       />
-                    </InputWrapper>
-                    <Button_custom
-                      text={'팔로우'}
-                      width={'70px'}
-                      height={'35px'}
-                      bgColor={'#0F4C82'}
-                      color={'white'}
-                      onClick={() => {
-                        // onTodolistAdd();
-                      }}
-                    />
-                  </NewFollowDiv>
-                  <ListApi
-                    height={300}
-                    itemCount={10}
-                    itemSize={40}
-                    width={360}
-                    style={{ marginBottom: '20px' }}
-                  >
-                    {followList}
-                  </ListApi>
+                    </NewFollowDiv>
+                  )}
+                  {userData.following.length === 0 ? (
+                    <NonFollow>팔로우하는 회원이 없습니다</NonFollow>
+                  ) : (
+                    <ListApi
+                      height={300}
+                      itemCount={userData.following.length}
+                      itemSize={54}
+                      width={360}
+                      style={{ marginBottom: '20px' }}
+                      itemData={close}
+                    >
+                      {followingList}
+                    </ListApi>
+                  )}
                   <ButtonDiv>
                     <PopupButton_solo
                       type="button"
@@ -460,6 +680,11 @@ export default ({
       </Header>
       <Tabs>
         {profileTabs.content.map((section, index) => {
+          // 다른 사람 프로필에서 안나오는 탭 지정
+          if (!isSelf && index === 1) {
+            return null;
+          }
+
           if (index === profileTabs.currentIndex) {
             return (
               <ProfileButton_Blue

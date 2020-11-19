@@ -22,15 +22,28 @@ const getSize = (size) => {
 };
 
 const Container = styled.div`
+  cursor: ${(props) => props.cursor};
   ${(props) => getSize(props.size)}
-  background-image:url(${(props) => props.url});
+  background-image: url(${(props) => props.url});
   background-size: cover;
   background-position: center center;
   border-radius: 50%;
 `;
 
-const Avatar = ({ size = 'sm', url, className, onClick }) => (
-  <Container className={className} size={size} url={url} onClick={onClick} />
+const Avatar = ({
+  size = 'sm',
+  url,
+  className,
+  onClick,
+  cursor = 'normal',
+}) => (
+  <Container
+    className={className}
+    size={size}
+    url={url}
+    onClick={onClick}
+    cursor={cursor}
+  />
 );
 
 Avatar.propTypes = {

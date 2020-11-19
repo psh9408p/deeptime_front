@@ -10,10 +10,14 @@ import {
   LOG_OUT,
   EDIT_AVATAR,
   DELETE_AVATAR,
+  ADD_FOLLOW,
+  UN_FOLLOW,
+  FOLLOW,
 } from './ProfileQueries';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import imageResize from '../../Components/imageResize';
+import useInput from '../../Hooks/useInput';
 
 const LoaderWrapper = styled.div`
   min-height: 100vh;
@@ -27,9 +31,10 @@ export default withRouter(
     },
   }) => {
     // const profileTabContents = ['구독 / 결제', '개인'];
-    const profileTabContents = ['구독 / 결제'];
+    const profileTabContents = ['게시물', '구독 / 결제'];
     const profileTabs = useTabs(0, profileTabContents);
     const [selectFile, setSelectFile] = useState(null);
+    const followInput = useInput('');
 
     const { data, loading, refetch } = useQuery(GET_USER, {
       variables: { username },
@@ -37,6 +42,9 @@ export default withRouter(
     const [logOut] = useMutation(LOG_OUT);
     const [editAvatarMuation] = useMutation(EDIT_AVATAR);
     const [deleteAvatarMuation] = useMutation(DELETE_AVATAR);
+    const [addFollowMuation] = useMutation(ADD_FOLLOW);
+    const [unFollowMuation] = useMutation(UN_FOLLOW);
+    const [followMuation] = useMutation(FOLLOW);
 
     const handleFileInput = (e) => {
       imageResize(e.target.files, 'preview-img', 640, setSelectFile);
@@ -98,6 +106,27 @@ export default withRouter(
       }
     };
 
+    const onAddFollow = async () => {
+      try {
+        toast.info('새로운 팔로우 추가 중...');
+        const {
+          data: { addFollow },
+        } = await addFollowMuation({
+          variables: { inputStr: followInput.value },
+        });
+        if (!addFollow) {
+          alert('팔로우를 추가할 수 없습니다.');
+        } else {
+          followInput.setValue('');
+          await refetch();
+          toast.success('새로운 팔로우가 추가 되었습니다.');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+      }
+    };
+
     if (loading === true) {
       return (
         <LoaderWrapper>
@@ -115,6 +144,10 @@ export default withRouter(
           onAvatar={onAvatar}
           deleteAvatar={deleteAvatar}
           setSelectFile={setSelectFile}
+          followInput={followInput}
+          onAddFollow={onAddFollow}
+          unFollowMuation={unFollowMuation}
+          followMuation={followMuation}
         />
       );
     }

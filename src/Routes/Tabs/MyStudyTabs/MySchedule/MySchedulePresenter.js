@@ -99,7 +99,6 @@ const SelectDiv = styled.div`
 
 const SaveButtonDiv = styled.div`
   width: 80px;
-  margin-right: 10px;
 `;
 
 const SubjectButtonDiv = styled.div`

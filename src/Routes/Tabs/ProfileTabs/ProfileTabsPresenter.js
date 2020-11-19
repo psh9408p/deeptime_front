@@ -123,6 +123,8 @@ export default ({
   onRegist,
 }) => {
   if (pageIndex === 0) {
+    return <div></div>;
+  } else if (pageIndex === 1) {
     return (
       <Regist>
         <ContentLink to="/manage-subscription" replace>
@@ -144,7 +146,7 @@ export default ({
         </ContentLink> */}
       </Regist>
     );
-  } else if (pageIndex === 1) {
+  } else if (pageIndex === 2) {
     return (
       <Regist>
         <PopupCustom

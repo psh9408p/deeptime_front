@@ -21,4 +21,10 @@ export default createGlobalStyle`
     input:focus{
         outline:none;
     }
-`;
+    button {
+        outline: none;
+    }
+    button:hover{
+        filter: brightness(120%);
+    }
+    `;

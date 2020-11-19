@@ -13,17 +13,34 @@ export const GET_USER = gql`
       studyGroup
       studyGroup2
       studyGroup3
-      organization {
+      followingCount
+      followersCount
+      isFollowing
+      followDates {
         id
-        name
-        manager {
-          id
-          phoneNumber
-        }
+        followId
+        createdAt
       }
-      raspberry {
+      following {
         id
-        seatNumber
+        avatar
+        email
+        username
+        isFollowing
+        isSelf
+      }
+      followers {
+        id
+        avatar
+        email
+        username
+        isFollowing
+        isSelf
+        followDates {
+          id
+          followId
+          createdAt
+        }
       }
     }
   }
@@ -44,5 +61,23 @@ export const EDIT_AVATAR = gql`
 export const DELETE_AVATAR = gql`
   mutation deleteAvatar {
     deleteAvatar
+  }
+`;
+
+export const ADD_FOLLOW = gql`
+  mutation addFollow($inputStr: String!) {
+    addFollow(inputStr: $inputStr)
+  }
+`;
+
+export const UN_FOLLOW = gql`
+  mutation unfollow($id: String!) {
+    unfollow(id: $id)
+  }
+`;
+
+export const FOLLOW = gql`
+  mutation follow($id: String!) {
+    follow(id: $id)
   }
 `;
