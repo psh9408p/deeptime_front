@@ -93,6 +93,9 @@ export const EDIT_STUDYSET = gql`
     $cutExtenTerm: Int
     $scheduleStart: Int
     $scheduleEnd: Int
+    $dDayOn: Boolean
+    $dDateName: String
+    $dDate: String
   ) {
     editStudySet(
       nonScheduleRecord: $nonScheduleRecord
@@ -102,6 +105,9 @@ export const EDIT_STUDYSET = gql`
       cutExtenTerm: $cutExtenTerm
       scheduleStart: $scheduleStart
       scheduleEnd: $scheduleEnd
+      dDayOn: $dDayOn
+      dDateName: $dDateName
+      dDate: $dDate
     )
   }
 `;

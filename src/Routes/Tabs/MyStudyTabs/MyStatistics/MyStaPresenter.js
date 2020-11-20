@@ -1068,6 +1068,7 @@ export default ({
         <StatisRow>
           <DatePickDiv>
             <DatePicker
+              dateFormat={'yyyy/MM/dd'}
               selected={selectDate}
               onChange={(date) => setSelectDate(date)}
               customInput={<CustomInput />}

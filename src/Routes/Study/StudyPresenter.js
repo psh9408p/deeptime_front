@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import * as posenet from '@tensorflow-models/posenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
@@ -55,6 +55,8 @@ import Input from '../../Components/Input';
 import videoCanvas from 'video-canvas';
 import Avatar from '../../Components/Avatar';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Whammy = require('whammy/whammy');
 
@@ -372,13 +374,23 @@ const IconWrap = styled.div`
   border-right: ${(props) => props.theme.boxBorder};
 `;
 
-const AvatarDiv = styled.div`
+const DDayDiv = styled.div`
   width: 50%;
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   padding: 0 0 0 15px;
+  font-weight: 800;
+`;
+
+const DName = styled.div`
+  font-size: 14px;
+`;
+
+const DNumber = styled.div`
+  font-size: 28px;
+  color: ${(props) => props.theme.classicBlue};
 `;
 
 const SetDiv = styled.div`
@@ -449,12 +461,6 @@ const SetContentBox = styled.div`
 const RefreshInputWrap = styled.div`
   width: 70px;
   height: 30px;
-`;
-
-const StatusSpan = styled.span`
-  margin-left: 10px;
-  font-size: 15px;
-  font-weight: bold;
 `;
 
 const IndiTodoWrap = styled.div`
@@ -647,6 +653,19 @@ const IndiviLink = styled(Link)`
   border-radius: 50%;
 `;
 
+const DatePickButton = styled.button`
+  border: 0;
+  outline-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+`;
+
 let scheduleList_selectDay = [];
 let scheduleList_selectDay_length = 0;
 let taskArray_schedule = [];
@@ -729,14 +748,26 @@ export default ({
   const [followingLoad, setFollowingLoad] = useState(
     new Array(myInfoData.following.length).fill(false),
   );
+  const [dDate, setDDate] = useState(
+    myInfoData.studyDefaultSet.dDate
+      ? new Date(myInfoData.studyDefaultSet.dDate)
+      : new Date(),
+  );
+  // dDay 계산
+  const nowDate_tmp = new Date();
+  const gap = nowDate_tmp.getTime() - dDate.getTime();
+  const realDDay = Math.floor(gap / (1000 * 60 * 60 * 24));
 
   const prevent_float = (value) => value % 1 === 0;
+  const max10 = (value) => value.length < 16;
   const [nonScheduleRecord, setNonScheduleRecord] = useState(
     myInfoData.studyDefaultSet.nonScheduleRecord,
   );
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
+  const [dDayOn, setDDayOn] = useState(myInfoData.studyDefaultSet.dDayOn);
+  const dDateName = useInput(myInfoData.studyDefaultSet.dDateName, max10);
   const autoRefreshTerm = useInput(
     myInfoData.studyDefaultSet.autoRefreshTerm,
     prevent_float,
@@ -775,12 +806,18 @@ export default ({
       setNonScheduleRecord(true);
     }
   };
-
   const autoSwitch = () => {
     if (autoRefresh) {
       setAutoRefresh(false);
     } else {
       setAutoRefresh(true);
+    }
+  };
+  const dDaySwitch = () => {
+    if (dDayOn) {
+      setDDayOn(false);
+    } else {
+      setDDayOn(true);
     }
   };
 
@@ -962,6 +999,9 @@ export default ({
           autoRefreshTerm: Number(autoRefreshTerm.value),
           startScheduleTerm: Number(startScheduleTerm_forSet.value),
           cutExtenTerm: Number(extensionTerm_forSet.value),
+          dDayOn,
+          dDateName: dDateName.value,
+          dDate,
         },
       });
       if (!editStudySet) {
@@ -1652,8 +1692,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      LoadCamera();
-      LoadModel();
+      // LoadCamera();
+      // LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -2086,6 +2126,14 @@ export default ({
     }
   };
 
+  const CustomInput = forwardRef(({ value, onClick }, ref) => {
+    return (
+      <DatePickButton ref={ref} onClick={onClick}>
+        {value}
+      </DatePickButton>
+    );
+  });
+
   return (
     <AllWrap>
       <TopWrap>
@@ -2113,19 +2161,20 @@ export default ({
           </VideoWrap>
           <GraphDiv>
             <HeaderDiv>
-              <AvatarDiv>
-                {studyBool ? (
+              <DDayDiv>
+                {dDayOn && (
                   <>
-                    <Study_true />
-                    <StatusSpan>Deep Time</StatusSpan>
-                  </>
-                ) : (
-                  <>
-                    <Study_false />
-                    <StatusSpan>Where are you...?</StatusSpan>
+                    <DName>{dDateName.value}</DName>
+                    <DNumber>
+                      {realDDay === 0
+                        ? 'D-day'
+                        : realDDay > 0
+                        ? `D+${realDDay}`
+                        : `D${realDDay}`}
+                    </DNumber>
                   </>
                 )}
-              </AvatarDiv>
+              </DDayDiv>
               <SetDiv>
                 <Button_capture
                   onClick={() => {
@@ -2150,7 +2199,38 @@ export default ({
                         <PTitle text={'기본값 세팅'} />
                         <SetContentWrap>
                           <SetContentBox>
-                            현재 스케줄 부재시 시간 기록 on/off :　
+                            D-day :　
+                            <Switch
+                              on={true}
+                              off={false}
+                              value={dDayOn}
+                              onChange={dDaySwitch}
+                            />
+                            <p>　</p>
+                            <Input_100
+                              width={'120px'}
+                              height={'32px'}
+                              bgColor={'#FAFAFA'}
+                              placeholder={'내용 (15자 이내)'}
+                              {...dDateName}
+                            />
+                            <p>　</p>
+                            <DatePicker
+                              dateFormat={'yyyy/MM/dd'}
+                              selected={dDate}
+                              onChange={(date) => {
+                                const newDate = new Date(
+                                  date.getFullYear(),
+                                  date.getMonth(),
+                                  date.getDate(),
+                                );
+                                setDDate(newDate);
+                              }}
+                              customInput={<CustomInput />}
+                            />
+                          </SetContentBox>
+                          <SetContentBox>
+                            현재 스케줄 부재시 시간 기록 :　
                             <Switch
                               on={true}
                               off={false}
@@ -2159,16 +2239,14 @@ export default ({
                             />
                           </SetContentBox>
                           <SetContentBox>
-                            자동 새로고침 on/off :　
+                            자동 새로고침 :　
                             <Switch
                               on={true}
                               off={false}
                               value={autoRefresh}
                               onChange={autoSwitch}
                             />
-                          </SetContentBox>
-                          <SetContentBox>
-                            자동 새로고침 기간 :　
+                            <p>　</p>
                             <RefreshInputWrap>
                               <Input_100
                                 placeholder={''}

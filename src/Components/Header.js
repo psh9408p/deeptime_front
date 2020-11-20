@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link, withRouter } from 'react-router-dom';
-import { Logo, User, Shop, Guide, MyStudy, Play, Timelapse } from './Icons';
+import { Link, withRouter, useLocation } from 'react-router-dom';
+import {
+  Logo,
+  User,
+  Shop,
+  Guide_white,
+  Guide_black,
+  MyStudy,
+  Play,
+  Person_white,
+  Person_black,
+  People_black,
+  People_white,
+} from './Icons';
 import Avatar from './Avatar';
 import { useQuery } from '@apollo/react-hooks';
 import { ME } from '../SharedQueries';
@@ -160,6 +172,9 @@ const VisualLong = styled.div`
 `;
 
 export default withRouter(() => {
+  const location = useLocation();
+  const pageName = location.pathname.split('/')[1];
+
   const [potal, setPotal] = useState();
 
   const { data, loading } = useQuery(ME);
@@ -247,25 +262,24 @@ export default withRouter(() => {
           {data.me && data.me.loginPosition === 'student' && (
             <HeaderColumn>
               <HeaderLink to="/" replace>
-                <VisualLong>My</VisualLong>
+                {/* <VisualLong>My</VisualLong>
                 <VisualShort>
                   <MyStudy />
-                </VisualShort>
+                </VisualShort> */}
+                {pageName === '' ? <Person_black /> : <Person_white />}
               </HeaderLink>
-              <TmpButton
-                type="button"
+              <HeaderLink
                 onClick={() => {
                   alert('그룹 서비스는 준비 중이니 조금만 더 기다려주세요. 😁');
                 }}
+                // to="/group"
+                // replace
               >
-                Group
-              </TmpButton>
-              {/* <HeaderLink >
-                <VisualLong>Guide</VisualLong>
-                <VisualShort>
-                  <Guide />
-                </VisualShort>
-              </HeaderLink> */}
+                {pageName === 'group' ? <People_black /> : <People_white />}
+              </HeaderLink>
+              <HeaderLink target="_blank" to="/userguide" replace>
+                {pageName === 'userguide' ? <Guide_black /> : <Guide_white />}
+              </HeaderLink>
               {!data.me ? (
                 <HeaderLink to="/#">
                   <User />

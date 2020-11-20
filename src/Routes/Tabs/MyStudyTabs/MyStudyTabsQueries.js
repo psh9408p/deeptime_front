@@ -63,6 +63,9 @@ export const ME = gql`
         cutExtenTerm
         scheduleStart
         scheduleEnd
+        dDayOn
+        dDateName
+        dDate
       }
       followDates {
         id
