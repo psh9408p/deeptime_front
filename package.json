@@ -14,7 +14,7 @@
     "@trendmicro/react-sidenav": "^0.5.0",
     "add": "2.0.6",
     "antd": "4.3.4",
-    "apollo-boost": "^0.3.1",
+    "apollo-boost": "0.4.9",
     "axios": "0.19.2",
     "chained-function": "^0.5.0",
     "chart.js": "2.9.3",
