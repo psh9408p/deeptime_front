@@ -1,13 +1,15 @@
-import ApolloClient from "apollo-boost"
-import { defaults, resolvers } from "./LocalState"
+import ApolloClient from 'apollo-boost';
+import { defaults, resolvers } from './LocalState';
 
-export default new ApolloClient({
+const apolloSet = {
   uri: process.env.REACT_APP_BACKEND_URI,
   clientState: {
     defaults,
-    resolvers
+    resolvers,
   },
   headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-  }
-})
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  },
+};
+
+export default new ApolloClient(apolloSet);
