@@ -26,10 +26,12 @@ import { toast } from 'react-toastify';
 export default ({ pageIndex, meData, meRefetch }) => {
   const maxLen_10 = (value) => value.length <= 10;
   const minLen_6 = (value) => value.length < 6 && value.length > 0;
+  const minLen_150 = (value) => value.length < 151;
 
   const firstName = useInput(meData.firstName);
   const lastName = useInput(meData.lastName);
   const username = useInput(meData.username, maxLen_10);
+  const bio = useInput(meData.bio, minLen_150);
   const email = useInput(meData.email);
   const emailKey = useInput('');
   const phoneNumber = useInput(meData.phoneNumber);
@@ -126,6 +128,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
             firstName: firstName.value,
             lastName: lastName.value,
             username: username.value,
+            bio: bio.value,
             email: email.value,
             phoneNumber: phoneNumber.value,
             studyPurpose: studyPurpose.option,
@@ -285,6 +288,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
       firstName={firstName}
       lastName={lastName}
       username={username}
+      bio={bio}
       email={email}
       emailKey={emailKey}
       phoneNumber={phoneNumber}

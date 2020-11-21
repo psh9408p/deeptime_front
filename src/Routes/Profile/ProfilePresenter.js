@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 
 const Header = styled.header`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   width: 80%;
   margin: 40px auto;
@@ -98,6 +98,9 @@ const SubText = styled.div`
 
 const Bio = styled.p`
   margin: 10px 0px;
+  max-width: 600px;
+  white-space: pre;
+  line-height: 20px;
 `;
 
 const Tabs = styled.div`
@@ -675,7 +678,20 @@ export default ({
               )}
             </PopupCustom3>
           </SubInfoDiv>
-          <Bio>{bio}</Bio>
+          {bio === '' ? (
+            <Button_custom
+              text={'자기소개 작성'}
+              width={'120px'}
+              height={'32px'}
+              margin={'0'}
+              bgColor={'#efefef'}
+              onClick={() => {
+                history.push(`account`);
+              }}
+            />
+          ) : (
+            <Bio>{bio}</Bio>
+          )}
         </HeaderColumn>
       </Header>
       <Tabs>

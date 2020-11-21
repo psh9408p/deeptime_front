@@ -11,6 +11,7 @@ import Button from '../../../Components/Buttons/Button';
 import PhoneInput from 'react-phone-input-2';
 import PopButton from '../../../Components/Buttons/PopButton';
 import CheckBox from '../../../Components/CheckBox';
+import Textarea from '../../../Components/Textarea';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -176,12 +177,19 @@ const PurposeContent = styled.div`
   }
 `;
 
+const BioArea = styled(Textarea)`
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+`;
+
 export default ({
   pageIndex,
   meData,
   firstName,
   lastName,
   username,
+  bio,
   email,
   emailKey,
   phoneNumber,
@@ -399,6 +407,11 @@ export default ({
                   <Select {...myAddress1} id={'myAddress1_id'} />
                   <Select {...myAddress2} id={'myAddress2_id'} />
                 </SelectDiv>
+                <BioArea
+                  {...bio}
+                  placeholder={'자기소개 (150자 이내)'}
+                  required={false}
+                />
               </>
             )}
             {meData.loginPosition === 'manager' && (

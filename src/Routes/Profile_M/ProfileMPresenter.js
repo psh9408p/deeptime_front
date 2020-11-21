@@ -213,7 +213,7 @@ export default ({
     return (
       <Wrapper>
         <Helmet>
-          <title>{username} | SLOG-IAM</title>
+          <title>{username} | DEEPTIME</title>
         </Helmet>
         <Header>
           <PopupCustom

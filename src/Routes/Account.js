@@ -13,6 +13,7 @@ const ACCOUNT_ME = gql`
       lastName
       firstName
       username
+      bio
       email
       phoneNumber
       studyPurpose

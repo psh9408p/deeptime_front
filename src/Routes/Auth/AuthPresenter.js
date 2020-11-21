@@ -367,7 +367,7 @@ export default ({
               <Logo />
             </LogoBox>
             <Helmet>
-              <title>로그인 | SLOG-IAM</title>
+              <title>로그인 | DEEPTIME</title>
             </Helmet>
             <form onSubmit={onSubmit}>
               <Input
@@ -389,7 +389,7 @@ export default ({
         {action === 'signUp' && (
           <>
             <Helmet>
-              <title>회원가입 | SLOG-IAM</title>
+              <title>회원가입 | DEEPTIME</title>
             </Helmet>
             <form onSubmit={onSubmit}>
               <NameInputDiv>
@@ -707,7 +707,7 @@ export default ({
         {action === 'signUp_manager' && (
           <>
             <Helmet>
-              <title>회원가입 | SLOG-IAM</title>
+              <title>회원가입 | DEEPTIME</title>
             </Helmet>
             <form onSubmit={onSubmit}>
               <NameInputDiv>
