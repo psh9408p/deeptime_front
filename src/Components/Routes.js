@@ -39,6 +39,7 @@ import UserGuide from '../Routes/UserGuide';
 import Timelapse from '../Routes/Timelapse';
 import { gql } from 'apollo-boost';
 import ChannelService from './ChannelService';
+import Feed from '../Routes/Feed';
 
 export const MEPOSITION = gql`
   query me {
@@ -94,6 +95,7 @@ const LoggedInRoutes = () => {
       return (
         <Switch>
           <Route path="/study" component={Study} />
+          <Route path="/feed" component={Feed} />
           <Route path="/userguide" component={UserGuide} />
           <Route path="/timelapse" component={Timelapse} />
           {/* <Route path="/attendance" component={Attendance} /> */}
