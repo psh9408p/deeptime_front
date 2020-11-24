@@ -47,7 +47,7 @@ const MyButton_Blue = styled.button`
 `;
 
 export default () => {
-  const myTabContents = ['스케줄', '통계'];
+  const myTabContents = ['나의 스케줄', '나의 통계'];
   const myTabs = useTabs(0, myTabContents);
 
   return (
