@@ -1692,8 +1692,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
+      LoadCamera();
+      LoadModel();
       isFirstRun.current = false;
       return;
     }
