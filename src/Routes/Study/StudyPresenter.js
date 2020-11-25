@@ -25,7 +25,7 @@ import {
   Study_false,
   Flag,
   Delete,
-  Add,
+  Add_12,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -906,7 +906,10 @@ export default ({
 
     const now_Date = new Date();
     const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
-    html2canvas(document.querySelector('#capture')).then((canvas) => {
+    const target = document.querySelector('#capture');
+    html2canvas(target, {
+      width: target.clientWidth + 20,
+    }).then((canvas) => {
       // document.body.appendChild(canvas);
       saveAs(
         canvas.toDataURL('image/png'),
@@ -2100,7 +2103,7 @@ export default ({
               setPopupView(true);
             }}
           >
-            <Add
+            <Add_12
               fill={'#0F4C82'}
               boxShadow={'0 0 0 2px white'}
               borderRadius={'50%'}

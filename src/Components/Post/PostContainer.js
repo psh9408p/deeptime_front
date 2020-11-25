@@ -17,10 +17,23 @@ const PostContainer = ({
   caption,
   location,
 }) => {
+  const checkLineBreak = /\r|\n/;
+  let shortCatption = caption.slice(0, 8);
+  let morecheck = false;
+  const checkResult = checkLineBreak.exec(shortCatption);
+  if (checkResult) {
+    shortCatption = caption.slice(0, checkResult.index + 1) + '...';
+    morecheck = true;
+  } else if (caption.length > 15) {
+    shortCatption = caption.slice(0, 8) + '...';
+    morecheck = true;
+  }
+
   const [isLikedS, setIsLiked] = useState(isLiked);
   const [likeCountS, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
   const [selfComments, setSelfComments] = useState([]);
+  const [moreBool, setMoreBool] = useState(morecheck);
   const comment = useInput('');
   const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
     variables: { postId: id },
@@ -62,7 +75,7 @@ const PostContainer = ({
         setSelfComments([...selfComments, addComment]);
         comment.setValue('');
       } catch {
-        toast.error('Cant send comment');
+        toast.error('댓글을 작성할 수 없습니다.');
       }
     }
   };
@@ -84,6 +97,8 @@ const PostContainer = ({
       toggleLike={toggleLike}
       onKeyPress={onKeyPress}
       selfComments={selfComments}
+      moreBool={moreBool}
+      setMoreBool={setMoreBool}
     />
   );
 };

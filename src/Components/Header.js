@@ -80,11 +80,12 @@ const AiBox = styled.div`
   align-items: center;
   font-size: 18px;
   font-weight: 600;
-  color: ${(props) => props.theme.classicBlue};
+  color: black;
   padding: 10px 15px;
   height: 45px;
   width: 100px;
-  border: 1px solid ${(props) => props.theme.classicBlue};
+  /* border: 1px solid ${(props) => props.theme.classicBlue}; */
+  border: ${(props) => props.theme.boxBorder};
   border-radius: 23px;
   :hover {
     background-color: ${(props) => props.theme.classicGray};
@@ -204,7 +205,7 @@ export default withRouter(() => {
                   onClickPotal_student();
                 }}
               >
-                <Play fill={'black'} margin={'0 5px 0 0'} />
+                <Play fill={'#0F4C82'} margin={'0 5px 0 0'} />
                 Play
                 {/* <AiHeaderLink oncli to="/timelapse" replace>
                   <Timelapse fill={'#0F4C82'} />
@@ -266,7 +267,11 @@ export default withRouter(() => {
                 <VisualShort>
                   <MyStudy />
                 </VisualShort> */}
-                {pageName === '' ? <Person_black /> : <Person_white />}
+                {pageName === '' ? (
+                  <Person_black fill={'#0F4C82'} />
+                ) : (
+                  <Person_white />
+                )}
               </HeaderLink>
               <HeaderLink
                 onClick={() => {
@@ -275,10 +280,18 @@ export default withRouter(() => {
                 // to="/group"
                 // replace
               >
-                {pageName === 'group' ? <People_black /> : <People_white />}
+                {pageName === 'group' ? (
+                  <People_black fill={'#0F4C82'} />
+                ) : (
+                  <People_white />
+                )}
               </HeaderLink>
               <HeaderLink target="_blank" to="/userguide" replace>
-                {pageName === 'userguide' ? <Guide_black /> : <Guide_white />}
+                {pageName === 'userguide' ? (
+                  <Guide_black fill={'#0F4C82'} />
+                ) : (
+                  <Guide_white />
+                )}
               </HeaderLink>
               {!data.me ? (
                 <HeaderLink to="/#">

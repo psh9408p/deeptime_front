@@ -20,7 +20,6 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
       var link = document.createElement('a');
-      console.log(link);
       if (typeof link.download === 'string') {
         link.href = uri;
         link.download = filename;
@@ -34,20 +33,26 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
 
     const now_Date = new Date();
     const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
-    html2canvas(document.querySelector('#staCapture_top')).then((canvas) => {
-      // document.body.appendChild(canvas);
-      saveAs(
-        canvas.toDataURL('image/png'),
-        'deeptime_stats_' + file_tail + '_1.png',
-      );
-    });
-    html2canvas(document.querySelector('#staCapture_bottom')).then((canvas) => {
-      // document.body.appendChild(canvas);
-      saveAs(
-        canvas.toDataURL('image/png'),
-        'deeptime_stats_' + file_tail + '_2.png',
-      );
-    });
+    const canvas_top = document.querySelector('#staCapture_top');
+    const canvas_bottom = document.querySelector('#staCapture_bottom');
+    html2canvas(canvas_top, { width: canvas_top.clientWidth + 20 }).then(
+      (canvas) => {
+        // document.body.appendChild(canvas);
+        saveAs(
+          canvas.toDataURL('image/png'),
+          'deeptime_stats_' + file_tail + '_1.png',
+        );
+      },
+    );
+    html2canvas(canvas_bottom, { width: canvas_bottom.clientWidth + 20 }).then(
+      (canvas) => {
+        // document.body.appendChild(canvas);
+        saveAs(
+          canvas.toDataURL('image/png'),
+          'deeptime_stats_' + file_tail + '_2.png',
+        );
+      },
+    );
   };
 
   const isFirstRun = useRef(true);
