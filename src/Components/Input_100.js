@@ -9,6 +9,7 @@ const Container = styled.input`
   background-color: ${(props) => props.bgColor};
   width: ${(props) => props.width};
   height: ${(props) => props.height};
+  margin: ${(props) => props.margin};
   font-size: 12px;
   padding: 0px 15px;
 `;
@@ -23,7 +24,8 @@ const Input = ({
   width = '100%',
   height = '100%',
   step,
-  bgColor,
+  bgColor = '#fafafa',
+  margin,
 }) => (
   <Container
     className={className}
@@ -36,6 +38,7 @@ const Input = ({
     width={width}
     height={height}
     bgColor={bgColor}
+    margin={margin}
   />
 );
 

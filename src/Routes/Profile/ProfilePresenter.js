@@ -99,7 +99,7 @@ const SubText = styled.div`
 const Bio = styled.p`
   margin: 10px 0px;
   max-width: 600px;
-  white-space: pre;
+  white-space: pre-wrap;
   line-height: 20px;
 `;
 

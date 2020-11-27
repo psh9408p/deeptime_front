@@ -5249,6 +5249,21 @@ file-uri-to-path@1.0.0:
   resolved "https://registry.yarnpkg.com/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
   integrity sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==
 
+filepond-plugin-image-exif-orientation@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-exif-orientation/-/filepond-plugin-image-exif-orientation-1.0.9.tgz#bf1220d99c117a69859f3297d0618e7469705019"
+  integrity sha512-Pyw7oNpMk5YwX0eYsa1wjNTJ2WxTQ27VUDviV0XrNbKPB7/iDSZ9r2zWSEeT9yS46OUGNE8lcdAARi5Z2v5TLA==
+
+filepond-plugin-image-preview@4.6.4:
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-4.6.4.tgz#19edade651559cf8c9fb97bcc8ce56af16ebae67"
+  integrity sha512-grlFJv1LH4E7IzsKTIFI52LuyLQa+lXMqmUnSm0cufDblRXHxdraRkjj/88bd9pyVJm206dBXQnlIVVyEaE5xg==
+
+filepond@4.23.1:
+  version "4.23.1"
+  resolved "https://registry.yarnpkg.com/filepond/-/filepond-4.23.1.tgz#fb6b9f09732ca524586765aee040edd5c5d453d9"
+  integrity sha512-OHMiVucJXCC5SXZPlwbDm7lgH4hJKvlXjkKNH6fZWVoh3IAhdUDMKh18JJGpO9PC3cCl1UYi8Aa1Le96SyXHYg==
+
 filesize@6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/filesize/-/filesize-6.0.1.tgz#f850b509909c7c86f7e450ea19006c31c2ed3d2f"
@@ -10043,6 +10058,11 @@ react-fast-compare@^2.0.2:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+
+react-filepond@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-filepond/-/react-filepond-7.1.0.tgz#e3a83321dcfcd9c55f9f7d97ca1042f6d4412e66"
+  integrity sha512-hkxhd1PElzbAaPwY0FElQQPdWD1KzIQAYXSkgeE3W2hdFvyXU4hBuBq5/u04emvOJR/RifrdQGXAX1z07DcOvQ==
 
 react-gauge-chart@0.2.5:
   version "0.2.5"

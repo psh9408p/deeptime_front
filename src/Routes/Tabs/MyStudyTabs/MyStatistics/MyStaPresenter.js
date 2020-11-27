@@ -46,20 +46,20 @@ const BigBox = styled.div`
     border: ${(props) => props.theme.boxBorder};
     border-radius: ${(props) => props.theme.borderRadius};
     width: 654.5px;
-    height: 1500px;
-    padding: 10px;
+    height: 100%;
+    padding-top: 10px;
     position: relative;
   }
 `;
 
 const StatisRow = styled.div`
-  width: 634.5px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  margin: 0 10px;
 
   &:first-child {
     height: 60px;
@@ -242,6 +242,16 @@ const ChangeButton = styled.button`
   }
 `;
 
+const Capture = styled.div`
+  width: 100%;
+  height: 740px;
+  margin-bottom: 10px;
+`;
+
+const Capture2 = styled(Capture)`
+  height: 730px;
+`;
+
 let taskArray = [];
 let taskArray_week = [];
 let taskArray_month = [];
@@ -261,7 +271,6 @@ let scheduleList_selectDay_month = [];
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
-let rgbBox = [];
 let scheduleList_selectDay_length = 0;
 // let scheduleList_selectDay_week_length = 0;
 let scheduleList_selectDay_month_length = 0;
@@ -364,7 +373,6 @@ export default ({
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    rgbBox = [];
     // 오늘 생선된 시간이 있는 인덱스 구하기
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
@@ -1121,14 +1129,7 @@ export default ({
       <BigBox id="staCapture_all">
         {StaTabs.currentIndex === 0 && (
           <>
-            <div
-              id="staCapture_top"
-              style={{
-                width: '634.5px',
-                height: '740px',
-                marginBottom: '10px',
-              }}
-            >
+            <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
                 <ChartWrap>
@@ -1170,11 +1171,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </div>
-            <div
-              id="staCapture_bottom"
-              style={{ width: '634.5px', height: '730px' }}
-            >
+            </Capture>
+            <Capture2 id="staCapture_bottom">
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1273,19 +1271,12 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-            </div>
+            </Capture2>
           </>
         )}
         {StaTabs.currentIndex === 1 && (
           <>
-            <div
-              id="staCapture_top"
-              style={{
-                width: '634.5px',
-                height: '740px',
-                marginBottom: '10px',
-              }}
-            >
+            <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
                 <ChartWrap>
@@ -1327,11 +1318,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </div>
-            <div
-              id="staCapture_bottom"
-              style={{ width: '634.5px', height: '730px' }}
-            >
+            </Capture>
+            <Capture2 id="staCapture_bottom">
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1430,19 +1418,12 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-            </div>
+            </Capture2>
           </>
         )}
         {StaTabs.currentIndex === 2 && (
           <>
-            <div
-              id="staCapture_top"
-              style={{
-                width: '634.5px',
-                height: '740px',
-                marginBottom: '10px',
-              }}
-            >
+            <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
                 <ChartWrap>
@@ -1484,11 +1465,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </div>
-            <div
-              id="staCapture_bottom"
-              style={{ width: '634.5px', height: '730px' }}
-            >
+            </Capture>
+            <Capture2 id="staCapture_bottom">
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1587,7 +1565,7 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-            </div>
+            </Capture2>
           </>
         )}
       </BigBox>
