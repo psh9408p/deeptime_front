@@ -13,6 +13,7 @@ import {
   Person_black,
   People_black,
   People_white,
+  List,
 } from './Icons';
 import Avatar from './Avatar';
 import { useQuery } from '@apollo/react-hooks';
@@ -285,6 +286,9 @@ export default withRouter(() => {
                 ) : (
                   <People_white />
                 )}
+              </HeaderLink>
+              <HeaderLink to="/feed" replace>
+                <List fill={pageName === 'feed' ? '#0F4C82' : 'black'} />
               </HeaderLink>
               <HeaderLink target="_blank" to="/userguide" replace>
                 {pageName === 'userguide' ? (

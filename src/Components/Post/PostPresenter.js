@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import TextareaAutosize from 'react-autosize-textarea';
 import FatText from '../FatText';
 import Avatar from '../Avatar';
-import { HeartFull, HeartEmpty, Comment as CommentIcon } from '../Icons';
+import { HeartFull, HeartEmpty, Delete, Edit, Delete_12 } from '../Icons';
 import moment from 'moment';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
+import ObjectCopy from '../ObjectCopy';
 
 const Post = styled.div`
   ${(props) => props.theme.whiteBox};
@@ -56,6 +57,8 @@ const Button = styled.span`
 `;
 
 const Meta = styled.div`
+  display: flex;
+  flex-direction: column;
   padding: 15px;
 `;
 
@@ -94,6 +97,8 @@ const Comments = styled.ul`
 `;
 
 const Comment = styled.li`
+  display: flex;
+  flex-direction: row;
   margin-bottom: 7px;
   span {
     margin-right: 5px;
@@ -101,23 +106,43 @@ const Comment = styled.li`
 `;
 
 const Caption = styled.div`
+  display: inline-block;
+  margin-top: 10px;
+  line-height: 17px;
+  white-space: pre-wrap;
+`;
+
+const HeaderL = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 10px 0px;
-  span {
-    margin-right: 5px;
-  }
-  p {
-    cursor: pointer;
-    color: #999;
-  }
+  align-items: center;
+  width: 50%;
+`;
+
+const HeaderR = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 50%;
+`;
+
+const DeleteDiv = styled.div`
+  width: 12px;
+  float: right;
+`;
+
+const CommetIn = styled.div`
+  width: 100%;
 `;
 
 export default ({
+  id,
   user: { username, avatar },
   location,
   files,
   isLiked,
+  isSelf,
   likeCount,
   createdAt,
   newComment,
@@ -127,8 +152,17 @@ export default ({
   comments,
   selfComments,
   caption,
+  shortCatption,
   moreBool,
   setMoreBool,
+  onDelete,
+  setMyTabs,
+  setEditPostId,
+  locationInput,
+  captionInput,
+  moreComment,
+  setMoreComment,
+  onDeleteComment,
 }) => {
   const nowDate = new Date();
   const createTime = new Date(createdAt);
@@ -141,10 +175,14 @@ export default ({
   const timeGap_cut = nowDate.getTime() - createTime_cut.getTime();
   // 시간 표현 기준 어레이 1시간 / 하루 / 8일 이하(render 표현식에서)
   const gapTerm = [3600000, 86400000];
-  let shortCatption = '';
-  if (caption.length > 15) {
-    shortCatption = caption.slice(0, 8) + '...';
-  }
+
+  let lastComments = ObjectCopy(comments);
+  lastComments.sort(function (a, b) {
+    const aDate = new Date(a.createdAt).getTime();
+    const bDate = new Date(b.createdAt).getTime();
+    return bDate - aDate;
+  });
+  lastComments = lastComments.slice(0, 2);
 
   const params = {
     spaceBetween: 30,
@@ -163,18 +201,46 @@ export default ({
     },
   };
 
+  const commentTotalDiv = (comment) => (
+    <Comment key={comment.id}>
+      <CommetIn>
+        <FatText text={comment.user.username} />
+        {comment.text}
+      </CommetIn>
+      <DeleteDiv>
+        <Delete_12 onClick={() => onDeleteComment(comment.id)} />
+      </DeleteDiv>
+    </Comment>
+  );
+
   return (
     <Post>
       <Header>
-        <Link to={`/${username}`}>
-          <Avatar size="sm" url={avatar} />
-        </Link>
-        <UserColumn>
+        <HeaderL>
           <Link to={`/${username}`}>
-            <FatText text={username} />
+            <Avatar size="sm" url={avatar} />
           </Link>
-          <Location>{location}</Location>
-        </UserColumn>
+          <UserColumn>
+            <Link to={`/${username}`}>
+              <FatText text={username} />
+            </Link>
+            <Location>{location}</Location>
+          </UserColumn>
+        </HeaderL>
+        {isSelf && (
+          <HeaderR>
+            <Edit
+              onClick={() => {
+                setEditPostId(id);
+                locationInput.setValue(location);
+                captionInput.setValue(caption);
+                setMyTabs(2);
+              }}
+            />
+            <span style={{ width: '15px' }} />
+            <Delete onClick={() => onDelete()} />
+          </HeaderR>
+        )}
       </Header>
       <Files>
         <Swiper {...params}>
@@ -199,30 +265,43 @@ export default ({
         </Buttons>
         <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
         <Caption>
-          <FatText text={username} />
+          <FatText margin={'0 5px 0 0'} text={username} />
           {moreBool ? (
-            <>
+            <span>
               {shortCatption}
-              <p onClick={() => setMoreBool(false)}>&nbsp;더 보기</p>
-            </>
+              <span
+                style={{ cursor: 'pointer', color: '#999' }}
+                onClick={() => setMoreBool(false)}
+              >
+                &nbsp;더 보기
+              </span>
+            </span>
           ) : (
-            caption
+            <span style={{ display: 'inlineBlock', wordWrap: 'break-word' }}>
+              {caption}
+            </span>
           )}
         </Caption>
         {comments && (
           <Comments>
-            {comments.map((comment) => (
-              <Comment key={comment.id}>
-                <FatText text={comment.user.username} />
-                {comment.text}
-              </Comment>
-            ))}
-            {selfComments.map((comment) => (
-              <Comment key={comment.id}>
-                <FatText text={comment.user.username} />
-                {comment.text}
-              </Comment>
-            ))}
+            {moreComment ? (
+              <>
+                <span
+                  style={{
+                    cursor: 'pointer',
+                    color: '#999',
+                  }}
+                  onClick={() => setMoreComment(false)}
+                >
+                  댓글 {comments.length}개 모두 보기
+                </span>
+                <div style={{ height: '10px' }} />
+                {lastComments.map((comment) => commentTotalDiv(comment))}
+              </>
+            ) : (
+              <>{comments.map((comment) => commentTotalDiv(comment))}</>
+            )}
+            {selfComments.map((comment) => commentTotalDiv(comment))}
           </Comments>
         )}
         <Timestamp>

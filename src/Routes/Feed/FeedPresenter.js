@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Post from '../../Components/Post';
 import { Add } from '../../Components/Icons';
-import Popup from 'reactjs-popup';
 import PopupButton from '../../Components/Buttons/PopupButton';
 import FatText from '../../Components/FatText';
+import Input_100 from '../../Components/Input_100';
+import Textarea from '../../Components/Textarea';
+
 // 이미지 업로드 관련
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
@@ -53,15 +55,6 @@ const ContentDiv = styled.div`
   margin-bottom: 30px;
 `;
 
-const PreviewImg = styled.canvas`
-  background-image: url(${(props) => props.url});
-  background-size: cover;
-  background-position: center center;
-  width: 200px;
-  height: 260px;
-  margin-right: 30px;
-`;
-
 const ButtonDiv = styled.div`
   display: flex;
   justify-content: center;
@@ -79,16 +72,28 @@ const SubTitle = styled.div`
   margin-bottom: 10px;
 `;
 
-export default ({ feedData, myTabs, setMyTabs }) => {
-  const [files, setFiles] = useState([]);
+const CaptionText = styled(Textarea)`
+  width: 376px;
+  height: 100px;
+  display: inline-block;
+`;
 
-  const processFile = async (error, file) => {
-    console.log(error, file);
-  };
-
+export default ({
+  feedData,
+  myTabs,
+  setMyTabs,
+  location,
+  caption,
+  files,
+  setFiles,
+  onSubmit,
+  allClear,
+  setEditPostId,
+  onEdit,
+}) => {
   return (
     <>
-      {myTabs !== 0 ? (
+      {myTabs === 0 ? (
         <>
           <HeaderDiv>
             <Add
@@ -109,13 +114,19 @@ export default ({ feedData, myTabs, setMyTabs }) => {
                 files={post.files}
                 likeCount={post.likeCount}
                 isLiked={post.isLiked}
+                isSelf={post.isSelf}
                 comments={post.comments}
                 createdAt={post.createdAt}
+                fileKey={post.files.map((file) => file.key)}
+                setMyTabs={setMyTabs}
+                setEditPostId={setEditPostId}
+                locationInput={location}
+                captionInput={caption}
               />
             ))}
           </PostWrap>
         </>
-      ) : (
+      ) : myTabs === 1 ? (
         <ContentBody>
           <ContentTitle text={'게시물 작성'} />
           <SubTitle>파일은 최대 3개 까지 업로드 가능</SubTitle>
@@ -127,16 +138,28 @@ export default ({ feedData, myTabs, setMyTabs }) => {
               onupdatefiles={setFiles}
               instantUpload={false}
               allowProcess={false}
-              onprocessfile={processFile}
               maxFiles={3}
               name="file"
               server={{
                 process: {
                   url: process.env.REACT_APP_BACKEND_URI + '/api/upload/avatar',
-                  onload: processFile,
+                  // onload: processFile,
                 },
               }}
               labelIdle='이미지 파일 드래그 또는 <span class="filepond--label-action">(클릭)</span>'
+            />
+            <Input_100
+              placeholder={'(선택 항목) 위치'}
+              width={'376px'}
+              height={'35px'}
+              margin={'20px 0 10px 0'}
+              bgColor={'#f1f0ef'}
+              {...location}
+            />
+            <CaptionText
+              placeholder={'(필수 항목) 내용'}
+              bgColor={'#f1f0ef'}
+              {...caption}
             />
           </ContentDiv>
           <ButtonDiv>
@@ -144,13 +167,50 @@ export default ({ feedData, myTabs, setMyTabs }) => {
               type="button"
               text={'게시'}
               onClick={() => {
-                console.log('a', files);
+                onSubmit();
               }}
             />
             <PopupButton
               type="button"
               onClick={() => {
                 setMyTabs(0);
+                allClear();
+              }}
+              text={'돌아가기'}
+            />
+          </ButtonDiv>
+        </ContentBody>
+      ) : (
+        <ContentBody>
+          <ContentTitle text={'게시물 수정'} />
+          <ContentDiv>
+            <Input_100
+              placeholder={'(선택 항목) 위치'}
+              width={'376px'}
+              height={'35px'}
+              margin={'20px 0 10px 0'}
+              bgColor={'#f1f0ef'}
+              {...location}
+            />
+            <CaptionText
+              placeholder={'(필수 항목) 내용'}
+              bgColor={'#f1f0ef'}
+              {...caption}
+            />
+          </ContentDiv>
+          <ButtonDiv>
+            <PopupButton
+              type="button"
+              text={'수정'}
+              onClick={() => {
+                onEdit();
+              }}
+            />
+            <PopupButton
+              type="button"
+              onClick={() => {
+                setMyTabs(0);
+                allClear();
               }}
               text={'돌아가기'}
             />
