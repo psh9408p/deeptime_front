@@ -730,22 +730,3 @@ export default ({
     </Wrapper>
   );
 };
-
-// const Posts = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(4, 200px);
-//   grid-template-rows: 200px;
-//   grid-auto-rows: 200px;
-// `
-
-/* <Posts>
-        {posts &&
-          posts.map(post => (
-            <SquarePost
-              key={post.id}
-              likeCount={post.likeCount}
-              commentCount={post.commentCount}
-              file={post.files[0]}
-            />
-          ))}
-      </Posts> */

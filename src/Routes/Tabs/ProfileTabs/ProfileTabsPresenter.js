@@ -6,6 +6,7 @@ import FatText from '../../../Components/FatText';
 import PopupButton from '../../../Components/Buttons/PopupButton';
 import phoneNumberNormalize from '../../../Components/phoneNumberNormalize';
 import Input from '../../../Components/Input';
+import SquarePost from '../../../Components/SquarePost';
 
 const Regist = styled.div`
   display: flex;
@@ -113,6 +114,16 @@ const InputWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
+const Posts = styled.div`
+  margin-top: 20px;
+  display: grid;
+  justify-content: center;
+  grid-gap: 20px;
+  grid-template-columns: repeat(4, 200px);
+  grid-template-rows: 200px;
+  grid-auto-rows: 200px;
+`;
+
 export default ({
   pageIndex,
   User,
@@ -123,7 +134,19 @@ export default ({
   onRegist,
 }) => {
   if (pageIndex === 0) {
-    return <div></div>;
+    return (
+      <Posts>
+        {User.posts &&
+          User.posts.map((post) => (
+            <SquarePost
+              key={post.id}
+              likeCount={post.likeCount}
+              commentCount={post.commentCount}
+              file={post.files[0]}
+            />
+          ))}
+      </Posts>
+    );
   } else if (pageIndex === 1) {
     return (
       <Regist>

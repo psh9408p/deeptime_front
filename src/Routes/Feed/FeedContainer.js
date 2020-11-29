@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'rl-react-helmet';
 import styled from 'styled-components';
 import { FEED_ALL_QUERY, CREATE_POST, EDIT_POST } from './FeedQueries';
@@ -28,14 +28,23 @@ export default () => {
   // if (count === "01") {
   //   window.location.reload()
   // }
+  const feedTerm = 20;
+
   const [myTabs, setMyTabs] = useState(0);
   const [editPostId, setEditPostId] = useState('');
+  const [variables, setVariables] = useState({ first: feedTerm });
   const location = useInput('');
   const caption = useInput('');
 
   const [createPostMutation] = useMutation(CREATE_POST);
   const [editPostMutation] = useMutation(EDIT_POST);
-  const { data: feedData, loading, refetch } = useQuery(FEED_ALL_QUERY);
+  const { data: feedData, loading, refetch, networkStatus } = useQuery(
+    FEED_ALL_QUERY,
+    {
+      variables,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
 
   const [files, setFiles] = useState([]);
 
@@ -47,8 +56,19 @@ export default () => {
   };
 
   const onSubmit = async () => {
+    let sizeCheck = false;
+    files.map((file) => {
+      if (file.fileSize > 1048576) {
+        sizeCheck = true;
+        return;
+      }
+    });
+
     if (files.length === 0) {
       alert('이미지 파일을 최소 1개 이상 등록해주세요.');
+      return;
+    } else if (sizeCheck) {
+      alert('이미지 파일당 최대 크기는 1MB입니다.');
       return;
     } else if (caption.value === '') {
       alert('게시물 내용을 작성하세요.');
@@ -124,17 +144,21 @@ export default () => {
     }
   };
 
+  useEffect(() => {
+    refetch(variables);
+  }, [variables]);
+
   return (
     <Wrapper>
       <Helmet>
         <title>Feed | Prismagram</title>
       </Helmet>
-      {loading && (
+      {networkStatus === 1 && (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
       )}
-      {!loading && feedData && feedData.seeAllFeed && (
+      {networkStatus !== 1 && feedData && feedData.seeAllFeed && (
         <FeedPresenter
           feedData={feedData.seeAllFeed}
           myTabs={myTabs}
@@ -147,6 +171,10 @@ export default () => {
           allClear={allClear}
           setEditPostId={setEditPostId}
           onEdit={onEdit}
+          variables={variables}
+          setVariables={setVariables}
+          feedTerm={feedTerm}
+          networkStatus={networkStatus}
         />
       )}
     </Wrapper>

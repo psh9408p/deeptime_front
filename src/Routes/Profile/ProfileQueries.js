@@ -43,6 +43,16 @@ export const GET_USER = gql`
           createdAt
         }
       }
+      posts {
+        id
+        files {
+          id
+          url
+          key
+        }
+        likeCount
+        commentCount
+      }
     }
   }
 `;

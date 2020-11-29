@@ -29,6 +29,7 @@ const PostContainer = ({
   setEditPostId,
   locationInput,
   captionInput,
+  variables,
 }) => {
   const checkLineBreak = /\r|\n/;
   let shortCatption = caption.slice(0, 8);
@@ -42,6 +43,7 @@ const PostContainer = ({
     morecheck = true;
   }
 
+  const [commentLoad, setCommentLoad] = useState(false);
   const [isLikedS, setIsLiked] = useState(isLiked);
   const [likeCountS, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
@@ -58,10 +60,10 @@ const PostContainer = ({
     variables: { postId: id, text: comment.value },
   });
   const [deletePostMutation] = useMutation(DELETE_POST, {
-    refetchQueries: [{ query: FEED_ALL_QUERY }],
+    refetchQueries: [{ query: FEED_ALL_QUERY, variables }],
   });
   const [deleteCommentMutation] = useMutation(DELETE_COMMENT, {
-    refetchQueries: [{ query: FEED_ALL_QUERY }],
+    refetchQueries: [{ query: FEED_ALL_QUERY, variables }],
   });
   const slide = () => {
     const totalFiles = files.length;
@@ -91,6 +93,7 @@ const PostContainer = ({
     if (which === 13) {
       event.preventDefault();
       try {
+        setCommentLoad(true);
         const {
           data: { addComment },
         } = await addCommentMutation();
@@ -98,6 +101,8 @@ const PostContainer = ({
         comment.setValue('');
       } catch {
         toast.error('댓글을 작성할 수 없습니다.');
+      } finally {
+        setCommentLoad(false);
       }
     }
   };
@@ -185,6 +190,7 @@ const PostContainer = ({
       moreComment={moreComment}
       setMoreComment={setMoreComment}
       onDeleteComment={onDeleteComment}
+      commentLoad={commentLoad}
     />
   );
 };

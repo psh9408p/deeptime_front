@@ -9,6 +9,7 @@ import moment from 'moment';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import ObjectCopy from '../ObjectCopy';
+import Loader_lotate from '../Loader_lotate';
 
 const Post = styled.div`
   ${(props) => props.theme.whiteBox};
@@ -82,11 +83,20 @@ const Timestamp = styled.span`
   border-bottom: ${(props) => props.theme.lightGreyColor} 1px solid;
 `;
 
+const TextareaWrap = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+`;
+
 const Textarea = styled(TextareaAutosize)`
   border: none;
   width: 100%;
   resize: none;
   font-size: 14px;
+  line-height: 17px;
   &:focus {
     outline: none;
   }
@@ -100,6 +110,7 @@ const Comment = styled.li`
   display: flex;
   flex-direction: row;
   margin-bottom: 7px;
+  line-height: 17px;
   span {
     margin-right: 5px;
   }
@@ -163,6 +174,7 @@ export default ({
   moreComment,
   setMoreComment,
   onDeleteComment,
+  commentLoad,
 }) => {
   const nowDate = new Date();
   const createTime = new Date(createdAt);
@@ -315,12 +327,15 @@ export default ({
             ? `${moment(createdAt).format('MM월 DD일')}`
             : `${moment(createdAt).format('YYYY년 MM월 DD일')}`}
         </Timestamp>
-        <Textarea
-          onKeyPress={onKeyPress}
-          placeholder={'댓글 달기...'}
-          value={newComment.value}
-          onChange={newComment.onChange}
-        />
+        <TextareaWrap>
+          {commentLoad && <Loader_lotate position={'absolute'} />}
+          <Textarea
+            onKeyPress={onKeyPress}
+            placeholder={'댓글 달기...'}
+            value={newComment.value}
+            onChange={newComment.onChange}
+          />
+        </TextareaWrap>
       </Meta>
     </Post>
   );

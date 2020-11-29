@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Post from '../../Components/Post';
 import { Add } from '../../Components/Icons';
 import PopupButton from '../../Components/Buttons/PopupButton';
+import Button_custom from '../../Components/Buttons/Button_custom';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Textarea from '../../Components/Textarea';
@@ -11,9 +12,14 @@ import Textarea from '../../Components/Textarea';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginFileValidateSize,
+  FilePondPluginImagePreview,
+);
 
 const HeaderDiv = styled.div`
   display: flex;
@@ -32,6 +38,8 @@ const HeaderDiv = styled.div`
 
 const PostWrap = styled.div`
   margin-top: 60px;
+  width: 100%;
+  max-width: 600px;
 `;
 
 const ContentBody = styled.div`
@@ -78,6 +86,11 @@ const CaptionText = styled(Textarea)`
   display: inline-block;
 `;
 
+const MoreDiv = styled.div`
+  width: 100%;
+  max-width: 600px;
+`;
+
 export default ({
   feedData,
   myTabs,
@@ -90,6 +103,10 @@ export default ({
   allClear,
   setEditPostId,
   onEdit,
+  variables,
+  setVariables,
+  feedTerm,
+  networkStatus,
 }) => {
   return (
     <>
@@ -122,9 +139,21 @@ export default ({
                 setEditPostId={setEditPostId}
                 locationInput={location}
                 captionInput={caption}
+                variables={variables}
               />
             ))}
           </PostWrap>
+          <MoreDiv>
+            <Button_custom
+              margin={'0'}
+              width={'100%'}
+              text={'게시물 20개 더보기'}
+              loading={networkStatus === 4 ? true : false}
+              onClick={() => {
+                setVariables({ first: variables.first + feedTerm });
+              }}
+            />
+          </MoreDiv>
         </>
       ) : myTabs === 1 ? (
         <ContentBody>
@@ -147,6 +176,9 @@ export default ({
                 },
               }}
               labelIdle='이미지 파일 드래그 또는 <span class="filepond--label-action">(클릭)</span>'
+              allowImageValidateSize={true}
+              maxFileSize={'1MB'}
+              labelMaxFileSizeExceeded={'파일 용량(1MB) 초과'}
             />
             <Input_100
               placeholder={'(선택 항목) 위치'}

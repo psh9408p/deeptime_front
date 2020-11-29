@@ -33,8 +33,8 @@ export const FEED_QUERY = gql`
 `;
 
 export const FEED_ALL_QUERY = gql`
-  {
-    seeAllFeed {
+  query seeAllFeed($first: Int!) {
+    seeAllFeed(first: $first) {
       id
       location
       caption
