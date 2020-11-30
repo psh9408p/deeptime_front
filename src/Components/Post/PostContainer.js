@@ -10,7 +10,6 @@ import {
   DELETE_COMMENT,
 } from './PostQueries';
 import { toast } from 'react-toastify';
-import { FEED_ALL_QUERY } from '../../Routes/Feed/FeedQueries';
 import ObjectCopy from '../ObjectCopy';
 
 const PostContainer = ({
@@ -29,6 +28,7 @@ const PostContainer = ({
   setEditPostId,
   locationInput,
   captionInput,
+  refetchQuerie,
   variables,
 }) => {
   const checkLineBreak = /\r|\n/;
@@ -60,10 +60,10 @@ const PostContainer = ({
     variables: { postId: id, text: comment.value },
   });
   const [deletePostMutation] = useMutation(DELETE_POST, {
-    refetchQueries: [{ query: FEED_ALL_QUERY, variables }],
+    refetchQueries: [{ query: refetchQuerie, variables }],
   });
   const [deleteCommentMutation] = useMutation(DELETE_COMMENT, {
-    refetchQueries: [{ query: FEED_ALL_QUERY, variables }],
+    refetchQueries: [{ query: refetchQuerie, variables }],
   });
   const slide = () => {
     const totalFiles = files.length;

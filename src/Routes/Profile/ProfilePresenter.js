@@ -259,6 +259,15 @@ const NonFollow = styled.div`
   color: #7f8c8d;
 `;
 
+const BlackBack = styled.div`
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 50%;
+`;
+
 export default ({
   userData,
   logOut,

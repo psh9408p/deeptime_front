@@ -35,6 +35,7 @@ export default () => {
   const [studyBool, setStudyBool] = useState(false);
   const [newTodoView, setNewTodoView] = useState(false);
   const [popupView, setPopupView] = useState(false);
+  const [onLoading, setOnLoading] = useState(false);
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
@@ -104,6 +105,8 @@ export default () => {
         popupView={popupView}
         setPopupView={setPopupView}
         goWithMutation={goWithMutation}
+        onLoading={onLoading}
+        setOnLoading={setOnLoading}
       />
     );
   }

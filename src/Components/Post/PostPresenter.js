@@ -16,7 +16,6 @@ const Post = styled.div`
   width: 100%;
   max-width: 600px;
   user-select: none;
-  margin-bottom: 25px;
   a {
     color: inherit;
   }
@@ -43,14 +42,11 @@ const Files = styled.div``;
 const File = styled.img`
   max-width: 100%;
   width: 100%;
-  height: 600px;
-  /* position: absolute; */
+  max-height: 657.5px;
   top: 0;
-  /* background-image: url(${(props) => props.src}); */
-  background-size: cover;
+  background-image: url(${(props) => props.src});
+  background-size: contain;
   background-position: center;
-  /* opacity: ${(props) => (props.showing ? 1 : 0)}; */
-  /* transition: opacity 0.5s linear; */
 `;
 
 const Button = styled.span`

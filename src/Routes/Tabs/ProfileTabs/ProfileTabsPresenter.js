@@ -140,6 +140,7 @@ export default ({
           User.posts.map((post) => (
             <SquarePost
               key={post.id}
+              postId={post.id}
               likeCount={post.likeCount}
               commentCount={post.commentCount}
               file={post.files[0]}

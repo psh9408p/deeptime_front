@@ -7,6 +7,7 @@ import Button_custom from '../../Components/Buttons/Button_custom';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Textarea from '../../Components/Textarea';
+import { FEED_ALL_QUERY } from './FeedQueries';
 
 // 이미지 업로드 관련
 import { FilePond, registerPlugin } from 'react-filepond';
@@ -122,25 +123,28 @@ export default ({
           </HeaderDiv>
           <PostWrap>
             {feedData.map((post) => (
-              <Post
-                key={post.id}
-                id={post.id}
-                location={post.location}
-                caption={post.caption}
-                user={post.user}
-                files={post.files}
-                likeCount={post.likeCount}
-                isLiked={post.isLiked}
-                isSelf={post.isSelf}
-                comments={post.comments}
-                createdAt={post.createdAt}
-                fileKey={post.files.map((file) => file.key)}
-                setMyTabs={setMyTabs}
-                setEditPostId={setEditPostId}
-                locationInput={location}
-                captionInput={caption}
-                variables={variables}
-              />
+              <div style={{ marginBottom: '25px' }}>
+                <Post
+                  key={post.id}
+                  id={post.id}
+                  location={post.location}
+                  caption={post.caption}
+                  user={post.user}
+                  files={post.files}
+                  likeCount={post.likeCount}
+                  isLiked={post.isLiked}
+                  isSelf={post.isSelf}
+                  comments={post.comments}
+                  createdAt={post.createdAt}
+                  fileKey={post.files.map((file) => file.key)}
+                  setMyTabs={setMyTabs}
+                  setEditPostId={setEditPostId}
+                  locationInput={location}
+                  captionInput={caption}
+                  refetchQuerie={FEED_ALL_QUERY}
+                  variables={variables}
+                />
+              </div>
             ))}
           </PostWrap>
           <MoreDiv>

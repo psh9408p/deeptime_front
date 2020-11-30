@@ -729,6 +729,8 @@ export default ({
   popupView,
   setPopupView,
   goWithMutation,
+  onLoading,
+  setOnLoading,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1282,59 +1284,62 @@ export default ({
   };
 
   const onStartSchedule = async () => {
-    // 5분 단위 최소 5분 검증
-    if (startScheduleTerm.value < 5) {
-      alert('스케줄을 시작하기 위한 최소 시간은 5분입니다.');
-      return;
-    } else if (startScheduleTerm.value % 5 !== 0) {
-      alert('스케줄 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
-      return;
-    }
-    // 업데이트 오래걸릴 수 있어 toast 위로
-    toast.info('새로운 스케줄을 시작 중...');
-    // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
-    await myInfoRefetch();
-    await todayGraph_calculate();
-    if (nowScheduleIndex !== -1) {
-      alert(
-        '현재 진행 중인 스케줄이 있습니다.\n현재 스케줄 마무리 후 시도해주세요.',
-      );
-      return;
-    }
-    // 사전 점검
-    if (scheduleTitle.value === '') {
-      alert('To Do List를 입력하세요.');
-      return;
-    }
-    if (scheduleTitle.value.includes('/')) {
-      alert(
-        "To Do List는 1개만 입력 가능합니다.\n즉, '/'는 입력이 불가능합니다.",
-      );
-      return;
-    }
-    // 입력 시간이 최대 시간이내 인지 점검
-    const nowDate = new Date();
-    const maxTime = maxTimeCal(nowDate);
-    if (maxTime < startScheduleTerm.value) {
-      alert(`현재 가능한 최대 설정 시간은 ${maxTime}분 입니다.`);
-      startScheduleTerm.setValue(maxTime);
-      return;
-    }
-    // todolist 중복 체크
-    const findTodo = (i) =>
-      i.subject.id === mySubjectList2.option && i.name === scheduleTitle.value;
-    const existIndex = todolistData_new.findIndex(findTodo);
-    const existTodo = existIndex === -1 ? false : true;
-    // 입력 시간 계산
-    const start = new Date();
-    start.setTime(nowDate.getTime());
-    start.setSeconds(0);
-    start.setMilliseconds(0);
-    start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
-    const end = new Date();
-    end.setTime(start.getTime() + startScheduleTerm.value * 60000);
-
     try {
+      setOnLoading(true);
+
+      // 5분 단위 최소 5분 검증
+      if (startScheduleTerm.value < 5) {
+        alert('스케줄을 시작하기 위한 최소 시간은 5분입니다.');
+        return;
+      } else if (startScheduleTerm.value % 5 !== 0) {
+        alert('스케줄 시간은 5분 단위로 입력해주세요.\n예) 5분, 10분, 15분...');
+        return;
+      }
+      // 업데이트 오래걸릴 수 있어 toast 위로
+      toast.info('새로운 스케줄을 시작 중...');
+      // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
+      await myInfoRefetch();
+      await todayGraph_calculate();
+      if (nowScheduleIndex !== -1) {
+        alert(
+          '현재 진행 중인 스케줄이 있습니다.\n현재 스케줄 마무리 후 시도해주세요.',
+        );
+        return;
+      }
+      // 사전 점검
+      if (scheduleTitle.value === '') {
+        alert('To Do List를 입력하세요.');
+        return;
+      }
+      if (scheduleTitle.value.includes('/')) {
+        alert(
+          "To Do List는 1개만 입력 가능합니다.\n즉, '/'는 입력이 불가능합니다.",
+        );
+        return;
+      }
+      // 입력 시간이 최대 시간이내 인지 점검
+      const nowDate = new Date();
+      const maxTime = maxTimeCal(nowDate);
+      if (maxTime < startScheduleTerm.value) {
+        alert(`현재 가능한 최대 설정 시간은 ${maxTime}분 입니다.`);
+        startScheduleTerm.setValue(maxTime);
+        return;
+      }
+      // todolist 중복 체크
+      const findTodo = (i) =>
+        i.subject.id === mySubjectList2.option &&
+        i.name === scheduleTitle.value;
+      const existIndex = todolistData_new.findIndex(findTodo);
+      const existTodo = existIndex === -1 ? false : true;
+      // 입력 시간 계산
+      const start = new Date();
+      start.setTime(nowDate.getTime());
+      start.setSeconds(0);
+      start.setMilliseconds(0);
+      start.setMinutes(Math.floor(start.getMinutes() / 5) * 5);
+      const end = new Date();
+      end.setTime(start.getTime() + startScheduleTerm.value * 60000);
+
       const {
         data: { startSchedule_study },
       } = await startScheduleMutation({
@@ -1364,6 +1369,8 @@ export default ({
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+    } finally {
+      setOnLoading(false);
     }
   };
 
@@ -2486,8 +2493,10 @@ export default ({
               bgColor={'#0F4C82'}
               color={'white'}
               padding={'0'}
-              onClick={() => {
-                onStartSchedule();
+              onClick={async () => {
+                if (!onLoading) {
+                  onStartSchedule();
+                }
               }}
             />
           </ScheStart>

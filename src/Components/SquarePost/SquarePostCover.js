@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { HeartFull, CommentFull } from './Icons';
+import { HeartFull, CommentFull } from '../Icons';
+import Popup from 'reactjs-popup';
+import SquarePostMain from './SquarePostMain';
 
 const Overlay = styled.div`
+  cursor: pointer;
   background-color: rgba(0, 0, 0, 0.6);
   width: 100%;
   height: 100%;
@@ -20,7 +23,6 @@ const Overlay = styled.div`
 const Container = styled.div`
   background-image: url(${(props) => props.bg});
   background-size: cover;
-  cursor: pointer;
   &:hover {
     ${Overlay} {
       opacity: 1;
@@ -42,18 +44,37 @@ const NumberText = styled.span`
   font-size: 16px;
 `;
 
-const SquarePost = ({ likeCount, commentCount, file }) => (
+const PopupCustom = styled(Popup)`
+  &-content {
+    overflow-y: auto !important;
+    width: auto !important;
+    /* height: 100% !important; */
+    max-height: 800px !important;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const SquarePost = ({ postId, likeCount, commentCount, file }) => (
   <Container bg={file.url}>
-    <Overlay>
-      <Number>
-        <HeartFull />
-        <NumberText>{likeCount}</NumberText>
-      </Number>
-      <Number>
-        <CommentFull />
-        <NumberText>{commentCount}</NumberText>
-      </Number>
-    </Overlay>
+    <PopupCustom
+      trigger={
+        <Overlay>
+          <Number>
+            <HeartFull />
+            <NumberText>{likeCount}</NumberText>
+          </Number>
+          <Number>
+            <CommentFull />
+            <NumberText>{commentCount}</NumberText>
+          </Number>
+        </Overlay>
+      }
+      // closeOnDocumentClick={false}
+      lockScroll={true}
+      modal
+    >
+      {(close) => <SquarePostMain postId={postId} />}
+    </PopupCustom>
   </Container>
 );
 
