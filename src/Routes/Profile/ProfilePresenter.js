@@ -57,15 +57,12 @@ const SettingLink = styled(Link)`
 const Counts = styled.ul`
   display: flex;
   margin: 15px 0px;
+  font-size: 16px;
+  font-weight: 600;
 `;
 
 const Count = styled.li`
-  font-size: 16px;
-  &:not(:last-child) {
-    margin-right: 10px;
-  }
   &:not(:first-child) {
-    font-weight: 600;
     color: #7f8c8d;
   }
 `;
@@ -259,13 +256,8 @@ const NonFollow = styled.div`
   color: #7f8c8d;
 `;
 
-const BlackBack = styled.div`
-  position: absolute;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  opacity: 50%;
+const BlankDiv = styled.div`
+  width: 10px;
 `;
 
 export default ({
@@ -573,10 +565,21 @@ export default ({
             <Count>
               <FatText text={'사용 범주:'} />
             </Count>
-            <Count>{studyGroup},</Count>
             {studyGroup !== '해당 없음' && (
               <>
-                <Count>{studyGroup2},</Count>
+                <BlankDiv />
+                <Count>{studyGroup}</Count>
+              </>
+            )}
+            {studyGroup2 !== '해당 없음' && (
+              <>
+                ,<BlankDiv />
+                <Count>{studyGroup2}</Count>
+              </>
+            )}
+            {studyGroup3 !== '해당 없음' && (
+              <>
+                ,<BlankDiv />
                 <Count>{studyGroup3}</Count>
               </>
             )}
@@ -687,7 +690,7 @@ export default ({
               )}
             </PopupCustom3>
           </SubInfoDiv>
-          {bio === '' ? (
+          {isSelf && bio === '' ? (
             <Button_custom
               text={'자기소개 작성'}
               width={'120px'}

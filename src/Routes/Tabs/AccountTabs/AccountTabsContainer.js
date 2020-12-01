@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import useInput from '../../../Hooks/useInput';
 import useSelect from '../../../Hooks/useSelect';
 import useSelect_dynamic from '../../../Hooks/useSelect_dynamic';
@@ -24,6 +25,8 @@ import {
 import { toast } from 'react-toastify';
 
 export default ({ pageIndex, meData, meRefetch }) => {
+  let history = useHistory();
+
   const maxLen_10 = (value) => value.length <= 10;
   const minLen_6 = (value) => value.length < 6 && value.length > 0;
   const minLen_150 = (value) => value.length < 151;
@@ -147,6 +150,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
           alert('프로필을 수정할 수 없습니다.');
         } else {
           await meRefetch();
+          history.push(`${meData.username}`);
           toast.success('프로필 수정이 완료되었습니다.');
         }
       } catch (e) {
@@ -176,6 +180,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
           alert('프로필을 수정할 수 없습니다.');
         } else {
           await meRefetch();
+          history.push(`${meData.username}`);
           toast.success('프로필 수정이 완료되었습니다.');
         }
       } catch (e) {
@@ -209,6 +214,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
           password_pre.setValue('');
           password.setValue('');
           password2.setValue('');
+          history.push(`${meData.username}`);
           toast.success('비밀번호 수정이 완료되었습니다.');
         }
       } catch (e) {
