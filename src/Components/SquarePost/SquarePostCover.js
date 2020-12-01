@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { useMutation } from '@apollo/react-hooks';
 import { HeartFull, CommentFull } from '../Icons';
+import useInput from '../../Hooks/useInput';
 import Popup from 'reactjs-popup';
 import SquarePostMain from './SquarePostMain';
+import { EDIT_POST } from '../../Routes/Feed/FeedQueries';
+import PopupButton from '../Buttons/PopupButton';
+import FatText from '../FatText';
+import Input_100 from '../Input_100';
+import Textarea from '../../Components/Textarea';
+import { toast } from 'react-toastify';
+import { FEED_ONE_QUERY } from './SquarePostQueries';
 
 const Overlay = styled.div`
   cursor: pointer;
@@ -47,41 +55,151 @@ const NumberText = styled.span`
 const PopupCustom = styled(Popup)`
   &-content {
     overflow-y: auto !important;
-    width: auto !important;
-    /* height: 100% !important; */
-    max-height: 800px !important;
+    width: 598px !important;
+    max-height: ${(props) => props.height + 'px'} !important;
     border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const SquarePost = ({ postId, likeCount, commentCount, file }) => (
-  <Container bg={file.url}>
-    <PopupCustom
-      trigger={
-        <Overlay>
-          <Number>
-            <HeartFull />
-            <NumberText>{likeCount}</NumberText>
-          </Number>
-          <Number>
-            <CommentFull />
-            <NumberText>{commentCount}</NumberText>
-          </Number>
-        </Overlay>
+const ContentBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px 20px;
+`;
+
+const ContentTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const ContentDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const CaptionText = styled(Textarea)`
+  width: 376px;
+  height: 100px;
+  display: inline-block;
+`;
+
+export default ({ postId, likeCount, commentCount, file }) => {
+  const height = window.screen.height * 0.75;
+  const [viewTab, setViewTab] = useState(0);
+  const location = useInput('');
+  const caption = useInput('');
+
+  const allClear = () => {
+    location.setValue('');
+    caption.setValue('');
+  };
+
+  const [editPostMutation] = useMutation(EDIT_POST, {
+    refetchQueries: [{ query: FEED_ONE_QUERY, variables: { postId } }],
+  });
+
+  const onEdit = async () => {
+    try {
+      toast.info('게시물 수정 중...');
+      const {
+        data: { editPost },
+      } = await editPostMutation({
+        variables: {
+          postId: postId,
+          location: location.value,
+          caption: caption.value,
+        },
+      });
+      if (!editPost) {
+        alert('게시물을 수정할 수 없습니다.');
+      } else {
+        allClear();
+        setViewTab(0);
+        toast.success('게시물이 수정 되었습니다.');
       }
-      // closeOnDocumentClick={false}
-      lockScroll={true}
-      modal
-    >
-      {(close) => <SquarePostMain postId={postId} />}
-    </PopupCustom>
-  </Container>
-);
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
 
-SquarePost.propTypes = {
-  likeCount: PropTypes.number.isRequired,
-  commentCount: PropTypes.number.isRequired,
-  file: PropTypes.object.isRequired,
+  return (
+    <Container bg={file.url}>
+      <PopupCustom
+        height={height}
+        trigger={
+          <Overlay>
+            <Number>
+              <HeartFull />
+              <NumberText>{likeCount}</NumberText>
+            </Number>
+            <Number>
+              <CommentFull />
+              <NumberText>{commentCount}</NumberText>
+            </Number>
+          </Overlay>
+        }
+        lockScroll={true}
+        modal
+      >
+        {(close) =>
+          viewTab === 0 ? (
+            <SquarePostMain
+              postId={postId}
+              setViewTab={setViewTab}
+              location={location}
+              caption={caption}
+              close={close}
+            />
+          ) : (
+            <ContentBody>
+              <ContentTitle text={'게시물 수정'} />
+              <ContentDiv>
+                <Input_100
+                  placeholder={'(선택 항목) 위치'}
+                  width={'376px'}
+                  height={'35px'}
+                  margin={'20px 0 10px 0'}
+                  bgColor={'#f1f0ef'}
+                  {...location}
+                />
+                <CaptionText
+                  placeholder={'(필수 항목) 내용'}
+                  bgColor={'#f1f0ef'}
+                  {...caption}
+                />
+              </ContentDiv>
+              <ButtonDiv>
+                <PopupButton
+                  type="button"
+                  text={'수정'}
+                  onClick={() => {
+                    onEdit();
+                  }}
+                />
+                <PopupButton
+                  type="button"
+                  onClick={() => {
+                    setViewTab(0);
+                    allClear();
+                  }}
+                  text={'돌아가기'}
+                />
+              </ButtonDiv>
+            </ContentBody>
+          )
+        }
+      </PopupCustom>
+    </Container>
+  );
 };
-
-export default SquarePost;

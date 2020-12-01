@@ -28,8 +28,11 @@ const PostContainer = ({
   setEditPostId,
   locationInput,
   captionInput,
+  refetchQuerie_deletePost,
+  variables_deletePost,
   refetchQuerie,
   variables,
+  close,
 }) => {
   const checkLineBreak = /\r|\n/;
   let shortCatption = caption.slice(0, 8);
@@ -59,11 +62,18 @@ const PostContainer = ({
   const [addCommentMutation] = useMutation(ADD_COMMENT, {
     variables: { postId: id, text: comment.value },
   });
+  // Feed에서 포스트 삭제시, 프로필에서 포스트 삭제시 리페치쿼리 해줘야하는게 다름
+  const postDelQuery = refetchQuerie_deletePost
+    ? refetchQuerie_deletePost
+    : refetchQuerie;
+  const postDelVariables = variables_deletePost
+    ? variables_deletePost
+    : variables;
   const [deletePostMutation] = useMutation(DELETE_POST, {
-    refetchQueries: [{ query: refetchQuerie, variables }],
+    refetchQueries: [{ query: postDelQuery, variables: postDelVariables }],
   });
   const [deleteCommentMutation] = useMutation(DELETE_COMMENT, {
-    refetchQueries: [{ query: refetchQuerie, variables }],
+    refetchQueries: [{ query: refetchQuerie, variables: variables }],
   });
   const slide = () => {
     const totalFiles = files.length;
@@ -125,6 +135,10 @@ const PostContainer = ({
       if (!deletePost) {
         alert('게시물을 삭제할 수 없습니다.');
       } else {
+        if (typeof close === 'function') {
+          // 프로필에서 팝업 닫기
+          close();
+        }
         toast.success('게시물이 삭제 되었습니다.');
       }
     } catch (e) {
