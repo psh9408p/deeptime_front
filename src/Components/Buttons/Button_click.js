@@ -14,6 +14,7 @@ const Container = styled.button`
   color: #fff;
   background-color: ${(props) => props.theme.classicGray};
   border: none;
+  outline: none;
   border-radius: 5px;
   /* box-shadow: 0 3px #999; */
   :hover {

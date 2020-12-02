@@ -60,31 +60,31 @@ const Meta = styled.div`
 `;
 
 const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   ${Button} {
     &:first-child {
-      margin-right: 10px;
+      margin-right: 5px;
     }
   }
-  margin-bottom: 10px;
 `;
 
 const Timestamp = styled.span`
   font-weight: 400;
   text-transform: uppercase;
   opacity: 0.5;
-  display: block;
   font-size: 12px;
-  margin: 10px 0px;
-  padding-bottom: 10px;
-  border-bottom: ${(props) => props.theme.lightGreyColor} 1px solid;
 `;
 
 const TextareaWrap = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+  margin-top: 10px;
 `;
 
 const Textarea = styled(TextareaAutosize)`
@@ -93,6 +93,10 @@ const Textarea = styled(TextareaAutosize)`
   resize: none;
   font-size: 14px;
   line-height: 17px;
+  height: 27px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.inputGray};
   &:focus {
     outline: none;
   }
@@ -141,6 +145,12 @@ const DeleteDiv = styled.div`
 
 const CommetIn = styled.div`
   width: 100%;
+`;
+
+const LikeWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export default ({
@@ -264,14 +274,24 @@ export default ({
       </Files>
       <Meta>
         <Buttons>
-          <Button onClick={toggleLike}>
-            {isLiked ? <HeartFull /> : <HeartEmpty />}
-          </Button>
-          {/* <Button>
-          <CommentIcon />
-        </Button> */}
+          <LikeWrap>
+            <Button onClick={toggleLike}>
+              {isLiked ? <HeartFull /> : <HeartEmpty />}
+            </Button>
+            <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
+          </LikeWrap>
+          <Timestamp>
+            {timeGap < gapTerm[0]
+              ? `${Math.floor(timeGap / 60000)}분 전`
+              : timeGap < gapTerm[1]
+              ? `${Math.floor(timeGap / 3600000)}시간 전`
+              : Math.floor(timeGap_cut / 86400000) < 8
+              ? `${Math.floor(timeGap_cut / 86400000)}일 전`
+              : createTime.getFullYear() === nowDate.getFullYear()
+              ? `${moment(createdAt).format('MM월 DD일')}`
+              : `${moment(createdAt).format('YYYY년 MM월 DD일')}`}
+          </Timestamp>
         </Buttons>
-        <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
         <Caption>
           <FatText margin={'0 5px 0 0'} text={username} />
           {moreBool ? (
@@ -312,17 +332,6 @@ export default ({
             {selfComments.map((comment) => commentTotalDiv(comment))}
           </Comments>
         )}
-        <Timestamp>
-          {timeGap < gapTerm[0]
-            ? `${Math.floor(timeGap / 60000)}분 전`
-            : timeGap < gapTerm[1]
-            ? `${Math.floor(timeGap / 3600000)}시간 전`
-            : Math.floor(timeGap_cut / 86400000) < 8
-            ? `${Math.floor(timeGap_cut / 86400000)}일 전`
-            : createTime.getFullYear() === nowDate.getFullYear()
-            ? `${moment(createdAt).format('MM월 DD일')}`
-            : `${moment(createdAt).format('YYYY년 MM월 DD일')}`}
-        </Timestamp>
         <TextareaWrap>
           {commentLoad && <Loader_lotate position={'absolute'} />}
           <Textarea

@@ -32,6 +32,7 @@ const HeaderDiv = styled.div`
   height: 50px;
   padding: 10px;
   border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
   background-color: white;
   position: fixed !important;
   z-index: 10;

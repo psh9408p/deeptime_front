@@ -18,6 +18,7 @@ const Overlay = styled.div`
   background-color: rgba(0, 0, 0, 0.6);
   width: 100%;
   height: 100%;
+  border-radius: 5%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,6 +32,7 @@ const Overlay = styled.div`
 const Container = styled.div`
   background-image: url(${(props) => props.bg});
   background-size: cover;
+  border-radius: 5%;
   &:hover {
     ${Overlay} {
       opacity: 1;

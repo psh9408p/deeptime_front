@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'rl-react-helmet';
 import styled from 'styled-components';
 import { FEED_ALL_QUERY, CREATE_POST, EDIT_POST } from './FeedQueries';
 import { useQuery, useMutation } from '@apollo/react-hooks';
@@ -150,9 +149,6 @@ export default () => {
 
   return (
     <Wrapper>
-      <Helmet>
-        <title>Feed | Prismagram</title>
-      </Helmet>
       {networkStatus === 1 && (
         <LoaderWrapper>
           <Loader />
