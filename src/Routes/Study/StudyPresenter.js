@@ -911,6 +911,7 @@ export default ({
     const target = document.querySelector('#capture');
     html2canvas(target, {
       width: target.clientWidth + 20,
+      useCORS: true,
     }).then((canvas) => {
       // document.body.appendChild(canvas);
       saveAs(
@@ -1702,8 +1703,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      LoadCamera();
-      LoadModel();
+      // LoadCamera();
+      // LoadModel();
       isFirstRun.current = false;
       return;
     }
