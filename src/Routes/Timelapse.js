@@ -69,7 +69,7 @@ const ButtonWrap = styled.div`
 export default () => {
   const videoWidth = useInput(500);
   const videoHeight = useInput(300);
-  const videoFPS = useInput(300);
+  const videoFPS = useInput(100);
 
   const Whammy = require('whammy/whammy');
 
@@ -100,11 +100,13 @@ export default () => {
 
         canvas.width = videoWidth.value;
         canvas.height = videoHeight.value;
+        // video = new Whammy.Video(videoFPS.value);
         video = new Whammy.Video(videoFPS.value);
 
         //if we have images loaded
         if (filesarr.length > 0) {
           //loop through them and process
+          console.log(filesarr);
           for (let i = 0; i < filesarr.length; i++) {
             var file = filesarr[i];
             if (file.type.match(/image.*/)) {
@@ -147,7 +149,9 @@ export default () => {
     files.addEventListener(
       'change',
       function (e) {
-        filesarr = e.target.files;
+        filesarr = [].slice.call(e.target.files).sort(function (a, b) {
+          return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+        });
         document.getElementById('status').style.color = '#0F4C82';
         document.getElementById('status').innerHTML =
           '옵션을 설정하고 [타임랩스 만들기]를 눌러주세요';
