@@ -26,6 +26,7 @@ import {
   Flag,
   Delete,
   Add_12,
+  Logo,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -247,12 +248,32 @@ const CanvasBox = styled.canvas`
 `;
 
 const AvatarBox = styled.div`
-  display: flex;
+  display: ${(props) => props.display};
   justify-content: center;
   position: absolute;
   z-index: 1;
   width: 100%;
   height: 100%;
+`;
+
+const AvatarBoxCover = styled.div`
+  display: ${(props) => props.display};
+  justify-content: center;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+`;
+
+const WhiteBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: ${(props) => props.theme.bgColor}; */
+  font-size: 22px;
+  font-weight: 600;
+  width: 100%;
+  height: 110px;
 `;
 
 const VideoWrap = styled.div`
@@ -405,7 +426,7 @@ const SetDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 460px !important;
-    height: 400px !important;
+    height: 440px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -731,6 +752,8 @@ export default ({
   goWithMutation,
   onLoading,
   setOnLoading,
+  coverView,
+  setCoverView,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -768,6 +791,9 @@ export default ({
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
+  const [timelapse, setTimelapse] = useState(
+    myInfoData.studyDefaultSet.timelapseRecord,
+  );
   const [dDayOn, setDDayOn] = useState(myInfoData.studyDefaultSet.dDayOn);
   const dDateName = useInput(myInfoData.studyDefaultSet.dDateName, max10);
   const autoRefreshTerm = useInput(
@@ -801,6 +827,13 @@ export default ({
     true,
   );
 
+  const timelapseSwitch = () => {
+    if (timelapse) {
+      setTimelapse(false);
+    } else {
+      setTimelapse(true);
+    }
+  };
   const recordSwitch = () => {
     if (nonScheduleRecord) {
       setNonScheduleRecord(false);
@@ -919,6 +952,8 @@ export default ({
         'deeptime_play_' + file_tail + '.png',
       );
     });
+    // 팔로워 영역 임시 화면 꺼주기
+    setCoverView(false);
   };
 
   const maxTimeCal = (nowDate) => {
@@ -1000,6 +1035,7 @@ export default ({
         data: { editStudySet },
       } = await editStudySetMutation({
         variables: {
+          timelapseRecord: timelapse,
           nonScheduleRecord,
           autoRefresh,
           autoRefreshTerm: Number(autoRefreshTerm.value),
@@ -1648,7 +1684,7 @@ export default ({
       setStudyBool(false);
     }
   };
-  useInterval(() => {
+  useInterval(async () => {
     // console.log(timeCount);
     updateTime();
     if (modelPose !== null && modelDetect !== null) {
@@ -1675,6 +1711,11 @@ export default ({
           existToggleMutation({
             variables: { email: userEmail, existToggle: true },
           });
+          // 타임랩스용 이미지 저장
+          if (timelapse) {
+            await setCoverView(true);
+            onImgSave();
+          }
         } else if (finalDecision === 2) {
           // console.log('Final decision : false');
           existToggleMutation({
@@ -1703,8 +1744,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
+      LoadCamera();
+      LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -2154,9 +2195,9 @@ export default ({
             <br />
             <VideoText>카메라 로딩중...</VideoText>
             <span style={{ color: '#DB4437' }}>
-              (로딩 중 조작, 창 닫기 금지!!!)
+              (로딩 중 조작, 닫기 금지!!!)
             </span>
-            <AvatarBox>
+            <AvatarBox display={coverView ? 'none' : 'flex'}>
               <FixedList
                 height={110}
                 width={450}
@@ -2167,6 +2208,11 @@ export default ({
                 {Avatars}
               </FixedList>
             </AvatarBox>
+            <AvatarBoxCover display={coverView ? 'flex' : 'none'}>
+              <WhiteBox>
+                <Logo />
+              </WhiteBox>
+            </AvatarBoxCover>
             <CanvasBox ref={canvas1} />
             <VideoBox ref={video1} playsInline autoPlay muted />
           </VideoWrap>
@@ -2188,7 +2234,8 @@ export default ({
               </DDayDiv>
               <SetDiv>
                 <Button_capture
-                  onClick={() => {
+                  onClick={async () => {
+                    await setCoverView(true);
                     onImgSave();
                   }}
                 />
@@ -2247,6 +2294,15 @@ export default ({
                               off={false}
                               value={nonScheduleRecord}
                               onChange={recordSwitch}
+                            />
+                          </SetContentBox>
+                          <SetContentBox>
+                            타임랩스용 자동 화면캡처 :　
+                            <Switch
+                              on={true}
+                              off={false}
+                              value={timelapse}
+                              onChange={timelapseSwitch}
                             />
                           </SetContentBox>
                           <SetContentBox>

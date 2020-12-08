@@ -86,6 +86,7 @@ export const EXTENSION_SCHEDULE = gql`
 
 export const EDIT_STUDYSET = gql`
   mutation editStudySet(
+    $timelapseRecord: Boolean
     $nonScheduleRecord: Boolean
     $autoRefresh: Boolean
     $autoRefreshTerm: Int
@@ -98,6 +99,7 @@ export const EDIT_STUDYSET = gql`
     $dDate: String
   ) {
     editStudySet(
+      timelapseRecord: $timelapseRecord
       nonScheduleRecord: $nonScheduleRecord
       autoRefresh: $autoRefresh
       autoRefreshTerm: $autoRefreshTerm

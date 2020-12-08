@@ -56,6 +56,7 @@ export const ME = gql`
         }
       }
       studyDefaultSet {
+        timelapseRecord
         nonScheduleRecord
         autoRefresh
         autoRefreshTerm
