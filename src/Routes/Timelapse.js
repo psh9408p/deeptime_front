@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Input from '../Components/Input';
 import useInput from '../Hooks/useInput';
 import FatText from '../Components/FatText';
+import getBlobDuration from 'get-blob-duration';
 
 const Wrapper = styled.div`
   display: flex;
@@ -70,6 +71,8 @@ export default () => {
   const videoWidth = useInput(500);
   const videoHeight = useInput(300);
   const videoFPS = useInput(100);
+  const [maxValue, setMaxValue] = useState(0);
+  const [progView, setProgView] = useState(false);
 
   const Whammy = require('whammy/whammy');
 
@@ -91,26 +94,27 @@ export default () => {
 
     createvideo.addEventListener(
       'click',
-      function () {
+      async function () {
+        setProgView(true);
+
         document.getElementById('status').style.color = 'black';
         document.getElementById('status').innerHTML = '타임랩스 만드는 중...';
 
         document.getElementById('awesome').src = '';
         ctx = 0;
 
-        canvas.width = videoWidth.value;
-        canvas.height = videoHeight.value;
-        // video = new Whammy.Video(videoFPS.value);
-        video = new Whammy.Video(videoFPS.value);
+        canvas.width = document.getElementById('width').value;
+        canvas.height = document.getElementById('height').value;
+        video = new Whammy.Video(document.getElementById('framerate').value);
 
         //if we have images loaded
         if (filesarr.length > 0) {
           //loop through them and process
-          console.log(filesarr);
           for (let i = 0; i < filesarr.length; i++) {
             var file = filesarr[i];
             if (file.type.match(/image.*/)) {
-              process(file);
+              console.log('aa');
+              await process(file);
             } else {
               document.getElementById('status').style.color = 'rad';
               document.getElementById('status').innerHTML =
@@ -149,8 +153,18 @@ export default () => {
     files.addEventListener(
       'change',
       function (e) {
+        // 파일 입력시 progress 초기화 및 max값 변경
+        if (document.getElementById('progress')) {
+          document.getElementById('progress').value = 0;
+        }
+        setMaxValue(e.target.files.length);
+        // 입력된 이미지 파일 순서대로 정렬
         filesarr = [].slice.call(e.target.files).sort(function (a, b) {
-          return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+          return a.lastModified < b.lastModified
+            ? -1
+            : a.lastModified > b.lastModified
+            ? 1
+            : 0;
         });
         document.getElementById('status').style.color = '#0F4C82';
         document.getElementById('status').innerHTML =
@@ -211,6 +225,7 @@ export default () => {
           video.add(context);
 
           ctx++;
+          document.getElementById('progress').value = ctx;
           finalizeVideo();
         };
         img.src = dataUri;
@@ -225,12 +240,13 @@ export default () => {
       reader.readAsDataURL(file);
     }
 
-    function finalizeVideo() {
+    async function finalizeVideo() {
       //check if its ready
       if (ctx == filesarr.length) {
-        var start_time = +new Date();
+        setProgView(false);
+
         var output = video.compile();
-        var end_time = +new Date();
+        const duration = await getBlobDuration(output);
         var url = window.URL.createObjectURL(output);
 
         document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
@@ -238,10 +254,8 @@ export default () => {
         document.getElementById('download').href = url;
         document.getElementById('status').style.color = 'black';
         document.getElementById('status').innerHTML =
-          '영상 길이: ' +
-          (end_time - start_time) / 1000 +
-          '초, 영상 크기: ' +
-          Math.ceil(output.size / 1024) / 1024 +
+          `영상 길이: ${duration}초, 영상 크기: ` +
+          Math.ceil(output.size / 1024 / 1024) +
           'MB';
       }
     }
@@ -255,6 +269,15 @@ export default () => {
     <Wrapper>
       <Title>캡쳐한 이미지를 타이랩스 영상으로 만들어보세요~!</Title>
       <br />
+      {progView && (
+        <progress
+          id="progress"
+          value="0"
+          max={maxValue}
+          min="0"
+          style={{ width: '500px' }}
+        />
+      )}
       <br />
       <SubTitle id="status" style={{ color: 'red' }}>
         이미지 파일을 선택해주세요
@@ -270,19 +293,34 @@ export default () => {
           <OptionDiv>
             <InputName text={'영상 너비(Width):'} />
             <InputWrap>
-              <Input type={'number'} bgColor={'white'} {...videoWidth} />
+              <Input
+                id={'width'}
+                type={'number'}
+                bgColor={'white'}
+                {...videoWidth}
+              />
             </InputWrap>
           </OptionDiv>
           <OptionDiv>
             <InputName text={'영상 높이(Height):'} />
             <InputWrap>
-              <Input type={'number'} bgColor={'white'} {...videoHeight} />
+              <Input
+                id={'height'}
+                type={'number'}
+                bgColor={'white'}
+                {...videoHeight}
+              />
             </InputWrap>
           </OptionDiv>
           <OptionDiv>
-            <InputName text={'영상 FPS(초당 이미지 개수):'} />
+            <InputName text={'영상 FPS:'} />
             <InputWrap>
-              <Input type={'number'} bgColor={'white'} {...videoFPS} />
+              <Input
+                id={'framerate'}
+                type={'number'}
+                bgColor={'white'}
+                {...videoFPS}
+              />
             </InputWrap>
           </OptionDiv>
         </div>

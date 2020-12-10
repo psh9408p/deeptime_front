@@ -14,6 +14,7 @@ const Container = styled.input`
 `;
 
 const Input = ({
+  id,
   placeholder,
   required = true, // 꼭 입력해야한다는 뜻인거 같음
   value,
@@ -24,6 +25,7 @@ const Input = ({
   bgColor = '#FAFAFA',
 }) => (
   <Container
+    id={id}
     className={className}
     placeholder={placeholder}
     required={required}

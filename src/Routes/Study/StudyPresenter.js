@@ -59,8 +59,6 @@ import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const Whammy = require('whammy/whammy');
-
 const UPDATE_EXISTTOGGLE = gql`
   mutation update_existToggle($email: String!, $existToggle: Boolean!) {
     update_existToggle(email: $email, existToggle: $existToggle)
@@ -68,13 +66,15 @@ const UPDATE_EXISTTOGGLE = gql`
 `;
 
 const ClockBox = styled.div`
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; */
+  width: 200px;
+  height: 200px;
   position: absolute;
   z-index: 2;
   display: flex;
-  padding-top: 27px;
-  padding-right: 168px;
+  margin-top: 113.5px;
+  margin-left: 534px;
   justify-content: center;
   align-items: center;
   top: 0;
@@ -87,8 +87,8 @@ const TodayTime = styled.div`
   position: absolute;
   z-index: 2;
   display: flex;
-  padding-top: 131px;
-  padding-left: 102px;
+  margin-top: 214px;
+  margin-left: 591px;
   font-size: 13px;
   font-weight: bold;
   color: ${(props) => props.theme.skyBlue};
@@ -96,12 +96,16 @@ const TodayTime = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  width: 100px;
+  height: 30px;
 `;
 
 const TodayTime_total = styled(TodayTime)`
-  padding-top: 146px;
-  padding-left: 125px;
+  margin-top: 228px;
+  margin-left: 613px;
   color: black;
+  width: 100px;
+  height: 30px;
 `;
 
 const TodayPercent = styled(TodayTime)`
@@ -110,15 +114,14 @@ const TodayPercent = styled(TodayTime)`
   align-items: center;
   color: black;
   font-size: 25px;
-  margin-top: 87px;
-  margin-left: 100px;
+  margin-top: 167px;
+  margin-left: 588px;
   padding: 0;
   width: 97px;
   height: 50px;
 `;
 
 const AllWrap = styled.div`
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -135,6 +138,7 @@ const TopWrap = styled.div`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   width: 960px;
   height: 500px;
@@ -231,20 +235,20 @@ const ControlTop2 = styled.div`
 
 const VideoBox = styled.video`
   position: absolute;
-  z-index: 3;
-  width: 450px;
-  height: 340px;
-  border-radius: ${(props) => props.theme.borderRadius};
-  margin-top: 90px;
-`;
-
-const CanvasBox = styled.canvas`
-  position: absolute;
   z-index: 2;
   width: 450px;
   height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
-  margin-top: 90px;
+  margin-top: 120px;
+`;
+
+const CanvasBox = styled.canvas`
+  position: absolute;
+  z-index: 3;
+  width: 450px;
+  height: 340px;
+  border-radius: ${(props) => props.theme.borderRadius};
+  margin-top: 120px;
 `;
 
 const AvatarBox = styled.div`
@@ -252,6 +256,7 @@ const AvatarBox = styled.div`
   justify-content: center;
   position: absolute;
   z-index: 1;
+  margin-top: 40px;
   width: 100%;
   height: 100%;
 `;
@@ -260,7 +265,8 @@ const AvatarBoxCover = styled.div`
   display: ${(props) => props.display};
   justify-content: center;
   position: absolute;
-  z-index: 1;
+  z-index: 3;
+  margin-top: 40px;
   width: 100%;
   height: 100%;
 `;
@@ -277,7 +283,6 @@ const WhiteBox = styled.div`
 `;
 
 const VideoWrap = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -317,7 +322,7 @@ const HeaderDiv = styled.div`
 `;
 
 const DonutWrap = styled.div`
-  position: relative;
+  /* position: relative; */
   width: 100%;
   height: 240px;
   margin-bottom: 10px;
@@ -945,6 +950,7 @@ export default ({
     html2canvas(target, {
       width: target.clientWidth + 20,
       useCORS: true,
+      removeContainer: false,
     }).then((canvas) => {
       // document.body.appendChild(canvas);
       saveAs(
