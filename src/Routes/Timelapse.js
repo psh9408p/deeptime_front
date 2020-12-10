@@ -68,13 +68,13 @@ const ButtonWrap = styled.div`
 `;
 
 export default () => {
+  const Whammy = require('whammy/whammy');
+
   const videoWidth = useInput(500);
   const videoHeight = useInput(300);
   const videoFPS = useInput(100);
   const [maxValue, setMaxValue] = useState(0);
   const [progView, setProgView] = useState(false);
-
-  const Whammy = require('whammy/whammy');
 
   const testFuc = () => {
     var drag = document.getElementById('drag');
@@ -94,13 +94,13 @@ export default () => {
 
     createvideo.addEventListener(
       'click',
-      async function () {
+      function () {
         setProgView(true);
 
         document.getElementById('status').style.color = 'black';
         document.getElementById('status').innerHTML = '타임랩스 만드는 중...';
 
-        document.getElementById('awesome').src = '';
+        // document.getElementById('awesome').src = '';
         ctx = 0;
 
         canvas.width = document.getElementById('width').value;
@@ -110,17 +110,25 @@ export default () => {
         //if we have images loaded
         if (filesarr.length > 0) {
           //loop through them and process
-          for (let i = 0; i < filesarr.length; i++) {
-            var file = filesarr[i];
+          filesarr.forEach(async (file) => {
             if (file.type.match(/image.*/)) {
-              console.log('aa');
               await process(file);
             } else {
               document.getElementById('status').style.color = 'rad';
               document.getElementById('status').innerHTML =
                 '선택하신 파일은 이미지 파일이 아닙니다';
             }
-          }
+          });
+          // for (let i = 0; i < filesarr.length; i++) {
+          //   var file = filesarr[i];
+          //   if (file.type.match(/image.*/)) {
+          //     process(file);
+          //   } else {
+          //     document.getElementById('status').style.color = 'rad';
+          //     document.getElementById('status').innerHTML =
+          //       '선택하신 파일은 이미지 파일이 아닙니다';
+          //   }
+          // }
         } else {
           document.getElementById('status').style.color = 'rad';
           document.getElementById('status').innerHTML =
@@ -246,10 +254,11 @@ export default () => {
         setProgView(false);
 
         var output = video.compile();
+        // output = new Blob([output], { type: 'video/mp4' });
         const duration = await getBlobDuration(output);
         var url = window.URL.createObjectURL(output);
 
-        document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
+        // document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
         document.getElementById('download').style.display = '';
         document.getElementById('download').href = url;
         document.getElementById('status').style.color = 'black';
@@ -290,7 +299,7 @@ export default () => {
           <input type="file" id="filesinput" multiple />
         </OptionDiv>
         <div id="small">
-          <OptionDiv>
+          {/* <OptionDiv>
             <InputName text={'영상 너비(Width):'} />
             <InputWrap>
               <Input
@@ -311,9 +320,9 @@ export default () => {
                 {...videoHeight}
               />
             </InputWrap>
-          </OptionDiv>
+          </OptionDiv> */}
           <OptionDiv>
-            <InputName text={'영상 FPS:'} />
+            <InputName text={'영상 FPS(클수록 빠르고 짧아짐):'} />
             <InputWrap>
               <Input
                 id={'framerate'}
@@ -337,13 +346,13 @@ export default () => {
           타임랩스 다운로드
         </a>
       </ButtonWrap>
-      <video
+      {/* <video
         id="awesome"
         style={{ display: 'none' }}
         controls
         autoPlay
         loop
-      ></video>
+      ></video> */}
       <canvas id="canvas" style={{ display: 'none' }}></canvas>
     </Wrapper>
   );

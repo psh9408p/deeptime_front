@@ -10,13 +10,13 @@ const Container = styled.button`
   font-weight: 600;
   background-color: ${(props) => props.bgColor};
   text-align: center;
-  padding: 7px 0px;
+  padding: ${(props) => props.padding};
   font-size: 14px;
   cursor: pointer;
 `;
 
-const Button = ({ text, onClick, bgColor = '#0F4C82' }) => (
-  <Container onClick={onClick} bgColor={bgColor}>
+const Button = ({ text, onClick, bgColor = '#0F4C82', padding = '7px 0' }) => (
+  <Container onClick={onClick} bgColor={bgColor} padding={padding}>
     {text}
   </Container>
 );

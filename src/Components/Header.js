@@ -208,9 +208,6 @@ export default withRouter(() => {
               >
                 <Play fill={'#0F4C82'} margin={'0 5px 0 0'} />
                 Play
-                {/* <AiHeaderLink oncli to="/timelapse" replace>
-                  <Timelapse fill={'#0F4C82'} />
-                </AiHeaderLink> */}
               </AiBox>
             )}
             {/* {data.me && data.me.loginPosition.includes('manager') && (

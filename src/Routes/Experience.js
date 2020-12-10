@@ -33,7 +33,7 @@ const VideoBox = styled.video`
 
 const CanvasBox = styled.canvas`
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   width: 450px;
   height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};

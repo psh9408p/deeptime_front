@@ -8,7 +8,10 @@ import FollowButton from '../../Components/FollowButton';
 import Button from '../../Components/Buttons/Button';
 import ProfileTabs from '../Tabs/ProfileTabs';
 import { Link } from 'react-router-dom';
-import { Button_setting } from '../../Components/Buttons/Button_click';
+import {
+  Button_setting,
+  Button_timelapse,
+} from '../../Components/Buttons/Button_click';
 import Popup from 'reactjs-popup';
 import PopupButton_triple from '../../Components/Buttons/PopupButton_triple';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
@@ -145,6 +148,7 @@ const SettingWrap = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 500px;
 `;
 
 const PopupCustom = styled(Popup)`
@@ -551,9 +555,19 @@ export default ({
             <ButtonWrap>
               {isSelf ? (
                 <SettingWrap>
-                  <Button onClick={logOut} text="로그아웃" />
+                  <Button_custom
+                    onClick={logOut}
+                    text={'로그아웃'}
+                    width={'100px'}
+                    bgColor={'#0F4C82'}
+                    color={'white'}
+                    margin={'0'}
+                  />
                   <SettingLink to="/account" replace>
-                    <Button_setting />
+                    <Button_setting margin={'0'} />
+                  </SettingLink>
+                  <SettingLink to="/timelapse" replace>
+                    <Button_timelapse margin={'0'} />
                   </SettingLink>
                 </SettingWrap>
               ) : (

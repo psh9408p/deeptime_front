@@ -150,7 +150,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
           alert('프로필을 수정할 수 없습니다.');
         } else {
           await meRefetch();
-          history.push(`${meData.username}`);
+          history.push(`${username.value}`);
           toast.success('프로필 수정이 완료되었습니다.');
         }
       } catch (e) {
@@ -180,7 +180,7 @@ export default ({ pageIndex, meData, meRefetch }) => {
           alert('프로필을 수정할 수 없습니다.');
         } else {
           await meRefetch();
-          history.push(`${meData.username}`);
+          history.push(`${username.value}`);
           toast.success('프로필 수정이 완료되었습니다.');
         }
       } catch (e) {
