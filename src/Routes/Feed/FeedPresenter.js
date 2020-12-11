@@ -44,7 +44,7 @@ const PostWrap = styled.div`
   max-width: 600px;
 `;
 
-const ContentBody = styled.div`
+const ContentBody = styled.form`
   display: flex;
   flex-direction: column;
   width: 500px;
@@ -161,7 +161,7 @@ export default ({
           </MoreDiv>
         </>
       ) : myTabs === 1 ? (
-        <ContentBody>
+        <ContentBody onSubmit={onSubmit}>
           <ContentTitle text={'게시물 작성'} />
           <SubTitle>파일은 최대 3개 까지 업로드 가능</SubTitle>
           <ContentDiv>
@@ -192,6 +192,7 @@ export default ({
               margin={'20px 0 10px 0'}
               bgColor={'#f1f0ef'}
               {...location}
+              required={false}
             />
             <CaptionText
               placeholder={'(필수 항목) 내용'}
@@ -200,13 +201,7 @@ export default ({
             />
           </ContentDiv>
           <ButtonDiv>
-            <PopupButton
-              type="button"
-              text={'게시'}
-              onClick={() => {
-                onSubmit();
-              }}
-            />
+            <PopupButton text={'게시'} />
             <PopupButton
               type="button"
               onClick={() => {
@@ -218,7 +213,7 @@ export default ({
           </ButtonDiv>
         </ContentBody>
       ) : (
-        <ContentBody>
+        <ContentBody onSubmit={onEdit}>
           <ContentTitle text={'게시물 수정'} />
           <ContentDiv>
             <Input_100
@@ -228,6 +223,7 @@ export default ({
               margin={'20px 0 10px 0'}
               bgColor={'#f1f0ef'}
               {...location}
+              required={false}
             />
             <CaptionText
               placeholder={'(필수 항목) 내용'}
@@ -236,13 +232,7 @@ export default ({
             />
           </ContentDiv>
           <ButtonDiv>
-            <PopupButton
-              type="button"
-              text={'수정'}
-              onClick={() => {
-                onEdit();
-              }}
-            />
+            <PopupButton text={'수정'} />
             <PopupButton
               type="button"
               onClick={() => {

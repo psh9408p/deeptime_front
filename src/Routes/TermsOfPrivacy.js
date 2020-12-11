@@ -144,9 +144,9 @@ export default () => (
       </li>
       <li>
         개인정보 이외의 정보로서 지역, 나이, 학년, 공부목적,
-        &ldquo;회사&rdquo;가 제공하는 사이트(www.slog-iam.com),
+        &ldquo;회사&rdquo;가 제공하는 사이트(www.deeeeptime.com),
         애플리케이션(아이엠)을 통하여 측정된 공부 시간, 시간표 등이
-        &ldquo;회사&rdquo;의 사이트(www.slog-iam.com), 애플리케이션(아이엠)에
+        &ldquo;회사&rdquo;의 사이트(www.deeeeptime.com), 애플리케이션(아이엠)에
         특화된 여러 기능을 사용하는 동안 수집됩니다.
       </li>
       <li>

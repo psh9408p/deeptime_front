@@ -196,7 +196,7 @@ export default () => {
       },
       async function (response) {
         // callback
-        const success_msg = 'IAM 이용기간이 성공적으로 연장되었습니다.';
+        const success_msg = 'DEEPTIME 이용기간이 성공적으로 연장되었습니다.';
         Object.assign(response, { success_msg });
         if (response.success) {
           try {
@@ -224,13 +224,13 @@ export default () => {
 
   if (!paymentSetLoading && paymentSetData && paymentSetData.myPaymentSet) {
     seatRatio = paymentSetData.myPaymentSet.user.organization.seatRatio;
-    merchantName_1 = `IAM 1개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+    merchantName_1 = `DEEPTIME 1개월 이용권 (${8 * (seatRatio - 1) + 1}~${
       8 * seatRatio
     }개 좌석)`;
-    merchantName_6 = `IAM 6개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+    merchantName_6 = `DEEPTIME 6개월 이용권 (${8 * (seatRatio - 1) + 1}~${
       8 * seatRatio
     }개 좌석)`;
-    merchantName_12 = `IAM 12개월 이용권 (${8 * (seatRatio - 1) + 1}~${
+    merchantName_12 = `DEEPTIME 12개월 이용권 (${8 * (seatRatio - 1) + 1}~${
       8 * seatRatio
     }개 좌석)`;
     resultPrice_1 = price_1 * seatRatio;

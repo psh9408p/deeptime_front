@@ -371,7 +371,7 @@ export default ({
             </Helmet>
             <form onSubmit={onSubmit}>
               <Input
-                placeholder={'Email (예: IAM@google.com)'}
+                placeholder={'Email (예: deeptime@google.com)'}
                 {...email}
                 type="email"
               />
@@ -415,7 +415,7 @@ export default ({
                       <PTitle text={'Email 인증'} />
                       <EmailInputDiv>
                         <Input
-                          placeholder={'Email (iam@google.com)'}
+                          placeholder={'Email (deeptime@google.com)'}
                           {...email}
                           type="email"
                         />
@@ -733,7 +733,7 @@ export default ({
                       <PTitle text={'Email 인증'} />
                       <EmailInputDiv>
                         <Input
-                          placeholder={'Email (iam@google.com)'}
+                          placeholder={'Email (deeptime@google.com)'}
                           {...email}
                           type="email"
                         />
@@ -1014,7 +1014,7 @@ export default ({
             <form onSubmit={onSubmit}>
               <VerifiInputDiv>
                 <Input
-                  placeholder={'Email (iam@google.com)'}
+                  placeholder={'Email (deeptime@google.com)'}
                   {...email}
                   type="email"
                 />

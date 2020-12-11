@@ -63,7 +63,7 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
-const ContentBody = styled.div`
+const ContentBody = styled.form`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -110,7 +110,8 @@ export default ({ postId, likeCount, commentCount, file }) => {
     refetchQueries: [{ query: FEED_ONE_QUERY, variables: { postId } }],
   });
 
-  const onEdit = async () => {
+  const onEdit = async (e) => {
+    e.preventDefault();
     try {
       toast.info('게시물 수정 중...');
       const {
@@ -164,7 +165,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
               close={close}
             />
           ) : (
-            <ContentBody>
+            <ContentBody onSubmit={onEdit}>
               <ContentTitle text={'게시물 수정'} />
               <ContentDiv>
                 <Input_100
@@ -174,6 +175,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
                   margin={'20px 0 10px 0'}
                   bgColor={'#f1f0ef'}
                   {...location}
+                  required={false}
                 />
                 <CaptionText
                   placeholder={'(필수 항목) 내용'}
@@ -182,13 +184,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
                 />
               </ContentDiv>
               <ButtonDiv>
-                <PopupButton
-                  type="button"
-                  text={'수정'}
-                  onClick={() => {
-                    onEdit();
-                  }}
-                />
+                <PopupButton text={'수정'} width={'138px'} />
                 <PopupButton
                   type="button"
                   onClick={() => {
@@ -196,6 +192,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
                     allClear();
                   }}
                   text={'돌아가기'}
+                  width={'138px'}
                 />
               </ButtonDiv>
             </ContentBody>

@@ -54,7 +54,8 @@ export default () => {
     setFiles([]);
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.preventDefault();
     let sizeCheck = false;
     files.map((file) => {
       if (file.fileSize > 1048576) {
@@ -117,7 +118,8 @@ export default () => {
     }
   };
 
-  const onEdit = async () => {
+  const onEdit = async (e) => {
+    e.preventDefault();
     try {
       toast.info('게시물 수정 중...');
       const {

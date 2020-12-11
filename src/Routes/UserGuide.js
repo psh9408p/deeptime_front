@@ -299,7 +299,8 @@ export default () => {
             <ScrollPoint ref={(el) => (focusTarget.current[0] = el)} />
             <Title_h1>스케줄 관리</Title_h1>
             <TitleContent>
-              IAM 서비스는 학습자의 계획을 기준으로 학습시간 확인 및 분석합니다.
+              DEEPTIME 서비스는 학습자의 계획을 기준으로 학습시간 확인 및
+              분석합니다.
               <br />
               스케줄을 작성하지 않을 시 통계분석이 불가능하다는 점 유의
               바랍니다.
@@ -444,8 +445,8 @@ export default () => {
                 <SSubContent>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   <span style={{ color: 'red' }}>
-                    IAM으로 학습시간 측정이 불가능한 현강 같은 스케줄 작성 시
-                    활용 가능
+                    DEEPTIME으로 학습시간 측정이 불가능한 현강 같은 스케줄 작성
+                    시 활용 가능
                   </span>
                 </SSubContent>
               </li>
@@ -522,7 +523,8 @@ export default () => {
             <ScrollPoint ref={(el) => (focusTarget2.current[0] = el)} />
             <Title_h1>학습 통계</Title_h1>
             <TitleContent>
-              IAM 서비스는 시간대별 학습 시간과 스케줄 데이터를 따로 관리합니다.
+              DEEPTIME 서비스는 시간대별 학습 시간과 스케줄 데이터를 따로
+              관리합니다.
               <br />
               통계 데이터는 시간대별 학습 시간과 스케줄을 비교하여 산출됩니다.
               <br />

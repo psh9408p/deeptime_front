@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const Container = styled.button`
-  width: 30%;
+  width: ${(props) => props.width};
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
   color: white;
@@ -18,8 +18,8 @@ const Container = styled.button`
   }
 `;
 
-const PopupButton = ({ type, text, onClick }) => (
-  <Container type={type} onClick={onClick}>
+const PopupButton = ({ type, text, onClick, width = '30%' }) => (
+  <Container type={type} onClick={onClick} width={width}>
     {text}
   </Container>
 );

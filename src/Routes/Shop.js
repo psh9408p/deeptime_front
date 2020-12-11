@@ -122,7 +122,7 @@ export default () => {
       },
       async function (response) {
         // callback
-        const success_msg = 'IAM 이용기간이 성공적으로 연장되었습니다.';
+        const success_msg = 'DEEPTIME 이용기간이 성공적으로 연장되었습니다.';
         Object.assign(response, { success_msg });
         if (response.success) {
           try {
@@ -157,7 +157,7 @@ export default () => {
         <TitleDiv>
           1개월 무료 혜택으로
           <br />
-          IAM의 모든 학습 기능을 체험해보세요.
+          DEEPTIME의 모든 학습 기능을 체험해보세요.
         </TitleDiv>
         <DetailUl>
           <li>1개월 무료 이용 후 자동결제 됩니다.</li>

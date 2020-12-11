@@ -240,7 +240,7 @@ export default ({
                     <PTitle text={'Email 인증'} />
                     <EmailInputDiv>
                       <Input
-                        placeholder={'Email (iam@google.com)'}
+                        placeholder={'Email (deeptime@google.com)'}
                         {...email}
                         type="email"
                       />

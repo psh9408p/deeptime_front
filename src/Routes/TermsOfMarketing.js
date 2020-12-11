@@ -95,7 +95,7 @@ export default () => (
         수신동의 변경
         <Content_ul>
           <li>
-            회사의 홈페이지(www.slog-iam.com)의 프로필 변경에서
+            회사의 홈페이지(www.deeeeptime.com)의 프로필 변경에서
             변경(동의/철회)할 수 있습니다.
           </li>
         </Content_ul>

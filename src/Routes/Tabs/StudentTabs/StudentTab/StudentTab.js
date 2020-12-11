@@ -222,7 +222,7 @@ export default ({
                   <PTitle text={'학생 정보'} />
                   <InputWrapper>
                     <SmallInput
-                      placeholder={'학생 Email (예: IAM@google.com)'}
+                      placeholder={'학생 Email (예: deeptime@google.com)'}
                       {...studentEmail}
                       type="email"
                     />
