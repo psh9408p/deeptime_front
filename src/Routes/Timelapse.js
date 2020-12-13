@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Input from '../Components/Input';
 import useInput from '../Hooks/useInput';
@@ -67,14 +67,20 @@ const ButtonWrap = styled.div`
   margin-top: 30px;
 `;
 
-export default () => {
-  const Whammy = require('whammy/whammy');
+const Whammy = require('whammy/whammy');
+var filesarr = [];
+var context = undefined;
+var canvas = undefined;
+//image to video via Whammy
+var video = new Whammy.Video(15);
 
-  const videoWidth = useInput(500);
-  const videoHeight = useInput(300);
-  const videoFPS = useInput(100);
+export default () => {
+  const videoWidth = useInput(1000);
+  const videoHeight = useInput(500);
+  const videoFPS = useInput(10);
   const [maxValue, setMaxValue] = useState(0);
   const [progView, setProgView] = useState(false);
+  const [ctx, setCtx] = useState(0);
 
   const testFuc = () => {
     var drag = document.getElementById('drag');
@@ -82,26 +88,22 @@ export default () => {
     var createvideo = document.getElementById('createvideo');
     var files = document.getElementById('filesinput');
 
-    var ctx = 0;
-
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
+    canvas = document.getElementById('canvas');
+    context = canvas.getContext('2d');
 
     //image to video via Whammy
-    var video = new Whammy.Video(15);
-
-    var filesarr = [];
+    // var video = new Whammy.Video(15);
 
     createvideo.addEventListener(
       'click',
-      function () {
+      async function () {
         setProgView(true);
 
         document.getElementById('status').style.color = 'black';
         document.getElementById('status').innerHTML = '타임랩스 만드는 중...';
 
         // document.getElementById('awesome').src = '';
-        ctx = 0;
+        // ctx = 0;
 
         canvas.width = document.getElementById('width').value;
         canvas.height = document.getElementById('height').value;
@@ -109,16 +111,7 @@ export default () => {
 
         //if we have images loaded
         if (filesarr.length > 0) {
-          //loop through them and process
-          filesarr.forEach(async (file) => {
-            if (file.type.match(/image.*/)) {
-              await process(file);
-            } else {
-              document.getElementById('status').style.color = 'rad';
-              document.getElementById('status').innerHTML =
-                '선택하신 파일은 이미지 파일이 아닙니다';
-            }
-          });
+          setCtx(1);
           // for (let i = 0; i < filesarr.length; i++) {
           //   var file = filesarr[i];
           //   if (file.type.match(/image.*/)) {
@@ -180,99 +173,70 @@ export default () => {
       },
       false,
     );
+  };
 
-    /* main process function */
-    function process(file) {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        var dataUri = event.target.result;
-        var img = new Image();
+  const finalizeVideo = async () => {
+    //check if its ready
+    if (ctx == filesarr.length) {
+      setProgView(false);
 
-        //load image and drop into canvas
-        img.onload = function () {
-          //a custom fade in and out slideshow
-          context.globalAlpha = 0.2;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.4;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.6;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.8;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 1;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+      var output = video.compile();
+      // output = new Blob([output], { type: 'video/mp4' });
+      const duration = await getBlobDuration(output);
+      var url = window.URL.createObjectURL(output);
 
-          //this should be a loop based on some user input
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-          video.add(context);
-
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.8;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.6;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.globalAlpha = 0.4;
-          context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          video.add(context);
-
-          ctx++;
-          document.getElementById('progress').value = ctx;
-          finalizeVideo();
-        };
-        img.src = dataUri;
-      };
-
-      reader.onerror = function (event) {
-        console.error(
-          '파일을 읽을 수 없습니다. Code ' + event.target.error.code,
-        );
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    async function finalizeVideo() {
-      //check if its ready
-      if (ctx == filesarr.length) {
-        setProgView(false);
-
-        var output = video.compile();
-        // output = new Blob([output], { type: 'video/mp4' });
-        const duration = await getBlobDuration(output);
-        var url = window.URL.createObjectURL(output);
-
-        // document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
-        document.getElementById('download').style.display = '';
-        document.getElementById('download').href = url;
-        document.getElementById('status').style.color = 'black';
-        document.getElementById('status').innerHTML =
-          `영상 길이: ${duration}초, 영상 크기: ` +
-          Math.ceil(output.size / 1024 / 1024) +
-          'MB';
-      }
+      document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
+      document.getElementById('download').style.display = '';
+      document.getElementById('download').href = url;
+      document.getElementById('status').style.color = 'black';
+      document.getElementById('status').innerHTML =
+        `영상 길이: ${duration}초, 영상 크기: ` +
+        Math.ceil(output.size / 1024 / 1024) +
+        'MB';
     }
   };
 
+  const process = (file) => {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      var dataUri = event.target.result;
+      var img = new Image();
+
+      //load image and drop into canvas
+      img.onload = function () {
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        video.add(context);
+
+        document.getElementById('progress').value = ctx;
+        finalizeVideo();
+        setCtx(ctx + 1);
+      };
+      img.src = dataUri;
+    };
+
+    reader.onerror = function (event) {
+      console.error('파일을 읽을 수 없습니다. Code ' + event.target.error.code);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const isFirstRun = useRef(true);
   useEffect(() => {
-    testFuc();
-  }, []);
+    if (isFirstRun.current) {
+      testFuc();
+      isFirstRun.current = false;
+      return;
+    }
+    if (ctx <= filesarr.length) {
+      if (filesarr[ctx - 1].type.match(/image.*/)) {
+        process(filesarr[ctx - 1]);
+      } else {
+        document.getElementById('status').style.color = 'rad';
+        document.getElementById('status').innerHTML =
+          '선택하신 파일은 이미지 파일이 아닙니다';
+      }
+    }
+  }, [ctx]);
 
   return (
     <Wrapper>
@@ -299,7 +263,7 @@ export default () => {
           <input type="file" id="filesinput" multiple />
         </OptionDiv>
         <div id="small">
-          {/* <OptionDiv>
+          <OptionDiv style={{ display: 'none' }}>
             <InputName text={'영상 너비(Width):'} />
             <InputWrap>
               <Input
@@ -310,7 +274,7 @@ export default () => {
               />
             </InputWrap>
           </OptionDiv>
-          <OptionDiv>
+          <OptionDiv style={{ display: 'none' }}>
             <InputName text={'영상 높이(Height):'} />
             <InputWrap>
               <Input
@@ -320,9 +284,9 @@ export default () => {
                 {...videoHeight}
               />
             </InputWrap>
-          </OptionDiv> */}
+          </OptionDiv>
           <OptionDiv>
-            <InputName text={'영상 FPS(클수록 빠르고 짧아짐):'} />
+            <InputName text={'영상 FPS(초당 이미지 개수):'} />
             <InputWrap>
               <Input
                 id={'framerate'}
@@ -333,6 +297,14 @@ export default () => {
             </InputWrap>
           </OptionDiv>
         </div>
+        <video
+          id="awesome"
+          style={{ width: '500px', height: '250px' }}
+          controls
+          autoPlay
+          loop
+        ></video>
+        <canvas id="canvas" style={{ display: 'none' }}></canvas>
         <ButtonWrap>
           <CreateButton id="createvideo">타임랩스 만들기</CreateButton>
         </ButtonWrap>
@@ -346,14 +318,6 @@ export default () => {
           타임랩스 다운로드
         </a>
       </ButtonWrap>
-      {/* <video
-        id="awesome"
-        style={{ display: 'none' }}
-        controls
-        autoPlay
-        loop
-      ></video> */}
-      <canvas id="canvas" style={{ display: 'none' }}></canvas>
     </Wrapper>
   );
 };

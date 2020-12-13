@@ -130,7 +130,7 @@ const LoggedInRoutes = () => {
     }
   } else {
     return (
-      <LoaderWrapper margin={pageName === 'study' ? '300px 0' : '100px 0'}>
+      <LoaderWrapper margin={pageName === 'study' ? '250px 0' : '100px 0'}>
         <Loader />
       </LoaderWrapper>
     );

@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import styled from 'styled-components';
-import { Camera, Refresh, Setting, Timelapse } from '../Icons';
+import { Camera, Refresh, Setting, Timelapse, Control } from '../Icons';
 
 const Container = styled.button`
   font-size: 24px;
@@ -43,6 +43,12 @@ export const Button_capture = ({ onClick, margin = '0 10px 0 0' }) => (
 export const Button_timelapse = ({ onClick, margin = '0 10px 0 0' }) => (
   <Container onClick={onClick} margin={margin}>
     <Timelapse />
+  </Container>
+);
+
+export const Button_control = ({ onClick, margin = '0 10px 0 0' }) => (
+  <Container onClick={onClick} margin={margin}>
+    <Control />
   </Container>
 );
 

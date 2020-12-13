@@ -24,7 +24,7 @@ import {
 } from './StudyQueries';
 
 const LoaderWrapper = styled.div`
-  margin: 300px 0px;
+  margin: 250px 0px;
 `;
 
 export default () => {
