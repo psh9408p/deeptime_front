@@ -226,7 +226,7 @@ export default () => {
   const LoadCamera = async () => {
     console.log('Load camera');
     const getUserMedia =
-      navigator.getUserMedia ||
+      navigator.mediaDevices.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia;

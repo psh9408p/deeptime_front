@@ -81,9 +81,9 @@ const Table = styled.table`
 
 export default () => (
   <Wrapper>
-    <Title_h1>개인정보 취급방침</Title_h1>
+    <Title_h1>개인정보 취급방침 (Ver1.0)</Title_h1>
     <Title_h2>제1장 총직</Title_h2>
-    <Title_h3>제1조 [목적]</Title_h3>
+    <Title_h3>제1조 [목 적]</Title_h3>
     <Content>
       개인사업자 슬로그(이하 &ldquo;회사&rdquo;)는 정보통신망 이용촉진 및
       정보보호 등에 관한 법률, 개인정보보호법, 통신비밀보호법, 전기통신사업법,
@@ -114,11 +114,9 @@ export default () => (
     <Content_ol>
       <li>회원가입 시점에서 수집하는 필수 항목</li>
       <Content_ul>
-        <li>성명, 비밀번호, 닉네임, 이메일주소(아이디), 핸드폰번호</li>
-      </Content_ul>
-      <li>회원가입 시점에서 이용자가 선택하여 입력하는 정보</li>
-      <Content_ul>
-        <li>사업장의 명칭</li>
+        <li>
+          성명, 닉네임, Email(아이디), 휴대폰 번호, 사용 범주, 주소, 비밀번호
+        </li>
       </Content_ul>
       <li>재화 또는 서비스의 제공 시 수집하는 항목</li>
       <Content_ul>
@@ -134,20 +132,16 @@ export default () => (
           프로필 사진, 아이엠 그룹으로 초대한 개별 지인(제3자)의 닉네임 및
           외부서비스 연결을 위한 네이버까페 &middot; 네이버밴드 &middot;
           네이버라인 &middot; 네이버메일 &middot; 카카오톡 &middot; 페이스북
-          &middot; 구글 드 라이브, 서비스 이용기록, 방문기록, 불량 이용기록,
-          와이파이 주소, 비밀번호 등의 계정 정보 및 회원 정보가 선택적으로
-          수집될 수 있습니다.
+          &middot; 구글 드 라이브, 서비스 이용기록, 방문기록, 불량 이용기록 등의
+          정보가 선택적으로 수집될 수 있습니다.
         </li>
       </Content_ul>
       <li>
-        오류 신고의 경우 단말기 정보(제조사, 모델명, OS 종류 및 버전, App 버전)
-      </li>
-      <li>
-        개인정보 이외의 정보로서 지역, 나이, 학년, 공부목적,
+        개인정보 이외의 정보로서 지역, 나이, 학년, 사용 범주,
         &ldquo;회사&rdquo;가 제공하는 사이트(www.deeeeptime.com),
-        애플리케이션(아이엠)을 통하여 측정된 공부 시간, 시간표 등이
-        &ldquo;회사&rdquo;의 사이트(www.deeeeptime.com), 애플리케이션(아이엠)에
-        특화된 여러 기능을 사용하는 동안 수집됩니다.
+        애플리케이션(DEEPTIME)을 통하여 측정된 기록 시간, 시간표 등이
+        &ldquo;회사&rdquo;의 사이트(www.deeeeptime.com),
+        애플리케이션(DEEPTIME)에 특화된 여러 기능을 사용하는 동안 수집됩니다.
       </li>
       <li>
         &ldquo;회사&rdquo;는 개인화된 서비스를 제공하기 위하여
@@ -185,7 +179,7 @@ export default () => (
             쿠키는 웹사이트를 운영하는 데 이용되는 서버가 &ldquo;회원&rdquo;이
             이용하는 브라우저에 보내는 아주 작은 텍스트 파일로
             &ldquo;회원&rdquo;이 이용하는 단말기의 하드디스크에 저장됩니다.
-            쿠키는 브라우저의 종료 시나 로그아웃 시 만료됩니다.
+            쿠키는 사용하는 각 브라우저의 설정에서 삭제가 가능합니다.
           </p>
         </li>
       </Content_ol>
@@ -493,6 +487,38 @@ export default () => (
             </p>
           </td>
         </tr>
+        <tr>
+          <td>
+            <p>
+              <strong>Channel Corp</strong>
+            </p>
+          </td>
+          <td>
+            <p>
+              <strong>
+                고객관리, 채팅상담,
+                <br />
+                마케팅
+              </strong>
+            </p>
+          </td>
+          <td>
+            <p>
+              <strong>
+                성명, 닉네임, Email,
+                <br />
+                휴대폰 번호, 사용 범주, 주소
+              </strong>
+            </p>
+          </td>
+          <td>
+            <p>
+              회원탈퇴 시 혹은 위탁계약
+              <br />
+              종료 시까지
+            </p>
+          </td>
+        </tr>
       </tbody>
     </Table>
     <Title_h2>제7장 회원의 권리와 의무</Title_h2>
@@ -512,7 +538,7 @@ export default () => (
       않을 의무도 가지고 있습니다.
     </Content>
     <Content>
-      ④ &rdquo;회원&ldquo;은 회원 계정(이메일), 비밀번호를 포함한 개인정보가
+      ④ &rdquo;회원&ldquo;은 회원 계정(Email), 비밀번호를 포함한 개인정보가
       유출되지 않도록 조심해야 하며, 게시물을 포함한 타인의 개인정보를 훼손하지
       않도록 유의해야 합니다. 만약 이 같은 책임을 다하지 못하고 타인의 정보 및
       타인의 존엄성을 훼손할 경우에는 「정보통신망 이용촉진 및 정보보호 등에
@@ -550,9 +576,9 @@ export default () => (
     <Content_ul>
       <li>이름 : 박영석</li>
       <li>부서 : Customer Relationship Management</li>
-      <li>연락처 : 070-8955-8107</li>
+      <li>연락처 : 010-9381-8107</li>
       <li>이메일 : iam.ai.project.pl@gamil.com</li>
-      <li>고객지원 메일 :</li>
+      <li>고객지원 메일 : deeptime.customer@gmail.com</li>
     </Content_ul>
     <Content_ol>
       <li>
@@ -593,7 +619,7 @@ export default () => (
       하지만 피치 못하게 &ldquo;회원&rdquo;의 권리에 중요한 변경이 있을 경우
       변경될 내용을 30일 전에 미리 알려드리겠습니다.
     </Content>
-    <Content>공고일자 : 2020.08.07</Content>
-    <Content>시행일자 : 2020.08.14</Content>
+    <Content>공고일자 : 2020.12.15</Content>
+    <Content>시행일자 : 2020.12.15</Content>
   </Wrapper>
 );
