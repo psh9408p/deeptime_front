@@ -11,6 +11,7 @@ import html2canvas from 'html2canvas';
 import { Button_capture } from '../Components/Buttons/Button_click';
 import RowBarChart_now from '../Components/Charts/RowBarChart_now';
 import Loader from '../Components/Loader';
+
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 

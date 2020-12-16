@@ -87,9 +87,9 @@ const TodayTime = styled.div`
   position: absolute;
   z-index: 2;
   display: flex;
-  margin-top: 214px;
-  margin-left: 591px;
-  font-size: 13px;
+  margin-top: 188px;
+  margin-left: 599.5px;
+  font-size: 28px;
   font-weight: bold;
   color: ${(props) => props.theme.skyBlue};
   top: 0;
@@ -101,8 +101,9 @@ const TodayTime = styled.div`
 `;
 
 const TodayTime_total = styled(TodayTime)`
-  margin-top: 228px;
-  margin-left: 613px;
+  margin-top: 218px;
+  margin-left: 604px;
+  font-size: 20px;
   color: black;
   width: 100px;
   height: 30px;
@@ -342,7 +343,7 @@ const BarWrap = styled.div`
   align-items: center;
   width: 270px;
   height: 100%;
-  margin-left: 10px;
+  margin-right: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
 `;
@@ -362,7 +363,6 @@ const BreakTimeDiv = styled.div`
   height: 50%;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
-  margin-bottom: 10px;
 `;
 
 const NextTimeDiv = styled.div`
@@ -373,6 +373,7 @@ const NextTimeDiv = styled.div`
   height: 50%;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+  margin-bottom: 10px;
 `;
 
 const TimeIn = styled.div`
@@ -773,6 +774,8 @@ export default ({
   setOnLoading,
   coverView,
   setCoverView,
+  reCount,
+  setReCount,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -974,6 +977,12 @@ export default ({
     });
     // 팔로워 영역 임시 화면 꺼주기
     setCoverView(false);
+    // 주기적으로 캐시 지우기위해 새로고침 30회 마다
+    if (reCount === 29) {
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      setReCount(reCount + 1);
+    }
   };
 
   const maxTimeCal = (nowDate) => {
@@ -2625,17 +2634,39 @@ export default ({
                 <Clock24 />
               </ClockBox>
               <TodayTime>
-                {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                {total_min.length === 1 ? '0' + total_min : total_min}m
+                {total_hour.length === 1 ? '0' + total_hour : total_hour}:
+                {total_min.length === 1 ? '0' + total_min : total_min}
               </TodayTime>
               <TodayTime_total>
-                / {target_hour.length === 1 ? '0' + target_hour : target_hour}h
-                {target_min.length === 1 ? '0' + target_min : target_min}m
+                / {target_hour.length === 1 ? '0' + target_hour : target_hour}:
+                {target_min.length === 1 ? '0' + target_min : target_min}
               </TodayTime_total>
-              <TodayPercent>{donutPercent}%</TodayPercent>
+              {/* <TodayPercent>{donutPercent}%</TodayPercent> */}
             </DonutWrap>
             <NowNextWrap>
+              <BarWrap>
+                <RowBarChart_now
+                  title1={nowTitle1}
+                  title2={nowTitle2}
+                  data_1={nowScheduleTime}
+                  data_2={nowScheduleTimeT}
+                  scheduleColor={nowScheduleColor}
+                />
+              </BarWrap>
               <BreakNextWrap>
+                <NextTimeDiv>
+                  <IconWrap>
+                    <NextSchedule />
+                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
+                  </IconWrap>
+                  <TimeIn>
+                    {nextTitle1}
+                    <br />
+                    {nextTitle2}
+                    <br />
+                    {next_TimeText}
+                  </TimeIn>
+                </NextTimeDiv>
                 <BreakTimeDiv>
                   <IconWrap>
                     <Coffee />
@@ -2660,29 +2691,7 @@ export default ({
                     )}
                   </TimeIn>
                 </BreakTimeDiv>
-                <NextTimeDiv>
-                  <IconWrap>
-                    <NextSchedule />
-                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
-                  </IconWrap>
-                  <TimeIn>
-                    {nextTitle1}
-                    <br />
-                    {nextTitle2}
-                    <br />
-                    {next_TimeText}
-                  </TimeIn>
-                </NextTimeDiv>
               </BreakNextWrap>
-              <BarWrap>
-                <RowBarChart_now
-                  title1={nowTitle1}
-                  title2={nowTitle2}
-                  data_1={nowScheduleTime}
-                  data_2={nowScheduleTimeT}
-                  scheduleColor={nowScheduleColor}
-                />
-              </BarWrap>
             </NowNextWrap>
           </GraphDiv>
         </Wrapper>

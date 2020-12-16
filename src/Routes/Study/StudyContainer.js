@@ -37,6 +37,7 @@ export default () => {
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
   const [coverView, setCoverView] = useState(false);
+  const [reCount, setReCount] = useState(0);
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
@@ -110,6 +111,8 @@ export default () => {
         setOnLoading={setOnLoading}
         coverView={coverView}
         setCoverView={setCoverView}
+        reCount={reCount}
+        setReCount={setReCount}
       />
     );
   }

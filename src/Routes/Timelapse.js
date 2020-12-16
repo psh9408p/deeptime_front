@@ -4,6 +4,7 @@ import Input from '../Components/Input';
 import useInput from '../Hooks/useInput';
 import FatText from '../Components/FatText';
 import getBlobDuration from 'get-blob-duration';
+import moment from 'moment';
 
 const Wrapper = styled.div`
   display: flex;
@@ -179,6 +180,8 @@ export default () => {
     //check if its ready
     if (ctx == filesarr.length) {
       setProgView(false);
+      const now_Date = new Date();
+      const file_tail = moment(now_Date).format('YYMMDD');
 
       var output = video.compile();
       // output = new Blob([output], { type: 'video/mp4' });
@@ -188,6 +191,8 @@ export default () => {
       document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
       document.getElementById('download').style.display = '';
       document.getElementById('download').href = url;
+      document.getElementById('download').download =
+        'deeptime_timelapse_' + file_tail + '.mp4';
       document.getElementById('status').style.color = 'black';
       document.getElementById('status').innerHTML =
         `영상 길이: ${duration}초, 영상 크기: ` +
@@ -313,7 +318,7 @@ export default () => {
         <a
           style={{ display: 'none', fontSize: '14px', fontWeight: 'bold' }}
           id="download"
-          download="video.mp4"
+          // download="video.mp4"
         >
           타임랩스 다운로드
         </a>
