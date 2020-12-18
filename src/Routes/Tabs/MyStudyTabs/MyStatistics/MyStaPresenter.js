@@ -301,8 +301,7 @@ export default ({
   setSelectPercent2,
   onImgSave,
 }) => {
-  const myState =
-    myInfoData.studyPurpose === '학습' ? ['자습', '강의'] : ['업무', '개인'];
+  const myState = ['자습', '강의'];
   const scheduleList = myInfoData.schedules;
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
   const lastMonthDate = new Date(
@@ -1244,7 +1243,6 @@ export default ({
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
-                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>
@@ -1391,7 +1389,6 @@ export default ({
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
-                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>
@@ -1538,7 +1535,6 @@ export default ({
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
                     updateBoolean={selectPercent2}
-                    state={myInfoData.studyPurpose}
                   />
                 </ChartWrap_percentBar>
                 <ChangeWrap>

@@ -1207,10 +1207,10 @@ export default ({
       return _getTimeTemplate(schedule, false);
     },
     popupStateFree: function () {
-      return myData.studyPurpose === '학습' ? '강의' : '개인';
+      return '강의';
     },
     popupStateBusy: function () {
-      return myData.studyPurpose === '학습' ? '자습' : '업무';
+      return '자습';
     },
     popupSave: function () {
       return '입력';

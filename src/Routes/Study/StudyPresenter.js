@@ -936,8 +936,7 @@ export default ({
     ['TASK 없음', ...listName_tmp],
     ['', ...listId_tmp],
   );
-  const stateBox =
-    myInfoData.studyPurpose === '학습' ? ['자습', '강의'] : ['업무', '개인'];
+  const stateBox = ['자습', '강의'];
   const stateList = useSelect(stateBox, stateBox);
 
   const onImgSave = () => {
@@ -1429,9 +1428,7 @@ export default ({
         await myInfoRefetch();
         await todolistRefetch();
         mySubjectList2.setOption('');
-        stateList.setOption(
-          myInfoData.studyPurpose === '학습' ? '자습' : '업무',
-        );
+        stateList.setOption('자습');
         scheduleTitle.setValue('');
         startScheduleTerm.setValue(30);
         toast.success('새로운 스케줄이 시작되었습니다.');
