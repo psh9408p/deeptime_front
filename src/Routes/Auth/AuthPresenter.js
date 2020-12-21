@@ -338,11 +338,13 @@ export default ({
       givenName: G_firstName,
       familyName: G_lastName,
     } = await response.profileObj;
-    email.setValue(G_email);
-    firstName.setValue(G_firstName);
-    lastName.setValue(G_lastName);
-    const [G_username] = G_email.split('@');
-    username.setValue(G_username);
+    email.setValue(G_email ? G_email : '');
+    firstName.setValue(G_firstName ? G_firstName : '');
+    lastName.setValue(G_lastName ? G_lastName : '');
+    if (G_email) {
+      const [G_username] = G_email.split('@');
+      username.setValue(G_username);
+    }
   };
   const responseFacebook = async (response) => {
     const {
@@ -350,11 +352,13 @@ export default ({
       first_name: F_firstName,
       last_name: F_lastName,
     } = await response;
-    email.setValue(F_email);
-    firstName.setValue(F_firstName);
-    lastName.setValue(F_lastName);
-    const [F_username] = F_email.split('@');
-    username.setValue(F_username);
+    email.setValue(F_email ? F_email : '');
+    firstName.setValue(F_firstName ? F_firstName : '');
+    lastName.setValue(F_lastName ? F_lastName : '');
+    if (F_email) {
+      const [F_username] = F_email.split('@');
+      username.setValue(F_username);
+    }
   };
 
   return (
