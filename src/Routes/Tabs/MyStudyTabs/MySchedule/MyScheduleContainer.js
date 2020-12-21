@@ -30,6 +30,18 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const cal = useRef(null);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
+  const [lastStart, setLastStart] = useState(
+    myInfoData.me.studyDefaultSet.scheduleStart,
+  );
+  const [lastEnd, setLastEnd] = useState(
+    myInfoData.me.studyDefaultSet.scheduleEnd,
+  );
+  const overhours =
+    myInfoData.me.studyDefaultSet.scheduleEnd -
+    myInfoData.me.studyDefaultSet.scheduleStart;
+  const [scheHeight, setScheHeight] = useState(
+    overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
+  );
   const subjectName = useInput('');
   const todolistName = useInput('');
   const scheduleStart = useInput(
@@ -91,7 +103,12 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
       if (!editStudySet) {
         alert('기본값 세팅을 적용할 수 없습니다.');
       } else {
-        await myInfoRefetch();
+        setLastStart(scheduleStart.value);
+        setLastEnd(scheduleEnd.value);
+        const diffHours = scheduleEnd.value - scheduleStart.value;
+        setScheHeight(
+          diffHours < 11 ? '605px' : 605 + (diffHours - 10) * 52 + 'px',
+        );
         toast.success('새로운 기본값 세팅을 적용하였습니다.');
         return true;
       }
@@ -134,6 +151,9 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         scheduleStart={scheduleStart}
         scheduleEnd={scheduleEnd}
         onSaveSet={onSaveSet}
+        scheHeight={scheHeight}
+        lastStart={lastStart}
+        lastEnd={lastEnd}
       />
     );
   } else {

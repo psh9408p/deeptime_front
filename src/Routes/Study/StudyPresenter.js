@@ -2222,12 +2222,14 @@ export default ({
       <TopWrap>
         <Wrapper id="capture">
           <VideoWrap>
-            <Loader />
-            <br />
-            <VideoText>카메라 로딩중...</VideoText>
-            <span style={{ color: '#DB4437' }}>
-              (로딩 중 조작, 닫기 금지!!!)
-            </span>
+            <div style={{ paddingTop: '100px' }}>
+              <Loader />
+              <br />
+              <VideoText>카메라 로딩중...</VideoText>
+              <span style={{ color: '#DB4437' }}>
+                (로딩 중 조작, 닫기 금지!!!)
+              </span>
+            </div>
             <AvatarBox display={coverView ? 'none' : 'flex'}>
               <FixedList
                 height={110}

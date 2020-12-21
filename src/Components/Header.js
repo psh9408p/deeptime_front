@@ -271,7 +271,7 @@ export default withRouter(() => {
                   <Person_white />
                 )}
               </HeaderLink>
-              <HeaderLink
+              {/* <HeaderLink
                 onClick={() => {
                   alert('그룹 서비스는 준비 중이니 조금만 더 기다려주세요. 😁');
                 }}
@@ -283,7 +283,7 @@ export default withRouter(() => {
                 ) : (
                   <People_white />
                 )}
-              </HeaderLink>
+              </HeaderLink> */}
               <HeaderLink to="/feed" replace>
                 <List fill={pageName === 'feed' ? '#0F4C82' : 'black'} />
               </HeaderLink>

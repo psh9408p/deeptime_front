@@ -550,6 +550,9 @@ export default ({
   scheduleStart,
   scheduleEnd,
   onSaveSet,
+  scheHeight,
+  lastStart,
+  lastEnd,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1829,7 +1832,7 @@ export default ({
       </PanelWrap>
       <TUICalendar
         ref={cal}
-        height="1330px"
+        height={scheHeight}
         useCreationPopup={true}
         useDetailPopup={true}
         template={templates}
@@ -1838,7 +1841,7 @@ export default ({
         taskView={false}
         scheduleView={['allday', 'time']}
         usageStatistics={true}
-        week={{ hourStart: scheduleStart.value, hourEnd: scheduleEnd.value }}
+        week={{ hourStart: lastStart, hourEnd: lastEnd }}
         onClickSchedule={onClickSchedule}
         onBeforeCreateSchedule={onBeforeCreateSchedule}
         onBeforeDeleteSchedule={onBeforeDeleteSchedule}

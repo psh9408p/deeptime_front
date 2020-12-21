@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Popup from 'reactjs-popup';
 import FatText from '../../../Components/FatText';
@@ -133,6 +133,8 @@ export default ({
   clearOnRegist,
   onRegist,
 }) => {
+  const location = useLocation();
+
   if (pageIndex === 0) {
     return (
       <Posts>
@@ -149,6 +151,19 @@ export default ({
       </Posts>
     );
   } else if (pageIndex === 1) {
+    return (
+      <Regist>
+        <ContentButton
+          type="button"
+          onClick={() => {
+            window.open('https://www.naver.com', '_blank');
+          }}
+        >
+          챌린지 인증
+        </ContentButton>
+      </Regist>
+    );
+  } else if (pageIndex === 2) {
     return (
       <Regist>
         <ContentLink to="/manage-subscription" replace>
@@ -170,109 +185,111 @@ export default ({
         </ContentLink> */}
       </Regist>
     );
-  } else if (pageIndex === 2) {
-    return (
-      <Regist>
-        <PopupCustom
-          trigger={<ContentDiv>나의 독서실</ContentDiv>}
-          closeOnDocumentClick={false}
-          modal
-        >
-          {(close) => {
-            return (
-              <PBody>
-                <PTitle text={'나의 독서실'} />
-                <ReadingContent>
-                  <LeftDiv>기관명:&nbsp;</LeftDiv>
-                  <RightDiv>{User?.organization?.name}</RightDiv>
-                </ReadingContent>
-                <ReadingContent>
-                  <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
-                  <RightDiv>
-                    {User?.organization?.manager?.phoneNumber &&
-                      phoneNumberNormalize(
-                        User.organization.manager.phoneNumber,
-                      )}
-                  </RightDiv>
-                </ReadingContent>
-                <ReadingContent>
-                  <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
-                  <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
-                </ReadingContent>
-                <ButtonDiv>
-                  <PopupButton
-                    type="button"
-                    text={'좌석 해제'}
-                    onClick={() => {
-                      let organizationNonExist = false;
-                      if (User.organization === null) {
-                        organizationNonExist = true;
-                      }
-                      onUnRegist(organizationNonExist);
-                    }}
-                  />
-                  <PopupButton
-                    type="button"
-                    onClick={() => {
-                      close();
-                    }}
-                    text={'닫기'}
-                  />
-                </ButtonDiv>
-              </PBody>
-            );
-            // }
-          }}
-        </PopupCustom>
-        <PopupCustom
-          trigger={<ContentDiv>독서실 좌석 연결</ContentDiv>}
-          closeOnDocumentClick={false}
-          modal
-        >
-          {(close) => {
-            return (
-              <PBody>
-                <PTitle text={'독서실 좌석 연결'} />
-                <InputUpWrapper>
-                  <InputWrapper>
-                    <Input
-                      placeholder={'시리얼 넘버 (예: a0001-a01-a0001)'}
-                      {...raspberrySerial}
-                    />
-                  </InputWrapper>
-                  <InputWrapper>
-                    <Input
-                      placeholder={'가입번호 (예: 123456)'}
-                      {...secretCode}
-                    />
-                  </InputWrapper>
-                </InputUpWrapper>
-                <ButtonDiv>
-                  <PopupButton
-                    type="button"
-                    text={'좌석 연결'}
-                    onClick={async () => {
-                      const fucResult = await onRegist();
-                      if (fucResult) {
-                        close();
-                      }
-                    }}
-                  />
-                  <PopupButton
-                    type="button"
-                    onClick={() => {
-                      clearOnRegist();
-                      close();
-                    }}
-                    text={'닫기'}
-                  />
-                </ButtonDiv>
-              </PBody>
-            );
-            // }
-          }}
-        </PopupCustom>
-      </Regist>
-    );
   }
 };
+
+// else if (pageIndex === 2) {
+//   return (
+//     <Regist>
+//       <PopupCustom
+//         trigger={<ContentDiv>나의 독서실</ContentDiv>}
+//         closeOnDocumentClick={false}
+//         modal
+//       >
+//         {(close) => {
+//           return (
+//             <PBody>
+//               <PTitle text={'나의 독서실'} />
+//               <ReadingContent>
+//                 <LeftDiv>기관명:&nbsp;</LeftDiv>
+//                 <RightDiv>{User?.organization?.name}</RightDiv>
+//               </ReadingContent>
+//               <ReadingContent>
+//                 <LeftDiv>관리자 연락처:&nbsp;</LeftDiv>
+//                 <RightDiv>
+//                   {User?.organization?.manager?.phoneNumber &&
+//                     phoneNumberNormalize(
+//                       User.organization.manager.phoneNumber,
+//                     )}
+//                 </RightDiv>
+//               </ReadingContent>
+//               <ReadingContent>
+//                 <LeftDiv>좌석 번호:&nbsp;</LeftDiv>
+//                 <RightDiv>{User?.raspberry?.seatNumber}</RightDiv>
+//               </ReadingContent>
+//               <ButtonDiv>
+//                 <PopupButton
+//                   type="button"
+//                   text={'좌석 해제'}
+//                   onClick={() => {
+//                     let organizationNonExist = false;
+//                     if (User.organization === null) {
+//                       organizationNonExist = true;
+//                     }
+//                     onUnRegist(organizationNonExist);
+//                   }}
+//                 />
+//                 <PopupButton
+//                   type="button"
+//                   onClick={() => {
+//                     close();
+//                   }}
+//                   text={'닫기'}
+//                 />
+//               </ButtonDiv>
+//             </PBody>
+//           );
+//           // }
+//         }}
+//       </PopupCustom>
+//       <PopupCustom
+//         trigger={<ContentDiv>독서실 좌석 연결</ContentDiv>}
+//         closeOnDocumentClick={false}
+//         modal
+//       >
+//         {(close) => {
+//           return (
+//             <PBody>
+//               <PTitle text={'독서실 좌석 연결'} />
+//               <InputUpWrapper>
+//                 <InputWrapper>
+//                   <Input
+//                     placeholder={'시리얼 넘버 (예: a0001-a01-a0001)'}
+//                     {...raspberrySerial}
+//                   />
+//                 </InputWrapper>
+//                 <InputWrapper>
+//                   <Input
+//                     placeholder={'가입번호 (예: 123456)'}
+//                     {...secretCode}
+//                   />
+//                 </InputWrapper>
+//               </InputUpWrapper>
+//               <ButtonDiv>
+//                 <PopupButton
+//                   type="button"
+//                   text={'좌석 연결'}
+//                   onClick={async () => {
+//                     const fucResult = await onRegist();
+//                     if (fucResult) {
+//                       close();
+//                     }
+//                   }}
+//                 />
+//                 <PopupButton
+//                   type="button"
+//                   onClick={() => {
+//                     clearOnRegist();
+//                     close();
+//                   }}
+//                   text={'닫기'}
+//                 />
+//               </ButtonDiv>
+//             </PBody>
+//           );
+//           // }
+//         }}
+//       </PopupCustom>
+//     </Regist>
+//   );
+// }
