@@ -333,7 +333,6 @@ export default ({
   managerSecret,
 }) => {
   const responseGoogle = async (response) => {
-    console.log(email, response);
     const {
       email: G_email,
       givenName: G_firstName,
