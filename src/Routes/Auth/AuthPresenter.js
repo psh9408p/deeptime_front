@@ -648,15 +648,21 @@ export default ({
                 </GoogleLoginButton>
               )}
               buttonText="Login"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
+              onSuccess={() => {
+                responseGoogle();
+              }}
+              onFailure={() => {
+                responseGoogle();
+              }}
               cookiePolicy={'single_host_origin'}
             />
             <FacebookLogin
               appId="672262500184302"
               autoLoad={false}
               fields="first_name,last_name,email,picture"
-              callback={responseFacebook}
+              callback={() => {
+                responseFacebook();
+              }}
               render={(renderProps) => (
                 <FacebookLoginButton
                   onClick={renderProps.onClick}
