@@ -23,9 +23,11 @@ const Input = ({
   height = '35px',
   className,
   bgColor = '#FAFAFA',
+  autoComplete = 'off',
 }) => (
   <Container
     id={id}
+    autoComplete={autoComplete}
     className={className}
     placeholder={placeholder}
     required={required}

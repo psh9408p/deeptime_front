@@ -49,7 +49,6 @@ const PotalButton = styled.button`
   padding: 0 20px;
   :hover {
     background-color: ${(props) => props.theme.classicGray};
-    filter: none;
   }
   :active {
     background-color: ${(props) => props.theme.classicGray};
@@ -59,6 +58,11 @@ const PotalButton = styled.button`
     margin-right: 50px;
     color: white;
     background-color: ${(props) => props.theme.classicBlue};
+  }
+  &:nth-child(2) {
+    :hover {
+      filter: none;
+    }
   }
 `;
 

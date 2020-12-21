@@ -372,11 +372,13 @@ export default ({
               <Input
                 placeholder={'Email (예: deeptime@google.com)'}
                 {...email}
+                autoComplete={'on'}
                 type="email"
               />
               <Input
                 placeholder={'비밀번호 (예: ABCD1234)'}
                 {...password}
+                autoComplete={'on'}
                 type="password"
               />
               <LoginButtonDiv>
