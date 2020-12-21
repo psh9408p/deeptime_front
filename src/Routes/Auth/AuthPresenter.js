@@ -407,6 +407,7 @@ export default ({
                   placeholder={'Email [인증 버튼 클릭 ▶]'}
                   value={email.value}
                   onChange={() => {}}
+                  type="email"
                 />
                 <PopupCustom
                   trigger={
