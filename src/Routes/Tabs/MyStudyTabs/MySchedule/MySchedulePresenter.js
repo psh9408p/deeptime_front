@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, forwardRef } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import ObjectUnassign from '../../../../Components/ObjectUnassign';
@@ -8,6 +8,7 @@ import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import Select from '../../../../Components/Select';
+import WeekRange from '../../../../Components/Date/WeekRange';
 import Button_blue from '../../../../Components/Buttons/Button_blue';
 import Button_red from '../../../../Components/Buttons/Button_red';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
@@ -24,12 +25,15 @@ import useSelect from '../../../../Hooks/useSelect';
 import { FixedSizeList as BookmarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
-import { Delete, Flag } from '../../../../Components/Icons';
+import { Delete, Flag, Next } from '../../../../Components/Icons';
 import {
   Button_refresh,
   Button_setting,
   Button_copy,
+  Button_copy2,
 } from '../../../../Components/Buttons/Button_click';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -89,6 +93,16 @@ const DateRangeWrap = styled.div`
   font-weight: 600;
 `;
 
+const DateRangeWrap2 = styled(DateRangeWrap)`
+  margin-top: 10px;
+  font-size: 16px;
+  padding: 10px;
+  width: 162px;
+  background-color: ${(props) => props.theme.bgColor};
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
 const SelectDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -124,80 +138,60 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
-const PopupCustom2 = styled(Popup)`
+const PopupCustom2 = styled(PopupCustom)`
   &-content {
-    width: 550px !important;
     height: 550px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const PopupCustom3 = styled(Popup)`
+const PopupCustom3 = styled(PopupCustom)`
   &-content {
     width: 500px !important;
     height: 250px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const PopupCustom4 = styled(Popup)`
+const PopupCustom4 = styled(PopupCustom)`
   &-content {
     width: 500px !important;
     height: 200px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const PopupCustom5 = styled(Popup)`
+const PopupCustom5 = styled(PopupCustom)`
   &-content {
     width: 500px !important;
     height: 500px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const PopupCustom6 = styled(Popup)`
-  &-content {
-    width: 550px !important;
-    height: 500px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
-  }
-`;
+const PopupCustom6 = styled(PopupCustom)``;
 
-const PopupCustom7 = styled(Popup)`
+const PopupCustom7 = styled(PopupCustom)`
   &-content {
     width: 300px !important;
     height: 200px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
 
-const PopupCustom8 = styled(Popup)`
+const PopupCustom8 = styled(PopupCustom)`
   &-content {
     width: 460px !important;
     height: 200px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const PopupCustom9 = styled(PopupCustom)`
+  &-content {
+    width: 360px !important;
+    height: 180px !important;
+  }
+`;
+
+const PopupCustom10 = styled(PopupCustom)`
+  &-content {
+    width: 450px !important;
+    height: 250px !important;
   }
 `;
 
@@ -213,6 +207,7 @@ const PBody = styled.div``;
 const PBody2 = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 500px;
   padding: 20px 20px;
 `;
@@ -513,6 +508,50 @@ const RefreshInputWrap = styled.div`
   height: 30px;
 `;
 
+const ScheWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+  width: 100%;
+`;
+
+const WeekWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+`;
+
+const WeekIndi = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+`;
+
+const NextWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  width: 10%;
+`;
+
+const DatePickButton = styled.button`
+  border: 0;
+  outline-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.classicGray};
+  font-weight: 600;
+  color: black;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 14px;
+  width: 162px;
+  cursor: pointer;
+`;
+
 let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
@@ -556,6 +595,18 @@ export default ({
   lastEnd,
   copyBool,
   setCopyBool,
+  copyDate,
+  setCopyDate,
+  pasteDate,
+  setPasteDate,
+  copyStart,
+  setCopyStart,
+  copyEnd,
+  setCopyEnd,
+  pasteStart,
+  setPasteStart,
+  pasteEnd,
+  setPasteEnd,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1048,7 +1099,7 @@ export default ({
   const onBeforeUpdateSchedule = useCallback(
     async (res) => {
       if (res.schedule.calendarId === '') {
-        alert('TASK를 할당해야 복사&수정이 가능합니다.');
+        alert('TASK를 할당해야 수정&복사가 가능합니다.');
         return;
       }
 
@@ -1191,7 +1242,7 @@ export default ({
     },
     [copyBool],
   );
-  console.log('z', copyBool);
+
   function _getFormattedTime(time) {
     const date = new Date(time);
     const h = date.getHours();
@@ -1350,6 +1401,14 @@ export default ({
     </IndiviList>
   );
 
+  const CustomInput = forwardRef(({ value, onClick }, ref) => {
+    return (
+      <DatePickButton ref={ref} onClick={onClick}>
+        {value} (클릭)
+      </DatePickButton>
+    );
+  });
+
   const onClickBookMark = async () => {
     try {
       toast.info('북마크 변경사항 저장 중...');
@@ -1437,6 +1496,106 @@ export default ({
             }}
             value={copyBool}
           />
+          <PopupCustom9
+            trigger={<Button_copy2 />}
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => {
+              return (
+                <PBody2>
+                  <ScheWrap>
+                    <Button_custom
+                      text={'스케줄 만들기'}
+                      width={'308px'}
+                      margin={'0 0 10px 0'}
+                    />
+                  </ScheWrap>
+                  <PopupCustom10
+                    trigger={
+                      <PopButton_custom
+                        text={'주간 스케줄 복사'}
+                        width={'308px'}
+                        height={'30px'}
+                        margin={'0 0 10px 0'}
+                      />
+                    }
+                    closeOnDocumentClick={false}
+                    modal
+                  >
+                    {(close) => {
+                      return (
+                        <PBody2>
+                          <PTitle text={'주간 스케줄 복사'} />
+                          <WeekWrap>
+                            <WeekIndi>
+                              <DatePicker
+                                dateFormat={'yyyy/MM/dd'}
+                                selected={copyDate}
+                                onChange={(date) => {
+                                  setCopyDate(date);
+                                }}
+                                customInput={<CustomInput />}
+                              />
+                              <DateRangeWrap2>
+                                {moment(copyStart).format('MM.DD')}(일)~
+                                {moment(copyEnd).format('MM.DD')}(토)
+                              </DateRangeWrap2>
+                            </WeekIndi>
+                            <NextWrap>
+                              <Next />
+                            </NextWrap>
+                            <WeekIndi>
+                              <DatePicker
+                                dateFormat={'yyyy/MM/dd'}
+                                selected={pasteDate}
+                                onChange={(date) => {
+                                  setPasteDate(date);
+                                }}
+                                customInput={<CustomInput />}
+                              />
+                              <DateRangeWrap2>
+                                {moment(pasteStart).format('MM.DD')}(일)~
+                                {moment(pasteEnd).format('MM.DD')}(토)
+                              </DateRangeWrap2>
+                            </WeekIndi>
+                          </WeekWrap>
+                          <ButtonDiv style={{ marginTop: '20px' }}>
+                            <PopupButton
+                              type="button"
+                              onClick={async () => {
+                                // const fucResult = await onSaveSet();
+                                // if (fucResult) {
+                                //   close();
+                                // }
+                              }}
+                              text={'복사'}
+                            />
+                            <PopupButton
+                              type="button"
+                              onClick={() => {
+                                close();
+                              }}
+                              text={'닫기'}
+                            />
+                          </ButtonDiv>
+                        </PBody2>
+                      );
+                    }}
+                  </PopupCustom10>
+                  <ButtonDiv style={{ marginTop: '10px' }}>
+                    <PopupButton_solo
+                      type="button"
+                      onClick={() => {
+                        close();
+                      }}
+                      text={'닫기'}
+                    />
+                  </ButtonDiv>
+                </PBody2>
+              );
+            }}
+          </PopupCustom9>
           <PopupCustom8
             trigger={<Button_setting />}
             closeOnDocumentClick={false}
@@ -1493,7 +1652,13 @@ export default ({
             }}
           </PopupCustom8>
           <PopupCustom7
-            trigger={<PopButton_custom widht={'80px'} text={'To Do List'} />}
+            trigger={
+              <PopButton_custom
+                widht={'80px'}
+                margin={'0 10px 0 0'}
+                text={'To Do List'}
+              />
+            }
             closeOnDocumentClick={false}
             modal
           >

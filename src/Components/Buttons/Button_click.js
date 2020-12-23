@@ -1,6 +1,14 @@
 import React, { forwardRef } from 'react';
 import styled from 'styled-components';
-import { Camera, Refresh, Setting, Timelapse, Control, Copy } from '../Icons';
+import {
+  Camera,
+  Refresh,
+  Setting,
+  Timelapse,
+  Control,
+  Copy,
+  Copy2,
+} from '../Icons';
 
 const Container = styled.button`
   font-size: 24px;
@@ -62,6 +70,14 @@ export const Button_copy = ({ onClick, margin = '0 10px 0 0', value }) => (
   <Container_hold onClick={onClick} margin={margin} value={value}>
     <Copy />
   </Container_hold>
+);
+
+export const Button_copy2 = forwardRef(
+  ({ onClick, margin = '0 10px 0 0' }, ref) => (
+    <Container onClick={onClick} margin={margin}>
+      <Copy2 />
+    </Container>
+  ),
 );
 
 export const Button_setting = forwardRef(

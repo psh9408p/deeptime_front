@@ -160,9 +160,9 @@ const DatePickButton = styled.button`
   border: 0;
   outline-color: black;
   border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.classicBlue};
+  background-color: ${(props) => props.theme.classicGray};
   font-weight: 600;
-  color: white;
+  color: black;
   text-align: center;
   padding: 7px 10px;
   font-size: 14px;
@@ -1064,7 +1064,7 @@ export default ({
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
     return (
       <DatePickButton ref={ref} onClick={onClick}>
-        {value} (Click)
+        {value} (클릭)
       </DatePickButton>
     );
   });

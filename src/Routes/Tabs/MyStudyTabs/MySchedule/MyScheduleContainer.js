@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Loader from '../../../../Components/Loader';
+import WeekRange from '../../../../Components/Date/WeekRange';
 import MySchedulePresenter from './MySchedulePresenter';
 import useInput from '../../../../Hooks/useInput';
 import { useMutation, useQuery } from '@apollo/react-hooks';
@@ -18,6 +19,7 @@ import {
   EDIT_STUDYSET,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -28,6 +30,13 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
 
   const cal = useRef(null);
+  const [copyDate, setCopyDate] = useState(new Date());
+  const [pasteDate, setPasteDate] = useState(new Date());
+  const { weekStart: initStart, weekEnd: initEnd } = WeekRange(new Date());
+  const [copyStart, setCopyStart] = useState(initStart);
+  const [copyEnd, setCopyEnd] = useState(initEnd);
+  const [pasteStart, setPasteStart] = useState(initStart);
+  const [pasteEnd, setPasteEnd] = useState(initEnd);
   const [copyBool, setCopyBool] = useState(false);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
@@ -120,6 +129,15 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     }
   };
 
+  useEffect(() => {
+    const { weekStart: copyS, weekEnd: copyE } = WeekRange(copyDate);
+    setCopyStart(copyS);
+    setCopyEnd(copyE);
+    const { weekStart: pasteS, weekEnd: pasteE } = WeekRange(pasteDate);
+    setPasteStart(pasteS);
+    setPasteEnd(pasteE);
+  }, [copyDate, pasteDate]);
+
   if ((subjectnetwork === 7 || subjectnetwork === 4) && !todolistLoading) {
     return (
       <MySchedulePresenter
@@ -157,6 +175,18 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         lastEnd={lastEnd}
         copyBool={copyBool}
         setCopyBool={setCopyBool}
+        copyDate={copyDate}
+        setCopyDate={setCopyDate}
+        pasteDate={pasteDate}
+        setPasteDate={setPasteDate}
+        copyStart={copyStart}
+        setCopyStart={setCopyStart}
+        copyEnd={copyEnd}
+        setCopyEnd={setCopyEnd}
+        pasteStart={pasteStart}
+        setPasteStart={setPasteStart}
+        pasteEnd={pasteEnd}
+        setPasteEnd={setPasteEnd}
       />
     );
   } else {
