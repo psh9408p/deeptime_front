@@ -28,6 +28,7 @@ import { Delete, Flag } from '../../../../Components/Icons';
 import {
   Button_refresh,
   Button_setting,
+  Button_copy,
 } from '../../../../Components/Buttons/Button_click';
 
 const Wrapper = styled.div`
@@ -553,6 +554,8 @@ export default ({
   scheHeight,
   lastStart,
   lastEnd,
+  copyBool,
+  setCopyBool,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1042,123 +1045,153 @@ export default ({
     );
   }, []);
 
-  const onBeforeUpdateSchedule = useCallback(async (res) => {
-    if (res.changes !== null) {
-      if (res.changes.start !== undefined && res.changes.end !== undefined) {
-        const dateSumVar = {
-          start: res.changes.start._date,
-          end: res.changes.end._date,
-        };
-        const dateRmVar = { start: '', end: '' };
-        ObjectUnassign(res.changes, dateRmVar);
-        Object.assign(res.changes, dateSumVar);
-      } else if (res.changes.start !== undefined) {
-        const dateSumVar = { start: res.changes.start._date };
-        const dateRmVar = { start: '' };
-        ObjectUnassign(res.changes, dateRmVar);
-        Object.assign(res.changes, dateSumVar);
-      } else if (res.changes.end !== undefined) {
-        const dateSumVar = { end: res.changes.end._date };
-        const dateRmVar = { end: '' };
-        ObjectUnassign(res.changes, dateRmVar);
-        Object.assign(res.changes, dateSumVar);
-      }
-
-      let totalTime_tmp = 0;
-      if (res.changes.start !== undefined && res.changes.end !== undefined) {
-        totalTime_tmp = res.changes.end.getTime() - res.changes.start.getTime();
-      } else if (res.changes.start !== undefined) {
-        totalTime_tmp =
-          res.schedule.end._date.getTime() - res.changes.start.getTime();
-      } else if (res.changes.end !== undefined) {
-        totalTime_tmp =
-          res.changes.end.getTime() - res.schedule.start._date.getTime();
-      } else {
-        totalTime_tmp =
-          res.schedule.end._date.getTime() - res.schedule.start._date.getTime();
-      }
-      totalTime_tmp = totalTime_tmp / 1000;
-      // 0시 0분으로 끝나면 1초 빼주기
-      const tmpEndDate = new Date(res.changes.end);
-      if (
-        res.changes.end !== undefined &&
-        res.changes.end.getMinutes() === 0 &&
-        res.changes.end.getHours() === 0
-      ) {
-        tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-      }
-
-      const schedule_tmp = {
-        id: res.schedule.id,
-        isAllDay: res.schedule.isAllDay,
-        isPrivate: res.schedule.isPrivate,
-        title:
-          res.changes.title !== undefined
-            ? res.changes.title
-            : res.schedule.title,
-        location:
-          res.changes.location !== undefined
-            ? res.changes.location
-            : res.schedule.location,
-        state:
-          res.changes.state !== undefined
-            ? res.changes.state
-            : res.schedule.state,
-        start:
-          res.changes.start !== undefined
-            ? res.changes.start
-            : res.schedule.start._date,
-        end:
-          res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
-        totalTime: totalTime_tmp,
-        calendarId:
-          res.changes.calendarId !== undefined
-            ? res.changes.calendarId
-            : res.schedule.calendarId,
-        option: 'update',
-      };
-      Object.assign(schedule_tmp, res.changes);
-
-      let overlap = false;
-      const schedules_test = ObjectCopy(schedules);
-      const checkExist = (a) => a.id === res.schedule.id;
-      const checkIndex2 = schedules.findIndex(checkExist);
-      schedules_test.splice(checkIndex2, 1);
-      schedules_test.map((sch) => {
-        if (
-          new Date(sch.end._date ? sch.end._date : sch.end) >
-            schedule_tmp.start &&
-          new Date(sch.start._date ? sch.start._date : sch.start) <
-            schedule_tmp.end
-        ) {
-          overlap = true;
-        }
-      });
-      if (overlap) {
-        alert('스케줄 시간은 중복될 수 없습니다.');
+  const onBeforeUpdateSchedule = useCallback(
+    async (res) => {
+      if (res.schedule.calendarId === '') {
+        alert('TASK를 할당해야 복사&수정이 가능합니다.');
         return;
       }
 
-      const checkIndex = newScheduleArray.findIndex(checkExist);
-      if (checkIndex === -1) {
-        newScheduleArray.push(schedule_tmp);
-      } else {
-        newScheduleArray.splice(checkIndex, 1);
-        newScheduleArray.push(schedule_tmp);
+      if (res.changes !== null) {
+        if (res.changes.start !== undefined && res.changes.end !== undefined) {
+          const dateSumVar = {
+            start: res.changes.start._date,
+            end: res.changes.end._date,
+          };
+          const dateRmVar = { start: '', end: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        } else if (res.changes.start !== undefined) {
+          const dateSumVar = { start: res.changes.start._date };
+          const dateRmVar = { start: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        } else if (res.changes.end !== undefined) {
+          const dateSumVar = { end: res.changes.end._date };
+          const dateRmVar = { end: '' };
+          ObjectUnassign(res.changes, dateRmVar);
+          Object.assign(res.changes, dateSumVar);
+        }
+
+        let totalTime_tmp = 0;
+        if (res.changes.start !== undefined && res.changes.end !== undefined) {
+          totalTime_tmp =
+            res.changes.end.getTime() - res.changes.start.getTime();
+        } else if (res.changes.start !== undefined) {
+          totalTime_tmp =
+            res.schedule.end._date.getTime() - res.changes.start.getTime();
+        } else if (res.changes.end !== undefined) {
+          totalTime_tmp =
+            res.changes.end.getTime() - res.schedule.start._date.getTime();
+        } else {
+          totalTime_tmp =
+            res.schedule.end._date.getTime() -
+            res.schedule.start._date.getTime();
+        }
+        totalTime_tmp = totalTime_tmp / 1000;
+
+        const generateId =
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15);
+        // 0시 0분으로 끝나면 1초 빼주기
+        const tmpEndDate = new Date(res.changes.end);
+        if (
+          res.changes.end !== undefined &&
+          res.changes.end.getMinutes() === 0 &&
+          res.changes.end.getHours() === 0
+        ) {
+          tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+        }
+
+        const schedule_tmp = {
+          id: copyBool ? generateId : res.schedule.id,
+          isAllDay: res.schedule.isAllDay,
+          isPrivate: res.schedule.isPrivate,
+          title:
+            res.changes.title !== undefined
+              ? res.changes.title
+              : res.schedule.title,
+          location:
+            res.changes.location !== undefined
+              ? res.changes.location
+              : res.schedule.location,
+          state:
+            res.changes.state !== undefined
+              ? res.changes.state
+              : res.schedule.state,
+          start:
+            res.changes.start !== undefined
+              ? res.changes.start
+              : res.schedule.start._date,
+          end:
+            res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
+          totalTime: totalTime_tmp,
+          calendarId:
+            res.changes.calendarId !== undefined
+              ? res.changes.calendarId
+              : res.schedule.calendarId,
+          option: copyBool ? 'create' : 'update',
+        };
+        Object.assign(schedule_tmp, res.changes);
+
+        let overlap = false;
+        const schedules_test = ObjectCopy(schedules);
+        const checkExist = (a) => a.id === res.schedule.id;
+        const checkIndex2 = schedules.findIndex(checkExist);
+        // 복사는 기존에 데이터가 없으니 뺄필요가 없지롱
+        if (!copyBool) {
+          schedules_test.splice(checkIndex2, 1);
+        }
+        schedules_test.map((sch) => {
+          if (
+            new Date(sch.end._date ? sch.end._date : sch.end) >
+              schedule_tmp.start &&
+            new Date(sch.start._date ? sch.start._date : sch.start) <
+              schedule_tmp.end
+          ) {
+            overlap = true;
+          }
+        });
+        if (overlap) {
+          alert('스케줄 시간은 중복될 수 없습니다.');
+          return;
+        }
+
+        const { schedule, changes } = res;
+        if (copyBool) {
+          // 복사
+          newScheduleArray.push(schedule_tmp);
+
+          schedules.push({ ...schedule, ...changes, id: generateId });
+
+          cal.current.calendarInst.createSchedules([
+            { ...schedule, ...changes, id: generateId },
+          ]);
+          setCopyBool(false);
+        } else {
+          // 업데이트
+          const checkIndex = newScheduleArray.findIndex(checkExist);
+          if (checkIndex === -1) {
+            newScheduleArray.push(schedule_tmp);
+          } else {
+            newScheduleArray.splice(checkIndex, 1);
+            newScheduleArray.push(schedule_tmp);
+          }
+
+          schedules.splice(checkIndex2, 1);
+          schedules.push({ ...schedule, ...changes });
+
+          cal.current.calendarInst.updateSchedule(
+            schedule.id,
+            schedule.calendarId,
+            changes,
+          );
+        }
       }
-      // 업데이트라는건 랜더링되는 스케줄변수가 무조건 있으니 if문 없음
-      schedules.splice(checkIndex2, 1);
-      schedules.push(res.schedule);
-
-      const { schedule, changes } = res;
-      cal.current.calendarInst.updateSchedule(
-        schedule.id,
-        schedule.calendarId,
-        changes,
-      );
-    }
-  }, []);
-
+    },
+    [copyBool],
+  );
+  console.log('z', copyBool);
   function _getFormattedTime(time) {
     const date = new Date(time);
     const h = date.getHours();
@@ -1398,6 +1431,12 @@ export default ({
               todolistRefetch();
             }}
           />
+          <Button_copy
+            onClick={() => {
+              setCopyBool(!copyBool);
+            }}
+            value={copyBool}
+          />
           <PopupCustom8
             trigger={<Button_setting />}
             closeOnDocumentClick={false}
@@ -1474,7 +1513,7 @@ export default ({
                           <PBody>
                             <SubjectForm>
                               <PTitle text={'To Do List 계획'} />
-                              <NewTodoDiv>
+                              {/* <NewTodoDiv>
                                 <SelectWrapper3>
                                   <Select
                                     {...mySubjectList2}
@@ -1497,7 +1536,7 @@ export default ({
                                     onTodolistAdd();
                                   }}
                                 />
-                              </NewTodoDiv>
+                              </NewTodoDiv> */}
                               <TodolistTitle>
                                 <BookLeft>TASK</BookLeft>
                                 <BookRight>To Do List</BookRight>
@@ -1505,7 +1544,7 @@ export default ({
                               </TodolistTitle>
                               <ListWrap>
                                 <BookmarkList
-                                  height={250}
+                                  height={300}
                                   itemCount={todolistData_new.length}
                                   itemSize={40}
                                   width={450}

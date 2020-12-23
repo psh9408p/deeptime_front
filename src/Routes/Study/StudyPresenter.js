@@ -2083,60 +2083,56 @@ export default ({
 
   const todolistRow = ({ columnIndex, rowIndex, style }) => {
     const index = rowIndex * 2 + columnIndex;
-    if (index === 0) {
-      return (
-        <IndiTodoWrap
-          key={index}
-          style={style}
-          isOdd={Boolean(columnIndex % 2)}
-        >
-          <RoundTodo
-            bgColor={'#DDE7E9'}
-            color={'black'}
-            onClick={() => {
-              setNewTodoView(true);
-            }}
-          >
-            <RoundNameDiv2>To Do List 추가 👆</RoundNameDiv2>
-          </RoundTodo>
-        </IndiTodoWrap>
-      );
-    } else {
-      if (todolistData_new[index - 1] === undefined) {
-        return <div></div>;
-      }
-      const rgb_tmp = hexToRgb(todolistData_new[index - 1].subject.bgColor);
-      const fontColor = fontColor_dependBg(rgb_tmp);
-      return (
-        <IndiTodoWrap
-          key={index}
-          style={style}
-          isOdd={Boolean(columnIndex % 2)}
-        >
-          <RoundTodo
-            bgColor={todolistData_new[index - 1].subject.bgColor}
-            color={fontColor}
-            onClick={() => {
-              mySubjectList2.setOption(todolistData_new[index - 1].subject.id);
-              scheduleTitle.setValue(todolistData_new[index - 1].name);
-            }}
-          >
-            <RoundNameDiv>{todolistData_new[index - 1].name}</RoundNameDiv>
-            <Flag
-              fill={fontColor}
-              margin={'0 5px 0 0'}
-              onClick={() => onTodolistFinish(todolistData_new[index - 1].id)}
-            />
-            <Delete
-              fill={fontColor}
-              onClick={() => {
-                onTodolistDelete(todolistData_new[index - 1].id);
-              }}
-            />
-          </RoundTodo>
-        </IndiTodoWrap>
-      );
+    // if (index === 0) {
+    //   return (
+    //     <IndiTodoWrap
+    //       key={index}
+    //       style={style}
+    //       isOdd={Boolean(columnIndex % 2)}
+    //     >
+    //       <RoundTodo
+    //         bgColor={'#DDE7E9'}
+    //         color={'black'}
+    //         onClick={() => {
+    //           setNewTodoView(true);
+    //         }}
+    //       >
+    //         <RoundNameDiv2>To Do List 추가 👆</RoundNameDiv2>
+    //       </RoundTodo>
+    //     </IndiTodoWrap>
+    //   );
+    // } else {
+    if (todolistData_new[index] === undefined) {
+      return <div></div>;
     }
+    const rgb_tmp = hexToRgb(todolistData_new[index].subject.bgColor);
+    const fontColor = fontColor_dependBg(rgb_tmp);
+    return (
+      <IndiTodoWrap key={index} style={style} isOdd={Boolean(columnIndex % 2)}>
+        <RoundTodo
+          bgColor={todolistData_new[index].subject.bgColor}
+          color={fontColor}
+          onClick={() => {
+            mySubjectList2.setOption(todolistData_new[index].subject.id);
+            scheduleTitle.setValue(todolistData_new[index].name);
+          }}
+        >
+          <RoundNameDiv>{todolistData_new[index].name}</RoundNameDiv>
+          <Flag
+            fill={fontColor}
+            margin={'0 5px 0 0'}
+            onClick={() => onTodolistFinish(todolistData_new[index].id)}
+          />
+          <Delete
+            fill={fontColor}
+            onClick={() => {
+              onTodolistDelete(todolistData_new[index].id);
+            }}
+          />
+        </RoundTodo>
+      </IndiTodoWrap>
+    );
+    // }
   };
 
   const followingList = ({ index, style }) => {

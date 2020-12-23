@@ -28,6 +28,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
 
   const cal = useRef(null);
+  const [copyBool, setCopyBool] = useState(false);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
   const [lastStart, setLastStart] = useState(
@@ -154,6 +155,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         scheHeight={scheHeight}
         lastStart={lastStart}
         lastEnd={lastEnd}
+        copyBool={copyBool}
+        setCopyBool={setCopyBool}
       />
     );
   } else {
