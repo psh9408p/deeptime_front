@@ -8,7 +8,7 @@ import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import Select from '../../../../Components/Select';
-import WeekRange from '../../../../Components/Date/WeekRange';
+import todayDateRange from '../../../../Components/Date/todayDateRange';
 import Button_blue from '../../../../Components/Buttons/Button_blue';
 import Button_red from '../../../../Components/Buttons/Button_red';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
@@ -93,16 +93,6 @@ const DateRangeWrap = styled.div`
   font-weight: 600;
 `;
 
-const DateRangeWrap2 = styled(DateRangeWrap)`
-  margin-top: 10px;
-  font-size: 16px;
-  padding: 10px;
-  width: 162px;
-  background-color: ${(props) => props.theme.bgColor};
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-`;
-
 const SelectDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -184,14 +174,14 @@ const PopupCustom8 = styled(PopupCustom)`
 const PopupCustom9 = styled(PopupCustom)`
   &-content {
     width: 360px !important;
-    height: 180px !important;
+    height: 200px !important;
   }
 `;
 
 const PopupCustom10 = styled(PopupCustom)`
   &-content {
     width: 450px !important;
-    height: 250px !important;
+    height: 200px !important;
   }
 `;
 
@@ -523,7 +513,7 @@ const WeekWrap = styled.div`
   width: 100%;
 `;
 
-const WeekIndi = styled.div`
+const DateIndi = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -534,7 +524,7 @@ const NextWrap = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
+  height: 32.5px;
   width: 10%;
 `;
 
@@ -600,13 +590,13 @@ export default ({
   pasteDate,
   setPasteDate,
   copyStart,
-  setCopyStart,
   copyEnd,
-  setCopyEnd,
   pasteStart,
-  setPasteStart,
   pasteEnd,
-  setPasteEnd,
+  copyOne,
+  setCopyOne,
+  pasteOne,
+  setPasteOne,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -881,6 +871,140 @@ export default ({
     }
   };
 
+  //스케줄 가공 전처리
+  const schePreTreat = ({ sches, diffTime = 0 }) => {
+    let checkEmpty = true;
+    const tmpSchedules = sches.map((sche) => {
+      if (sche.calendarId === '') {
+        checkEmpty = false;
+      }
+      delete sche.category;
+      delete sche.raw;
+      delete sche.dueDateClass;
+      delete sche.isVisible;
+      delete sche.bgColor;
+      delete sche.borderColor;
+      delete sche.dragBgColor;
+      delete sche.color;
+      sche.totalTime = (sche.end.getTime() - sche.start.getTime()) / 1000;
+      sche.option = 'create';
+      if (diffTime !== 0) {
+        sche.start.setTime(sche.start.getTime() + diffTime);
+        sche.end.setTime(sche.end.getTime() + diffTime);
+      }
+      const generateId =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+      sche.id = generateId;
+      return sche;
+    });
+
+    if (!checkEmpty) {
+      return false;
+    }
+    return tmpSchedules;
+  };
+
+  const onCopyWeek = async () => {
+    // 해당주 스케줄 필터링
+    const weekFilter = (sche) =>
+      sche.start >= copyStart && sche.start <= copyEnd;
+    const weekSche = schedules.filter(weekFilter);
+
+    const diffTime = pasteStart.getTime() - copyStart.getTime();
+    const scheTmpArray = schePreTreat({
+      sches: weekSche,
+      diffTime,
+    });
+
+    if (scheTmpArray.length === 0) {
+      alert('해당 기간에 복사할 스케줄이 없습니다.');
+      return;
+    } else if (scheTmpArray === false) {
+      alert(
+        'TASK가 할당되지 않은 스케줄이 존재합니다.\nTASK 할당 후 다시 시도하세요.',
+      );
+      return;
+    }
+
+    try {
+      toast.info('주간 스케줄 복사 중...');
+      const {
+        data: { saveSchedule_my },
+      } = await saveScheduleMutation({
+        variables: {
+          scheduleArray: scheTmpArray,
+        },
+      });
+      if (!saveSchedule_my) {
+        alert('스케줄을 복사할 수 없습니다.');
+      } else {
+        await myRefetch();
+        await todolistRefetch();
+        const nowDate = new Date();
+        setCopyDate(nowDate);
+        setPasteDate(new Date(nowDate.getTime() + 604800000));
+        toast.success('주간 스케줄이 복사되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const onCopyOne = async () => {
+    // 해당일 스케줄 필터링
+    const weekFilter = (sche) => {
+      const { startDate, endDate } = todayDateRange(copyOne);
+      return sche.start >= startDate && sche.start <= endDate;
+    };
+    const weekSche = schedules.filter(weekFilter);
+
+    const { startDate: copySD } = todayDateRange(copyOne);
+    const { startDate: pasteSD } = todayDateRange(pasteOne);
+    const diffTime = pasteSD.getTime() - copySD.getTime();
+    const scheTmpArray = schePreTreat({
+      sches: weekSche,
+      diffTime,
+    });
+
+    if (scheTmpArray.length === 0) {
+      alert('해당 기간에 복사할 스케줄이 없습니다.');
+      return;
+    } else if (scheTmpArray === false) {
+      alert(
+        'TASK가 할당되지 않은 스케줄이 존재합니다.\nTASK 할당 후 다시 시도하세요.',
+      );
+      return;
+    }
+
+    try {
+      toast.info('하루 스케줄 복사 중...');
+      const {
+        data: { saveSchedule_my },
+      } = await saveScheduleMutation({
+        variables: {
+          scheduleArray: scheTmpArray,
+        },
+      });
+      if (!saveSchedule_my) {
+        alert('스케줄을 복사할 수 없습니다.');
+      } else {
+        await myRefetch();
+        await todolistRefetch();
+        const nowDate = new Date();
+        setCopyOne(new Date());
+        setPasteOne(new Date(nowDate.getTime() + 86400000));
+        toast.success('하루 스케줄이 복사되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
   //TASK 종류 넣기
   const inputCalendars = () => {
     const calendars_tmp = subjectList.map((subject) => {
@@ -1029,13 +1153,13 @@ export default ({
 
     const schedule_tmp = {
       id: generateId,
+      title: scheduleData.title,
       isAllDay: scheduleData.isAllDay,
       isPrivate: scheduleData.raw.class === 'private' ? true : false,
-      title: scheduleData.title,
-      location: scheduleData.location,
-      state: scheduleData.state,
       start: scheduleData.start._date,
       end: tmpEndDate,
+      location: scheduleData.location,
+      state: scheduleData.state,
       totalTime:
         (scheduleData.end._date.getTime() -
           scheduleData.start._date.getTime()) /
@@ -1098,7 +1222,8 @@ export default ({
 
   const onBeforeUpdateSchedule = useCallback(
     async (res) => {
-      if (res.schedule.calendarId === '') {
+      const checkSche = { ...res.schedule, ...res.changes };
+      if (checkSche.calendarId === '') {
         alert('TASK를 할당해야 수정&복사가 가능합니다.');
         return;
       }
@@ -1401,13 +1526,15 @@ export default ({
     </IndiviList>
   );
 
-  const CustomInput = forwardRef(({ value, onClick }, ref) => {
-    return (
-      <DatePickButton ref={ref} onClick={onClick}>
-        {value} (클릭)
-      </DatePickButton>
-    );
-  });
+  const CustomInput = forwardRef(
+    ({ value, onClick, text, week = false }, ref) => {
+      return (
+        <DatePickButton ref={ref} onClick={onClick}>
+          {week ? text : value}
+        </DatePickButton>
+      );
+    },
+  );
 
   const onClickBookMark = async () => {
     try {
@@ -1514,7 +1641,7 @@ export default ({
                   <PopupCustom10
                     trigger={
                       <PopButton_custom
-                        text={'주간 스케줄 복사'}
+                        text={'하루 스케줄 복사'}
                         width={'308px'}
                         height={'30px'}
                         margin={'0 0 10px 0'}
@@ -1526,48 +1653,40 @@ export default ({
                     {(close) => {
                       return (
                         <PBody2>
-                          <PTitle text={'주간 스케줄 복사'} />
+                          <PTitle text={'하루 스케줄 복사'} />
                           <WeekWrap>
-                            <WeekIndi>
+                            <DateIndi>
                               <DatePicker
                                 dateFormat={'yyyy/MM/dd'}
-                                selected={copyDate}
+                                selected={copyOne}
                                 onChange={(date) => {
-                                  setCopyDate(date);
+                                  setCopyOne(date);
                                 }}
                                 customInput={<CustomInput />}
                               />
-                              <DateRangeWrap2>
-                                {moment(copyStart).format('MM.DD')}(일)~
-                                {moment(copyEnd).format('MM.DD')}(토)
-                              </DateRangeWrap2>
-                            </WeekIndi>
+                            </DateIndi>
                             <NextWrap>
                               <Next />
                             </NextWrap>
-                            <WeekIndi>
+                            <DateIndi>
                               <DatePicker
                                 dateFormat={'yyyy/MM/dd'}
-                                selected={pasteDate}
+                                selected={pasteOne}
                                 onChange={(date) => {
-                                  setPasteDate(date);
+                                  setPasteOne(date);
                                 }}
                                 customInput={<CustomInput />}
                               />
-                              <DateRangeWrap2>
-                                {moment(pasteStart).format('MM.DD')}(일)~
-                                {moment(pasteEnd).format('MM.DD')}(토)
-                              </DateRangeWrap2>
-                            </WeekIndi>
+                            </DateIndi>
                           </WeekWrap>
                           <ButtonDiv style={{ marginTop: '20px' }}>
                             <PopupButton
                               type="button"
                               onClick={async () => {
-                                // const fucResult = await onSaveSet();
-                                // if (fucResult) {
-                                //   close();
-                                // }
+                                const fucResult = await onCopyOne();
+                                if (fucResult) {
+                                  close();
+                                }
                               }}
                               text={'복사'}
                             />
@@ -1575,6 +1694,98 @@ export default ({
                               type="button"
                               onClick={() => {
                                 close();
+                                const nowDate = new Date();
+                                setCopyDate(new Date());
+                                setPasteDate(
+                                  new Date(nowDate.getTime() + 86400000),
+                                );
+                              }}
+                              text={'닫기'}
+                            />
+                          </ButtonDiv>
+                        </PBody2>
+                      );
+                    }}
+                  </PopupCustom10>
+                  <PopupCustom10
+                    trigger={
+                      <PopButton_custom
+                        text={'주간 스케줄 복사'}
+                        width={'308px'}
+                        height={'30px'}
+                        margin={'0 0 10px 0'}
+                      />
+                    }
+                    closeOnDocumentClick={false}
+                    modal
+                  >
+                    {(close) => {
+                      const copyEnd_text = new Date(copyEnd.getTime() - 1000);
+                      const pasteEnd_text = new Date(pasteEnd.getTime() - 1000);
+                      return (
+                        <PBody2>
+                          <PTitle text={'주간 스케줄 복사'} />
+                          <WeekWrap>
+                            <DateIndi>
+                              <DatePicker
+                                dateFormat={'yyyy/MM/dd'}
+                                selected={copyDate}
+                                onChange={(date) => {
+                                  setCopyDate(date);
+                                }}
+                                customInput={
+                                  <CustomInput
+                                    week={true}
+                                    text={`${moment(copyStart).format(
+                                      'MM.DD',
+                                    )}(일)~
+                                ${moment(copyEnd_text).format('MM.DD')}(토)`}
+                                  />
+                                }
+                              />
+                            </DateIndi>
+                            <NextWrap>
+                              <Next />
+                            </NextWrap>
+                            <DateIndi>
+                              <DatePicker
+                                dateFormat={'yyyy/MM/dd'}
+                                selected={pasteDate}
+                                onChange={(date) => {
+                                  setPasteDate(date);
+                                }}
+                                customInput={
+                                  <CustomInput
+                                    week={true}
+                                    text={`${moment(pasteStart).format(
+                                      'MM.DD',
+                                    )}(일)~
+                                  ${moment(pasteEnd_text).format('MM.DD')}(토)`}
+                                  />
+                                }
+                              />
+                            </DateIndi>
+                          </WeekWrap>
+                          <ButtonDiv style={{ marginTop: '20px' }}>
+                            <PopupButton
+                              type="button"
+                              onClick={async () => {
+                                const fucResult = await onCopyWeek();
+                                if (fucResult) {
+                                  close();
+                                }
+                              }}
+                              text={'복사'}
+                            />
+                            <PopupButton
+                              type="button"
+                              onClick={() => {
+                                close();
+                                const nowDate = new Date();
+                                setCopyDate(nowDate);
+                                setPasteDate(
+                                  new Date(nowDate.getTime() + 604800000),
+                                );
                               }}
                               text={'닫기'}
                             />

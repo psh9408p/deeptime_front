@@ -19,7 +19,6 @@ import {
   EDIT_STUDYSET,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
-import moment from 'moment';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -30,13 +29,20 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
 
   const cal = useRef(null);
-  const [copyDate, setCopyDate] = useState(new Date());
-  const [pasteDate, setPasteDate] = useState(new Date());
-  const { weekStart: initStart, weekEnd: initEnd } = WeekRange(new Date());
-  const [copyStart, setCopyStart] = useState(initStart);
-  const [copyEnd, setCopyEnd] = useState(initEnd);
-  const [pasteStart, setPasteStart] = useState(initStart);
-  const [pasteEnd, setPasteEnd] = useState(initEnd);
+  const nowDate = new Date();
+
+  const [copyOne, setCopyOne] = useState(nowDate);
+  const [pasteOne, setPasteOne] = useState(
+    new Date(nowDate.getTime() + 86400000),
+  );
+  const [copyDate, setCopyDate] = useState(nowDate);
+  const [pasteDate, setPasteDate] = useState(
+    new Date(nowDate.getTime() + 604800000),
+  );
+  const [copyStart, setCopyStart] = useState(nowDate);
+  const [copyEnd, setCopyEnd] = useState(nowDate);
+  const [pasteStart, setPasteStart] = useState(nowDate);
+  const [pasteEnd, setPasteEnd] = useState(nowDate);
   const [copyBool, setCopyBool] = useState(false);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
@@ -130,10 +136,12 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   };
 
   useEffect(() => {
-    const { weekStart: copyS, weekEnd: copyE } = WeekRange(copyDate);
+    const { real_weekStart: copyS, real_weekEnd: copyE } = WeekRange(copyDate);
     setCopyStart(copyS);
     setCopyEnd(copyE);
-    const { weekStart: pasteS, weekEnd: pasteE } = WeekRange(pasteDate);
+    const { real_weekStart: pasteS, real_weekEnd: pasteE } = WeekRange(
+      pasteDate,
+    );
     setPasteStart(pasteS);
     setPasteEnd(pasteE);
   }, [copyDate, pasteDate]);
@@ -180,13 +188,13 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         pasteDate={pasteDate}
         setPasteDate={setPasteDate}
         copyStart={copyStart}
-        setCopyStart={setCopyStart}
         copyEnd={copyEnd}
-        setCopyEnd={setCopyEnd}
         pasteStart={pasteStart}
-        setPasteStart={setPasteStart}
         pasteEnd={pasteEnd}
-        setPasteEnd={setPasteEnd}
+        copyOne={copyOne}
+        setCopyOne={setCopyOne}
+        pasteOne={pasteOne}
+        setPasteOne={setPasteOne}
       />
     );
   } else {
