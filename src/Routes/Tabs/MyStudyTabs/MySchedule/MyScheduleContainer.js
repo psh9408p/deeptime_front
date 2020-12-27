@@ -58,6 +58,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [scheHeight, setScheHeight] = useState(
     overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
   );
+  const [dayBool, setDayBool] = useState(new Array(7).fill(false));
+
   const subjectName = useInput('');
   const todolistName = useInput('');
   const scheduleStart = useInput(
@@ -195,6 +197,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         setCopyOne={setCopyOne}
         pasteOne={pasteOne}
         setPasteOne={setPasteOne}
+        dayBool={dayBool}
+        setDayBool={setDayBool}
       />
     );
   } else {

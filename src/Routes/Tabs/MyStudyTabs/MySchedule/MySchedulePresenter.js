@@ -25,7 +25,7 @@ import useSelect from '../../../../Hooks/useSelect';
 import { FixedSizeList as BookmarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
-import { Delete, Flag, Next } from '../../../../Components/Icons';
+import { Delete, Flag, Next, Study_false } from '../../../../Components/Icons';
 import {
   Button_refresh,
   Button_setting,
@@ -182,6 +182,13 @@ const PopupCustom10 = styled(PopupCustom)`
   &-content {
     width: 450px !important;
     height: 200px !important;
+  }
+`;
+
+const PopupCustom11 = styled(PopupCustom)`
+  &-content {
+    width: 450px !important;
+    height: 500px !important;
   }
 `;
 
@@ -542,6 +549,37 @@ const DatePickButton = styled.button`
   cursor: pointer;
 `;
 
+const DayWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+`;
+
+const DayButton = styled.button`
+  width: 35px;
+  height: 35px;
+  border: 0;
+  color: black;
+  outline-color: black;
+  background-color: ${(props) => props.theme.classicGray};
+  border-radius: ${(props) => props.theme.borderRadius};
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 0px;
+  font-size: 16px;
+  cursor: pointer;
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+`;
+
+const DayButton2 = styled(DayButton)`
+  color: white;
+  background-color: ${(props) => props.theme.skyBlue};
+  border-radius: ${(props) => props.theme.borderRadius};
+`;
+
 let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
@@ -597,6 +635,8 @@ export default ({
   setCopyOne,
   pasteOne,
   setPasteOne,
+  dayBool,
+  setDayBool,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1444,6 +1484,21 @@ export default ({
     },
   };
 
+  // 다중 스케줄 만들기 (변수를 배열로 하니까 적용이 안됨...)
+  const nowDay = new
+  const [day0, setDay0] = useState(false);
+  const [day1, setDay1] = useState(false);
+  const [day2, setDay2] = useState(false);
+  const [day3, setDay3] = useState(false);
+  const [day4, setDay4] = useState(false);
+  const [day5, setDay5] = useState(false);
+  const [day6, setDay6] = useState(false);
+  const onCheckDay = (index) => {
+    let newArr = dayBool;
+    newArr[index] = !newArr[index];
+    setDayBool(newArr);
+  };
+
   // TASK 즐겨찾기 관련
   const [bookMarkCh, setBookMarkCh] = useState(
     subjectList.map((_, index) => {
@@ -1632,11 +1687,72 @@ export default ({
               return (
                 <PBody2>
                   <ScheWrap>
-                    <Button_custom
-                      text={'스케줄 만들기'}
-                      width={'308px'}
-                      margin={'0 0 10px 0'}
-                    />
+                    <PopupCustom11
+                      trigger={
+                        <PopButton_custom
+                          text={'스케줄 만들기'}
+                          width={'308px'}
+                          margin={'0 0 10px 0'}
+                        />
+                      }
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => {
+                        const dayList = [
+                          '일',
+                          '월',
+                          // '화',
+                          // '수',
+                          // '목',
+                          // '금',
+                          // '토',
+                        ];
+                        let booltest = new Array(7).fill(false);
+                        return (
+                          <PBody2>
+                            <PTitle text={'스케줄 만들기'} />
+                            <DayWrap>
+                              {dayList.map((day, index) => {
+                                return (
+                                  <DayButton
+                                    key={index}
+                                    dayBool={booltest[index]}
+                                    onClick={() => {
+                                      // let newArr = test;
+                                      // newArr[0] = !test[0];
+                                      booltest[index] = !booltest[index];
+                                      setTest(!test);
+                                    }}
+                                  >
+                                    {day}
+                                  </DayButton>
+                                );
+                              })}
+                            </DayWrap>
+                            <ButtonDiv style={{ marginTop: '20px' }}>
+                              <PopupButton
+                                type="button"
+                                onClick={async () => {
+                                  // const fucResult = await onCopyOne();
+                                  // if (fucResult) {
+                                  //   close();
+                                  // }
+                                }}
+                                text={'만들기'}
+                              />
+                              <PopupButton
+                                type="button"
+                                onClick={() => {
+                                  close();
+                                }}
+                                text={'닫기'}
+                              />
+                            </ButtonDiv>
+                          </PBody2>
+                        );
+                      }}
+                    </PopupCustom11>
                   </ScheWrap>
                   <PopupCustom10
                     trigger={
