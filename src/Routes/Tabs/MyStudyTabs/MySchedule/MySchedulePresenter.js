@@ -22,7 +22,7 @@ import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
 import useSelect from '../../../../Hooks/useSelect';
-import { FixedSizeList as BookmarkList } from 'react-window';
+import { FixedSizeList as BookmarkList, DaymarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
 import { Delete, Flag, Next, Study_false } from '../../../../Components/Icons';
@@ -34,6 +34,9 @@ import {
 } from '../../../../Components/Buttons/Button_click';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import useInput from '../../../../Hooks/useInput';
+import TimePicker from 'rc-time-picker';
+import 'rc-time-picker/assets/index.css';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -174,7 +177,7 @@ const PopupCustom8 = styled(PopupCustom)`
 const PopupCustom9 = styled(PopupCustom)`
   &-content {
     width: 360px !important;
-    height: 200px !important;
+    height: 220px !important;
   }
 `;
 
@@ -187,8 +190,8 @@ const PopupCustom10 = styled(PopupCustom)`
 
 const PopupCustom11 = styled(PopupCustom)`
   &-content {
-    width: 450px !important;
-    height: 500px !important;
+    width: 400px !important;
+    height: 350px !important;
   }
 `;
 
@@ -556,28 +559,41 @@ const DayWrap = styled.div`
   width: 100%;
 `;
 
-const DayButton = styled.button`
-  width: 35px;
-  height: 35px;
-  border: 0;
-  color: black;
-  outline-color: black;
-  background-color: ${(props) => props.theme.classicGray};
-  border-radius: ${(props) => props.theme.borderRadius};
-  font-weight: 600;
-  text-align: center;
-  padding: 8px 0px;
+const DayIndiWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   font-size: 16px;
-  cursor: pointer;
+  font-weight: 600;
   &:not(:last-child) {
     margin-right: 10px;
   }
 `;
 
-const DayButton2 = styled(DayButton)`
-  color: white;
-  background-color: ${(props) => props.theme.skyBlue};
-  border-radius: ${(props) => props.theme.borderRadius};
+const SelectInL = styled.div`
+  width: 130px;
+  height: 28px;
+  margin-right: 17px;
+`;
+
+const SelectInR = styled.div`
+  width: 50px;
+  height: 28px;
+`;
+
+const NewScheContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 197px;
+  height: 25px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  margin-top: 10px;
+  &:nth-child(3) {
+    margin-top: 20px;
+  }
 `;
 
 let newScheduleArray = [];
@@ -587,6 +603,7 @@ let calendars = [];
 let isFirstRun = true;
 let isRefectRun = false;
 let isRefectRun2 = false;
+const dayList = ['일', '월', '화', '수', '목', '금', '토'];
 
 export default ({
   cal,
@@ -637,6 +654,13 @@ export default ({
   setPasteOne,
   dayBool,
   setDayBool,
+  sTime,
+  setSTime,
+  eTime,
+  setETime,
+  stateList,
+  scheTitle,
+  scheLocation,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1477,25 +1501,17 @@ export default ({
       return '삭제';
     },
     titlePlaceholder: function () {
-      return 'To Do List';
+      return '(필수) To Do List';
     },
     locationPlaceholder: function () {
-      return '위치';
+      return '(선택) 위치';
     },
   };
 
-  // 다중 스케줄 만들기 (변수를 배열로 하니까 적용이 안됨...)
-  const nowDay = new
-  const [day0, setDay0] = useState(false);
-  const [day1, setDay1] = useState(false);
-  const [day2, setDay2] = useState(false);
-  const [day3, setDay3] = useState(false);
-  const [day4, setDay4] = useState(false);
-  const [day5, setDay5] = useState(false);
-  const [day6, setDay6] = useState(false);
-  const onCheckDay = (index) => {
-    let newArr = dayBool;
-    newArr[index] = !newArr[index];
+  // 다중 스케줄 만들기
+  const onCheckDay = (index) => (e) => {
+    let newArr = [...dayBool];
+    newArr[index] = e.target.checked;
     setDayBool(newArr);
   };
 
@@ -1692,6 +1708,7 @@ export default ({
                         <PopButton_custom
                           text={'스케줄 만들기'}
                           width={'308px'}
+                          height={'30px'}
                           margin={'0 0 10px 0'}
                         />
                       }
@@ -1699,37 +1716,87 @@ export default ({
                       modal
                     >
                       {(close) => {
-                        const dayList = [
-                          '일',
-                          '월',
-                          // '화',
-                          // '수',
-                          // '목',
-                          // '금',
-                          // '토',
-                        ];
-                        let booltest = new Array(7).fill(false);
                         return (
                           <PBody2>
                             <PTitle text={'스케줄 만들기'} />
                             <DayWrap>
                               {dayList.map((day, index) => {
                                 return (
-                                  <DayButton
-                                    key={index}
-                                    dayBool={booltest[index]}
-                                    onClick={() => {
-                                      // let newArr = test;
-                                      // newArr[0] = !test[0];
-                                      booltest[index] = !booltest[index];
-                                      setTest(!test);
-                                    }}
-                                  >
+                                  <DayIndiWrap key={index}>
                                     {day}
-                                  </DayButton>
+                                    <br />
+                                    <CheckBox
+                                      checked={
+                                        dayBool[index] !== undefined
+                                          ? dayBool[index]
+                                          : true
+                                      }
+                                      onChange={onCheckDay(index)}
+                                      boxSize={'25px'}
+                                      margin={'0'}
+                                    />
+                                  </DayIndiWrap>
                                 );
                               })}
                             </DayWrap>
+                            <NewScheContent>
+                              <SelectInL>
+                                <Select
+                                  {...mySubjectList2}
+                                  id={'mySubject_id_sche'}
+                                />
+                              </SelectInL>
+                              <SelectInR>
+                                <Select
+                                  {...stateList}
+                                  id={'mySubject_state_sche'}
+                                />
+                              </SelectInR>
+                            </NewScheContent>
+                            <NewScheContent>
+                              <Input
+                                placeholder={'(필수) 제목'}
+                                height={'25px'}
+                                bgColor={'white'}
+                                {...scheTitle}
+                              />
+                            </NewScheContent>
+                            <NewScheContent>
+                              <Input
+                                placeholder={'(선택) 위치'}
+                                height={'25px'}
+                                bgColor={'white'}
+                                {...scheLocation}
+                              />
+                            </NewScheContent>
+                            <NewScheContent>
+                              시작 :
+                              <TimePicker
+                                value={moment(sTime)}
+                                onChange={(value) => {
+                                  setSTime(value._d);
+                                }}
+                                style={{
+                                  width: 50,
+                                  marginLeft: 10,
+                                  marginRight: 20,
+                                }}
+                                showSecond={false}
+                                allowEmpty={false}
+                                minuteStep={5}
+                              />
+                              끝 :
+                              <TimePicker
+                                value={moment(eTime)}
+                                onChange={(value) => {
+                                  setETime(value._d);
+                                }}
+                                style={{ width: 50, marginLeft: 10 }}
+                                showSecond={false}
+                                allowEmpty={false}
+                                minuteStep={5}
+                              />
+                            </NewScheContent>
                             <ButtonDiv style={{ marginTop: '20px' }}>
                               <PopupButton
                                 type="button"

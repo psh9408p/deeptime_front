@@ -19,10 +19,14 @@ import {
   EDIT_STUDYSET,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
+import useSelect from '../../../../Hooks/useSelect';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
+
+const fivemin = 1000 * 60 * 5;
+const stateBox = ['자습', '강의'];
 
 export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const start_range = (value) => value >= 0 && value <= 23 && value % 1 === 0;
@@ -31,6 +35,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const cal = useRef(null);
   const nowDate = new Date();
 
+  const stateList = useSelect(stateBox, stateBox);
   const [copyOne, setCopyOne] = useState(nowDate);
   const [pasteOne, setPasteOne] = useState(
     new Date(nowDate.getTime() + 86400000),
@@ -46,6 +51,12 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [copyBool, setCopyBool] = useState(false);
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
+  const [sTime, setSTime] = useState(
+    new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin),
+  );
+  const [eTime, setETime] = useState(
+    new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
+  );
   const [lastStart, setLastStart] = useState(
     myInfoData.me.studyDefaultSet.scheduleStart,
   );
@@ -60,6 +71,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   );
   const [dayBool, setDayBool] = useState(new Array(7).fill(false));
 
+  const scheTitle = useInput('');
+  const scheLocation = useInput('');
   const subjectName = useInput('');
   const todolistName = useInput('');
   const scheduleStart = useInput(
@@ -199,6 +212,13 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         setPasteOne={setPasteOne}
         dayBool={dayBool}
         setDayBool={setDayBool}
+        sTime={sTime}
+        setSTime={setSTime}
+        eTime={eTime}
+        setETime={setETime}
+        stateList={stateList}
+        scheTitle={scheTitle}
+        scheLocation={scheLocation}
       />
     );
   } else {
