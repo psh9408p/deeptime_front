@@ -26,6 +26,7 @@ const LoaderWrapper = styled.div`
   margin: 100px 0px;
 `;
 
+const dayList = ['일', '월', '화', '수', '목', '금', '토'];
 const fivemin = 1000 * 60 * 5;
 const stateBox = ['자습', '강의'];
 
@@ -37,6 +38,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const nowDate = new Date();
 
   const stateList = useSelect(stateBox, stateBox);
+
+  const [dayDate, setDayDate] = useState(nowDate);
   const [copyOne, setCopyOne] = useState(nowDate);
   const [pasteOne, setPasteOne] = useState(
     new Date(nowDate.getTime() + 86400000),
@@ -70,7 +73,11 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [scheHeight, setScheHeight] = useState(
     overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
   );
-  const [dayBool, setDayBool] = useState(new Array(7).fill(false));
+  const [dayBool, setDayBool] = useState(
+    dayList.map((_, index) => {
+      return nowDate.getDay() === index ? true : false;
+    }),
+  );
 
   const scheTitle = useInput('');
   const scheLocation = useInput('');
@@ -222,6 +229,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         scheTitle={scheTitle}
         scheLocation={scheLocation}
         createScheDayMutation={createScheDayMutation}
+        dayDate={dayDate}
+        setDayDate={setDayDate}
       />
     );
   } else {

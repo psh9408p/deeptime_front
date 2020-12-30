@@ -103,6 +103,7 @@ export const EDIT_STUDYSET = gql`
 
 export const CREATE_SCHEDULE_DAY = gql`
   mutation createSchedule_day(
+    $standDate: String!
     $days: [Boolean!]!
     $calendarId: String!
     $state: String!
@@ -113,6 +114,7 @@ export const CREATE_SCHEDULE_DAY = gql`
     $totalTime: Int!
   ) {
     createSchedule_day(
+      standDate: $standDate
       days: $days
       calendarId: $calendarId
       state: $state

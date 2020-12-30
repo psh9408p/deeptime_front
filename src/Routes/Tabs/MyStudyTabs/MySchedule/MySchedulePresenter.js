@@ -37,6 +37,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useInput from '../../../../Hooks/useInput';
 import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
+import WeekRange from '../../../../Components/Date/WeekRange';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -185,8 +186,8 @@ const PopupCustom10 = styled(PopupCustom)`
 
 const PopupCustom11 = styled(PopupCustom)`
   &-content {
-    width: 400px !important;
-    height: 350px !important;
+    width: 390px !important;
+    height: 410px !important;
   }
 `;
 
@@ -205,6 +206,10 @@ const PBody2 = styled.div`
   align-items: center;
   width: 500px;
   padding: 20px 20px;
+`;
+
+const PBody3 = styled(PBody2)`
+  width: 390px;
 `;
 
 const PTitle = styled(FatText)`
@@ -538,6 +543,7 @@ const DatePickButton = styled.button`
   outline-color: black;
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.theme.classicGray};
+  margin: ${(props) => props.margin};
   font-weight: 600;
   color: black;
   text-align: center;
@@ -586,9 +592,10 @@ const NewScheContent = styled.div`
   margin-bottom: 5px;
   font-weight: 600;
   margin-top: 10px;
-  &:nth-child(3) {
-    margin-top: 20px;
-  }
+`;
+
+const SelectWrap = styled(NewScheContent)`
+  margin-top: 20px;
 `;
 
 let newScheduleArray = [];
@@ -599,6 +606,7 @@ let isFirstRun = true;
 let isRefectRun = false;
 let isRefectRun2 = false;
 const dayList = ['일', '월', '화', '수', '목', '금', '토'];
+const fivemin = 1000 * 60 * 5;
 
 export default ({
   cal,
@@ -657,11 +665,24 @@ export default ({
   scheTitle,
   scheLocation,
   createScheDayMutation,
+  dayDate,
+  setDayDate,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   });
+
+  // subjectlist 기타가 아래로오게
+  subjectList.sort(function (a, b) {
+    const word = '기타';
+    return a.name !== word && b.name === word
+      ? -1
+      : a.name === word && b.name !== word
+      ? 1
+      : 0;
+  });
+
   // todolistData 오름차순 정렬
   todolistData.sort(function (a, b) {
     return a.subject.name < b.subject.name
@@ -734,10 +755,7 @@ export default ({
   });
   const listName_tmp = todoTask_tmp.map((List) => `${List.name}`);
   const listId_tmp = todoTask_tmp.map((List) => `${List.id}`);
-  const mySubjectList2 = useSelect(
-    ['TASK 없음', ...listName_tmp],
-    ['', ...listId_tmp],
-  );
+  const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
 
   const todolistClear = () => {
     todolistName.setValue('');
@@ -790,6 +808,7 @@ export default ({
       alert('TASK 이름을 입력하세요.');
       return;
     }
+
     if (
       window.confirm(
         '수정 내용이 기존 데이터에도 반영됩니다.\n그래도 수정하시겠습니까?',
@@ -1000,7 +1019,7 @@ export default ({
         alert('스케줄을 복사할 수 없습니다.');
       } else {
         await myRefetch();
-        await todolistRefetch();
+        // await todolistRefetch();
         const nowDate = new Date();
         setCopyDate(nowDate);
         setPasteDate(new Date(nowDate.getTime() + 604800000));
@@ -1052,7 +1071,7 @@ export default ({
         alert('스케줄을 복사할 수 없습니다.');
       } else {
         await myRefetch();
-        await todolistRefetch();
+        // await todolistRefetch();
         const nowDate = new Date();
         setCopyOne(new Date());
         setPasteOne(new Date(nowDate.getTime() + 86400000));
@@ -1105,8 +1124,8 @@ export default ({
   };
 
   const handleClickNextButton = () => {
+    // 캘린더 데이터 변경
     const calendarInstance = cal.current.getInstance();
-
     calendarInstance.next();
     setStartRange(
       moment(calendarInstance.getDateRangeStart()._date).format('YYYY.MM.DD'),
@@ -1114,10 +1133,12 @@ export default ({
     setEndRange(
       moment(calendarInstance.getDateRangeEnd()._date).format('YYYY.MM.DD'),
     );
+    // 다중 스케줄 만들기 날짜 변경
+    setDayDate(calendarInstance.getDateRangeStart()._date);
   };
   const handleClickPrevButton = () => {
+    // 캘린더 데이터 변경
     const calendarInstance = cal.current.getInstance();
-
     calendarInstance.prev();
     setStartRange(
       moment(calendarInstance.getDateRangeStart()._date).format('YYYY.MM.DD'),
@@ -1125,6 +1146,8 @@ export default ({
     setEndRange(
       moment(calendarInstance.getDateRangeEnd()._date).format('YYYY.MM.DD'),
     );
+    // 다중 스케줄 만들기 날짜 변경
+    setDayDate(calendarInstance.getDateRangeStart()._date);
   };
   const handleClickTodayButton = () => {
     const calendarInstance = cal.current.getInstance();
@@ -1150,7 +1173,7 @@ export default ({
         alert('스케줄을 변경할 수 없습니다.');
       } else {
         await myRefetch();
-        await todolistRefetch();
+        // await todolistRefetch();
         newScheduleArray = [];
         toast.success('변경된 스케줄이 저장되었습니다.');
       }
@@ -1497,7 +1520,7 @@ export default ({
       return '삭제';
     },
     titlePlaceholder: function () {
-      return '(필수) To Do List';
+      return '(필수) 제목';
     },
     locationPlaceholder: function () {
       return '(선택) 위치';
@@ -1529,6 +1552,7 @@ export default ({
         data: { createSchedule_day },
       } = await createScheDayMutation({
         variables: {
+          standDate: dayDate,
           days: dayBool,
           calendarId: mySubjectList2.option,
           state: stateList.option,
@@ -1542,7 +1566,22 @@ export default ({
       if (!createSchedule_day) {
         alert('스케줄을 만들 수 없습니다.');
       } else {
-        // await subjectRefetch();
+        await myRefetch();
+        const nowDate = new Date();
+        setDayDate(nowDate);
+        setDayBool(
+          dayList.map((_, index) => {
+            return nowDate.getDay() === index ? true : false;
+          }),
+        );
+        mySubjectList2.setOption(mySubjectList2.valueList[0]);
+        stateList.setOption('자습');
+        scheTitle.setValue('');
+        scheLocation.setValue('');
+        setSTime(new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin));
+        setETime(
+          new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
+        );
         toast.success('새로운 스케줄을 만들었습니다.');
         return true;
       }
@@ -1553,10 +1592,15 @@ export default ({
     }
   };
 
-  // TASK 즐겨찾기 관련
+  // TASK 북마크 관련
+  // '기타' 북마크 못건드리게 제거
+  const subjectList_book = ObjectCopy(subjectList);
+  const etcIndex = subjectList.findIndex((a) => a.name === '기타');
+  subjectList_book.splice(etcIndex, 1);
+
   const [bookMarkCh, setBookMarkCh] = useState(
-    subjectList.map((_, index) => {
-      return subjectList[index].bookMark;
+    subjectList_book.map((_, index) => {
+      return subjectList_book[index].bookMark;
     }),
   );
   const onChangeCheck = (index) => (e) => {
@@ -1577,68 +1621,68 @@ export default ({
       <ColorBox2
         size={'18px'}
         radius={'9px'}
-        bgColor={subjectList[index].bgColor}
+        bgColor={subjectList_book[index].bgColor}
       />
-      <TaskNameDiv>{subjectList[index].name}</TaskNameDiv>
+      <TaskNameDiv>{subjectList_book[index].name}</TaskNameDiv>
     </IndiviList>
   );
-  const todolistRow_new = ({ index, style }) => (
-    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-      <ColorBox
-        size={'18px'}
-        radius={'9px'}
-        bgColor={todolistData_new[index].subject.bgColor}
-      />
-      <TaskName_todo isOdd={Boolean(index % 2)}>
-        {todolistData_new[index].subject.name}
-      </TaskName_todo>
-      <TodoNameDiv isOdd={Boolean(index % 2)}>
-        {todolistData_new[index].name}
-      </TodoNameDiv>
-      <TodoIconDiv2>
-        <Flag
-          onClick={() => {
-            onTodolistFinish(todolistData_new[index].id);
-          }}
-        />
-      </TodoIconDiv2>
-      <TodoIconDiv2>
-        <Delete
-          onClick={() => {
-            onTodolistDelete(todolistData_new[index].id);
-          }}
-        />
-      </TodoIconDiv2>
-    </IndiviList>
-  );
-  const todolistRow_finish = ({ index, style }) => (
-    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-      <ColorBox
-        size={'18px'}
-        radius={'9px'}
-        bgColor={todolistData_finish[index].subject.bgColor}
-      />
-      <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
-      <TodoNameDiv isOdd={Boolean(index % 2)}>
-        {todolistData_finish[index].name}
-      </TodoNameDiv>
-      <TodoFinishDiv isOdd={Boolean(index % 2)}>
-        {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
-      </TodoFinishDiv>
-      <TodoIconDiv>
-        <Delete
-          onClick={() => {
-            onTodolistDelete(todolistData_finish[index].id);
-          }}
-        />
-      </TodoIconDiv>
-    </IndiviList>
-  );
+  // const todolistRow_new = ({ index, style }) => (
+  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
+  //     <ColorBox
+  //       size={'18px'}
+  //       radius={'9px'}
+  //       bgColor={todolistData_new[index].subject.bgColor}
+  //     />
+  //     <TaskName_todo isOdd={Boolean(index % 2)}>
+  //       {todolistData_new[index].subject.name}
+  //     </TaskName_todo>
+  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
+  //       {todolistData_new[index].name}
+  //     </TodoNameDiv>
+  //     <TodoIconDiv2>
+  //       <Flag
+  //         onClick={() => {
+  //           onTodolistFinish(todolistData_new[index].id);
+  //         }}
+  //       />
+  //     </TodoIconDiv2>
+  //     <TodoIconDiv2>
+  //       <Delete
+  //         onClick={() => {
+  //           onTodolistDelete(todolistData_new[index].id);
+  //         }}
+  //       />
+  //     </TodoIconDiv2>
+  //   </IndiviList>
+  // );
+  // const todolistRow_finish = ({ index, style }) => (
+  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
+  //     <ColorBox
+  //       size={'18px'}
+  //       radius={'9px'}
+  //       bgColor={todolistData_finish[index].subject.bgColor}
+  //     />
+  //     <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
+  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
+  //       {todolistData_finish[index].name}
+  //     </TodoNameDiv>
+  //     <TodoFinishDiv isOdd={Boolean(index % 2)}>
+  //       {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
+  //     </TodoFinishDiv>
+  //     <TodoIconDiv>
+  //       <Delete
+  //         onClick={() => {
+  //           onTodolistDelete(todolistData_finish[index].id);
+  //         }}
+  //       />
+  //     </TodoIconDiv>
+  //   </IndiviList>
+  // );
 
   const CustomInput = forwardRef(
-    ({ value, onClick, text, week = false }, ref) => {
+    ({ value, onClick, text, week = false, margin }, ref) => {
       return (
-        <DatePickButton ref={ref} onClick={onClick}>
+        <DatePickButton ref={ref} onClick={onClick} margin={margin}>
           {week ? text : value}
         </DatePickButton>
       );
@@ -1652,8 +1696,8 @@ export default ({
         data: { bookMarkSubject },
       } = await bookMarkSubjectMutation({
         variables: {
-          subjectId: subjectList.map((_, index) => {
-            return subjectList[index].id;
+          subjectId: subjectList_book.map((_, index) => {
+            return subjectList_book[index].id;
           }),
           bookMark: bookMarkCh,
         },
@@ -1723,7 +1767,7 @@ export default ({
             onClick={() => {
               myRefetch();
               subjectRefetch();
-              todolistRefetch();
+              // todolistRefetch();
             }}
           />
           <Button_copy
@@ -1754,9 +1798,27 @@ export default ({
                       modal
                     >
                       {(close) => {
+                        const { weekStart, weekEnd } = WeekRange(dayDate);
                         return (
                           <PBody2>
                             <PTitle text={'스케줄 만들기'} />
+                            <DatePicker
+                              dateFormat={'yyyy/MM/dd'}
+                              selected={dayDate}
+                              onChange={(date) => {
+                                setDayDate(date);
+                              }}
+                              customInput={
+                                <CustomInput
+                                  margin={'0 0 10px 0'}
+                                  week={true}
+                                  text={`${moment(weekStart).format(
+                                    'MM.DD',
+                                  )}(일)~
+                                ${moment(weekEnd).format('MM.DD')}(토)`}
+                                />
+                              }
+                            />
                             <DayWrap>
                               {dayList.map((day, index) => {
                                 return (
@@ -1777,7 +1839,7 @@ export default ({
                                 );
                               })}
                             </DayWrap>
-                            <NewScheContent>
+                            <SelectWrap>
                               <SelectInL>
                                 <Select
                                   {...mySubjectList2}
@@ -1790,7 +1852,7 @@ export default ({
                                   id={'mySubject_state_sche'}
                                 />
                               </SelectInR>
-                            </NewScheContent>
+                            </SelectWrap>
                             <NewScheContent>
                               <Input
                                 placeholder={'(필수) 제목'}
@@ -2115,7 +2177,7 @@ export default ({
                               <ListWrap>
                                 <BookmarkList
                                   height={300}
-                                  itemCount={subjectList.length}
+                                  itemCount={subjectList_book.length}
                                   itemSize={30}
                                   width={370}
                                 >
@@ -2138,8 +2200,8 @@ export default ({
                                   onClick={() => {
                                     close();
                                     setBookMarkCh(
-                                      subjectList.map((_, index) => {
-                                        return subjectList[index].bookMark;
+                                      subjectList_book.map((_, index) => {
+                                        return subjectList_book[index].bookMark;
                                       }),
                                     );
                                   }}
