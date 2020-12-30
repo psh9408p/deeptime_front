@@ -115,11 +115,6 @@ const SubjectButtonDiv = styled.div`
   margin-right: 10px;
 `;
 
-const SubjectButtonDiv2 = styled.div`
-  width: 80px;
-  margin-right: 10px;
-`;
-
 const PopupCustom = styled(Popup)`
   &-content {
     width: 550px !important;
@@ -661,6 +656,7 @@ export default ({
   stateList,
   scheTitle,
   scheLocation,
+  createScheDayMutation,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1515,6 +1511,48 @@ export default ({
     setDayBool(newArr);
   };
 
+  const onCreateDay = async () => {
+    if (dayBool.findIndex((e) => e === true) === -1) {
+      alert('요일을 최소 하루 이상 선택하세요.');
+      return;
+    } else if (scheTitle.value === '') {
+      alert('제목을 입력하세요.');
+      return;
+    } else if (sTime >= eTime) {
+      alert('끝 시간이 시작 시간과 같거나 빠를 수 없습니다.');
+      return;
+    }
+
+    try {
+      toast.info('스케줄 만들기 중...');
+      const {
+        data: { createSchedule_day },
+      } = await createScheDayMutation({
+        variables: {
+          days: dayBool,
+          calendarId: mySubjectList2.option,
+          state: stateList.option,
+          title: scheTitle.value,
+          location: scheLocation.value,
+          start: sTime,
+          end: eTime,
+          totalTime: (eTime.getTime() - sTime.getTime()) / 1000,
+        },
+      });
+      if (!createSchedule_day) {
+        alert('스케줄을 만들 수 없습니다.');
+      } else {
+        // await subjectRefetch();
+        toast.success('새로운 스케줄을 만들었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
+    }
+  };
+
   // TASK 즐겨찾기 관련
   const [bookMarkCh, setBookMarkCh] = useState(
     subjectList.map((_, index) => {
@@ -1756,16 +1794,14 @@ export default ({
                             <NewScheContent>
                               <Input
                                 placeholder={'(필수) 제목'}
-                                height={'25px'}
-                                bgColor={'white'}
+                                height={'28px'}
                                 {...scheTitle}
                               />
                             </NewScheContent>
                             <NewScheContent>
                               <Input
                                 placeholder={'(선택) 위치'}
-                                height={'25px'}
-                                bgColor={'white'}
+                                height={'28px'}
                                 {...scheLocation}
                               />
                             </NewScheContent>
@@ -1801,10 +1837,10 @@ export default ({
                               <PopupButton
                                 type="button"
                                 onClick={async () => {
-                                  // const fucResult = await onCopyOne();
-                                  // if (fucResult) {
-                                  //   close();
-                                  // }
+                                  const fucResult = await onCreateDay();
+                                  if (fucResult) {
+                                    close();
+                                  }
                                 }}
                                 text={'만들기'}
                               />
@@ -2045,12 +2081,12 @@ export default ({
               );
             }}
           </PopupCustom8>
-          <PopupCustom7
+          <PopupCustom4
             trigger={
               <PopButton_custom
-                widht={'80px'}
+                width={'80px'}
                 margin={'0 10px 0 0'}
-                text={'To Do List'}
+                text={'TASK'}
               />
             }
             closeOnDocumentClick={false}
@@ -2059,63 +2095,53 @@ export default ({
             {(close) => (
               <PBody>
                 <FrontDiv>
-                  <PTitle text={'To Do List 관리'} />
+                  <PTitle text={'TASK 관리'} />
                   <ThreeButtonWrap>
                     <SpaceDiv />
                     <SubjectButtonDiv>
-                      <PopupCustom6
-                        trigger={<PopButton_100 text={'계획'} />}
+                      <PopupCustom5
+                        trigger={<PopButton_100 text={'북마크'} />}
                         closeOnDocumentClick={false}
                         modal
                       >
                         {(close) => (
                           <PBody>
                             <SubjectForm>
-                              <PTitle text={'To Do List 계획'} />
-                              {/* <NewTodoDiv>
-                                <SelectWrapper3>
-                                  <Select
-                                    {...mySubjectList2}
-                                    id={'mySubject2_id'}
-                                  />
-                                </SelectWrapper3>
-                                <InputWrapper2>
-                                  <Input
-                                    placeholder={'내용 (예: 1단원 암기)'}
-                                    {...todolistName}
-                                  />
-                                </InputWrapper2>
-                                <Button_custom
-                                  text={'추가'}
-                                  width={'70px'}
-                                  height={'35px'}
-                                  bgColor={'#0F4C82'}
-                                  color={'white'}
-                                  onClick={() => {
-                                    onTodolistAdd();
-                                  }}
-                                />
-                              </NewTodoDiv> */}
-                              <TodolistTitle>
-                                <BookLeft>TASK</BookLeft>
-                                <BookRight>To Do List</BookRight>
-                                <div style={{ marginLeft: '10px' }}>🔧</div>
-                              </TodolistTitle>
+                              <PTitle text={'TASK 북마크'} />
+                              <BookMarkTitle>
+                                <BookLeft2>&#9989;</BookLeft2>
+                                <BookRight2>TASK</BookRight2>
+                              </BookMarkTitle>
                               <ListWrap>
                                 <BookmarkList
                                   height={300}
-                                  itemCount={todolistData_new.length}
-                                  itemSize={40}
-                                  width={450}
+                                  itemCount={subjectList.length}
+                                  itemSize={30}
+                                  width={370}
                                 >
-                                  {todolistRow_new}
+                                  {subjectRow}
                                 </BookmarkList>
                               </ListWrap>
                               <ButtonDiv>
-                                <PopupButton_solo
+                                <PopupButton
+                                  type="button"
+                                  text={'저장'}
+                                  onClick={async () => {
+                                    const fucResult = await onClickBookMark();
+                                    if (fucResult) {
+                                      close();
+                                    }
+                                  }}
+                                />
+                                <PopupButton
                                   type="button"
                                   onClick={() => {
                                     close();
+                                    setBookMarkCh(
+                                      subjectList.map((_, index) => {
+                                        return subjectList[index].bookMark;
+                                      }),
+                                    );
                                   }}
                                   text={'닫기'}
                                 />
@@ -2123,47 +2149,166 @@ export default ({
                             </SubjectForm>
                           </PBody>
                         )}
-                      </PopupCustom6>
+                      </PopupCustom5>
                     </SubjectButtonDiv>
                     <SubjectButtonDiv>
-                      <PopupCustom6
-                        trigger={<PopButton_100 text={'완료'} />}
+                      <PopupCustom
+                        trigger={<PopButton_100 text={'추가'} />}
                         closeOnDocumentClick={false}
                         modal
                       >
                         {(close) => (
                           <PBody>
-                            <SubjectForm>
-                              <PTitle text={'완료한 To Do List'} />
-                              <TodolistTitle2>
-                                <BookLeft>TASK</BookLeft>
-                                <BookRight3>To Do List</BookRight3>
-                                <FinishDateDiv>Done</FinishDateDiv>
-                                <div style={{ marginLeft: '10px' }}>🔧</div>
-                              </TodolistTitle2>
-                              <ListWrap>
-                                <BookmarkList
-                                  height={300}
-                                  itemCount={todolistData_finish.length}
-                                  itemSize={40}
-                                  width={490}
-                                >
-                                  {todolistRow_finish}
-                                </BookmarkList>
-                              </ListWrap>
+                            <SubjectForm2>
+                              <PTitle text={'TASK 추가'} />
+                              <InputWrapper>
+                                <Input
+                                  placeholder={
+                                    'TASK 이름 (예: 국어 or 문서작업)'
+                                  }
+                                  {...subjectName}
+                                />
+                              </InputWrapper>
+                              <ColorWrapper>
+                                <SubTitle text={'색상 선택'} />
+                                <SwatchesPicker
+                                  color={subjectColor}
+                                  onChangeComplete={handleChangeComplete}
+                                />
+                              </ColorWrapper>
                               <ButtonDiv>
-                                <PopupButton_solo
+                                <PopupButton
+                                  type="button"
+                                  text={'추가'}
+                                  onClick={async () => {
+                                    const fucResult = await onSubmitAdd();
+                                    if (fucResult) {
+                                      close();
+                                    }
+                                  }}
+                                />
+                                <PopupButton
                                   type="button"
                                   onClick={() => {
+                                    close();
+                                    subjectClear();
+                                  }}
+                                  text={'닫기'}
+                                />
+                              </ButtonDiv>
+                            </SubjectForm2>
+                          </PBody>
+                        )}
+                      </PopupCustom>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom2
+                        trigger={<PopButton_100 text={'수정'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <SubjectForm2>
+                              <PTitle text={'TASK 수정'} />
+                              <SelectWrapDiv2>
+                                <SubTitle text={`수정할 TASK:　`} />
+                                <SelectWrapper2>
+                                  <Select
+                                    {...mySubjectList}
+                                    id={'mySubjectList_id'}
+                                  />
+                                </SelectWrapper2>
+                                <RedButtonWrap>
+                                  <Button_red
+                                    type={'button'}
+                                    text={'기존정보 불러오기'}
+                                    onClick={subjectLoad}
+                                  />
+                                </RedButtonWrap>
+                              </SelectWrapDiv2>
+                              <InputWrapper>
+                                <Input
+                                  placeholder={
+                                    'TASK 이름 (예: 국어 or 문서작업)'
+                                  }
+                                  {...subjectName}
+                                />
+                              </InputWrapper>
+                              <ColorWrapper>
+                                <SubTitle text={'색상 선택'} />
+                                <SwatchesPicker
+                                  color={subjectColor}
+                                  onChangeComplete={handleChangeComplete}
+                                />
+                              </ColorWrapper>
+                              <ButtonDiv>
+                                <PopupButton
+                                  type="button"
+                                  text={'수정'}
+                                  onClick={async () => {
+                                    const fucResult = await onSubmitEdit();
+                                    if (fucResult) {
+                                      close();
+                                    }
+                                  }}
+                                />
+                                <PopupButton
+                                  type="button"
+                                  onClick={() => {
+                                    subjectClear();
                                     close();
                                   }}
                                   text={'닫기'}
                                 />
                               </ButtonDiv>
-                            </SubjectForm>
+                            </SubjectForm2>
                           </PBody>
                         )}
-                      </PopupCustom6>
+                      </PopupCustom2>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom3
+                        trigger={<PopButton_100 text={'삭제'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <SubjectForm2>
+                              <PTitle text={'TASK 삭제'} />
+                              <SelectWrapDiv>
+                                <SelectWrapper>
+                                  <Select
+                                    {...mySubjectList}
+                                    id={'mySubject_id'}
+                                  />
+                                </SelectWrapper>
+                              </SelectWrapDiv>
+                              <ButtonDiv>
+                                <PopupButton
+                                  type="button"
+                                  text={'삭제'}
+                                  onClick={async () => {
+                                    const fucResult = await onSubmitDelete();
+                                    if (fucResult) {
+                                      close();
+                                    }
+                                  }}
+                                />
+                                <PopupButton
+                                  type="button"
+                                  onClick={() => {
+                                    close();
+                                    subjectClear();
+                                  }}
+                                  text={'닫기'}
+                                />
+                              </ButtonDiv>
+                            </SubjectForm2>
+                          </PBody>
+                        )}
+                      </PopupCustom3>
                     </SubjectButtonDiv>
                   </ThreeButtonWrap>
                   <ButtonDiv>
@@ -2178,246 +2323,7 @@ export default ({
                 </FrontDiv>
               </PBody>
             )}
-          </PopupCustom7>
-          <SubjectButtonDiv2>
-            <PopupCustom4
-              trigger={<PopButton_100 text={'TASK'} />}
-              closeOnDocumentClick={false}
-              modal
-            >
-              {(close) => (
-                <PBody>
-                  <FrontDiv>
-                    <PTitle text={'TASK 관리'} />
-                    <ThreeButtonWrap>
-                      <SpaceDiv />
-                      <SubjectButtonDiv>
-                        <PopupCustom5
-                          trigger={<PopButton_100 text={'북마크'} />}
-                          closeOnDocumentClick={false}
-                          modal
-                        >
-                          {(close) => (
-                            <PBody>
-                              <SubjectForm>
-                                <PTitle text={'TASK 북마크'} />
-                                <BookMarkTitle>
-                                  <BookLeft2>&#9989;</BookLeft2>
-                                  <BookRight2>TASK</BookRight2>
-                                </BookMarkTitle>
-                                <ListWrap>
-                                  <BookmarkList
-                                    height={300}
-                                    itemCount={subjectList.length}
-                                    itemSize={30}
-                                    width={370}
-                                  >
-                                    {subjectRow}
-                                  </BookmarkList>
-                                </ListWrap>
-                                <ButtonDiv>
-                                  <PopupButton
-                                    type="button"
-                                    text={'저장'}
-                                    onClick={async () => {
-                                      const fucResult = await onClickBookMark();
-                                      if (fucResult) {
-                                        close();
-                                      }
-                                    }}
-                                  />
-                                  <PopupButton
-                                    type="button"
-                                    onClick={() => {
-                                      close();
-                                      setBookMarkCh(
-                                        subjectList.map((_, index) => {
-                                          return subjectList[index].bookMark;
-                                        }),
-                                      );
-                                    }}
-                                    text={'닫기'}
-                                  />
-                                </ButtonDiv>
-                              </SubjectForm>
-                            </PBody>
-                          )}
-                        </PopupCustom5>
-                      </SubjectButtonDiv>
-                      <SubjectButtonDiv>
-                        <PopupCustom
-                          trigger={<PopButton_100 text={'추가'} />}
-                          closeOnDocumentClick={false}
-                          modal
-                        >
-                          {(close) => (
-                            <PBody>
-                              <SubjectForm2>
-                                <PTitle text={'TASK 추가'} />
-                                <InputWrapper>
-                                  <Input
-                                    placeholder={
-                                      'TASK 이름 (예: 국어 or 문서작업)'
-                                    }
-                                    {...subjectName}
-                                  />
-                                </InputWrapper>
-                                <ColorWrapper>
-                                  <SubTitle text={'색상 선택'} />
-                                  <SwatchesPicker
-                                    color={subjectColor}
-                                    onChangeComplete={handleChangeComplete}
-                                  />
-                                </ColorWrapper>
-                                <ButtonDiv>
-                                  <PopupButton
-                                    type="button"
-                                    text={'추가'}
-                                    onClick={async () => {
-                                      const fucResult = await onSubmitAdd();
-                                      if (fucResult) {
-                                        close();
-                                      }
-                                    }}
-                                  />
-                                  <PopupButton
-                                    type="button"
-                                    onClick={() => {
-                                      close();
-                                      subjectClear();
-                                    }}
-                                    text={'닫기'}
-                                  />
-                                </ButtonDiv>
-                              </SubjectForm2>
-                            </PBody>
-                          )}
-                        </PopupCustom>
-                      </SubjectButtonDiv>
-                      <SubjectButtonDiv>
-                        <PopupCustom2
-                          trigger={<PopButton_100 text={'수정'} />}
-                          closeOnDocumentClick={false}
-                          modal
-                        >
-                          {(close) => (
-                            <PBody>
-                              <SubjectForm2>
-                                <PTitle text={'TASK 수정'} />
-                                <SelectWrapDiv2>
-                                  <SubTitle text={`수정할 TASK:　`} />
-                                  <SelectWrapper2>
-                                    <Select
-                                      {...mySubjectList}
-                                      id={'mySubjectList_id'}
-                                    />
-                                  </SelectWrapper2>
-                                  <RedButtonWrap>
-                                    <Button_red
-                                      type={'button'}
-                                      text={'기존정보 불러오기'}
-                                      onClick={subjectLoad}
-                                    />
-                                  </RedButtonWrap>
-                                </SelectWrapDiv2>
-                                <InputWrapper>
-                                  <Input
-                                    placeholder={
-                                      'TASK 이름 (예: 국어 or 문서작업)'
-                                    }
-                                    {...subjectName}
-                                  />
-                                </InputWrapper>
-                                <ColorWrapper>
-                                  <SubTitle text={'색상 선택'} />
-                                  <SwatchesPicker
-                                    color={subjectColor}
-                                    onChangeComplete={handleChangeComplete}
-                                  />
-                                </ColorWrapper>
-                                <ButtonDiv>
-                                  <PopupButton
-                                    type="button"
-                                    text={'수정'}
-                                    onClick={async () => {
-                                      const fucResult = await onSubmitEdit();
-                                      if (fucResult) {
-                                        close();
-                                      }
-                                    }}
-                                  />
-                                  <PopupButton
-                                    type="button"
-                                    onClick={() => {
-                                      subjectClear();
-                                      close();
-                                    }}
-                                    text={'닫기'}
-                                  />
-                                </ButtonDiv>
-                              </SubjectForm2>
-                            </PBody>
-                          )}
-                        </PopupCustom2>
-                      </SubjectButtonDiv>
-                      <SubjectButtonDiv>
-                        <PopupCustom3
-                          trigger={<PopButton_100 text={'삭제'} />}
-                          closeOnDocumentClick={false}
-                          modal
-                        >
-                          {(close) => (
-                            <PBody>
-                              <SubjectForm2>
-                                <PTitle text={'TASK 삭제'} />
-                                <SelectWrapDiv>
-                                  <SelectWrapper>
-                                    <Select
-                                      {...mySubjectList}
-                                      id={'mySubject_id'}
-                                    />
-                                  </SelectWrapper>
-                                </SelectWrapDiv>
-                                <ButtonDiv>
-                                  <PopupButton
-                                    type="button"
-                                    text={'삭제'}
-                                    onClick={async () => {
-                                      const fucResult = await onSubmitDelete();
-                                      if (fucResult) {
-                                        close();
-                                      }
-                                    }}
-                                  />
-                                  <PopupButton
-                                    type="button"
-                                    onClick={() => {
-                                      close();
-                                      subjectClear();
-                                    }}
-                                    text={'닫기'}
-                                  />
-                                </ButtonDiv>
-                              </SubjectForm2>
-                            </PBody>
-                          )}
-                        </PopupCustom3>
-                      </SubjectButtonDiv>
-                    </ThreeButtonWrap>
-                    <ButtonDiv>
-                      <PopupButton_solo
-                        type="button"
-                        onClick={() => {
-                          close();
-                        }}
-                        text={'닫기'}
-                      />
-                    </ButtonDiv>
-                  </FrontDiv>
-                </PBody>
-              )}
-            </PopupCustom4>
-          </SubjectButtonDiv2>
+          </PopupCustom4>
           <SaveButtonDiv>
             <Button_blue
               text={'저장'}
@@ -2448,3 +2354,141 @@ export default ({
     </Wrapper>
   );
 };
+
+// To Do List 코드 임시 기록
+{
+  /* <PopupCustom7
+trigger={
+  <PopButton_custom
+    width={'100px'}
+    margin={'0 10px 0 0'}
+    text={'To Do List'}
+  />
+}
+closeOnDocumentClick={false}
+modal
+>
+{(close) => (
+  <PBody>
+    <FrontDiv>
+      <PTitle text={'To Do List 관리'} />
+      <ThreeButtonWrap>
+        <SpaceDiv />
+        <SubjectButtonDiv>
+          <PopupCustom6
+            trigger={<PopButton_100 text={'계획'} />}
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => (
+              <PBody>
+                <SubjectForm>
+                  <PTitle text={'To Do List 계획'} />
+                  <NewTodoDiv>
+                    <SelectWrapper3>
+                      <Select
+                        {...mySubjectList2}
+                        id={'mySubject2_id'}
+                      />
+                    </SelectWrapper3>
+                    <InputWrapper2>
+                      <Input
+                        placeholder={'내용 (예: 1단원 암기)'}
+                        {...todolistName}
+                      />
+                    </InputWrapper2>
+                    <Button_custom
+                      text={'추가'}
+                      width={'70px'}
+                      height={'35px'}
+                      bgColor={'#0F4C82'}
+                      color={'white'}
+                      onClick={() => {
+                        onTodolistAdd();
+                      }}
+                    />
+                  </NewTodoDiv>
+                  <TodolistTitle>
+                    <BookLeft>TASK</BookLeft>
+                    <BookRight>To Do List</BookRight>
+                    <div style={{ marginLeft: '10px' }}>🔧</div>
+                  </TodolistTitle>
+                  <ListWrap>
+                    <BookmarkList
+                      height={300}
+                      itemCount={todolistData_new.length}
+                      itemSize={40}
+                      width={450}
+                    >
+                      {todolistRow_new}
+                    </BookmarkList>
+                  </ListWrap>
+                  <ButtonDiv>
+                    <PopupButton_solo
+                      type="button"
+                      onClick={() => {
+                        close();
+                      }}
+                      text={'닫기'}
+                    />
+                  </ButtonDiv>
+                </SubjectForm>
+              </PBody>
+            )}
+          </PopupCustom6>
+        </SubjectButtonDiv>
+        <SubjectButtonDiv>
+          <PopupCustom6
+            trigger={<PopButton_100 text={'완료'} />}
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => (
+              <PBody>
+                <SubjectForm>
+                  <PTitle text={'완료한 To Do List'} />
+                  <TodolistTitle2>
+                    <BookLeft>TASK</BookLeft>
+                    <BookRight3>To Do List</BookRight3>
+                    <FinishDateDiv>Done</FinishDateDiv>
+                    <div style={{ marginLeft: '10px' }}>🔧</div>
+                  </TodolistTitle2>
+                  <ListWrap>
+                    <BookmarkList
+                      height={300}
+                      itemCount={todolistData_finish.length}
+                      itemSize={40}
+                      width={490}
+                    >
+                      {todolistRow_finish}
+                    </BookmarkList>
+                  </ListWrap>
+                  <ButtonDiv>
+                    <PopupButton_solo
+                      type="button"
+                      onClick={() => {
+                        close();
+                      }}
+                      text={'닫기'}
+                    />
+                  </ButtonDiv>
+                </SubjectForm>
+              </PBody>
+            )}
+          </PopupCustom6>
+        </SubjectButtonDiv>
+      </ThreeButtonWrap>
+      <ButtonDiv>
+        <PopupButton_solo
+          type="button"
+          onClick={() => {
+            close();
+          }}
+          text={'닫기'}
+        />
+      </ButtonDiv>
+    </FrontDiv>
+  </PBody>
+)}
+</PopupCustom7> */
+}

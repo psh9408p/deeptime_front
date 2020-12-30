@@ -150,7 +150,8 @@ const Wrapper = styled.div`
 const Wrapper_b = styled.div`
   display: flex;
   flex-direction: row;
-  width: 960px;
+  justify-content: center;
+  width: 500px;
   height: 150px;
   border-radius: ${(props) => props.theme.borderRadius};
 `;
@@ -440,7 +441,7 @@ const PopupCustom = styled(Popup)`
 
 const PopupCustom2 = styled(Popup)`
   &-content {
-    width: 960px !important;
+    width: 500px !important;
     height: 300px !important;
     display: flex;
     justify-content: center;
@@ -461,7 +462,7 @@ const PBody2 = styled(PBody)`
 `;
 
 const PBody3 = styled(PBody)`
-  width: 960px;
+  width: 500px;
   padding: 0;
 `;
 
@@ -2285,64 +2286,6 @@ export default ({
                       <PBody3>
                         <PTitle text={'컨트롤 패널'} />
                         <Wrapper_b>
-                          <TodoWrap>
-                            {newTodoView ? (
-                              <NewTodoDiv>
-                                <NewTopDiv>
-                                  <SelectWrapper>
-                                    <Select
-                                      {...mySubjectList}
-                                      id={'mySubject_id_study'}
-                                    />
-                                  </SelectWrapper>
-                                  <InputWrapper>
-                                    <Input
-                                      placeholder={'내용 (예: 1단원 암기)'}
-                                      bgColor={'white'}
-                                      {...todolistName}
-                                    />
-                                  </InputWrapper>
-                                </NewTopDiv>
-                                <NewBottomDiv>
-                                  <Button_custom
-                                    text={'추가'}
-                                    width={'100px'}
-                                    height={'35px'}
-                                    bgColor={'#0F4C82'}
-                                    color={'white'}
-                                    margin={'0 60px 0 0'}
-                                    onClick={() => {
-                                      onTodolistAdd();
-                                    }}
-                                  />
-                                  <Button_custom
-                                    text={'닫기'}
-                                    width={'100px'}
-                                    height={'35px'}
-                                    bgColor={'#0F4C82'}
-                                    color={'white'}
-                                    margin={'0'}
-                                    onClick={() => {
-                                      setNewTodoView(false);
-                                    }}
-                                  />
-                                </NewBottomDiv>
-                              </NewTodoDiv>
-                            ) : (
-                              <ListGrid
-                                height={130}
-                                width={470}
-                                columnWidth={225}
-                                rowHeight={44}
-                                rowCount={
-                                  Math.floor(todolistData_new.length / 2) + 1
-                                }
-                                columnCount={2}
-                              >
-                                {todolistRow}
-                              </ListGrid>
-                            )}
-                          </TodoWrap>
                           <ScheStart>
                             <NewScheContent>
                               <SelectInL>
@@ -2360,7 +2303,7 @@ export default ({
                             </NewScheContent>
                             <NewScheContent>
                               <Input
-                                placeholder={'To Do list (예: 1장 복습)'}
+                                placeholder={'(필수) 제목'}
                                 height={'25px'}
                                 bgColor={'white'}
                                 {...scheduleTitle}
@@ -2726,3 +2669,65 @@ export default ({
     </AllWrap>
   );
 };
+
+// To Do List 코드 임시저장
+{
+  /* <TodoWrap>
+                            {newTodoView ? (
+                              <NewTodoDiv>
+                                <NewTopDiv>
+                                  <SelectWrapper>
+                                    <Select
+                                      {...mySubjectList}
+                                      id={'mySubject_id_study'}
+                                    />
+                                  </SelectWrapper>
+                                  <InputWrapper>
+                                    <Input
+                                      placeholder={'내용 (예: 1단원 암기)'}
+                                      bgColor={'white'}
+                                      {...todolistName}
+                                    />
+                                  </InputWrapper>
+                                </NewTopDiv>
+                                <NewBottomDiv>
+                                  <Button_custom
+                                    text={'추가'}
+                                    width={'100px'}
+                                    height={'35px'}
+                                    bgColor={'#0F4C82'}
+                                    color={'white'}
+                                    margin={'0 60px 0 0'}
+                                    onClick={() => {
+                                      onTodolistAdd();
+                                    }}
+                                  />
+                                  <Button_custom
+                                    text={'닫기'}
+                                    width={'100px'}
+                                    height={'35px'}
+                                    bgColor={'#0F4C82'}
+                                    color={'white'}
+                                    margin={'0'}
+                                    onClick={() => {
+                                      setNewTodoView(false);
+                                    }}
+                                  />
+                                </NewBottomDiv>
+                              </NewTodoDiv>
+                            ) : (
+                              <ListGrid
+                                height={130}
+                                width={470}
+                                columnWidth={225}
+                                rowHeight={44}
+                                rowCount={
+                                  Math.floor(todolistData_new.length / 2) + 1
+                                }
+                                columnCount={2}
+                              >
+                                {todolistRow}
+                              </ListGrid>
+                            )}
+                          </TodoWrap> */
+}

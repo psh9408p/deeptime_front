@@ -17,6 +17,7 @@ import {
   DELETE_TODOLIST,
   FINISH_TODOLIST,
   EDIT_STUDYSET,
+  CREATE_SCHEDULE_DAY,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
@@ -98,6 +99,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
+  const [createScheDayMutation] = useMutation(CREATE_SCHEDULE_DAY);
   const {
     data: subjectData,
     loading: subjectLoading,
@@ -219,6 +221,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         stateList={stateList}
         scheTitle={scheTitle}
         scheLocation={scheLocation}
+        createScheDayMutation={createScheDayMutation}
       />
     );
   } else {

@@ -100,3 +100,27 @@ export const EDIT_STUDYSET = gql`
     )
   }
 `;
+
+export const CREATE_SCHEDULE_DAY = gql`
+  mutation createSchedule_day(
+    $days: [Boolean!]!
+    $calendarId: String!
+    $state: String!
+    $title: String!
+    $location: String!
+    $start: String!
+    $end: String!
+    $totalTime: Int!
+  ) {
+    createSchedule_day(
+      days: $days
+      calendarId: $calendarId
+      state: $state
+      title: $title
+      location: $location
+      start: $start
+      end: $end
+      totalTime: $totalTime
+    )
+  }
+`;
