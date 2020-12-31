@@ -19,7 +19,7 @@ const InWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 150px;
+  margin-top: 100px;
 `;
 
 const Title = styled.div`
@@ -110,16 +110,18 @@ export default () => {
     <Wrapper>
       <InWrap>
         <Title>
-          <BoldT style={{ color: '#DB4437' }}>코로나</BoldT>로{' '}
-          <BoldT>지겨운 집콕...</BoldT>
+          <BoldT>코로나</BoldT>로 <BoldT>지겨운 집콕...</BoldT>
           <br />
-          <BoldT style={{ color: '#0F4C82' }}>DEEPTIME 챌린지</BoldT>로{' '}
-          <BoldT style={{ color: '#DB4437' }}>극뽁!</BoldT>
+          <BoldT style={{ color: '#0F4C82' }}>DEEPTIME</BoldT> 베타테스트{' '}
+          <BoldT>참여</BoldT>하고
           <br />
+          <BoldT style={{ color: '#DB4437' }}>에어팟프로</BoldT>{' '}
+          <BoldT>받자!!</BoldT>
+          {/* <br />
           <BoldT style={{ color: '#0F4C82' }}>
             SNS로 학습 결과 공유
           </BoldT>하고 <BoldT>상품</BoldT>{' '}
-          <BoldT style={{ color: '#DB4437' }}>겟겟~</BoldT>
+          <BoldT style={{ color: '#DB4437' }}>겟겟~</BoldT> */}
         </Title>
         <ButtonWrap>
           <PotalButton type="button" onClick={onClickPotal_student}>
