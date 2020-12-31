@@ -1427,7 +1427,7 @@ export default ({
         alert('스케줄을 시작할 수 없습니다.');
       } else {
         await myInfoRefetch();
-        await todolistRefetch();
+        // await todolistRefetch();
         mySubjectList2.setOption('');
         stateList.setOption('자습');
         scheduleTitle.setValue('');
@@ -2273,7 +2273,7 @@ export default ({
                   onClick={() => {
                     myInfoRefetch();
                     subjectRefetch();
-                    todolistRefetch();
+                    // todolistRefetch();
                   }}
                 />
                 <PopupCustom2
