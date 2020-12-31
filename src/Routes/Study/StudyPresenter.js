@@ -927,16 +927,20 @@ export default ({
   task_tmp.sort(function (a, b) {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   });
+  // TASK 기타가 아래로오게
+  task_tmp.sort(function (a, b) {
+    const word = '기타';
+    return a.name !== word && b.name === word
+      ? -1
+      : a.name === word && b.name !== word
+      ? 1
+      : 0;
+  });
+
   const listName_tmp = task_tmp.map((List) => `${List.name}`);
   const listId_tmp = task_tmp.map((List) => `${List.id}`);
-  const mySubjectList = useSelect(
-    ['TASK 없음', ...listName_tmp],
-    ['', ...listId_tmp],
-  );
-  const mySubjectList2 = useSelect(
-    ['TASK 없음', ...listName_tmp],
-    ['', ...listId_tmp],
-  );
+  const mySubjectList = useSelect([...listName_tmp], [...listId_tmp]);
+  const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
   const stateBox = ['자습', '강의'];
   const stateList = useSelect(stateBox, stateBox);
 
