@@ -190,6 +190,7 @@ export default () => {
 
       document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
       document.getElementById('download').style.display = '';
+      document.getElementById('submission').style.display = '';
       document.getElementById('download').href = url;
       document.getElementById('download').download =
         'deeptime_timelapse_' + file_tail + '.mp4';
@@ -321,6 +322,23 @@ export default () => {
           // download="video.mp4"
         >
           타임랩스 다운로드
+        </a>
+      </ButtonWrap>
+      <ButtonWrap>
+        <a
+          style={{
+            display: 'none',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: 'red',
+            cursor: 'pointer',
+          }}
+          id="submission"
+          onClick={() => {
+            window.open('https://www.naver.com', '_blank');
+          }}
+        >
+          타임랩스 제출
         </a>
       </ButtonWrap>
     </Wrapper>
