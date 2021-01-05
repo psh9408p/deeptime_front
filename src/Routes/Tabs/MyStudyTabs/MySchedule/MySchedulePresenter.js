@@ -697,7 +697,7 @@ export default ({
   });
   // todolistData Task 없음이 위로오게
   todolistData.sort(function (a, b) {
-    const word = 'TASK 없음';
+    const word = '과목 없음';
     return a.subject.name === word && b.subject.name !== word
       ? -1
       : a.subject.name !== word && b.subject.name === word
@@ -731,7 +731,7 @@ export default ({
   });
   // todolistData_finish Task 없음이 위로오게
   todolistData_finish.sort(function (a, b) {
-    const word = 'TASK 없음';
+    const word = '과목 없음';
     return a.subject.name === word && b.subject.name !== word
       ? -1
       : a.subject.name !== word && b.subject.name === word
@@ -739,12 +739,12 @@ export default ({
       : 0;
   });
 
-  // TASK 전용 리스트
+  // 과목 전용 리스트
   const mySubjectList = useSelect(
     subjectList.map((List) => `${List.name}`),
     subjectList.map((List) => `${List.id}`),
   );
-  // TOdolist에 쓸 TASK 전용(북마크 필터)
+  // TOdolist에 쓸 과목 전용(북마크 필터)
   let todoTask_tmp = subjectList.map((subject) => {
     if (subject.bookMark) {
       return subject;
@@ -775,11 +775,11 @@ export default ({
 
   const onSubmitAdd = async () => {
     if (subjectName.value === '') {
-      alert('TASK 이름을 입력하세요.');
+      alert('과목 이름을 입력하세요.');
       return;
     }
     try {
-      toast.info('새로운 TASK를 추가 중...');
+      toast.info('새로운 과목을 추가 중...');
       const {
         data: { addSubject },
       } = await addSubjectMutation({
@@ -789,11 +789,11 @@ export default ({
         },
       });
       if (!addSubject) {
-        alert('TASK를 추가할 수 없습니다.');
+        alert('과목을 추가할 수 없습니다.');
       } else {
         await subjectRefetch();
         await subjectClear();
-        toast.success('새로운 TASK가 추가되었습니다.');
+        toast.success('새로운 과목이 추가되었습니다.');
         return true;
       }
     } catch (e) {
@@ -805,7 +805,7 @@ export default ({
 
   const onSubmitEdit = async () => {
     if (subjectName.value === '') {
-      alert('TASK 이름을 입력하세요.');
+      alert('과목 이름을 입력하세요.');
       return;
     }
 
@@ -815,7 +815,7 @@ export default ({
       ) === true
     ) {
       try {
-        toast.info('TASK를 수정 중...');
+        toast.info('과목을 수정 중...');
         const {
           data: { editSubject },
         } = await editSubjectMutation({
@@ -826,11 +826,11 @@ export default ({
           },
         });
         if (!editSubject) {
-          alert('TASK를 수정할 수 없습니다.');
+          alert('과목을 수정할 수 없습니다.');
         } else {
           await subjectRefetch();
           await subjectClear();
-          toast.success('TASK가 수정되었습니다.');
+          toast.success('과목이 수정되었습니다.');
           return true;
         }
       } catch (e) {
@@ -844,11 +844,11 @@ export default ({
   const onSubmitDelete = async () => {
     if (
       window.confirm(
-        '해당 TASK가 기존 데이터에서 삭제됩니다.\n그래도 삭제하시겠습니까?',
+        '해당 과목이 기존 데이터에서 삭제됩니다.\n그래도 삭제하시겠습니까?',
       ) === true
     ) {
       try {
-        toast.info('해당 TASK를 삭제 중...');
+        toast.info('해당 과목을 삭제 중...');
         const {
           data: { deleteSubject },
         } = await deleteSubjectMutation({
@@ -857,12 +857,12 @@ export default ({
           },
         });
         if (!deleteSubject) {
-          alert('해당 TASK를 삭제할 수 없습니다.');
+          alert('해당 과목을 삭제할 수 없습니다.');
         } else {
           await subjectRefetch();
           await myRefetch();
           await subjectClear();
-          toast.success('해당 TASK가 삭제되었습니다.');
+          toast.success('해당 과목이 삭제되었습니다.');
           return true;
         }
       } catch (e) {
@@ -1001,7 +1001,7 @@ export default ({
       return;
     } else if (scheTmpArray === false) {
       alert(
-        'TASK가 할당되지 않은 스케줄이 존재합니다.\nTASK 할당 후 다시 시도하세요.',
+        '과목이 할당되지 않은 스케줄이 존재합니다.\n과목 할당 후 다시 시도하세요.',
       );
       return;
     }
@@ -1053,7 +1053,7 @@ export default ({
       return;
     } else if (scheTmpArray === false) {
       alert(
-        'TASK가 할당되지 않은 스케줄이 존재합니다.\nTASK 할당 후 다시 시도하세요.',
+        '과목이 할당되지 않은 스케줄이 존재합니다.\n과목 할당 후 다시 시도하세요.',
       );
       return;
     }
@@ -1084,7 +1084,7 @@ export default ({
     }
   };
 
-  //TASK 종류 넣기
+  //과목 종류 넣기
   const inputCalendars = () => {
     const calendars_tmp = subjectList.map((subject) => {
       if (subject.bookMark) {
@@ -1185,7 +1185,7 @@ export default ({
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
     if (scheduleData.calendarId === undefined) {
-      alert('TASK 선택은 필수입니다.\nTASK 추가 및 북마크를 진행하세요.');
+      alert('과목 선택은 필수입니다.\n과목 추가 및 북마크를 진행하세요.');
       return;
     }
 
@@ -1307,7 +1307,7 @@ export default ({
     async (res) => {
       const checkSche = { ...res.schedule, ...res.changes };
       if (checkSche.calendarId === '') {
-        alert('TASK를 할당해야 수정&복사가 가능합니다.');
+        alert('과목을 할당해야 수정&복사가 가능합니다.');
         return;
       }
 
@@ -1592,7 +1592,7 @@ export default ({
     }
   };
 
-  // TASK 북마크 관련
+  // 과목 북마크 관련
   // '기타' 북마크 못건드리게 제거
   const subjectList_book = ObjectCopy(subjectList);
   const etcIndex = subjectList.findIndex((a) => a.name === '기타');
@@ -1716,13 +1716,13 @@ export default ({
     }
   };
 
-  // 맨처음 스케줄, TASK 넣기
+  // 맨처음 스케줄, 과목 넣기
   if (isFirstRun) {
     isFirstRun = false;
     inputCalendars();
     inputSchedules();
   }
-  // TASK의 리페치가 완료되야지만 새로운 TASK&스케줄 넣기
+  // 과목의 리페치가 완료되야지만 새로운 과목&스케줄 넣기
   if (subjectnetwork === 4) {
     isRefectRun2 = true;
   }
@@ -2148,7 +2148,7 @@ export default ({
               <PopButton_custom
                 width={'80px'}
                 margin={'0 10px 0 0'}
-                text={'TASK'}
+                text={'과목'}
               />
             }
             closeOnDocumentClick={false}
@@ -2157,7 +2157,7 @@ export default ({
             {(close) => (
               <PBody>
                 <FrontDiv>
-                  <PTitle text={'TASK 관리'} />
+                  <PTitle text={'과목 관리'} />
                   <ThreeButtonWrap>
                     <SpaceDiv />
                     <SubjectButtonDiv>
@@ -2169,10 +2169,10 @@ export default ({
                         {(close) => (
                           <PBody>
                             <SubjectForm>
-                              <PTitle text={'TASK 북마크'} />
+                              <PTitle text={'과목 북마크'} />
                               <BookMarkTitle>
                                 <BookLeft2>&#9989;</BookLeft2>
-                                <BookRight2>TASK</BookRight2>
+                                <BookRight2>과목</BookRight2>
                               </BookMarkTitle>
                               <ListWrap>
                                 <BookmarkList
@@ -2222,12 +2222,10 @@ export default ({
                         {(close) => (
                           <PBody>
                             <SubjectForm2>
-                              <PTitle text={'TASK 추가'} />
+                              <PTitle text={'과목 추가'} />
                               <InputWrapper>
                                 <Input
-                                  placeholder={
-                                    'TASK 이름 (예: 국어 or 문서작업)'
-                                  }
+                                  placeholder={'과목 이름 (예: 국어 or 독서)'}
                                   {...subjectName}
                                 />
                               </InputWrapper>
@@ -2272,9 +2270,9 @@ export default ({
                         {(close) => (
                           <PBody>
                             <SubjectForm2>
-                              <PTitle text={'TASK 수정'} />
+                              <PTitle text={'과목 수정'} />
                               <SelectWrapDiv2>
-                                <SubTitle text={`수정할 TASK:　`} />
+                                <SubTitle text={`수정할 과목:　`} />
                                 <SelectWrapper2>
                                   <Select
                                     {...mySubjectList}
@@ -2292,7 +2290,7 @@ export default ({
                               <InputWrapper>
                                 <Input
                                   placeholder={
-                                    'TASK 이름 (예: 국어 or 문서작업)'
+                                    '과목 이름 (예: 국어 or 문서작업)'
                                   }
                                   {...subjectName}
                                 />
@@ -2338,7 +2336,7 @@ export default ({
                         {(close) => (
                           <PBody>
                             <SubjectForm2>
-                              <PTitle text={'TASK 삭제'} />
+                              <PTitle text={'과목 삭제'} />
                               <SelectWrapDiv>
                                 <SelectWrapper>
                                   <Select
@@ -2471,7 +2469,7 @@ modal
                     />
                   </NewTodoDiv>
                   <TodolistTitle>
-                    <BookLeft>TASK</BookLeft>
+                    <BookLeft>과목</BookLeft>
                     <BookRight>To Do List</BookRight>
                     <div style={{ marginLeft: '10px' }}>🔧</div>
                   </TodolistTitle>
@@ -2510,7 +2508,7 @@ modal
                 <SubjectForm>
                   <PTitle text={'완료한 To Do List'} />
                   <TodolistTitle2>
-                    <BookLeft>TASK</BookLeft>
+                    <BookLeft>과목</BookLeft>
                     <BookRight3>To Do List</BookRight3>
                     <FinishDateDiv>Done</FinishDateDiv>
                     <div style={{ marginLeft: '10px' }}>🔧</div>

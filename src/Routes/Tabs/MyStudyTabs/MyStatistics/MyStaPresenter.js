@@ -448,14 +448,14 @@ export default ({
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay[j].subject
           ? scheduleList_selectDay[j].subject.name
-          : 'TASK 없음',
+          : '과목 없음',
       );
-      // 중복되는 TASK 인덱스 체크
+      // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(
           scheduleList_selectDay[j].subject
             ? scheduleList_selectDay[j].subject.name
-            : 'TASK 없음',
+            : '과목 없음',
         );
         schedule_color.push(
           scheduleList_selectDay[j].subject
@@ -496,7 +496,7 @@ export default ({
         taskArray_schedule[index] = item / 60;
       });
     }
-    // 스케줄(TASK) 시간 퍼센트 계산
+    // 스케줄(과목) 시간 퍼센트 계산
     const totalExsitTime = SumArray(taskArray_schedule);
     const totalTargetTime = SumArray(taskArray_scheduleT);
     if (schedule_label.length === 0) {
@@ -673,13 +673,13 @@ export default ({
         const duplIndex = schedule_label.indexOf(
           scheduleList_selectDay_week[k][j].subject
             ? scheduleList_selectDay_week[k][j].subject.name
-            : 'TASK 없음',
-        ); // 중복되는 TASK 인덱스 체크
+            : '과목 없음',
+        ); // 중복되는 과목 인덱스 체크
         if (duplIndex === -1) {
           schedule_label.push(
             scheduleList_selectDay_week[k][j].subject
               ? scheduleList_selectDay_week[k][j].subject.name
-              : 'TASK 없음',
+              : '과목 없음',
           );
           schedule_color.push(
             scheduleList_selectDay_week[k][j].subject
@@ -729,7 +729,7 @@ export default ({
         taskArray_scheduleT_week[index] = item / 60;
       });
     }
-    // 스케줄(TASK) 시간 퍼센트 계산
+    // 스케줄(과목) 시간 퍼센트 계산
     const totalExsitTime = SumArray(taskArray_schedule_week);
     const totalTargetTime = SumArray(taskArray_scheduleT_week);
     if (schedule_label.length === 0) {
@@ -913,13 +913,13 @@ export default ({
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay_month[j].subject
           ? scheduleList_selectDay_month[j].subject.name
-          : 'TASK 없음',
-      ); // 중복되는 TASK 인덱스 체크
+          : '과목 없음',
+      ); // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(
           scheduleList_selectDay_month[j].subject
             ? scheduleList_selectDay_month[j].subject.name
-            : 'TASK 없음',
+            : '과목 없음',
         );
         resultArray_schedule.push(SumArray(slicedTime));
         schedule_color.push(
@@ -968,7 +968,7 @@ export default ({
         taskArray_scheduleT_month[index] = item / 60;
       });
     }
-    // 스케줄(TASK) 시간 퍼센트 계산
+    // 스케줄(과목) 시간 퍼센트 계산
     const totalExsitTime = SumArray(taskArray_schedule_month);
     const totalTargetTime = SumArray(taskArray_scheduleT_month);
     if (schedule_label.length === 0) {
@@ -1181,7 +1181,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'Real'}
                     label_2={'Plan'}
-                    title={'TASK별 Deep Time'}
+                    title={'과목별 Deep Time'}
                     title_x={'시간(분)'}
                     dateRange={'today'}
                   />
@@ -1202,8 +1202,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Deep Time 비율'
-                        : 'TASK별 Real Deep Time 비율'
+                        ? '과목별 Plan Deep Time 비율'
+                        : '과목별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1327,7 +1327,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'Real'}
                     label_2={'Plan'}
-                    title={'TASK별 Deep Time'}
+                    title={'과목별 Deep Time'}
                     title_x={'시간(시)'}
                     dateRange={'week'}
                   />
@@ -1348,8 +1348,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Deep Time 비율'
-                        : 'TASK별 Real Deep Time 비율'
+                        ? '과목별 Plan Deep Time 비율'
+                        : '과목별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1473,7 +1473,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'Real'}
                     label_2={'Plan'}
-                    title={'TASK별 Deep Time'}
+                    title={'과목별 Deep Time'}
                     title_x={'시간(시)'}
                     dateRange={'month'}
                   />
@@ -1494,8 +1494,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? 'TASK별 Plan Deep Time 비율'
-                        : 'TASK별 Real Deep Time 비율'
+                        ? '과목별 Plan Deep Time 비율'
+                        : '과목별 Real Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />

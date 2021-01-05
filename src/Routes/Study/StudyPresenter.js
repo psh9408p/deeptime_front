@@ -906,7 +906,7 @@ export default ({
   });
   // todolistData_new Task 없음이 위로오게
   todolistData_new.sort(function (a, b) {
-    const word = 'TASK 없음';
+    const word = '과목 없음';
     return a.subject.name === word && b.subject.name !== word
       ? -1
       : a.subject.name !== word && b.subject.name === word
@@ -914,7 +914,7 @@ export default ({
       : 0;
   });
 
-  // 북마크 된 TASK(subject)
+  // 북마크 된 과목(subject)
   let task_tmp = subjectData.map((subject) => {
     if (subject.bookMark) {
       return subject;
@@ -923,11 +923,11 @@ export default ({
   task_tmp = task_tmp.filter(function (el) {
     return el != undefined;
   });
-  // TASK(subject) 오름차순 정렬
+  // 과목(subject) 오름차순 정렬
   task_tmp.sort(function (a, b) {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   });
-  // TASK 기타가 아래로오게
+  // 과목 기타가 아래로오게
   task_tmp.sort(function (a, b) {
     const word = '기타';
     return a.name !== word && b.name === word
@@ -1809,12 +1809,12 @@ export default ({
     }
     scheduleList_selectDay_length = scheduleList_selectDay.length;
 
-    // 현재 TASK 찾기
+    // 현재 과목 찾기
     const nowDate = new Date();
     const findShedule = (i) =>
       new Date(i.start) <= nowDate && new Date(i.end) > nowDate;
     nowScheduleIndex = scheduleList_selectDay.findIndex(findShedule);
-    // 다음 TASK 찾기
+    // 다음 과목 찾기
     const findShedule_next = (i) => nowDate < new Date(i.start);
     nextScheduleIndex = scheduleList_selectDay.findIndex(findShedule_next);
   };
@@ -1887,7 +1887,7 @@ export default ({
       const startPoint = new Date(nowSchedule.start);
       const endPoint = new Date(nowSchedule.end);
       nowTitle1 =
-        (nowSchedule.subject ? nowSchedule.subject.name : 'TASK 없음') +
+        (nowSchedule.subject ? nowSchedule.subject.name : '과목 없음') +
         ' (' +
         nowSchedule.title +
         ')';
@@ -1975,14 +1975,14 @@ export default ({
       const duplIndex = schedule_label.indexOf(
         scheduleList_selectDay[j].subject
           ? scheduleList_selectDay[j].subject.name
-          : 'TASK 없음',
+          : '과목 없음',
       );
-      // 중복되는 TASK 인덱스 체크
+      // 중복되는 과목 인덱스 체크
       if (duplIndex === -1) {
         schedule_label.push(
           scheduleList_selectDay[j].subject
             ? scheduleList_selectDay[j].subject.name
-            : 'TASK 없음',
+            : '과목 없음',
         );
         schedule_color.push(
           scheduleList_selectDay[j].subject

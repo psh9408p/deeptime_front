@@ -37,7 +37,7 @@ const Container2 = styled.div`
   background-size: cover;
   background-position: center center;
   border-radius: 50%;
-  border: 2px solid ${(props) => (props.exist ? '#7ba9eb' : 'white')};
+  border: 4px solid ${(props) => (props.exist ? '#7ba9eb' : 'white')};
   box-shadow: 0 0 0 1px #c7c7c7;
 `;
 
