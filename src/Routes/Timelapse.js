@@ -11,10 +11,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 30px 0;
 `;
 
 const Title = styled.h1`
-  margin-top: 30px;
   font-size: 20px;
   font-weight: bold;
 `;
@@ -69,6 +69,7 @@ const ButtonWrap = styled.div`
 `;
 
 const Whammy = require('whammy/whammy');
+const surveySite = process.env.REACT_APP_SURVEY;
 var filesarr = [];
 var context = undefined;
 var canvas = undefined;
@@ -335,7 +336,7 @@ export default () => {
           }}
           id="submission"
           onClick={() => {
-            window.open('https://www.naver.com', '_blank');
+            window.open(surveySite, '_blank');
           }}
         >
           타임랩스 제출
