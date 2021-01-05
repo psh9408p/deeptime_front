@@ -31,7 +31,8 @@ export default withRouter(
     },
   }) => {
     // const profileTabContents = ['게시물', '구독 / 결제'];
-    const profileTabContents = ['게시물', '챌린지'];
+    // const profileTabContents = ['게시물', '챌린지'];
+    const profileTabContents = ['게시물'];
     const profileTabs = useTabs(0, profileTabContents);
     const [selectFile, setSelectFile] = useState(null);
     const followInput = useInput('');

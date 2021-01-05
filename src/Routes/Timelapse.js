@@ -11,10 +11,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 30px 0;
 `;
 
 const Title = styled.h1`
-  margin-top: 30px;
   font-size: 20px;
   font-weight: bold;
 `;
@@ -69,6 +69,7 @@ const ButtonWrap = styled.div`
 `;
 
 const Whammy = require('whammy/whammy');
+const surveySite = process.env.REACT_APP_SURVEY;
 var filesarr = [];
 var context = undefined;
 var canvas = undefined;
@@ -190,6 +191,7 @@ export default () => {
 
       document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
       document.getElementById('download').style.display = '';
+      document.getElementById('submission').style.display = '';
       document.getElementById('download').href = url;
       document.getElementById('download').download =
         'deeptime_timelapse_' + file_tail + '.mp4';
@@ -321,6 +323,23 @@ export default () => {
           // download="video.mp4"
         >
           타임랩스 다운로드
+        </a>
+      </ButtonWrap>
+      <ButtonWrap>
+        <a
+          style={{
+            display: 'none',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: 'red',
+            cursor: 'pointer',
+          }}
+          id="submission"
+          onClick={() => {
+            window.open(surveySite, '_blank');
+          }}
+        >
+          타임랩스 제출
         </a>
       </ButtonWrap>
     </Wrapper>
