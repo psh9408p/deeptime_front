@@ -2289,9 +2289,7 @@ export default ({
                               </SelectWrapDiv2>
                               <InputWrapper>
                                 <Input
-                                  placeholder={
-                                    '과목 이름 (예: 국어 or 문서작업)'
-                                  }
+                                  placeholder={'과목 이름 (예: 국어 or 독서)'}
                                   {...subjectName}
                                 />
                               </InputWrapper>
