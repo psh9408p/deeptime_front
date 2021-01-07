@@ -60,12 +60,6 @@ export const Button_timelapse = ({ onClick, margin = '0 10px 0 0' }) => (
   </Container>
 );
 
-export const Button_control = ({ onClick, margin = '0 10px 0 0' }) => (
-  <Container onClick={onClick} margin={margin}>
-    <Control />
-  </Container>
-);
-
 export const Button_copy = ({ onClick, margin = '0 10px 0 0', value }) => (
   <Container_hold onClick={onClick} margin={margin} value={value}>
     <Copy />
@@ -84,6 +78,14 @@ export const Button_setting = forwardRef(
   ({ onClick, margin = '0 10px 0 0' }, ref) => (
     <Container ref={ref} onClick={onClick} margin={margin}>
       <Setting />
+    </Container>
+  ),
+);
+
+export const Button_control = forwardRef(
+  ({ onClick, margin = '0 10px 0 0' }, ref) => (
+    <Container ref={ref} onClick={onClick} margin={margin}>
+      <Control />
     </Container>
   ),
 );

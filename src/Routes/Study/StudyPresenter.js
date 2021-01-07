@@ -1533,9 +1533,9 @@ export default ({
   const LoadModel = async () => {
     console.log('Load model');
 
-    const loadedModelPose = await posenet.load();
+    // const loadedModelPose = await posenet.load();
     const loadedModelDetect = await cocoSsd.load({ base: 'mobilenet_v2' });
-    setModelPose(loadedModelPose);
+    // setModelPose(loadedModelPose);
     setModelDetect(loadedModelDetect);
   };
 
@@ -1582,14 +1582,15 @@ export default ({
 
   const detectFromVideoFrame = async (video) => {
     try {
-      const posePredictions = await modelPose.estimateMultiplePoses(video, {
-        flipHorizontal: false,
-        maxDetections: 1,
-        minPoseConfidence: 0.15,
-        minPartConfidence: 0.1,
-        scoreThreshold: 0.5,
-        nmsRadius: 30,
-      });
+      const posePredictions = 0;
+      // const posePredictions = await modelPose.estimateMultiplePoses(video, {
+      //   flipHorizontal: false,
+      //   maxDetections: 1,
+      //   minPoseConfidence: 0.15,
+      //   minPartConfidence: 0.1,
+      //   scoreThreshold: 0.5,
+      //   nmsRadius: 30,
+      // });
 
       const objectPredictions = await modelDetect.detect(video);
       const personDetections = objectPredictions.filter(
@@ -1690,8 +1691,8 @@ export default ({
     }
     if (
       objectPredictions.length > 0 &&
-      posePredictions.length > 0 &&
-      maxBboxArea > 90000
+      // posePredictions.length > 0 &&
+      maxBboxArea > 30000
     ) {
       result = true;
     } else {
@@ -1723,7 +1724,8 @@ export default ({
   useInterval(async () => {
     // console.log(timeCount);
     updateTime();
-    if (modelPose !== null && modelDetect !== null) {
+    // if (modelPose !== null && modelDetect !== null) {
+    if (modelDetect !== null) {
       if (timeCount % 10 === 1) {
         detectFromVideoFrame(video1.current);
         // console.log(decision);
