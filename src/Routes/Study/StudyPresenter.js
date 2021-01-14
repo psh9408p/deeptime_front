@@ -2095,12 +2095,12 @@ export default ({
         const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
         if (index_tmp2 === -1) {
           slicedTimeBox.push(slicedTimes);
-          rgbBox.push('#0F4C82'); // 스카이 블루 학습시간
+          rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
           break; // 학습시간으로 끝남
         } else {
           const studyTime = slicedTimes.slice(0, index_tmp2);
           slicedTimeBox.push(studyTime);
-          rgbBox.push('#0F4C82'); // 스카이 블루 학습시간
+          rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
           slicedTimes = slicedTimes.slice(index_tmp2);
         }
       }
