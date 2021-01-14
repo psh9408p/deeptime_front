@@ -100,7 +100,7 @@ const EmailInputDiv = styled.div`
 `;
 
 const SmallInput = styled(Input)`
-  width: 80%;
+  width: 200px;
   margin-bottom: 7px;
   margin-right: 15px;
 `;

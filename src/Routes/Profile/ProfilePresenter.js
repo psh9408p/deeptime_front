@@ -604,7 +604,7 @@ export default ({
           </SubInfoDiv>
           <SubInfoDiv>
             <SubText>
-              게시물<span>0</span>
+              게시물<span>{userData.postsCount}</span>
             </SubText>
             <PopupCustom2
               trigger={

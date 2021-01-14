@@ -67,8 +67,8 @@ export default ({ data, color, title, labels }) => {
     options: {
       tooltips: false,
       legend: {
-        display: true,
-        position: 'right',
+        display: false,
+        // position: 'right',
       },
       title: {
         display: true,
@@ -79,6 +79,7 @@ export default ({ data, color, title, labels }) => {
       plugins: {
         datalabels: false,
       },
+      aspectRatio: 1,
     },
   };
   const chartContainer = useRef(null);

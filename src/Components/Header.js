@@ -78,13 +78,14 @@ const HeaderColumn = styled.div`
 const AiBox = styled.div`
   cursor: pointer;
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
   color: black;
   padding: 10px 15px;
   height: 45px;
-  width: 100px;
+  width: 115px;
   /* border: 1px solid ${(props) => props.theme.classicBlue}; */
   border: ${(props) => props.theme.boxBorder};
   border-radius: 23px;

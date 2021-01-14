@@ -47,7 +47,7 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
           label: 'Deep Time',
           data: data_1,
           backgroundColor: ['rgba(123, 169, 235, 0)'],
-          borderColor: ['rgba(123, 169, 235, 1)'],
+          borderColor: ['#0F4C82'],
           pointRadius: 3,
         },
       ],

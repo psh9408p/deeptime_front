@@ -11,8 +11,8 @@ export default ({ data_1, data_2, title, labels }) => {
         {
           data: [data_1, data_2],
           // data: [data_tmp_1, data_tmp_2],
-          backgroundColor: ['rgba(123, 169, 235, 1)', 'rgba(233,236,244,1)'],
-          borderColor: ['rgba(123, 169, 235, 1)', 'rgba(233,236,244,1)'],
+          backgroundColor: ['#0F4C82', 'rgba(233,236,244,1)'],
+          borderColor: ['#0F4C82', 'rgba(233,236,244,1)'],
           borderWidth: 1,
         },
       ],
@@ -28,6 +28,7 @@ export default ({ data_1, data_2, title, labels }) => {
       plugins: {
         datalabels: false,
       },
+      aspectRatio: 1,
     },
   };
   const chartContainer = useRef(null);

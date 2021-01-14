@@ -42,20 +42,20 @@ const LoaderWrapper = styled.div`
 
 const BigBox = styled.div`
   background-color: white;
-  &:first-child {
-    border: ${(props) => props.theme.boxBorder};
-    border-radius: ${(props) => props.theme.borderRadius};
-    width: 654.5px;
-    height: 100%;
-    padding-top: 10px;
-    position: relative;
-  }
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  width: 654.5px;
+  height: 100%;
+  padding-top: 10px;
+  margin-bottom: 30px;
+  position: relative;
 `;
 
 const StatisRow = styled.div`
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   position: relative;
@@ -97,6 +97,44 @@ const ChartWrap = styled.div`
   height: 100%;
 `;
 
+const ChartWrap_Donut = styled.div`
+  margin-top: 10px;
+  width: 280px;
+  height: 100%;
+`;
+
+const TotalTimeWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 260px;
+  height: 100%;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
+const TotalNumber = styled.div`
+  text-align: center;
+
+  &:first-child {
+    margin-bottom: 20px;
+    line-height: 35px;
+    span {
+      font-size: 35px;
+      color: ${(props) => props.theme.classicBlue};
+    }
+  }
+
+  &:last-child {
+    line-height: 30px;
+    span {
+      font-size: 25px;
+      color: ${(props) => props.theme.lightGreyColor};
+    }
+  }
+`;
+
 const ChartWrap_percentBar = styled.div`
   width: 250px;
   height: 125px;
@@ -110,7 +148,7 @@ const TotalTime = styled.div`
   padding-left: 267px;
   font-size: 13px;
   font-weight: bold;
-  color: ${(props) => props.theme.skyBlue};
+  color: ${(props) => props.theme.classicBlue};
   top: 0;
   bottom: 0;
   left: 0;
@@ -128,9 +166,9 @@ const DonutPercent = styled(TotalTime)`
   justify-content: center;
   align-items: center;
   color: black;
-  font-size: 25px;
-  margin-top: 128px;
-  margin-left: 267px;
+  font-size: 35px;
+  margin-top: 150px;
+  margin-left: 135px;
   padding: 0;
   width: 100px;
   height: 50px;
@@ -152,7 +190,7 @@ const ClassButton = styled.button`
 `;
 
 const ClassButton_Blue = styled(ClassButton)`
-  background-color: ${(props) => props.theme.skyBlue};
+  background-color: ${(props) => props.theme.classicBlue};
   color: white;
 `;
 
@@ -1125,28 +1163,41 @@ export default ({
 
   return (
     <Wrapper>
-      <BigBox id="staCapture_all">
+      <BigBox>
         {StaTabs.currentIndex === 0 && (
           <>
             <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
-                <ChartWrap>
+                <ChartWrap_Donut>
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
                     title={'총 Deep Time'}
-                    labels={['Real', 'Plan']}
+                    labels={['학습', '목표']}
                   />
-                </ChartWrap>
-                <TotalTime>
-                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                  {total_min.length === 1 ? '0' + total_min : total_min}m
-                </TotalTime>
-                <TargetTime>
-                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
-                  h{target_min.length === 1 ? '0' + target_min : target_min}m
-                </TargetTime>
+                </ChartWrap_Donut>
+                <TotalTimeWrap>
+                  <TotalNumber>
+                    학습 시간
+                    <br />
+                    <span>
+                      {total_hour.length === 1 ? '0' + total_hour : total_hour}{' '}
+                      : {total_min.length === 1 ? '0' + total_min : total_min}
+                    </span>
+                  </TotalNumber>
+                  <TotalNumber>
+                    목표 시간
+                    <br />
+                    <span>
+                      {target_hour.length === 1
+                        ? '0' + target_hour
+                        : target_hour}{' '}
+                      :{' '}
+                      {target_min.length === 1 ? '0' + target_min : target_min}
+                    </span>
+                  </TotalNumber>
+                </TotalTimeWrap>
                 <DonutPercent>{donutPercent}%</DonutPercent>
                 {todayCalLoading.current && (
                   <LoaderWrapper>
@@ -1179,8 +1230,8 @@ export default ({
                     data_2={taskArray_scheduleT}
                     data_color={schedule_color}
                     labels={schedule_label}
-                    label_1={'Real'}
-                    label_2={'Plan'}
+                    label_1={'학습'}
+                    label_2={'목표'}
                     title={'과목별 Deep Time'}
                     title_x={'시간(분)'}
                     dateRange={'today'}
@@ -1202,8 +1253,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 Plan Deep Time 비율'
-                        : '과목별 Real Deep Time 비율'
+                        ? '과목별 목표 Deep Time 비율'
+                        : '과목별 학습 Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1211,19 +1262,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent(true);
-                    }}
-                    styleBoolean={selectPercent}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent(false);
                     }}
                     styleBoolean={!selectPercent}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {todayCalLoading.current && (
@@ -1237,8 +1288,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
@@ -1248,19 +1299,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent2(true);
-                    }}
-                    styleBoolean={selectPercent2}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent2(false);
                     }}
                     styleBoolean={!selectPercent2}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {todayCalLoading.current && (
@@ -1277,22 +1328,35 @@ export default ({
             <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
-                <ChartWrap>
+                <ChartWrap_Donut>
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
                     title={'총 Deep Time'}
-                    labels={['Real', 'Plan']}
+                    labels={['학습', '목표']}
                   />
-                </ChartWrap>
-                <TotalTime>
-                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                  {total_min.length === 1 ? '0' + total_min : total_min}m
-                </TotalTime>
-                <TargetTime>
-                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
-                  h{target_min.length === 1 ? '0' + target_min : target_min}m
-                </TargetTime>
+                </ChartWrap_Donut>
+                <TotalTimeWrap>
+                  <TotalNumber>
+                    학습 시간
+                    <br />
+                    <span>
+                      {total_hour.length === 1 ? '0' + total_hour : total_hour}{' '}
+                      : {total_min.length === 1 ? '0' + total_min : total_min}
+                    </span>
+                  </TotalNumber>
+                  <TotalNumber>
+                    목표 시간
+                    <br />
+                    <span>
+                      {target_hour.length === 1
+                        ? '0' + target_hour
+                        : target_hour}{' '}
+                      :{' '}
+                      {target_min.length === 1 ? '0' + target_min : target_min}
+                    </span>
+                  </TotalNumber>
+                </TotalTimeWrap>
                 <DonutPercent>{donutPercent}%</DonutPercent>
                 {weekCalLoading.current && (
                   <LoaderWrapper>
@@ -1325,8 +1389,8 @@ export default ({
                     data_2={taskArray_scheduleT_week}
                     data_color={schedule_color}
                     labels={schedule_label}
-                    label_1={'Real'}
-                    label_2={'Plan'}
+                    label_1={'학습'}
+                    label_2={'목표'}
                     title={'과목별 Deep Time'}
                     title_x={'시간(시)'}
                     dateRange={'week'}
@@ -1348,8 +1412,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 Plan Deep Time 비율'
-                        : '과목별 Real Deep Time 비율'
+                        ? '과목별 목표 Deep Time 비율'
+                        : '과목별 학습 Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1357,19 +1421,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent(true);
-                    }}
-                    styleBoolean={selectPercent}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent(false);
                     }}
                     styleBoolean={!selectPercent}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {weekCalLoading.current && (
@@ -1383,8 +1447,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
@@ -1394,19 +1458,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent2(true);
-                    }}
-                    styleBoolean={selectPercent2}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent2(false);
                     }}
                     styleBoolean={!selectPercent2}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {weekCalLoading.current && (
@@ -1423,22 +1487,35 @@ export default ({
             <Capture id="staCapture_top">
               <TopStatisRow />
               <StatisRow>
-                <ChartWrap>
+                <ChartWrap_Donut>
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
                     title={'총 Deep Time'}
-                    labels={['Real', 'Plan']}
+                    labels={['학습', '목표']}
                   />
-                </ChartWrap>
-                <TotalTime>
-                  {total_hour.length === 1 ? '0' + total_hour : total_hour}h
-                  {total_min.length === 1 ? '0' + total_min : total_min}m
-                </TotalTime>
-                <TargetTime>
-                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}
-                  h{target_min.length === 1 ? '0' + target_min : target_min}m
-                </TargetTime>
+                </ChartWrap_Donut>
+                <TotalTimeWrap>
+                  <TotalNumber>
+                    학습 시간
+                    <br />
+                    <span>
+                      {total_hour.length === 1 ? '0' + total_hour : total_hour}{' '}
+                      : {total_min.length === 1 ? '0' + total_min : total_min}
+                    </span>
+                  </TotalNumber>
+                  <TotalNumber>
+                    목표 시간
+                    <br />
+                    <span>
+                      {target_hour.length === 1
+                        ? '0' + target_hour
+                        : target_hour}{' '}
+                      :{' '}
+                      {target_min.length === 1 ? '0' + target_min : target_min}
+                    </span>
+                  </TotalNumber>
+                </TotalTimeWrap>
                 <DonutPercent>{donutPercent}%</DonutPercent>
                 {monthCalLoading.current && (
                   <LoaderWrapper>
@@ -1471,8 +1548,8 @@ export default ({
                     data_2={taskArray_scheduleT_month}
                     data_color={schedule_color}
                     labels={schedule_label}
-                    label_1={'Real'}
-                    label_2={'Plan'}
+                    label_1={'학습'}
+                    label_2={'목표'}
                     title={'과목별 Deep Time'}
                     title_x={'시간(시)'}
                     dateRange={'month'}
@@ -1494,8 +1571,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 Plan Deep Time 비율'
-                        : '과목별 Real Deep Time 비율'
+                        ? '과목별 목표 Deep Time 비율'
+                        : '과목별 학습 Deep Time 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1503,19 +1580,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent(true);
-                    }}
-                    styleBoolean={selectPercent}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent(false);
                     }}
                     styleBoolean={!selectPercent}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent(true);
+                    }}
+                    styleBoolean={selectPercent}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {monthCalLoading.current && (
@@ -1529,8 +1606,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `Plan Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `Real Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
@@ -1540,19 +1617,19 @@ export default ({
                 <ChangeWrap>
                   <ChangeButton
                     onClick={() => {
-                      setSelectPercent2(true);
-                    }}
-                    styleBoolean={selectPercent2}
-                  >
-                    Plan
-                  </ChangeButton>
-                  <ChangeButton
-                    onClick={() => {
                       setSelectPercent2(false);
                     }}
                     styleBoolean={!selectPercent2}
                   >
-                    Real
+                    학습
+                  </ChangeButton>
+                  <ChangeButton
+                    onClick={() => {
+                      setSelectPercent2(true);
+                    }}
+                    styleBoolean={selectPercent2}
+                  >
+                    목표
                   </ChangeButton>
                 </ChangeWrap>
                 {monthCalLoading.current && (

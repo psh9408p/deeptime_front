@@ -14,6 +14,7 @@ export const GET_USER = gql`
       studyGroup
       studyGroup2
       studyGroup3
+      postsCount
       followingCount
       followersCount
       isFollowing

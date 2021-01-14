@@ -73,8 +73,8 @@ const ClockBox = styled.div`
   position: absolute;
   z-index: 10;
   display: flex;
-  margin-top: 113.5px;
-  margin-left: 534px;
+  margin-top: 118px;
+  margin-left: 526px;
   justify-content: center;
   align-items: center;
   top: 0;
@@ -100,23 +100,14 @@ const TodayTime = styled.div`
   height: 30px;
 `;
 
-const TodayTime_total = styled(TodayTime)`
-  margin-top: 218px;
-  margin-left: 604px;
-  font-size: 20px;
-  color: black;
-  width: 100px;
-  height: 30px;
-`;
-
 const TodayPercent = styled(TodayTime)`
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-  font-size: 25px;
-  margin-top: 167px;
-  margin-left: 588px;
+  font-size: 33px;
+  margin-top: 190px;
+  margin-left: 580px;
   padding: 0;
   width: 97px;
   height: 50px;
@@ -321,13 +312,62 @@ const HeaderDiv = styled.div`
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
-const DonutWrap = styled.div`
+const TimeLogWrap = styled.div`
   /* position: relative; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 240px;
   margin-bottom: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const DonutWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 230px;
+  height: 230px;
+`;
+
+const TotalTimeWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 100%;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
+const TotalNumber = styled.div`
+  text-align: center;
+
+  &:first-child {
+    line-height: 30px;
+    span {
+      font-size: 35px;
+      color: ${(props) => props.theme.classicBlue};
+    }
+  }
+
+  &:nth-child(2) {
+    margin-bottom: 20px;
+    line-height: 25px;
+    span {
+      font-size: 25px;
+      color: ${(props) => props.theme.lightGreyColor};
+    }
+  }
+`;
+
+const DonutLabel = styled.div`
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 22px;
 `;
 
 const NowNextWrap = styled.div`
@@ -1782,8 +1822,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      LoadCamera();
-      LoadModel();
+      // LoadCamera();
+      // LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -2055,12 +2095,12 @@ export default ({
         const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
         if (index_tmp2 === -1) {
           slicedTimeBox.push(slicedTimes);
-          rgbBox.push('#7BA9EB'); // 스카이 블루 학습시간
+          rgbBox.push('#0F4C82'); // 스카이 블루 학습시간
           break; // 학습시간으로 끝남
         } else {
           const studyTime = slicedTimes.slice(0, index_tmp2);
           slicedTimeBox.push(studyTime);
-          rgbBox.push('#7BA9EB'); // 스카이 블루 학습시간
+          rgbBox.push('#0F4C82'); // 스카이 블루 학습시간
           slicedTimes = slicedTimes.slice(index_tmp2);
         }
       }
@@ -2563,30 +2603,53 @@ export default ({
                 </PopupCustom>
               </SetDiv>
             </HeaderDiv>
-            <DonutWrap>
-              <DonutChart_today
-                data={donutData}
-                color={rgbBox}
-                title={'Today Deep Time Log'}
-                labels={[
-                  'Deep Time',
-                  '부재 시간' + '　' + '　' + '　' + '　',
-                  '나머지 시간',
-                ]}
-              />
+            <TimeLogWrap>
+              <DonutWrap>
+                <DonutChart_today
+                  data={donutData}
+                  color={rgbBox}
+                  title={'Today Deep Time Log'}
+                  // labels={[
+                  //   'Deep Time',
+                  //   '부재 시간' + '　' + '　' + '　' + '　',
+                  //   '나머지 시간',
+                  // ]}
+                />
+              </DonutWrap>
+              <TotalTimeWrap>
+                <TotalNumber>
+                  학습 시간
+                  <br />
+                  <span>
+                    {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
+                    {total_min.length === 1 ? '0' + total_min : total_min}
+                  </span>
+                </TotalNumber>
+                <TotalNumber>
+                  {/* 목표 시간 */}/ {/* <br />
+                  <span> */}
+                  {target_hour.length === 1
+                    ? '0' + target_hour
+                    : target_hour} :{' '}
+                  {target_min.length === 1 ? '0' + target_min : target_min}
+                  {/* </span> */}
+                </TotalNumber>
+                <DonutLabel>
+                  <span style={{ color: '#0F4C82' }}>■</span>학습 시간
+                </DonutLabel>
+                {/* <DonutLabel>
+                  <span style={{ color: 'rgba(233, 236, 244, 1)' }}>■</span>부재
+                  시간
+                </DonutLabel> */}
+                <DonutLabel>
+                  <span style={{ color: '#EAD6D4' }}>■</span>나머지 시간
+                </DonutLabel>
+              </TotalTimeWrap>
               <ClockBox>
                 <Clock24 />
               </ClockBox>
-              <TodayTime>
-                {total_hour.length === 1 ? '0' + total_hour : total_hour}:
-                {total_min.length === 1 ? '0' + total_min : total_min}
-              </TodayTime>
-              <TodayTime_total>
-                / {target_hour.length === 1 ? '0' + target_hour : target_hour}:
-                {target_min.length === 1 ? '0' + target_min : target_min}
-              </TodayTime_total>
-              {/* <TodayPercent>{donutPercent}%</TodayPercent> */}
-            </DonutWrap>
+              <TodayPercent>{donutPercent}%</TodayPercent>
+            </TimeLogWrap>
             <NowNextWrap>
               <BarWrap>
                 <RowBarChart_now
