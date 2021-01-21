@@ -39,6 +39,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
 
   const stateList = useSelect(stateBox, stateBox);
 
+  const [makeView, setMakeView] = useState(false);
   const [dayDate, setDayDate] = useState(nowDate);
   const [copyOne, setCopyOne] = useState(nowDate);
   const [pasteOne, setPasteOne] = useState(
@@ -231,6 +232,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         createScheDayMutation={createScheDayMutation}
         dayDate={dayDate}
         setDayDate={setDayDate}
+        makeView={makeView}
+        setMakeView={setMakeView}
       />
     );
   } else {

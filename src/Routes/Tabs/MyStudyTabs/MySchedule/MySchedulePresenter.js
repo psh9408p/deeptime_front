@@ -598,6 +598,31 @@ const SelectWrap = styled(NewScheContent)`
   margin-top: 20px;
 `;
 
+const BlackBack = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const CustomPopup = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 420px;
+  height: 460px;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: white;
+`;
+
 let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
@@ -667,6 +692,8 @@ export default ({
   createScheDayMutation,
   dayDate,
   setDayDate,
+  makeView,
+  setMakeView,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1156,7 +1183,11 @@ export default ({
   };
 
   const onClickSchedule = useCallback((e) => {
-    // console.log(e)
+    console.log(e);
+  }, []);
+
+  const onDrag = useCallback((e) => {
+    console.log(e);
   }, []);
 
   const onClickScheduleSave = async () => {
@@ -1184,6 +1215,9 @@ export default ({
   };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
+    // console.log(scheduleData);
+    setMakeView(true);
+
     if (scheduleData.calendarId === undefined) {
       alert('과목 선택은 필수입니다.\n과목 추가 및 북마크를 진행하세요.');
       return;
@@ -2395,8 +2429,8 @@ export default ({
       <TUICalendar
         ref={cal}
         height={scheHeight}
-        useCreationPopup={true}
-        useDetailPopup={true}
+        useCreationPopup={false}
+        useDetailPopup={false}
         template={templates}
         calendars={calendars}
         schedules={schedules}
@@ -2409,6 +2443,11 @@ export default ({
         onBeforeDeleteSchedule={onBeforeDeleteSchedule}
         onBeforeUpdateSchedule={onBeforeUpdateSchedule}
       />
+      {makeView && (
+        <BlackBack>
+          <CustomPopup></CustomPopup>
+        </BlackBack>
+      )}
     </Wrapper>
   );
 };

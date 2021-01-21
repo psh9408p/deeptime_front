@@ -408,13 +408,12 @@ const BreakTimeDiv = styled.div`
 
 const NextTimeDiv = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  width: 100%;
-  height: 50%;
+  width: 180px;
+  height: 100%;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
-  margin-bottom: 10px;
 `;
 
 const TimeIn = styled.div`
@@ -424,20 +423,27 @@ const TimeIn = styled.div`
   align-items: center;
   text-align: center;
   line-height: 1.5em;
-  width: 70%;
+  width: 100%;
   height: 100%;
   font-size: 13px;
   font-weight: bold;
+  padding: 10px;
 `;
 
 const IconWrap = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 30%;
-  height: 100%;
-  border-right: ${(props) => props.theme.boxBorder};
+  width: 100%;
+  height: 30%;
+  border-bottom: ${(props) => props.theme.boxBorder};
+`;
+
+const NextText = styled.p`
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: 10px;
 `;
 
 const DDayDiv = styled.div`
@@ -1290,7 +1296,11 @@ export default ({
     }
   };
 
-  const onPullSchedule = async ({ close }) => {
+  const onPullSchedule = async () => {
+    if (window.confirm('다음 스케줄을 당기시겠습니까?') === false) {
+      return;
+    }
+
     // 업데이트 오래걸릴 수 있어 toast 위로
     toast.info('다음 스케줄 당기는 중...');
     // 스케줄 데이터르 최신으로 업데이트 후 현재 진행중인 스케줄 확인
@@ -1329,7 +1339,6 @@ export default ({
       } else {
         await myInfoRefetch();
         toast.success('다음 스케줄을 당겼습니다.');
-        close();
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
@@ -1942,7 +1951,7 @@ export default ({
       nowScheduleTimeT = 0;
       nowScheduleColor = 'rgba(123, 169, 235, 1)';
       nowTitle1 = '현재 스케줄 없음';
-      nowTitle2 = 'X';
+      nowTitle2 = '';
     }
     // nextSchedule 계산
     if (nextScheduleIndex !== -1) {
@@ -1956,8 +1965,8 @@ export default ({
         '~' +
         moment(endPoint_next).format('hh:mma');
     } else {
-      nextTitle1 = '다음 스케줄 없음';
-      nextTitle2 = 'X';
+      nextTitle1 = '다음 스케줄';
+      nextTitle2 = '없음';
       next_TimeText = '';
     }
     // breakTime 계산
@@ -1983,8 +1992,8 @@ export default ({
         '~' +
         moment(endPoint_break).format('hh:mma');
     } else {
-      break_title = '다음 휴식 없음';
-      break_time = 'X';
+      break_title = '다음 휴식';
+      break_time = '없음';
       break_boolean = false;
     }
 
@@ -2447,18 +2456,6 @@ export default ({
                                   onStopSchedule({ close });
                                 }}
                               />
-                              <Button_custom
-                                text={'다음 스케줄 당김'}
-                                width={'120px'}
-                                height={'25px'}
-                                margin={'0'}
-                                bgColor={'#0F4C82'}
-                                color={'white'}
-                                padding={'0'}
-                                onClick={() => {
-                                  onPullSchedule({ close });
-                                }}
-                              />
                             </ControlBottom>
                           </ControlWrap>
                         </Wrapper_b>
@@ -2635,14 +2632,14 @@ export default ({
                   {/* </span> */}
                 </TotalNumber>
                 <DonutLabel>
-                  <span style={{ color: '#0F4C82' }}>■</span>학습 시간
+                  <span style={{ color: '#0F4C82' }}>■</span> 학습 시간
                 </DonutLabel>
                 {/* <DonutLabel>
                   <span style={{ color: 'rgba(233, 236, 244, 1)' }}>■</span>부재
                   시간
                 </DonutLabel> */}
                 <DonutLabel>
-                  <span style={{ color: '#EAD6D4' }}>■</span>나머지 시간
+                  <span style={{ color: '#EAD6D4' }}>■</span> 나머지 시간
                 </DonutLabel>
               </TotalTimeWrap>
               <ClockBox>
@@ -2660,31 +2657,39 @@ export default ({
                   scheduleColor={nowScheduleColor}
                 />
               </BarWrap>
-              <BreakNextWrap>
-                <NextTimeDiv>
-                  <IconWrap>
-                    <NextSchedule />
-                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>Next</div>
-                  </IconWrap>
-                  <TimeIn>
-                    {nextTitle1}
-                    <br />
-                    {nextTitle2}
-                    <br />
-                    {next_TimeText}
-                  </TimeIn>
-                </NextTimeDiv>
-                <BreakTimeDiv>
+              <NextTimeDiv>
+                <IconWrap>
+                  <NextSchedule
+                    onClick={() => onPullSchedule()}
+                    cursor={'pointer'}
+                  />
+                  <NextText>다음 스케줄</NextText>
+                </IconWrap>
+                <TimeIn>
+                  <p>{nextTitle1}</p>
+                  <p>{nextTitle2}</p>
+                  <p>{next_TimeText}</p>
+                  {break_boolean && (
+                    <Countdown
+                      date={Date.now() + break_countdown}
+                      renderer={({ hours, minutes }) => (
+                        <span style={{ color: 'red' }}>
+                          시작 {hours > 0 && <span>{hours}시간 </span>}
+                          {minutes}분 전
+                        </span>
+                      )}
+                    />
+                  )}
+                </TimeIn>
+              </NextTimeDiv>
+              {/* <BreakTimeDiv>
                   <IconWrap>
                     <Coffee />
-                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>
-                      Break
-                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>휴식</div>
                   </IconWrap>
                   <TimeIn>
-                    {break_title}
-                    <br />
-                    {break_time}
+                    <p>{break_title}</p>
+                    <p>{break_time}</p>
                     {break_boolean && (
                       <Countdown
                         date={Date.now() + break_countdown}
@@ -2697,8 +2702,7 @@ export default ({
                       />
                     )}
                   </TimeIn>
-                </BreakTimeDiv>
-              </BreakNextWrap>
+                </BreakTimeDiv> */}
             </NowNextWrap>
           </GraphDiv>
         </Wrapper>

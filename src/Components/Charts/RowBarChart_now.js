@@ -31,7 +31,7 @@ export default ({ data_1, data_2, title1, title2, scheduleColor }) => {
         display: true,
         fontSize: 13,
         fontColor: 'black',
-        text: [title1, title2],
+        text: title2 === '' ? title1 : [title1, title2],
       },
       legend: {
         display: false,
