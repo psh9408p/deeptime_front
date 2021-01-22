@@ -21,6 +21,7 @@ import {
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
+import useKey_oneUp from '../../../../Hooks/useKey_oneUp';
 
 const LoaderWrapper = styled.div`
   margin: 100px 0px;
@@ -39,7 +40,11 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
 
   const stateList = useSelect(stateBox, stateBox);
 
+  const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
   const [makeView, setMakeView] = useState(false);
+  const [infoView, setInfoView] = useState(false);
+  const [modiView, setModiView] = useState(false);
+  const [infoSche, setInfoSche] = useState({});
   const [dayDate, setDayDate] = useState(nowDate);
   const [copyOne, setCopyOne] = useState(nowDate);
   const [pasteOne, setPasteOne] = useState(
@@ -96,7 +101,14 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     undefined,
     true,
   );
-  const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
+
+  // ESC누르면 Popup 꺼지게
+  useKey_oneUp(
+    'Escape',
+    [makeView, infoView, modiView],
+    [setMakeView, setInfoView, setModiView],
+  );
+  // useKey_oneUp('Escape', [setInfoView]);
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
   const [addSubjectMutation] = useMutation(ADD_SUBJECT);
@@ -234,6 +246,13 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         setDayDate={setDayDate}
         makeView={makeView}
         setMakeView={setMakeView}
+        nowDate={nowDate}
+        infoView={infoView}
+        setInfoView={setInfoView}
+        infoSche={infoSche}
+        setInfoSche={setInfoSche}
+        modiView={modiView}
+        setModiView={setModiView}
       />
     );
   } else {

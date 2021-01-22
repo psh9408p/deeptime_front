@@ -6,9 +6,9 @@ const Container = styled.button`
   width: ${(props) => props.width};
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
-  color: white;
+  color: ${(props) => props.color};
   font-weight: 600;
-  background-color: ${(props) => props.theme.classicBlue};
+  background-color: ${(props) => props.bgColor};
   text-align: center;
   padding: 7px 0px;
   font-size: 14px;
@@ -18,8 +18,21 @@ const Container = styled.button`
   }
 `;
 
-const PopupButton = ({ type, text, onClick, width = '30%' }) => (
-  <Container type={type} onClick={onClick} width={width}>
+const PopupButton = ({
+  type,
+  text,
+  onClick,
+  width = '30%',
+  bgColor = '#0F4C82',
+  color = 'white',
+}) => (
+  <Container
+    type={type}
+    onClick={onClick}
+    width={width}
+    bgColor={bgColor}
+    color={color}
+  >
     {text}
   </Container>
 );

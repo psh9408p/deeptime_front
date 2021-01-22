@@ -107,7 +107,7 @@ const SelectDiv = styled.div`
 `;
 
 const SaveButtonDiv = styled.div`
-  width: 80px;
+  width: 40px;
 `;
 
 const SubjectButtonDiv = styled.div`
@@ -173,7 +173,7 @@ const PopupCustom8 = styled(PopupCustom)`
 const PopupCustom9 = styled(PopupCustom)`
   &-content {
     width: 360px !important;
-    height: 220px !important;
+    height: 170px !important;
   }
 `;
 
@@ -181,13 +181,6 @@ const PopupCustom10 = styled(PopupCustom)`
   &-content {
     width: 450px !important;
     height: 200px !important;
-  }
-`;
-
-const PopupCustom11 = styled(PopupCustom)`
-  &-content {
-    width: 390px !important;
-    height: 410px !important;
   }
 `;
 
@@ -508,14 +501,6 @@ const RefreshInputWrap = styled.div`
   height: 30px;
 `;
 
-const ScheWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  border-bottom: 1px solid black;
-  width: 100%;
-`;
-
 const WeekWrap = styled.div`
   display: flex;
   flex-direction: row;
@@ -613,14 +598,68 @@ const BlackBack = styled.div`
 `;
 
 const CustomPopup = styled.div`
+  position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: auto;
-  width: 420px;
-  height: 460px;
+  width: 310px;
+  height: 410px;
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: white;
+`;
+
+const CustomPopup2 = styled(CustomPopup)`
+  border-top: 4px solid ${(props) => props.color};
+  height: auto;
+  width: 390px;
+  padding: 20px;
+`;
+
+const InfoWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+
+  p {
+    &:first-child {
+      font-size: 18px;
+      font-weight: bold;
+      color: ${(props) => props.color};
+      margin-bottom: 5px;
+    }
+    &:nth-child(2) {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    &:nth-child(3) {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+    &:last-child {
+      color: ${(props) => props.theme.darkGreyColor};
+    }
+  }
+`;
+
+const CloseButton = styled.a`
+  cursor: pointer;
+  position: absolute;
+  color: ${(props) => props.theme.classicBlue};
+  display: block;
+  padding: 0 5px 5px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  font-weight: bold;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #cfcece;
 `;
 
 let newScheduleArray = [];
@@ -694,7 +733,16 @@ export default ({
   setDayDate,
   makeView,
   setMakeView,
+  nowDate,
+  infoView,
+  setInfoView,
+  infoSche,
+  setInfoSche,
+  modiView,
+  setModiView,
 }) => {
+  const { weekStart, weekEnd } = WeekRange(dayDate);
+
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
@@ -977,6 +1025,40 @@ export default ({
     }
   };
 
+  // 스케줄 초기화
+  const clearSchedule = () => {
+    setDayDate(nowDate);
+    setDayBool(
+      dayList.map((_, index) => {
+        return nowDate.getDay() === index ? true : false;
+      }),
+    );
+    mySubjectList2.setOption(mySubjectList2.valueList[0]);
+    stateList.setOption('자습');
+    scheTitle.setValue('');
+    scheLocation.setValue('');
+    setSTime(new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin));
+    setETime(
+      new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
+    );
+  };
+
+  // 스케줄 수정 시 값 넣어주기
+  const inputSchedule = (Sche) => {
+    setDayDate(Sche.start._date);
+    setDayBool(
+      dayList.map((_, index) => {
+        return Sche.start._date.getDay() === index ? true : false;
+      }),
+    );
+    mySubjectList2.setOption(Sche.calendarId);
+    stateList.setOption(Sche.state);
+    scheTitle.setValue(Sche.title);
+    scheLocation.setValue(Sche.location);
+    setSTime(Sche.start._date);
+    setETime(Sche.end._date);
+  };
+
   //스케줄 가공 전처리
   const schePreTreat = ({ sches, diffTime = 0 }) => {
     let checkEmpty = true;
@@ -1047,7 +1129,6 @@ export default ({
       } else {
         await myRefetch();
         // await todolistRefetch();
-        const nowDate = new Date();
         setCopyDate(nowDate);
         setPasteDate(new Date(nowDate.getTime() + 604800000));
         toast.success('주간 스케줄이 복사되었습니다.');
@@ -1099,7 +1180,6 @@ export default ({
       } else {
         await myRefetch();
         // await todolistRefetch();
-        const nowDate = new Date();
         setCopyOne(new Date());
         setPasteOne(new Date(nowDate.getTime() + 86400000));
         toast.success('하루 스케줄이 복사되었습니다.');
@@ -1183,112 +1263,125 @@ export default ({
   };
 
   const onClickSchedule = useCallback((e) => {
-    console.log(e);
-  }, []);
-
-  const onDrag = useCallback((e) => {
-    console.log(e);
-  }, []);
-
-  const onClickScheduleSave = async () => {
-    try {
-      toast.info('스케줄 변경사항 저장 중...');
-      const {
-        data: { saveSchedule_my },
-      } = await saveScheduleMutation({
-        variables: {
-          scheduleArray: newScheduleArray,
-        },
-      });
-      if (!saveSchedule_my) {
-        alert('스케줄을 변경할 수 없습니다.');
-      } else {
-        await myRefetch();
-        // await todolistRefetch();
-        newScheduleArray = [];
-        toast.success('변경된 스케줄이 저장되었습니다.');
-      }
-    } catch (e) {
-      const realText = e.message.split('GraphQL error: ');
-      alert(realText[1]);
+    const subjectInfo = calendars.find(
+      (cal) => cal.id === e.schedule.calendarId,
+    );
+    if (subjectInfo) {
+      e.schedule.calendarName = subjectInfo.name;
     }
-  };
+    setInfoView(true);
+    setInfoSche(e.schedule);
+  }, []);
+
+  // const onClickScheduleSave = async () => {
+  //   try {
+  //     toast.info('스케줄 변경사항 저장 중...');
+  //     const {
+  //       data: { saveSchedule_my },
+  //     } = await saveScheduleMutation({
+  //       variables: {
+  //         scheduleArray: newScheduleArray,
+  //       },
+  //     });
+  //     if (!saveSchedule_my) {
+  //       alert('스케줄을 변경할 수 없습니다.');
+  //     } else {
+  //       await myRefetch();
+  //       // await todolistRefetch();
+  //       newScheduleArray = [];
+  //       toast.success('변경된 스케줄이 저장되었습니다.');
+  //     }
+  //   } catch (e) {
+  //     const realText = e.message.split('GraphQL error: ');
+  //     alert(realText[1]);
+  //   }
+  // };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
-    // console.log(scheduleData);
+    const inputDate_s = new Date(scheduleData.start._date);
+    const inputDate_e = new Date(scheduleData.end._date);
+
     setMakeView(true);
+    setDayDate(inputDate_s);
+    setDayBool(
+      dayList.map((_, index) => {
+        return inputDate_s.getDay() === index ? true : false;
+      }),
+    );
+    setSTime(inputDate_s);
+    setETime(inputDate_e);
 
-    if (scheduleData.calendarId === undefined) {
-      alert('과목 선택은 필수입니다.\n과목 추가 및 북마크를 진행하세요.');
-      return;
-    }
+    //   if (scheduleData.calendarId === undefined) {
+    //     alert('과목 선택은 필수입니다.\n과목 추가 및 북마크를 진행하세요.');
+    //     return;
+    //   }
 
-    let overlap = false;
-    schedules.map((sch) => {
-      if (
-        new Date(sch.end._date ? sch.end._date : sch.end) >
-          scheduleData.start._date &&
-        new Date(sch.start._date ? sch.start._date : sch.start) <
-          scheduleData.end._date
-      ) {
-        overlap = true;
-      }
-    });
-    if (overlap) {
-      alert('스케줄 시간은 중복될 수 없습니다.');
-      return;
-    }
+    //   let overlap = false;
+    //   schedules.map((sch) => {
+    //     if (
+    //       new Date(sch.end._date ? sch.end._date : sch.end) >
+    //         scheduleData.start._date &&
+    //       new Date(sch.start._date ? sch.start._date : sch.start) <
+    //         scheduleData.end._date
+    //     ) {
+    //       overlap = true;
+    //     }
+    //   });
+    //   if (overlap) {
+    //     alert('스케줄 시간은 중복될 수 없습니다.');
+    //     return;
+    //   }
 
-    const generateId =
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15);
-    // 0시0분에 끝나면 끝나는 시간 -1초
-    const tmpEndDate = new Date(scheduleData.end._date);
-    if (
-      scheduleData.end._date.getMinutes() === 0 &&
-      scheduleData.end._date.getHours() === 0
-    ) {
-      tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-    }
+    //   const generateId =
+    //     Math.random().toString(36).substring(2, 15) +
+    //     Math.random().toString(36).substring(2, 15);
+    //   // 0시0분에 끝나면 끝나는 시간 -1초
+    //   const tmpEndDate = new Date(scheduleData.end._date);
+    //   if (
+    //     scheduleData.end._date.getMinutes() === 0 &&
+    //     scheduleData.end._date.getHours() === 0
+    //   ) {
+    //     tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+    //   }
 
-    const schedule = {
-      id: generateId,
-      title: scheduleData.title,
-      isAllDay: scheduleData.isAllDay,
-      isPrivate: scheduleData.raw.class === 'private' ? true : false,
-      start: scheduleData.start,
-      end: scheduleData.end,
-      category: scheduleData.isAllDay ? 'allday' : 'time',
-      dueDateClass: '',
-      location: scheduleData.location,
-      raw: {
-        class: scheduleData.raw.class === 'private' ? 'private' : 'public',
-      },
-      state: scheduleData.state,
-      calendarId: scheduleData.calendarId,
-    };
+    //   const schedule = {
+    //     id: generateId,
+    //     title: scheduleData.title,
+    //     isAllDay: scheduleData.isAllDay,
+    //     isPrivate: scheduleData.raw.class === 'private' ? true : false,
+    //     start: scheduleData.start,
+    //     end: scheduleData.end,
+    //     category: scheduleData.isAllDay ? 'allday' : 'time',
+    //     dueDateClass: '',
+    //     location: scheduleData.location,
+    //     raw: {
+    //       class: scheduleData.raw.class === 'private' ? 'private' : 'public',
+    //     },
+    //     state: scheduleData.state,
+    //     calendarId: scheduleData.calendarId,
+    //   };
 
-    const schedule_tmp = {
-      id: generateId,
-      title: scheduleData.title,
-      isAllDay: scheduleData.isAllDay,
-      isPrivate: scheduleData.raw.class === 'private' ? true : false,
-      start: scheduleData.start._date,
-      end: tmpEndDate,
-      location: scheduleData.location,
-      state: scheduleData.state,
-      totalTime:
-        (scheduleData.end._date.getTime() -
-          scheduleData.start._date.getTime()) /
-        1000,
-      calendarId: scheduleData.calendarId ? scheduleData.calendarId : '',
-      option: 'create',
-    };
+    //   const schedule_tmp = {
+    //     id: generateId,
+    //     title: scheduleData.title,
+    //     isAllDay: scheduleData.isAllDay,
+    //     isPrivate: scheduleData.raw.class === 'private' ? true : false,
+    //     start: scheduleData.start._date,
+    //     end: tmpEndDate,
+    //     location: scheduleData.location,
+    //     state: scheduleData.state,
+    //     totalTime:
+    //       (scheduleData.end._date.getTime() -
+    //         scheduleData.start._date.getTime()) /
+    //       1000,
+    //     calendarId: scheduleData.calendarId ? scheduleData.calendarId : '',
+    //     option: 'create',
+    //   };
 
-    newScheduleArray.push(schedule_tmp);
-    // console.log(newScheduleArray);
-    schedules.push(schedule);
-    cal.current.calendarInst.createSchedules([schedule]);
+    //   newScheduleArray.push(schedule_tmp);
+    //   // console.log(newScheduleArray);
+    //   schedules.push(schedule);
+    //   cal.current.calendarInst.createSchedules([schedule]);
   }, []);
 
   const onBeforeDeleteSchedule = useCallback(async (res) => {
@@ -1601,21 +1694,7 @@ export default ({
         alert('스케줄을 만들 수 없습니다.');
       } else {
         await myRefetch();
-        const nowDate = new Date();
-        setDayDate(nowDate);
-        setDayBool(
-          dayList.map((_, index) => {
-            return nowDate.getDay() === index ? true : false;
-          }),
-        );
-        mySubjectList2.setOption(mySubjectList2.valueList[0]);
-        stateList.setOption('자습');
-        scheTitle.setValue('');
-        scheLocation.setValue('');
-        setSTime(new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin));
-        setETime(
-          new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
-        );
+        clearSchedule();
         toast.success('새로운 스케줄을 만들었습니다.');
         return true;
       }
@@ -1818,141 +1897,6 @@ export default ({
             {(close) => {
               return (
                 <PBody2>
-                  <ScheWrap>
-                    <PopupCustom11
-                      trigger={
-                        <PopButton_custom
-                          text={'스케줄 만들기'}
-                          width={'308px'}
-                          height={'30px'}
-                          margin={'0 0 10px 0'}
-                        />
-                      }
-                      closeOnDocumentClick={false}
-                      modal
-                    >
-                      {(close) => {
-                        const { weekStart, weekEnd } = WeekRange(dayDate);
-                        return (
-                          <PBody2>
-                            <PTitle text={'스케줄 만들기'} />
-                            <DatePicker
-                              dateFormat={'yyyy/MM/dd'}
-                              selected={dayDate}
-                              onChange={(date) => {
-                                setDayDate(date);
-                              }}
-                              customInput={
-                                <CustomInput
-                                  margin={'0 0 10px 0'}
-                                  week={true}
-                                  text={`${moment(weekStart).format(
-                                    'MM.DD',
-                                  )}(일)~
-                                ${moment(weekEnd).format('MM.DD')}(토)`}
-                                />
-                              }
-                            />
-                            <DayWrap>
-                              {dayList.map((day, index) => {
-                                return (
-                                  <DayIndiWrap key={index}>
-                                    {day}
-                                    <br />
-                                    <CheckBox
-                                      checked={
-                                        dayBool[index] !== undefined
-                                          ? dayBool[index]
-                                          : true
-                                      }
-                                      onChange={onCheckDay(index)}
-                                      boxSize={'25px'}
-                                      margin={'0'}
-                                    />
-                                  </DayIndiWrap>
-                                );
-                              })}
-                            </DayWrap>
-                            <SelectWrap>
-                              <SelectInL>
-                                <Select
-                                  {...mySubjectList2}
-                                  id={'mySubject_id_sche'}
-                                />
-                              </SelectInL>
-                              <SelectInR>
-                                <Select
-                                  {...stateList}
-                                  id={'mySubject_state_sche'}
-                                />
-                              </SelectInR>
-                            </SelectWrap>
-                            <NewScheContent>
-                              <Input
-                                placeholder={'(필수) 제목'}
-                                height={'28px'}
-                                {...scheTitle}
-                              />
-                            </NewScheContent>
-                            <NewScheContent>
-                              <Input
-                                placeholder={'(선택) 위치'}
-                                height={'28px'}
-                                {...scheLocation}
-                              />
-                            </NewScheContent>
-                            <NewScheContent>
-                              시작 :
-                              <TimePicker
-                                value={moment(sTime)}
-                                onChange={(value) => {
-                                  setSTime(value._d);
-                                }}
-                                style={{
-                                  width: 50,
-                                  marginLeft: 10,
-                                  marginRight: 20,
-                                }}
-                                showSecond={false}
-                                allowEmpty={false}
-                                minuteStep={5}
-                              />
-                              끝 :
-                              <TimePicker
-                                value={moment(eTime)}
-                                onChange={(value) => {
-                                  setETime(value._d);
-                                }}
-                                style={{ width: 50, marginLeft: 10 }}
-                                showSecond={false}
-                                allowEmpty={false}
-                                minuteStep={5}
-                              />
-                            </NewScheContent>
-                            <ButtonDiv style={{ marginTop: '20px' }}>
-                              <PopupButton
-                                type="button"
-                                onClick={async () => {
-                                  const fucResult = await onCreateDay();
-                                  if (fucResult) {
-                                    close();
-                                  }
-                                }}
-                                text={'만들기'}
-                              />
-                              <PopupButton
-                                type="button"
-                                onClick={() => {
-                                  close();
-                                }}
-                                text={'닫기'}
-                              />
-                            </ButtonDiv>
-                          </PBody2>
-                        );
-                      }}
-                    </PopupCustom11>
-                  </ScheWrap>
                   <PopupCustom10
                     trigger={
                       <PopButton_custom
@@ -2009,7 +1953,6 @@ export default ({
                               type="button"
                               onClick={() => {
                                 close();
-                                const nowDate = new Date();
                                 setCopyDate(new Date());
                                 setPasteDate(
                                   new Date(nowDate.getTime() + 86400000),
@@ -2096,7 +2039,6 @@ export default ({
                               type="button"
                               onClick={() => {
                                 close();
-                                const nowDate = new Date();
                                 setCopyDate(nowDate);
                                 setPasteDate(
                                   new Date(nowDate.getTime() + 604800000),
@@ -2418,9 +2360,11 @@ export default ({
           </PopupCustom4>
           <SaveButtonDiv>
             <Button_blue
-              text={'저장'}
+              text={'+'}
+              fontSize={'25px'}
               onClick={() => {
-                onClickScheduleSave();
+                setMakeView(true);
+                // onClickScheduleSave();
               }}
             />
           </SaveButtonDiv>
@@ -2435,7 +2379,7 @@ export default ({
         calendars={calendars}
         schedules={schedules}
         taskView={false}
-        scheduleView={['allday', 'time']}
+        scheduleView={['time']}
         usageStatistics={true}
         week={{ hourStart: lastStart, hourEnd: lastEnd }}
         onClickSchedule={onClickSchedule}
@@ -2443,9 +2387,180 @@ export default ({
         onBeforeDeleteSchedule={onBeforeDeleteSchedule}
         onBeforeUpdateSchedule={onBeforeUpdateSchedule}
       />
-      {makeView && (
+      {(makeView || modiView) && (
         <BlackBack>
-          <CustomPopup></CustomPopup>
+          <CustomPopup>
+            <CloseButton
+              onClick={() => {
+                setMakeView(false);
+                setModiView(false);
+              }}
+            >
+              &times;
+            </CloseButton>
+            <PTitle text={makeView ? '스케줄 만들기' : '스케줄 수정'} />
+            <DatePicker
+              dateFormat={'yyyy/MM/dd'}
+              selected={dayDate}
+              onChange={(date) => {
+                setDayDate(date);
+                setDayBool(
+                  dayList.map((_, index) => {
+                    return date.getDay() === index ? true : false;
+                  }),
+                );
+              }}
+              customInput={
+                <CustomInput
+                  margin={'0 0 10px 0'}
+                  week={true}
+                  text={`${moment(weekStart).format('MM.DD')}(일)~
+                                ${moment(weekEnd).format('MM.DD')}(토)`}
+                />
+              }
+            />
+            <DayWrap>
+              {dayList.map((day, index) => {
+                return (
+                  <DayIndiWrap key={index}>
+                    {day}
+                    <br />
+                    <CheckBox
+                      checked={
+                        dayBool[index] !== undefined ? dayBool[index] : true
+                      }
+                      onChange={onCheckDay(index)}
+                      boxSize={'25px'}
+                      margin={'0'}
+                    />
+                  </DayIndiWrap>
+                );
+              })}
+            </DayWrap>
+            <SelectWrap>
+              <SelectInL>
+                <Select {...mySubjectList2} id={'mySubject_id_sche'} />
+              </SelectInL>
+              <SelectInR>
+                <Select {...stateList} id={'mySubject_state_sche'} />
+              </SelectInR>
+            </SelectWrap>
+            <NewScheContent>
+              <Input
+                placeholder={'(필수) 제목'}
+                height={'28px'}
+                {...scheTitle}
+              />
+            </NewScheContent>
+            <NewScheContent>
+              <Input
+                placeholder={'(선택) 위치'}
+                height={'28px'}
+                {...scheLocation}
+              />
+            </NewScheContent>
+            <NewScheContent>
+              시작 :
+              <TimePicker
+                value={moment(sTime)}
+                onChange={(value) => {
+                  setSTime(value._d);
+                }}
+                style={{
+                  width: 50,
+                  marginLeft: 10,
+                  marginRight: 20,
+                }}
+                showSecond={false}
+                allowEmpty={false}
+                minuteStep={5}
+              />
+              끝 :
+              <TimePicker
+                value={moment(eTime)}
+                onChange={(value) => {
+                  setETime(value._d);
+                }}
+                style={{ width: 50, marginLeft: 10 }}
+                showSecond={false}
+                allowEmpty={false}
+                minuteStep={5}
+              />
+            </NewScheContent>
+            <ButtonDiv style={{ marginTop: '20px' }}>
+              {makeView && (
+                <Button_custom
+                  width={'100px'}
+                  margin={'0'}
+                  height={'32px'}
+                  bgColor={'#0F4C82'}
+                  text={'만들기'}
+                  color={'white'}
+                  onClick={async () => {
+                    const fucResult = await onCreateDay();
+                    if (fucResult) {
+                      setMakeView(false);
+                    }
+                  }}
+                />
+              )}
+              {modiView && (
+                <Button_custom
+                  width={'100px'}
+                  margin={'0'}
+                  height={'32px'}
+                  bgColor={'#0F4C82'}
+                  text={'수정'}
+                  color={'white'}
+                  onClick={async () => {
+                    const fucResult = await onCreateDay();
+                    if (fucResult) {
+                      setMakeView(false);
+                    }
+                  }}
+                />
+              )}
+            </ButtonDiv>
+          </CustomPopup>
+        </BlackBack>
+      )}
+      {infoView && infoSche.title && (
+        <BlackBack>
+          <CustomPopup2 color={infoSche.bgColor}>
+            <CloseButton onClick={() => setInfoView(false)}>
+              &times;
+            </CloseButton>
+            <InfoWrap color={infoSche.bgColor}>
+              <p>{infoSche.calendarName ? `[${infoSche.calendarName}]` : ''}</p>
+              <p>{infoSche.title}</p>
+              <p>
+                {moment(infoSche.start._date).format('YYYY.MM.DD h:mm a -')}
+                {moment(infoSche.end._date).format(' h:mm a')}
+              </p>
+              <p>{infoSche.state}</p>
+            </InfoWrap>
+            <ButtonDiv style={{ marginTop: '20px' }}>
+              <PopupButton
+                type="button"
+                onClick={async () => {
+                  setModiView(true);
+                  setInfoView(false);
+                  inputSchedule(infoSche);
+                }}
+                text={'수정'}
+              />
+              <PopupButton
+                type="button"
+                onClick={() => {
+                  setInfoView(false);
+                  clearSchedule();
+                }}
+                bgColor={'#DB4437'}
+                color={'black'}
+                text={'삭제'}
+              />
+            </ButtonDiv>
+          </CustomPopup2>
         </BlackBack>
       )}
     </Wrapper>

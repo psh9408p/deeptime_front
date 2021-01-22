@@ -5,6 +5,7 @@ import StudyPresenter from './StudyPresenter';
 import { ME } from '../Tabs/MyStudyTabs/MyStudyTabsQueries';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
+import useKey_oneUp from '../../Hooks/useKey_oneUp';
 import ChannelService from '../../Components/ChannelService';
 import {
   MY_TODOLIST,
@@ -38,6 +39,9 @@ export default () => {
   const [onLoading, setOnLoading] = useState(false);
   const [coverView, setCoverView] = useState(false);
   const [reCount, setReCount] = useState(0);
+
+  // ESC누르면 Popup 꺼지게
+  useKey_oneUp('Escape', setPopupView);
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
