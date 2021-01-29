@@ -34,6 +34,7 @@ import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import PopupButton from '../../Components/Buttons/PopupButton';
+import PopupClose from '../../Components/Buttons/PopupClose';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Loader from '../../Components/Loader';
@@ -77,6 +78,26 @@ const ClockBox = styled.div`
   margin-left: 526px;
   justify-content: center;
   align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const TimeButton = styled.button`
+  cursor: pointer;
+  width: 30px;
+  height: 18px;
+  position: absolute;
+  z-index: 12;
+  font-size: 12px;
+  font-weight: 600;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  margin-top: 93px;
+  margin-left: 603px;
+  padding: 1px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -488,7 +509,7 @@ const PopupCustom = styled(Popup)`
 const PopupCustom2 = styled(Popup)`
   &-content {
     width: 500px !important;
-    height: 300px !important;
+    height: 230px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -515,7 +536,7 @@ const PBody3 = styled(PBody)`
 const PTitle = styled(FatText)`
   font-size: 18px;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 10px 0 30px 0;
 `;
 
 const ButtonDiv = styled.div`
@@ -689,7 +710,7 @@ const CustomPopup = styled.div`
   position: absolute;
   z-index: 11;
   width: 420px;
-  height: 460px;
+  height: 410px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -759,8 +780,12 @@ let scheduleList_selectDay_length = 0;
 let taskArray_schedule = [];
 let taskArray_scheduleT = [];
 let donutData = [];
+let donutData_am = [];
+let donutData_pm = [];
 let donutPercent = 0;
 let rgbBox = [];
+let rgbBox_am = [];
+let rgbBox_pm = [];
 let schedule_label = [];
 let schedule_color = [];
 let nowScheduleIndex = -1;
@@ -823,6 +848,8 @@ export default ({
   setCoverView,
   reCount,
   setReCount,
+  isAm,
+  setIsAm,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1771,7 +1798,6 @@ export default ({
     }
   };
   useInterval(async () => {
-    // console.log(timeCount);
     updateTime();
     // if (modelPose !== null && modelDetect !== null) {
     if (modelDetect !== null) {
@@ -1831,8 +1857,8 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
+      LoadCamera();
+      LoadModel();
       isFirstRun.current = false;
       return;
     }
@@ -1873,8 +1899,12 @@ export default ({
   const todayGraph_calculate = () => {
     // 초기화
     donutData = [];
+    donutData_am = [];
+    donutData_pm = [];
     donutPercent = 0;
     rgbBox = [];
+    rgbBox_am = [];
+    rgbBox_pm = [];
     // 오늘 생선된 시간이 있는 인덱스 구하기
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
@@ -2056,6 +2086,7 @@ export default ({
       taskArray_scheduleT,
       resultArray_scheduleT,
     );
+
     // 도넛차트 계산
     let slicedTimeBox = [];
     // console.log(todayTime.time_24);
@@ -2115,6 +2146,42 @@ export default ({
       }
     }
     donutData = slicedTimeBox.map((a) => a.length * 5);
+
+    // 도넛 데이터 am pm 구분하여넣기
+    let timeSum = 0;
+    let midCheck = false; // 중간 넘는 값이 처음나온건지 체크
+    for (let z = 0; z < donutData.length; z++) {
+      const time = donutData[z];
+      const rgb = rgbBox[z];
+      const preSum = ObjectCopy(timeSum);
+      timeSum = preSum + time;
+
+      // 24시간이 1440분 절반이 720분
+      if (timeSum < 720) {
+        donutData_am.push(time);
+        rgbBox_am.push(rgb);
+      } else if (timeSum === 720) {
+        donutData_am.push(time);
+        rgbBox_am.push(rgb);
+        midCheck = true;
+      } else {
+        // timeSum > 720
+        if (midCheck) {
+          donutData_pm.push(time);
+          rgbBox_pm.push(rgb);
+        } else {
+          const pmTime = preSum + time - 720;
+          const amTime = time - pmTime;
+          donutData_am.push(amTime);
+          donutData_pm.push(pmTime);
+          rgbBox_am.push(rgb);
+          rgbBox_pm.push(rgb);
+          midCheck = true;
+        }
+      }
+    }
+
+    // 도넛
     const targetTime = SumArray(taskArray_scheduleT) * 60;
     if (targetTime === 0) {
       donutPercent = 0;
@@ -2339,6 +2406,7 @@ export default ({
                   {(close) => {
                     return (
                       <PBody3>
+                        <PopupClose onClick={() => close()} />
                         <PTitle text={'컨트롤 패널'} />
                         <Wrapper_b>
                           <ScheStart>
@@ -2459,16 +2527,6 @@ export default ({
                             </ControlBottom>
                           </ControlWrap>
                         </Wrapper_b>
-                        <ButtonDiv>
-                          <PopupButton_solo
-                            type="button"
-                            width="130px"
-                            onClick={() => {
-                              close();
-                            }}
-                            text={'닫기'}
-                          />
-                        </ButtonDiv>
                       </PBody3>
                     );
                   }}
@@ -2481,6 +2539,7 @@ export default ({
                   {(close) => {
                     return (
                       <PBody>
+                        <PopupClose onClick={() => close()} />
                         <PTitle text={'기본값 세팅'} />
                         <SetContentWrap>
                           <SetContentBox>
@@ -2576,7 +2635,7 @@ export default ({
                           </SetContentBox>
                         </SetContentWrap>
                         <ButtonDiv>
-                          <PopupButton
+                          <PopupButton_solo
                             type="button"
                             onClick={async () => {
                               const fucResult = await onSaveSet();
@@ -2585,13 +2644,6 @@ export default ({
                               }
                             }}
                             text={'적용'}
-                          />
-                          <PopupButton
-                            type="button"
-                            onClick={() => {
-                              close();
-                            }}
-                            text={'닫기'}
                           />
                         </ButtonDiv>
                       </PBody>
@@ -2603,9 +2655,9 @@ export default ({
             <TimeLogWrap>
               <DonutWrap>
                 <DonutChart_today
-                  data={donutData}
-                  color={rgbBox}
-                  title={'Today Deep Time Log'}
+                  data={isAm ? donutData_am : donutData_pm}
+                  color={isAm ? rgbBox_am : rgbBox_pm}
+                  title={'Today           Time Log'}
                   // labels={[
                   //   'Deep Time',
                   //   '부재 시간' + '　' + '　' + '　' + '　',
@@ -2645,6 +2697,13 @@ export default ({
               <ClockBox>
                 <Clock24 />
               </ClockBox>
+              <TimeButton
+                onClick={() => {
+                  setIsAm(!isAm);
+                }}
+              >
+                {isAm ? 'AM' : 'PM'}
+              </TimeButton>
               <TodayPercent>{donutPercent}%</TodayPercent>
             </TimeLogWrap>
             <NowNextWrap>
@@ -2712,6 +2771,7 @@ export default ({
           <BlackBack />
           <CustomPopup>
             <PBody2>
+              <PopupClose onClick={() => setPopupView(false)} custom={true} />
               <PTitle text={'동행자 관리'} />
               {myInfoData.following.length === 0 ? (
                 <NonFollow>팔로잉하는 회원이 없습니다</NonFollow>
@@ -2726,15 +2786,6 @@ export default ({
                   {followingList}
                 </FixedList>
               )}
-              <ButtonDiv>
-                <PopupButton_solo
-                  type="button"
-                  onClick={() => {
-                    setPopupView(false);
-                  }}
-                  text={'닫기'}
-                />
-              </ButtonDiv>
             </PBody2>
           </CustomPopup>
         </>

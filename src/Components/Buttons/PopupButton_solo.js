@@ -15,7 +15,7 @@ const Container = styled.button`
   cursor: pointer;
 `;
 
-const PopupButton = ({ type, text, onClick, width = '30%' }) => (
+const PopupButton = ({ type, text, onClick, width = '100px' }) => (
   <Container type={type} onClick={onClick} width={width}>
     {text}
   </Container>

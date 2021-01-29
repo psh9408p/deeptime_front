@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import StudyPresenter from './StudyPresenter';
 import { ME } from '../Tabs/MyStudyTabs/MyStudyTabsQueries';
 import Loader from '../../Components/Loader';
+import todayDateRange from '../../Components/Date/todayDateRange';
 import useInput from '../../Hooks/useInput';
 import useKey_oneUp from '../../Hooks/useKey_oneUp';
 import ChannelService from '../../Components/ChannelService';
@@ -38,10 +39,11 @@ export default () => {
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
   const [coverView, setCoverView] = useState(false);
+  const [isAm, setIsAm] = useState(new Date().getHours() < 12);
   const [reCount, setReCount] = useState(0);
 
   // ESC누르면 Popup 꺼지게
-  useKey_oneUp('Escape', setPopupView);
+  useKey_oneUp('Escape', [popupView], [setPopupView]);
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
@@ -74,6 +76,30 @@ export default () => {
     loading: subjectLoading,
     refetch: subjectRefetch,
   } = useQuery(MY_SUBJECT);
+
+  // Today 도넛 차트 am pm 자동 전환
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    const nowDate = new Date();
+    const { startDate, endDate } = todayDateRange(nowDate);
+    if (isAm) {
+      //43200000 12시간
+      const restTime = startDate.getTime() + 43200000 - nowDate.getTime();
+      const setTime = isFirstRun.current ? restTime : 43200000;
+      setTimeout(() => {
+        setIsAm(false);
+      }, setTime);
+    } else {
+      const restTime = endDate.getTime() - nowDate.getTime();
+      const setTime = isFirstRun.current ? restTime : 43200000;
+      setTimeout(() => {
+        setIsAm(true);
+      }, setTime);
+    }
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+    }
+  }, [isAm]);
 
   if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
@@ -117,6 +143,8 @@ export default () => {
         setCoverView={setCoverView}
         reCount={reCount}
         setReCount={setReCount}
+        isAm={isAm}
+        setIsAm={setIsAm}
       />
     );
   }

@@ -10,6 +10,7 @@ import PopButton_auth from '../../Components/Buttons/PopButton_auth';
 import PopButton from '../../Components/Buttons/PopButton';
 import PopupButton from '../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import PopupClose from '../../Components/Buttons/PopupClose';
 import FatText from '../../Components/FatText';
 import Select from '../../Components/Select';
 import { GoogleLogin } from 'react-google-login';
@@ -120,8 +121,8 @@ const VerficationInputDiv = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 500px !important;
-    height: 250px !important;
+    width: 450px !important;
+    height: 230px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -129,14 +130,10 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
-const PopupCustom2 = styled(Popup)`
+const PopupCustom2 = styled(PopupCustom)`
   &-content {
-    width: 450px !important;
-    height: 300px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
+    width: 420px !important;
+    height: 200px !important;
   }
 `;
 
@@ -155,7 +152,7 @@ const PBody = styled.div`
   display: flex;
   flex-direction: column;
   width: 500px;
-  padding: 20px 50px;
+  padding: 20px 20px;
 `;
 
 const PTitle = styled(FatText)`
@@ -418,6 +415,12 @@ export default ({
                 >
                   {(close) => (
                     <PBody>
+                      <PopupClose
+                        onClick={() => {
+                          close();
+                          emailKey.setValue(``);
+                        }}
+                      />
                       <PTitle text={'Email 인증'} />
                       <EmailInputDiv>
                         <Input
@@ -433,7 +436,7 @@ export default ({
                       </EmailInputDiv>
                       <SmallInput placeholder={'인증번호 입력'} {...emailKey} />
                       <ButtonDiv>
-                        <PopupButton
+                        <PopupButton_solo
                           type="button"
                           text={'인증'}
                           onClick={async () => {
@@ -442,14 +445,6 @@ export default ({
                               close();
                             }
                           }}
-                        />
-                        <PopupButton
-                          type="button"
-                          onClick={() => {
-                            close();
-                            emailKey.setValue(``);
-                          }}
-                          text={'닫기'}
                         />
                       </ButtonDiv>
                     </PBody>
@@ -471,6 +466,12 @@ export default ({
                 >
                   {(close) => (
                     <PBody>
+                      <PopupClose
+                        onClick={() => {
+                          close();
+                          phoneKey.setValue(``);
+                        }}
+                      />
                       <PTitle text={'휴대폰 인증'} />
                       <VerifiInputDiv>
                         <PhoneInput
@@ -486,7 +487,7 @@ export default ({
                       </VerifiInputDiv>
                       <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
                       <ButtonDiv>
-                        <PopupButton
+                        <PopupButton_solo
                           type="button"
                           text={'인증'}
                           onClick={async () => {
@@ -495,14 +496,6 @@ export default ({
                               close();
                             }
                           }}
-                        />
-                        <PopupButton
-                          type="button"
-                          onClick={() => {
-                            close();
-                            phoneKey.setValue(``);
-                          }}
-                          text={'닫기'}
                         />
                       </ButtonDiv>
                     </PBody>
@@ -556,7 +549,7 @@ export default ({
                 />
                 <CheckLabel htmlFor="allTermChk">
                   <FatText text={'만 14세 이상이며, 약관에 모두 동의합니다'} />
-                  <PopupCustom
+                  <PopupCustom2
                     trigger={
                       <TermButton type="button">
                         (약관 및 세부사항 선택)
@@ -567,6 +560,7 @@ export default ({
                   >
                     {(close) => (
                       <PBody>
+                        <PopupClose onClick={() => close()} />
                         <PTitle text={'약관 및 세부사항 선택'} />
                         <AllCheckDiv>
                           <CheckBox
@@ -615,18 +609,9 @@ export default ({
                             <span style={{ color: 'gray' }}>&nbsp;(선택)</span>
                           </CheckLabel2>
                         </AllCheckDiv>
-                        <ButtonDiv>
-                          <PopupButton_solo
-                            type="button"
-                            onClick={() => {
-                              close();
-                            }}
-                            text={'닫기'}
-                          />
-                        </ButtonDiv>
                       </PBody>
                     )}
-                  </PopupCustom>
+                  </PopupCustom2>
                 </CheckLabel>
               </AllCheckDiv>
               <JoinButtonDiv>

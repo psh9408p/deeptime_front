@@ -86,7 +86,6 @@ const AiBox = styled.div`
   padding: 10px 15px;
   height: 45px;
   width: 115px;
-  /* border: 1px solid ${(props) => props.theme.classicBlue}; */
   border: ${(props) => props.theme.boxBorder};
   border-radius: 23px;
   :hover {
@@ -207,7 +206,7 @@ export default withRouter(() => {
                   onClickPotal_student();
                 }}
               >
-                <Play fill={'#0F4C82'} margin={'0 5px 0 0'} />
+                <Play margin={'0 10px 0 0'} />
                 Play
               </AiBox>
             )}

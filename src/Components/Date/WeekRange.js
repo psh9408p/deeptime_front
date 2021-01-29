@@ -44,20 +44,21 @@ export default (refDate) => {
   var real_weekStart = new Date(weekStart);
   var real_weekEnd = new Date(weekEnd);
 
-  real_weekStart.setMilliseconds(
-    -(
-      weekStart.getHours() * 3600000 +
-      weekStart.getMinutes() * 60000 +
-      weekStart.getSeconds() * 1000
-    ),
+  real_weekStart.setTime(
+    weekStart.getTime() -
+      (weekStart.getHours() * 3600000 +
+        weekStart.getMinutes() * 60000 +
+        weekStart.getSeconds() * 1000 +
+        weekStart.getMilliseconds()),
   );
 
-  real_weekEnd.setMilliseconds(
-    -(
-      weekEnd.getHours() * 3600000 +
-      weekEnd.getMinutes() * 60000 +
-      weekEnd.getSeconds() * 1000
-    ) + 86400000,
+  real_weekEnd.setTime(
+    weekEnd.getTime() -
+      (weekEnd.getHours() * 3600000 +
+        weekEnd.getMinutes() * 60000 +
+        weekEnd.getSeconds() * 1000 +
+        weekEnd.getMilliseconds()) +
+      86400000,
   );
 
   return { weekStart, weekEnd, real_weekStart, real_weekEnd };

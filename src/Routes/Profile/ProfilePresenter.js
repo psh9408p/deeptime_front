@@ -5,7 +5,7 @@ import { Helmet } from 'rl-react-helmet';
 import Avatar from '../../Components/Avatar';
 import FatText from '../../Components/FatText';
 import FollowButton from '../../Components/FollowButton';
-import Button from '../../Components/Buttons/Button';
+import PopupClose from '../../Components/Buttons/PopupClose';
 import ProfileTabs from '../Tabs/ProfileTabs';
 import { Link } from 'react-router-dom';
 import {
@@ -13,8 +13,7 @@ import {
   Button_timelapse,
 } from '../../Components/Buttons/Button_click';
 import Popup from 'reactjs-popup';
-import PopupButton_triple from '../../Components/Buttons/PopupButton_triple';
-import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
+import PopupButton from '../../Components/Buttons/PopupButton';
 import Button_custom from '../../Components/Buttons/Button_custom';
 import Input from '../../Components/Input';
 import { FixedSizeList as ListApi } from 'react-window';
@@ -153,8 +152,8 @@ const SettingWrap = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 600px !important;
-    height: 320px !important;
+    width: 510px !important;
+    height: 310px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,14 +164,14 @@ const PopupCustom = styled(Popup)`
 const PopupCustom2 = styled(PopupCustom)`
   &-content {
     width: 420px !important;
-    height: 440px !important;
+    height: 410px !important;
   }
 `;
 
 const PopupCustom3 = styled(PopupCustom)`
   &-content {
     width: 420px !important;
-    height: ${(props) => (props.isSelf ? '500px' : '440px')} !important;
+    height: ${(props) => (props.isSelf ? '470px' : '410px')} !important;
   }
 `;
 
@@ -503,12 +502,15 @@ export default ({
           >
             {(close) => (
               <PBody>
+                <PopupClose
+                  onClick={() => {
+                    close();
+                    setSelectFile(null);
+                  }}
+                />
                 <PTitle text={'프로필 이미지 설정'} />
                 <SmallDiv>
-                  <PreviewImg
-                    id="preview-img"
-                    url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Missing_avatar.svg/1024px-Missing_avatar.svg.png"
-                  ></PreviewImg>
+                  <PreviewImg id="preview-img" url={avatar}></PreviewImg>
                   <input
                     type="file"
                     accept="image/*"
@@ -516,7 +518,7 @@ export default ({
                   />
                 </SmallDiv>
                 <ButtonDiv>
-                  <PopupButton_triple
+                  <PopupButton
                     type="button"
                     text={'변경'}
                     onClick={async () => {
@@ -526,8 +528,10 @@ export default ({
                       }
                     }}
                   />
-                  <PopupButton_triple
+                  <PopupButton
                     type="button"
+                    bgColor={'#DB4437'}
+                    color={'black'}
                     onClick={async () => {
                       const fucResult = await deleteAvatar();
                       if (fucResult) {
@@ -535,14 +539,6 @@ export default ({
                       }
                     }}
                     text={'기본값'}
-                  />
-                  <PopupButton_triple
-                    type="button"
-                    onClick={() => {
-                      close();
-                      setSelectFile(null);
-                    }}
-                    text={'닫기'}
                   />
                 </ButtonDiv>
               </PBody>
@@ -617,6 +613,7 @@ export default ({
             >
               {(close) => (
                 <PBody2>
+                  <PopupClose onClick={() => close()} />
                   <PTitle text={'팔로워'} />
                   {userData.followers.length === 0 ? (
                     <NonFollow>팔로워하는 회원이 없습니다</NonFollow>
@@ -626,21 +623,11 @@ export default ({
                       itemCount={userData.followers.length}
                       itemSize={54}
                       width={360}
-                      style={{ marginBottom: '20px' }}
                       itemData={close}
                     >
                       {followerList}
                     </ListApi>
                   )}
-                  <ButtonDiv>
-                    <PopupButton_solo
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
                 </PBody2>
               )}
             </PopupCustom2>
@@ -656,6 +643,7 @@ export default ({
             >
               {(close) => (
                 <PBody2>
+                  <PopupClose onClick={() => close()} />
                   <PTitle text={'팔로잉'} />
                   {userData.isSelf && (
                     <NewFollowDiv>
@@ -685,21 +673,11 @@ export default ({
                       itemCount={userData.following.length}
                       itemSize={54}
                       width={360}
-                      style={{ marginBottom: '20px' }}
                       itemData={close}
                     >
                       {followingList}
                     </ListApi>
                   )}
-                  <ButtonDiv>
-                    <PopupButton_solo
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
                 </PBody2>
               )}
             </PopupCustom3>

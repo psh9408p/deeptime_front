@@ -5,6 +5,7 @@ import Popup from 'reactjs-popup';
 import PopButton_auth from '../../../Components/Buttons/PopButton_auth';
 import PopupButton from '../../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../../Components/Buttons/PopupButton_solo';
+import PopupClose from '../../../Components/Buttons/PopupClose';
 import FatText from '../../../Components/FatText';
 import Select from '../../../Components/Select';
 import Button from '../../../Components/Buttons/Button';
@@ -62,19 +63,8 @@ const VerficationInputDiv = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 500px !important;
-    height: 250px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
-  }
-`;
-
-const PopupCustom2 = styled(Popup)`
-  &-content {
-    width: 450px !important;
-    height: 300px !important;
+    width: 440px !important;
+    height: 220px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -85,8 +75,8 @@ const PopupCustom2 = styled(Popup)`
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px;
-  padding: 20px 50px;
+  width: 100%;
+  padding: 20px 20px;
 `;
 
 const PTitle = styled(FatText)`
@@ -236,6 +226,12 @@ export default ({
               >
                 {(close) => (
                   <PBody>
+                    <PopupClose
+                      onClick={() => {
+                        close();
+                        emailKey.setValue(``);
+                      }}
+                    />
                     <PTitle text={'Email 인증'} />
                     <EmailInputDiv>
                       <Input
@@ -257,7 +253,7 @@ export default ({
                     </EmailInputDiv>
                     <SmallInput placeholder={'인증번호 입력'} {...emailKey} />
                     <ButtonDiv>
-                      <PopupButton
+                      <PopupButton_solo
                         type="button"
                         text={'인증'}
                         onClick={async () => {
@@ -266,14 +262,6 @@ export default ({
                             close();
                           }
                         }}
-                      />
-                      <PopupButton
-                        type="button"
-                        onClick={() => {
-                          close();
-                          emailKey.setValue(``);
-                        }}
-                        text={'닫기'}
                       />
                     </ButtonDiv>
                   </PBody>
@@ -295,6 +283,12 @@ export default ({
               >
                 {(close) => (
                   <PBody>
+                    <PopupClose
+                      onClick={() => {
+                        close();
+                        phoneKey.setValue(``);
+                      }}
+                    />
                     <PTitle text={'휴대폰 인증'} />
                     <VerifiInputDiv>
                       <PhoneInput
@@ -316,7 +310,7 @@ export default ({
                     </VerifiInputDiv>
                     <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
                     <ButtonDiv>
-                      <PopupButton
+                      <PopupButton_solo
                         type="button"
                         text={'인증'}
                         onClick={async () => {
@@ -325,14 +319,6 @@ export default ({
                             close();
                           }
                         }}
-                      />
-                      <PopupButton
-                        type="button"
-                        onClick={() => {
-                          close();
-                          phoneKey.setValue(``);
-                        }}
-                        text={'닫기'}
                       />
                     </ButtonDiv>
                   </PBody>

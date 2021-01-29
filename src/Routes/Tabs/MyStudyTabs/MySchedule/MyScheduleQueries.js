@@ -6,6 +6,12 @@ export const SAVE_SCHEDULE = gql`
   }
 `;
 
+export const DELETE_SCHEDULE = gql`
+  mutation deleteSchedule($scheduleId: String!) {
+    deleteSchedule(scheduleId: $scheduleId)
+  }
+`;
+
 export const ADD_SUBJECT = gql`
   mutation addSubject($name: String!, $bgColor: String!) {
     addSubject(name: $name, bgColor: $bgColor)
@@ -101,9 +107,10 @@ export const EDIT_STUDYSET = gql`
   }
 `;
 
-export const CREATE_SCHEDULE_DAY = gql`
-  mutation createSchedule_day(
-    $standDate: String!
+export const CREATE_SCHEDULE = gql`
+  mutation createSchedule(
+    $option: String!
+    $scheduleId: String!
     $days: [Boolean!]!
     $calendarId: String!
     $state: String!
@@ -111,10 +118,10 @@ export const CREATE_SCHEDULE_DAY = gql`
     $location: String!
     $start: String!
     $end: String!
-    $totalTime: Int!
   ) {
-    createSchedule_day(
-      standDate: $standDate
+    createSchedule(
+      option: $option
+      scheduleId: $scheduleId
       days: $days
       calendarId: $calendarId
       state: $state
@@ -122,7 +129,30 @@ export const CREATE_SCHEDULE_DAY = gql`
       location: $location
       start: $start
       end: $end
-      totalTime: $totalTime
+    )
+  }
+`;
+
+export const DRAG_SCHEDULE = gql`
+  mutation dragSchedule(
+    $option: String!
+    $scheduleId: String!
+    $calendarId: String!
+    $state: String!
+    $title: String!
+    $location: String!
+    $start: String!
+    $end: String!
+  ) {
+    dragSchedule(
+      option: $option
+      scheduleId: $scheduleId
+      calendarId: $calendarId
+      state: $state
+      title: $title
+      location: $location
+      start: $start
+      end: $end
     )
   }
 `;

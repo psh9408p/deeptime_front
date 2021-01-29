@@ -17,7 +17,9 @@ import {
   DELETE_TODOLIST,
   FINISH_TODOLIST,
   EDIT_STUDYSET,
-  CREATE_SCHEDULE_DAY,
+  CREATE_SCHEDULE,
+  DELETE_SCHEDULE,
+  DRAG_SCHEDULE,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
@@ -41,6 +43,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const stateList = useSelect(stateBox, stateBox);
 
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
+  const [timeError, setTimeError] = useState(false);
+  const [scheLoading, setScheLoading] = useState(false);
   const [makeView, setMakeView] = useState(false);
   const [infoView, setInfoView] = useState(false);
   const [modiView, setModiView] = useState(false);
@@ -111,6 +115,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   // useKey_oneUp('Escape', [setInfoView]);
 
   const [saveScheduleMutation] = useMutation(SAVE_SCHEDULE);
+  const [deleteScheduleMutation] = useMutation(DELETE_SCHEDULE);
   const [addSubjectMutation] = useMutation(ADD_SUBJECT);
   const [editSubjectMutation] = useMutation(EDIT_SUBJECT);
   const [deleteSubjectMutation] = useMutation(DELETE_SUBJECT);
@@ -119,7 +124,8 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
-  const [createScheDayMutation] = useMutation(CREATE_SCHEDULE_DAY);
+  const [createScheMutation] = useMutation(CREATE_SCHEDULE);
+  const [dragScheMutation] = useMutation(DRAG_SCHEDULE);
   const {
     data: subjectData,
     loading: subjectLoading,
@@ -172,6 +178,33 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     }
   };
 
+  const onDeleteSche = async (scheduleId) => {
+    if (window.confirm('정말로 스케줄을 삭제하시겠습니까?') === false) {
+      return;
+    }
+
+    try {
+      setScheLoading(true);
+      const {
+        data: { deleteSchedule },
+      } = await deleteScheduleMutation({
+        variables: {
+          scheduleId,
+        },
+      });
+      if (!deleteSchedule) {
+        alert('스케줄을 삭제할 수 없습니다.');
+      } else {
+        await myInfoRefetch();
+        setInfoView(false);
+        setScheLoading(false);
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
   useEffect(() => {
     const { real_weekStart: copyS, real_weekEnd: copyE } = WeekRange(copyDate);
     setCopyStart(copyS);
@@ -182,6 +215,15 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     setPasteStart(pasteS);
     setPasteEnd(pasteE);
   }, [copyDate, pasteDate]);
+
+  // 스케줄 시작 마침 시간 에러 체크
+  useEffect(() => {
+    // 24시간 넘는지
+    const overError = eTime.getTime() - sTime.getTime() > 86400000;
+    // 끝시간이 더 뒤인지
+    const orderError = sTime >= eTime;
+    setTimeError(overError || orderError);
+  }, [sTime, eTime]);
 
   if ((subjectnetwork === 7 || subjectnetwork === 4) && !todolistLoading) {
     return (
@@ -241,7 +283,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         stateList={stateList}
         scheTitle={scheTitle}
         scheLocation={scheLocation}
-        createScheDayMutation={createScheDayMutation}
+        createScheMutation={createScheMutation}
         dayDate={dayDate}
         setDayDate={setDayDate}
         makeView={makeView}
@@ -253,6 +295,11 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         setInfoSche={setInfoSche}
         modiView={modiView}
         setModiView={setModiView}
+        onDeleteSche={onDeleteSche}
+        dragScheMutation={dragScheMutation}
+        scheLoading={scheLoading}
+        setScheLoading={setScheLoading}
+        timeError={timeError}
       />
     );
   } else {

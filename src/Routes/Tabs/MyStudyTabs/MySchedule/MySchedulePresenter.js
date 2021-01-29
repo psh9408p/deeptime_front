@@ -18,6 +18,7 @@ import PopupButton from '../../../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../../../Components/Buttons/PopupButton_solo';
 import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
 import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
+import PopupClose from '../../../../Components/Buttons/PopupClose';
 import FatText from '../../../../Components/FatText';
 import { toast } from 'react-toastify';
 import { SwatchesPicker } from 'react-color';
@@ -32,17 +33,31 @@ import {
   Button_copy,
   Button_copy2,
 } from '../../../../Components/Buttons/Button_click';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 import useInput from '../../../../Hooks/useInput';
-import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
+import TimePicker from 'rc-time-picker';
 import WeekRange from '../../../../Components/Date/WeekRange';
+import Loader from '../../../../Components/Loader';
+import { sum } from '@tensorflow/tfjs';
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1400px;
   position: relative;
+`;
+
+const LoaderWrapper = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ControlButton = styled.button`
@@ -118,8 +133,8 @@ const SubjectButtonDiv = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 550px !important;
-    height: 500px !important;
+    width: 440px !important;
+    height: 480px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -127,30 +142,30 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
+const PopupCustom5 = styled(PopupCustom)`
+  &-content {
+    width: 400px !important;
+  }
+`;
+
 const PopupCustom2 = styled(PopupCustom)`
   &-content {
-    height: 550px !important;
+    width: 400px !important;
+    height: 530px !important;
   }
 `;
 
 const PopupCustom3 = styled(PopupCustom)`
   &-content {
-    width: 500px !important;
-    height: 250px !important;
+    width: 260px !important;
+    height: 180px !important;
   }
 `;
 
 const PopupCustom4 = styled(PopupCustom)`
   &-content {
-    width: 500px !important;
-    height: 200px !important;
-  }
-`;
-
-const PopupCustom5 = styled(PopupCustom)`
-  &-content {
-    width: 500px !important;
-    height: 500px !important;
+    width: 480px !important;
+    height: 130px !important;
   }
 `;
 
@@ -166,44 +181,34 @@ const PopupCustom7 = styled(PopupCustom)`
 const PopupCustom8 = styled(PopupCustom)`
   &-content {
     width: 460px !important;
-    height: 200px !important;
+    height: 180px !important;
   }
 `;
 
 const PopupCustom9 = styled(PopupCustom)`
   &-content {
     width: 360px !important;
-    height: 170px !important;
+    height: 110px !important;
   }
 `;
 
 const PopupCustom10 = styled(PopupCustom)`
   &-content {
-    width: 450px !important;
-    height: 200px !important;
+    width: 410px !important;
+    height: 170px !important;
   }
 `;
 
-const FrontDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  padding: 20px 20px;
-`;
-
-const PBody = styled.div``;
-
 const PBody2 = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 500px;
-  padding: 20px 20px;
+  width: 100%;
+  padding: 20px;
 `;
 
-const PBody3 = styled(PBody2)`
-  width: 390px;
-`;
+const PBody = styled(PBody2)``;
 
 const PTitle = styled(FatText)`
   font-size: 18px;
@@ -218,6 +223,7 @@ const ButtonDiv = styled.div`
 `;
 
 const InputWrapper = styled.div`
+  width: 320px;
   margin-bottom: 20px;
 `;
 
@@ -254,7 +260,7 @@ const SelectWrapDiv2 = styled.div`
 `;
 
 const SelectWrapper = styled.div`
-  width: 50%;
+  width: 200px;
   height: 35px;
   margin-bottom: 30px;
 `;
@@ -275,31 +281,15 @@ const ThreeButtonWrap = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
 `;
 
 const RedButtonWrap = styled.div`
-  width: 120px;
+  width: 68px;
   margin: 0px 0px 10px 10px;
 `;
 
 const SpaceDiv = styled.div`
   width: 10px;
-`;
-
-const SubjectForm = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 500px;
-  padding: 20px 20px;
-`;
-
-const SubjectForm2 = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  padding: 20px 20px;
 `;
 
 const ListWrap = styled.div`
@@ -520,7 +510,7 @@ const NextWrap = styled.div`
   justify-content: center;
   align-items: center;
   height: 32.5px;
-  width: 10%;
+  width: 20%;
 `;
 
 const DatePickButton = styled.button`
@@ -534,7 +524,7 @@ const DatePickButton = styled.button`
   text-align: center;
   padding: 7px 10px;
   font-size: 14px;
-  width: 162px;
+  width: ${(props) => props.width};
   cursor: pointer;
 `;
 
@@ -558,7 +548,7 @@ const DayIndiWrap = styled.div`
 `;
 
 const SelectInL = styled.div`
-  width: 130px;
+  width: 143px;
   height: 28px;
   margin-right: 17px;
 `;
@@ -572,11 +562,32 @@ const NewScheContent = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 197px;
+  width: 210px;
   height: 25px;
   margin-bottom: 5px;
   font-weight: 600;
   margin-top: 10px;
+`;
+
+const DateTotalDiv = styled(NewScheContent)`
+  height: auto;
+`;
+
+const DateWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+`;
+
+const DateContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const DateContent2 = styled(DateContent)`
+  justify-content: flex-end;
 `;
 
 const SelectWrap = styled(NewScheContent)`
@@ -646,20 +657,8 @@ const InfoWrap = styled.div`
   }
 `;
 
-const CloseButton = styled.a`
-  cursor: pointer;
-  position: absolute;
-  color: ${(props) => props.theme.classicBlue};
-  display: block;
-  padding: 0 5px 5px 5px;
-  line-height: 20px;
-  right: -10px;
-  top: -10px;
-  font-size: 24px;
-  font-weight: bold;
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid #cfcece;
+const TimeText = styled.span`
+  color: ${(props) => (props.timeError ? 'red' : 'black')};
 `;
 
 let newScheduleArray = [];
@@ -728,7 +727,7 @@ export default ({
   stateList,
   scheTitle,
   scheLocation,
-  createScheDayMutation,
+  createScheMutation,
   dayDate,
   setDayDate,
   makeView,
@@ -740,6 +739,11 @@ export default ({
   setInfoSche,
   modiView,
   setModiView,
+  onDeleteSche,
+  dragScheMutation,
+  scheLoading,
+  setScheLoading,
+  timeError,
 }) => {
   const { weekStart, weekEnd } = WeekRange(dayDate);
 
@@ -1298,6 +1302,7 @@ export default ({
   // };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
+    console.log(scheduleData);
     const inputDate_s = new Date(scheduleData.start._date);
     const inputDate_e = new Date(scheduleData.end._date);
 
@@ -1432,148 +1437,181 @@ export default ({
 
   const onBeforeUpdateSchedule = useCallback(
     async (res) => {
-      const checkSche = { ...res.schedule, ...res.changes };
-      if (checkSche.calendarId === '') {
-        alert('과목을 할당해야 수정&복사가 가능합니다.');
-        return;
-      }
-
-      if (res.changes !== null) {
-        if (res.changes.start !== undefined && res.changes.end !== undefined) {
-          const dateSumVar = {
-            start: res.changes.start._date,
-            end: res.changes.end._date,
-          };
-          const dateRmVar = { start: '', end: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        } else if (res.changes.start !== undefined) {
-          const dateSumVar = { start: res.changes.start._date };
-          const dateRmVar = { start: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        } else if (res.changes.end !== undefined) {
-          const dateSumVar = { end: res.changes.end._date };
-          const dateRmVar = { end: '' };
-          ObjectUnassign(res.changes, dateRmVar);
-          Object.assign(res.changes, dateSumVar);
-        }
-
-        let totalTime_tmp = 0;
-        if (res.changes.start !== undefined && res.changes.end !== undefined) {
-          totalTime_tmp =
-            res.changes.end.getTime() - res.changes.start.getTime();
-        } else if (res.changes.start !== undefined) {
-          totalTime_tmp =
-            res.schedule.end._date.getTime() - res.changes.start.getTime();
-        } else if (res.changes.end !== undefined) {
-          totalTime_tmp =
-            res.changes.end.getTime() - res.schedule.start._date.getTime();
-        } else {
-          totalTime_tmp =
-            res.schedule.end._date.getTime() -
-            res.schedule.start._date.getTime();
-        }
-        totalTime_tmp = totalTime_tmp / 1000;
-
-        const generateId =
-          Math.random().toString(36).substring(2, 15) +
-          Math.random().toString(36).substring(2, 15);
-        // 0시 0분으로 끝나면 1초 빼주기
-        const tmpEndDate = new Date(res.changes.end);
-        if (
-          res.changes.end !== undefined &&
-          res.changes.end.getMinutes() === 0 &&
-          res.changes.end.getHours() === 0
-        ) {
-          tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-        }
-
-        const schedule_tmp = {
-          id: copyBool ? generateId : res.schedule.id,
-          isAllDay: res.schedule.isAllDay,
-          isPrivate: res.schedule.isPrivate,
-          title:
-            res.changes.title !== undefined
-              ? res.changes.title
-              : res.schedule.title,
-          location:
-            res.changes.location !== undefined
-              ? res.changes.location
-              : res.schedule.location,
-          state:
-            res.changes.state !== undefined
-              ? res.changes.state
-              : res.schedule.state,
-          start:
-            res.changes.start !== undefined
-              ? res.changes.start
-              : res.schedule.start._date,
-          end:
-            res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
-          totalTime: totalTime_tmp,
-          calendarId:
-            res.changes.calendarId !== undefined
-              ? res.changes.calendarId
-              : res.schedule.calendarId,
-          option: copyBool ? 'create' : 'update',
-        };
-        Object.assign(schedule_tmp, res.changes);
-
-        let overlap = false;
-        const schedules_test = ObjectCopy(schedules);
-        const checkExist = (a) => a.id === res.schedule.id;
-        const checkIndex2 = schedules.findIndex(checkExist);
-        // 복사는 기존에 데이터가 없으니 뺄필요가 없지롱
-        if (!copyBool) {
-          schedules_test.splice(checkIndex2, 1);
-        }
-        schedules_test.map((sch) => {
-          if (
-            new Date(sch.end._date ? sch.end._date : sch.end) >
-              schedule_tmp.start &&
-            new Date(sch.start._date ? sch.start._date : sch.start) <
-              schedule_tmp.end
-          ) {
-            overlap = true;
-          }
+      setScheLoading(true);
+      try {
+        const {
+          data: { dragSchedule },
+        } = await dragScheMutation({
+          variables: {
+            option: copyBool ? 'copy' : 'update',
+            scheduleId: res.schedule.id,
+            calendarId: res.schedule.calendarId,
+            state: res.schedule.state,
+            title: res.schedule.title,
+            location: res.schedule.location,
+            start: res.start._date,
+            end: res.end._date,
+          },
         });
-        if (overlap) {
-          alert('스케줄 시간은 중복될 수 없습니다.');
-          return;
-        }
-
-        const { schedule, changes } = res;
-        if (copyBool) {
-          // 복사
-          newScheduleArray.push(schedule_tmp);
-
-          schedules.push({ ...schedule, ...changes, id: generateId });
-
-          cal.current.calendarInst.createSchedules([
-            { ...schedule, ...changes, id: generateId },
-          ]);
-          setCopyBool(false);
-        } else {
-          // 업데이트
-          const checkIndex = newScheduleArray.findIndex(checkExist);
-          if (checkIndex === -1) {
-            newScheduleArray.push(schedule_tmp);
-          } else {
-            newScheduleArray.splice(checkIndex, 1);
-            newScheduleArray.push(schedule_tmp);
-          }
-
-          schedules.splice(checkIndex2, 1);
-          schedules.push({ ...schedule, ...changes });
-
-          cal.current.calendarInst.updateSchedule(
-            schedule.id,
-            schedule.calendarId,
-            changes,
+        if (!dragSchedule) {
+          alert(
+            copyBool
+              ? '스케줄을 복사할 수 없습니다.'
+              : '스케줄을 수정할 수 없습니다.',
           );
+        } else {
+          await myRefetch();
+          setCopyBool(false);
         }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
+      } finally {
+        setScheLoading(false);
       }
+
+      // const checkSche = { ...res.schedule, ...res.changes };
+      // if (checkSche.calendarId === '') {
+      //   alert('과목을 할당해야 수정&복사가 가능합니다.');
+      //   return;
+      // }
+
+      // if (res.changes !== null) {
+      //   if (res.changes.start !== undefined && res.changes.end !== undefined) {
+      //     const dateSumVar = {
+      //       start: res.changes.start._date,
+      //       end: res.changes.end._date,
+      //     };
+      //     const dateRmVar = { start: '', end: '' };
+      //     ObjectUnassign(res.changes, dateRmVar);
+      //     Object.assign(res.changes, dateSumVar);
+      //   } else if (res.changes.start !== undefined) {
+      //     const dateSumVar = { start: res.changes.start._date };
+      //     const dateRmVar = { start: '' };
+      //     ObjectUnassign(res.changes, dateRmVar);
+      //     Object.assign(res.changes, dateSumVar);
+      //   } else if (res.changes.end !== undefined) {
+      //     const dateSumVar = { end: res.changes.end._date };
+      //     const dateRmVar = { end: '' };
+      //     ObjectUnassign(res.changes, dateRmVar);
+      //     Object.assign(res.changes, dateSumVar);
+      //   }
+
+      //   let totalTime_tmp = 0;
+      //   if (res.changes.start !== undefined && res.changes.end !== undefined) {
+      //     totalTime_tmp =
+      //       res.changes.end.getTime() - res.changes.start.getTime();
+      //   } else if (res.changes.start !== undefined) {
+      //     totalTime_tmp =
+      //       res.schedule.end._date.getTime() - res.changes.start.getTime();
+      //   } else if (res.changes.end !== undefined) {
+      //     totalTime_tmp =
+      //       res.changes.end.getTime() - res.schedule.start._date.getTime();
+      //   } else {
+      //     totalTime_tmp =
+      //       res.schedule.end._date.getTime() -
+      //       res.schedule.start._date.getTime();
+      //   }
+      //   totalTime_tmp = totalTime_tmp / 1000;
+
+      //   const generateId =
+      //     Math.random().toString(36).substring(2, 15) +
+      //     Math.random().toString(36).substring(2, 15);
+      //   // 0시 0분으로 끝나면 1초 빼주기
+      //   const tmpEndDate = new Date(res.changes.end);
+      //   if (
+      //     res.changes.end !== undefined &&
+      //     res.changes.end.getMinutes() === 0 &&
+      //     res.changes.end.getHours() === 0
+      //   ) {
+      //     tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
+      //   }
+
+      //   const schedule_tmp = {
+      //     id: copyBool ? generateId : res.schedule.id,
+      //     isAllDay: res.schedule.isAllDay,
+      //     isPrivate: res.schedule.isPrivate,
+      //     title:
+      //       res.changes.title !== undefined
+      //         ? res.changes.title
+      //         : res.schedule.title,
+      //     location:
+      //       res.changes.location !== undefined
+      //         ? res.changes.location
+      //         : res.schedule.location,
+      //     state:
+      //       res.changes.state !== undefined
+      //         ? res.changes.state
+      //         : res.schedule.state,
+      //     start:
+      //       res.changes.start !== undefined
+      //         ? res.changes.start
+      //         : res.schedule.start._date,
+      //     end:
+      //       res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
+      //     totalTime: totalTime_tmp,
+      //     calendarId:
+      //       res.changes.calendarId !== undefined
+      //         ? res.changes.calendarId
+      //         : res.schedule.calendarId,
+      //     option: copyBool ? 'create' : 'update',
+      //   };
+      //   Object.assign(schedule_tmp, res.changes);
+
+      //   let overlap = false;
+      //   const schedules_test = ObjectCopy(schedules);
+      //   const checkExist = (a) => a.id === res.schedule.id;
+      //   const checkIndex2 = schedules.findIndex(checkExist);
+      //   // 복사는 기존에 데이터가 없으니 뺄필요가 없지롱
+      //   if (!copyBool) {
+      //     schedules_test.splice(checkIndex2, 1);
+      //   }
+      //   schedules_test.map((sch) => {
+      //     if (
+      //       new Date(sch.end._date ? sch.end._date : sch.end) >
+      //         schedule_tmp.start &&
+      //       new Date(sch.start._date ? sch.start._date : sch.start) <
+      //         schedule_tmp.end
+      //     ) {
+      //       overlap = true;
+      //     }
+      //   });
+      //   if (overlap) {
+      //     alert('스케줄 시간은 중복될 수 없습니다.');
+      //     return;
+      //   }
+
+      //   const { schedule, changes } = res;
+      //   if (copyBool) {
+      //     // 복사
+      //     newScheduleArray.push(schedule_tmp);
+
+      //     schedules.push({ ...schedule, ...changes, id: generateId });
+
+      //     cal.current.calendarInst.createSchedules([
+      //       { ...schedule, ...changes, id: generateId },
+      //     ]);
+      //     setCopyBool(false);
+      //   } else {
+      //     // 업데이트
+      //     const checkIndex = newScheduleArray.findIndex(checkExist);
+      //     if (checkIndex === -1) {
+      //       newScheduleArray.push(schedule_tmp);
+      //     } else {
+      //       newScheduleArray.splice(checkIndex, 1);
+      //       newScheduleArray.push(schedule_tmp);
+      //     }
+
+      //     schedules.splice(checkIndex2, 1);
+      //     schedules.push({ ...schedule, ...changes });
+
+      //     cal.current.calendarInst.updateSchedule(
+      //       schedule.id,
+      //       schedule.calendarId,
+      //       changes,
+      //     );
+      //   }
+      // }
     },
     [copyBool],
   );
@@ -1659,9 +1697,19 @@ export default ({
     let newArr = [...dayBool];
     newArr[index] = e.target.checked;
     setDayBool(newArr);
+    // 요일 1개만 선택시 스케줄 시작 마침 시간도 변경해주기
+    if (newArr.filter(Boolean).length === 1) {
+      const sTmp = new Date(sTime);
+      const eTmp = new Date(eTime);
+      const diffDay = index - sTmp.getDay();
+      sTmp.setDate(sTmp.getDate() + diffDay);
+      eTmp.setDate(eTmp.getDate() + diffDay);
+      setSTime(sTmp);
+      setETime(eTmp);
+    }
   };
 
-  const onCreateDay = async () => {
+  const onCreateSche = async (option, scheduleId) => {
     if (dayBool.findIndex((e) => e === true) === -1) {
       alert('요일을 최소 하루 이상 선택하세요.');
       return;
@@ -1671,15 +1719,19 @@ export default ({
     } else if (sTime >= eTime) {
       alert('끝 시간이 시작 시간과 같거나 빠를 수 없습니다.');
       return;
+    } else if (eTime.getTime() - sTime.getTime() > 86400000) {
+      alert('스케줄 기간은 24시간 이내로만 가능합니다.');
+      return;
     }
 
     try {
-      toast.info('스케줄 만들기 중...');
+      setScheLoading(true);
       const {
-        data: { createSchedule_day },
-      } = await createScheDayMutation({
+        data: { createSchedule },
+      } = await createScheMutation({
         variables: {
-          standDate: dayDate,
+          option,
+          scheduleId,
           days: dayBool,
           calendarId: mySubjectList2.option,
           state: stateList.option,
@@ -1687,21 +1739,21 @@ export default ({
           location: scheLocation.value,
           start: sTime,
           end: eTime,
-          totalTime: (eTime.getTime() - sTime.getTime()) / 1000,
         },
       });
-      if (!createSchedule_day) {
+      if (!createSchedule) {
         alert('스케줄을 만들 수 없습니다.');
       } else {
         await myRefetch();
         clearSchedule();
-        toast.success('새로운 스케줄을 만들었습니다.');
-        return true;
+        setMakeView(false);
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
-      return false;
+    } finally {
+      setScheLoading(false);
+      setModiView(false);
     }
   };
 
@@ -1793,9 +1845,14 @@ export default ({
   // );
 
   const CustomInput = forwardRef(
-    ({ value, onClick, text, week = false, margin }, ref) => {
+    ({ value, onClick, text, week = false, margin, width = '150px' }, ref) => {
       return (
-        <DatePickButton ref={ref} onClick={onClick} margin={margin}>
+        <DatePickButton
+          ref={ref}
+          onClick={onClick}
+          margin={margin}
+          width={width}
+        >
           {week ? text : value}
         </DatePickButton>
       );
@@ -1866,8 +1923,14 @@ export default ({
     );
   }, []);
 
+  // console.log(networkStatus, subjectnetwork);
   return (
     <Wrapper>
+      {scheLoading && (
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      )}
       <PanelWrap>
         <ControlButton onClick={handleClickTodayButton}>Today</ControlButton>
         <ControlButton onClick={handleClickPrevButton} />
@@ -1897,6 +1960,7 @@ export default ({
             {(close) => {
               return (
                 <PBody2>
+                  <PopupClose onClick={() => close()} />
                   <PopupCustom10
                     trigger={
                       <PopButton_custom
@@ -1912,6 +1976,15 @@ export default ({
                     {(close) => {
                       return (
                         <PBody2>
+                          <PopupClose
+                            onClick={() => {
+                              close();
+                              setCopyDate(new Date());
+                              setPasteDate(
+                                new Date(nowDate.getTime() + 86400000),
+                              );
+                            }}
+                          />
                           <PTitle text={'하루 스케줄 복사'} />
                           <WeekWrap>
                             <DateIndi>
@@ -1939,7 +2012,7 @@ export default ({
                             </DateIndi>
                           </WeekWrap>
                           <ButtonDiv style={{ marginTop: '20px' }}>
-                            <PopupButton
+                            <PopupButton_solo
                               type="button"
                               onClick={async () => {
                                 const fucResult = await onCopyOne();
@@ -1948,17 +2021,6 @@ export default ({
                                 }
                               }}
                               text={'복사'}
-                            />
-                            <PopupButton
-                              type="button"
-                              onClick={() => {
-                                close();
-                                setCopyDate(new Date());
-                                setPasteDate(
-                                  new Date(nowDate.getTime() + 86400000),
-                                );
-                              }}
-                              text={'닫기'}
                             />
                           </ButtonDiv>
                         </PBody2>
@@ -1971,7 +2033,7 @@ export default ({
                         text={'주간 스케줄 복사'}
                         width={'308px'}
                         height={'30px'}
-                        margin={'0 0 10px 0'}
+                        margin={'0'}
                       />
                     }
                     closeOnDocumentClick={false}
@@ -1982,6 +2044,15 @@ export default ({
                       const pasteEnd_text = new Date(pasteEnd.getTime() - 1000);
                       return (
                         <PBody2>
+                          <PopupClose
+                            onClick={() => {
+                              close();
+                              setCopyDate(nowDate);
+                              setPasteDate(
+                                new Date(nowDate.getTime() + 604800000),
+                              );
+                            }}
+                          />
                           <PTitle text={'주간 스케줄 복사'} />
                           <WeekWrap>
                             <DateIndi>
@@ -2025,7 +2096,7 @@ export default ({
                             </DateIndi>
                           </WeekWrap>
                           <ButtonDiv style={{ marginTop: '20px' }}>
-                            <PopupButton
+                            <PopupButton_solo
                               type="button"
                               onClick={async () => {
                                 const fucResult = await onCopyWeek();
@@ -2035,31 +2106,11 @@ export default ({
                               }}
                               text={'복사'}
                             />
-                            <PopupButton
-                              type="button"
-                              onClick={() => {
-                                close();
-                                setCopyDate(nowDate);
-                                setPasteDate(
-                                  new Date(nowDate.getTime() + 604800000),
-                                );
-                              }}
-                              text={'닫기'}
-                            />
                           </ButtonDiv>
                         </PBody2>
                       );
                     }}
                   </PopupCustom10>
-                  <ButtonDiv style={{ marginTop: '10px' }}>
-                    <PopupButton_solo
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
                 </PBody2>
               );
             }}
@@ -2072,6 +2123,7 @@ export default ({
             {(close) => {
               return (
                 <PBody2>
+                  <PopupClose onClick={() => close()} />
                   <PTitle text={'기본값 세팅'} />
                   <SetContentWrap>
                     <SetContentBox>
@@ -2097,7 +2149,7 @@ export default ({
                     </SetContentBox>
                   </SetContentWrap>
                   <ButtonDiv style={{ marginTop: '20px' }}>
-                    <PopupButton
+                    <PopupButton_solo
                       type="button"
                       onClick={async () => {
                         const fucResult = await onSaveSet();
@@ -2106,13 +2158,6 @@ export default ({
                         }
                       }}
                       text={'적용'}
-                    />
-                    <PopupButton
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
                     />
                   </ButtonDiv>
                 </PBody2>
@@ -2132,229 +2177,200 @@ export default ({
           >
             {(close) => (
               <PBody>
-                <FrontDiv>
-                  <PTitle text={'과목 관리'} />
-                  <ThreeButtonWrap>
-                    <SpaceDiv />
-                    <SubjectButtonDiv>
-                      <PopupCustom5
-                        trigger={<PopButton_100 text={'북마크'} />}
-                        closeOnDocumentClick={false}
-                        modal
-                      >
-                        {(close) => (
-                          <PBody>
-                            <SubjectForm>
-                              <PTitle text={'과목 북마크'} />
-                              <BookMarkTitle>
-                                <BookLeft2>&#9989;</BookLeft2>
-                                <BookRight2>과목</BookRight2>
-                              </BookMarkTitle>
-                              <ListWrap>
-                                <BookmarkList
-                                  height={300}
-                                  itemCount={subjectList_book.length}
-                                  itemSize={30}
-                                  width={370}
-                                >
-                                  {subjectRow}
-                                </BookmarkList>
-                              </ListWrap>
-                              <ButtonDiv>
-                                <PopupButton
-                                  type="button"
-                                  text={'저장'}
-                                  onClick={async () => {
-                                    const fucResult = await onClickBookMark();
-                                    if (fucResult) {
-                                      close();
-                                    }
-                                  }}
-                                />
-                                <PopupButton
-                                  type="button"
-                                  onClick={() => {
-                                    close();
-                                    setBookMarkCh(
-                                      subjectList_book.map((_, index) => {
-                                        return subjectList_book[index].bookMark;
-                                      }),
-                                    );
-                                  }}
-                                  text={'닫기'}
-                                />
-                              </ButtonDiv>
-                            </SubjectForm>
-                          </PBody>
-                        )}
-                      </PopupCustom5>
-                    </SubjectButtonDiv>
-                    <SubjectButtonDiv>
-                      <PopupCustom
-                        trigger={<PopButton_100 text={'추가'} />}
-                        closeOnDocumentClick={false}
-                        modal
-                      >
-                        {(close) => (
-                          <PBody>
-                            <SubjectForm2>
-                              <PTitle text={'과목 추가'} />
-                              <InputWrapper>
-                                <Input
-                                  placeholder={'과목 이름 (예: 국어 or 독서)'}
-                                  {...subjectName}
-                                />
-                              </InputWrapper>
-                              <ColorWrapper>
-                                <SubTitle text={'색상 선택'} />
-                                <SwatchesPicker
-                                  color={subjectColor}
-                                  onChangeComplete={handleChangeComplete}
-                                />
-                              </ColorWrapper>
-                              <ButtonDiv>
-                                <PopupButton
-                                  type="button"
-                                  text={'추가'}
-                                  onClick={async () => {
-                                    const fucResult = await onSubmitAdd();
-                                    if (fucResult) {
-                                      close();
-                                    }
-                                  }}
-                                />
-                                <PopupButton
-                                  type="button"
-                                  onClick={() => {
-                                    close();
-                                    subjectClear();
-                                  }}
-                                  text={'닫기'}
-                                />
-                              </ButtonDiv>
-                            </SubjectForm2>
-                          </PBody>
-                        )}
-                      </PopupCustom>
-                    </SubjectButtonDiv>
-                    <SubjectButtonDiv>
-                      <PopupCustom2
-                        trigger={<PopButton_100 text={'수정'} />}
-                        closeOnDocumentClick={false}
-                        modal
-                      >
-                        {(close) => (
-                          <PBody>
-                            <SubjectForm2>
-                              <PTitle text={'과목 수정'} />
-                              <SelectWrapDiv2>
-                                <SubTitle text={`수정할 과목:　`} />
-                                <SelectWrapper2>
-                                  <Select
-                                    {...mySubjectList}
-                                    id={'mySubjectList_id'}
-                                  />
-                                </SelectWrapper2>
-                                <RedButtonWrap>
-                                  <Button_red
-                                    type={'button'}
-                                    text={'기존정보 불러오기'}
-                                    onClick={subjectLoad}
-                                  />
-                                </RedButtonWrap>
-                              </SelectWrapDiv2>
-                              <InputWrapper>
-                                <Input
-                                  placeholder={'과목 이름 (예: 국어 or 독서)'}
-                                  {...subjectName}
-                                />
-                              </InputWrapper>
-                              <ColorWrapper>
-                                <SubTitle text={'색상 선택'} />
-                                <SwatchesPicker
-                                  color={subjectColor}
-                                  onChangeComplete={handleChangeComplete}
-                                />
-                              </ColorWrapper>
-                              <ButtonDiv>
-                                <PopupButton
-                                  type="button"
-                                  text={'수정'}
-                                  onClick={async () => {
-                                    const fucResult = await onSubmitEdit();
-                                    if (fucResult) {
-                                      close();
-                                    }
-                                  }}
-                                />
-                                <PopupButton
-                                  type="button"
-                                  onClick={() => {
-                                    subjectClear();
-                                    close();
-                                  }}
-                                  text={'닫기'}
-                                />
-                              </ButtonDiv>
-                            </SubjectForm2>
-                          </PBody>
-                        )}
-                      </PopupCustom2>
-                    </SubjectButtonDiv>
-                    <SubjectButtonDiv>
-                      <PopupCustom3
-                        trigger={<PopButton_100 text={'삭제'} />}
-                        closeOnDocumentClick={false}
-                        modal
-                      >
-                        {(close) => (
-                          <PBody>
-                            <SubjectForm2>
-                              <PTitle text={'과목 삭제'} />
-                              <SelectWrapDiv>
-                                <SelectWrapper>
-                                  <Select
-                                    {...mySubjectList}
-                                    id={'mySubject_id'}
-                                  />
-                                </SelectWrapper>
-                              </SelectWrapDiv>
-                              <ButtonDiv>
-                                <PopupButton
-                                  type="button"
-                                  text={'삭제'}
-                                  onClick={async () => {
-                                    const fucResult = await onSubmitDelete();
-                                    if (fucResult) {
-                                      close();
-                                    }
-                                  }}
-                                />
-                                <PopupButton
-                                  type="button"
-                                  onClick={() => {
-                                    close();
-                                    subjectClear();
-                                  }}
-                                  text={'닫기'}
-                                />
-                              </ButtonDiv>
-                            </SubjectForm2>
-                          </PBody>
-                        )}
-                      </PopupCustom3>
-                    </SubjectButtonDiv>
-                  </ThreeButtonWrap>
-                  <ButtonDiv>
-                    <PopupButton_solo
-                      type="button"
-                      onClick={() => {
-                        close();
-                      }}
-                      text={'닫기'}
-                    />
-                  </ButtonDiv>
-                </FrontDiv>
+                <PopupClose onClick={() => close()} />
+                <PTitle text={'과목 관리'} />
+                <ThreeButtonWrap>
+                  <SpaceDiv />
+                  <SubjectButtonDiv>
+                    <PopupCustom
+                      trigger={<PopButton_100 text={'북마크'} />}
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => (
+                        <PBody>
+                          <PopupClose
+                            onClick={() => {
+                              close();
+                              setBookMarkCh(
+                                subjectList_book.map((_, index) => {
+                                  return subjectList_book[index].bookMark;
+                                }),
+                              );
+                            }}
+                          />
+                          <PTitle text={'과목 북마크'} />
+                          <BookMarkTitle>
+                            <BookLeft2>&#9989;</BookLeft2>
+                            <BookRight2>과목</BookRight2>
+                          </BookMarkTitle>
+                          <ListWrap>
+                            <BookmarkList
+                              height={300}
+                              itemCount={subjectList_book.length}
+                              itemSize={30}
+                              width={370}
+                            >
+                              {subjectRow}
+                            </BookmarkList>
+                          </ListWrap>
+                          <ButtonDiv>
+                            <PopupButton_solo
+                              type="button"
+                              text={'저장'}
+                              onClick={async () => {
+                                const fucResult = await onClickBookMark();
+                                if (fucResult) {
+                                  close();
+                                }
+                              }}
+                            />
+                          </ButtonDiv>
+                        </PBody>
+                      )}
+                    </PopupCustom>
+                  </SubjectButtonDiv>
+                  <SubjectButtonDiv>
+                    <PopupCustom5
+                      trigger={<PopButton_100 text={'추가'} />}
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => (
+                        <PBody>
+                          <PopupClose
+                            onClick={() => {
+                              close();
+                              subjectClear();
+                            }}
+                          />
+                          <PTitle text={'과목 추가'} />
+                          <InputWrapper>
+                            <Input
+                              placeholder={'과목 이름 (예: 국어 or 독서)'}
+                              {...subjectName}
+                            />
+                          </InputWrapper>
+                          <ColorWrapper>
+                            <SubTitle text={'색상 선택'} />
+                            <SwatchesPicker
+                              color={subjectColor}
+                              onChangeComplete={handleChangeComplete}
+                            />
+                          </ColorWrapper>
+                          <ButtonDiv>
+                            <PopupButton_solo
+                              type="button"
+                              text={'추가'}
+                              onClick={async () => {
+                                const fucResult = await onSubmitAdd();
+                                if (fucResult) {
+                                  close();
+                                }
+                              }}
+                            />
+                          </ButtonDiv>
+                        </PBody>
+                      )}
+                    </PopupCustom5>
+                  </SubjectButtonDiv>
+                  <SubjectButtonDiv>
+                    <PopupCustom2
+                      trigger={<PopButton_100 text={'수정'} />}
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => (
+                        <PBody>
+                          <PopupClose
+                            onClick={() => {
+                              subjectClear();
+                              close();
+                            }}
+                          />
+                          <PTitle text={'과목 수정'} />
+                          <SelectWrapDiv2>
+                            <SubTitle text={`과목:　`} />
+                            <SelectWrapper2>
+                              <Select
+                                {...mySubjectList}
+                                id={'mySubjectList_id'}
+                              />
+                            </SelectWrapper2>
+                            <RedButtonWrap>
+                              <Button_red
+                                type={'button'}
+                                text={'불러오기'}
+                                onClick={subjectLoad}
+                              />
+                            </RedButtonWrap>
+                          </SelectWrapDiv2>
+                          <InputWrapper>
+                            <Input
+                              placeholder={'과목 이름 (예: 국어 or 독서)'}
+                              {...subjectName}
+                            />
+                          </InputWrapper>
+                          <ColorWrapper>
+                            <SubTitle text={'색상 선택'} />
+                            <SwatchesPicker
+                              color={subjectColor}
+                              onChangeComplete={handleChangeComplete}
+                            />
+                          </ColorWrapper>
+                          <ButtonDiv>
+                            <PopupButton_solo
+                              type="button"
+                              text={'수정'}
+                              onClick={async () => {
+                                const fucResult = await onSubmitEdit();
+                                if (fucResult) {
+                                  close();
+                                }
+                              }}
+                            />
+                          </ButtonDiv>
+                        </PBody>
+                      )}
+                    </PopupCustom2>
+                  </SubjectButtonDiv>
+                  <SubjectButtonDiv>
+                    <PopupCustom3
+                      trigger={<PopButton_100 text={'삭제'} />}
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => (
+                        <PBody>
+                          <PopupClose
+                            onClick={() => {
+                              close();
+                              subjectClear();
+                            }}
+                          />
+                          <PTitle text={'과목 삭제'} />
+                          <SelectWrapDiv>
+                            <SelectWrapper>
+                              <Select {...mySubjectList} id={'mySubject_id'} />
+                            </SelectWrapper>
+                          </SelectWrapDiv>
+                          <ButtonDiv>
+                            <PopupButton_solo
+                              type="button"
+                              text={'삭제'}
+                              onClick={async () => {
+                                const fucResult = await onSubmitDelete();
+                                if (fucResult) {
+                                  close();
+                                }
+                              }}
+                            />
+                          </ButtonDiv>
+                        </PBody>
+                      )}
+                    </PopupCustom3>
+                  </SubjectButtonDiv>
+                </ThreeButtonWrap>
               </PBody>
             )}
           </PopupCustom4>
@@ -2390,16 +2406,15 @@ export default ({
       {(makeView || modiView) && (
         <BlackBack>
           <CustomPopup>
-            <CloseButton
+            <PopupClose
               onClick={() => {
                 setMakeView(false);
                 setModiView(false);
               }}
-            >
-              &times;
-            </CloseButton>
+              custom={true}
+            />
             <PTitle text={makeView ? '스케줄 만들기' : '스케줄 수정'} />
-            <DatePicker
+            {/* <DatePicker
               dateFormat={'yyyy/MM/dd'}
               selected={dayDate}
               onChange={(date) => {
@@ -2418,7 +2433,7 @@ export default ({
                                 ${moment(weekEnd).format('MM.DD')}(토)`}
                 />
               }
-            />
+            /> */}
             <DayWrap>
               {dayList.map((day, index) => {
                 return (
@@ -2459,34 +2474,70 @@ export default ({
                 {...scheLocation}
               />
             </NewScheContent>
-            <NewScheContent>
-              시작 :
-              <TimePicker
-                value={moment(sTime)}
-                onChange={(value) => {
-                  setSTime(value._d);
-                }}
-                style={{
-                  width: 50,
-                  marginLeft: 10,
-                  marginRight: 20,
-                }}
-                showSecond={false}
-                allowEmpty={false}
-                minuteStep={5}
-              />
-              끝 :
-              <TimePicker
-                value={moment(eTime)}
-                onChange={(value) => {
-                  setETime(value._d);
-                }}
-                style={{ width: 50, marginLeft: 10 }}
-                showSecond={false}
-                allowEmpty={false}
-                minuteStep={5}
-              />
-            </NewScheContent>
+            <DateTotalDiv>
+              <DateWrap>
+                <DateContent>
+                  <DatePicker
+                    dateFormat={'yyyy/MM/dd'}
+                    selected={sTime}
+                    onChange={(date) => {
+                      setSTime(date);
+                      setDayBool(
+                        dayList.map((_, index) => {
+                          return date.getDay() === index ? true : false;
+                        }),
+                      );
+                    }}
+                    customInput={
+                      <CustomInput width={'92px'} margin={'0 0 5px 0'} />
+                    }
+                  />
+                </DateContent>
+                <DateContent>
+                  <TimeText timeError={timeError}>시작 :</TimeText>
+                  <TimePicker
+                    value={moment(sTime)}
+                    onChange={(value) => {
+                      setSTime(value._d);
+                    }}
+                    style={{
+                      width: 50,
+                      marginLeft: 10,
+                    }}
+                    showSecond={false}
+                    allowEmpty={false}
+                    minuteStep={5}
+                  />
+                </DateContent>
+              </DateWrap>
+              <DateWrap>
+                <DateContent2>
+                  <DatePicker
+                    dateFormat={'yyyy/MM/dd'}
+                    selected={eTime}
+                    onChange={(date) => {
+                      setETime(date);
+                    }}
+                    customInput={
+                      <CustomInput width={'92px'} margin={'0 0 5px 0'} />
+                    }
+                  />
+                </DateContent2>
+                <DateContent2>
+                  <TimeText timeError={timeError}>마침 :</TimeText>
+                  <TimePicker
+                    value={moment(eTime)}
+                    onChange={(value) => {
+                      setETime(value._d);
+                    }}
+                    style={{ width: 50, marginLeft: 10 }}
+                    showSecond={false}
+                    allowEmpty={false}
+                    minuteStep={5}
+                  />
+                </DateContent2>
+              </DateWrap>
+            </DateTotalDiv>
             <ButtonDiv style={{ marginTop: '20px' }}>
               {makeView && (
                 <Button_custom
@@ -2496,12 +2547,7 @@ export default ({
                   bgColor={'#0F4C82'}
                   text={'만들기'}
                   color={'white'}
-                  onClick={async () => {
-                    const fucResult = await onCreateDay();
-                    if (fucResult) {
-                      setMakeView(false);
-                    }
-                  }}
+                  onClick={async () => onCreateSche('create', '')}
                 />
               )}
               {modiView && (
@@ -2512,12 +2558,7 @@ export default ({
                   bgColor={'#0F4C82'}
                   text={'수정'}
                   color={'white'}
-                  onClick={async () => {
-                    const fucResult = await onCreateDay();
-                    if (fucResult) {
-                      setMakeView(false);
-                    }
-                  }}
+                  onClick={async () => onCreateSche('update', infoSche.id)}
                 />
               )}
             </ButtonDiv>
@@ -2527,9 +2568,7 @@ export default ({
       {infoView && infoSche.title && (
         <BlackBack>
           <CustomPopup2 color={infoSche.bgColor}>
-            <CloseButton onClick={() => setInfoView(false)}>
-              &times;
-            </CloseButton>
+            <PopupClose onClick={() => setInfoView(false)} custom={true} />
             <InfoWrap color={infoSche.bgColor}>
               <p>{infoSche.calendarName ? `[${infoSche.calendarName}]` : ''}</p>
               <p>{infoSche.title}</p>
@@ -2551,10 +2590,7 @@ export default ({
               />
               <PopupButton
                 type="button"
-                onClick={() => {
-                  setInfoView(false);
-                  clearSchedule();
-                }}
+                onClick={() => onDeleteSche(infoSche.id)}
                 bgColor={'#DB4437'}
                 color={'black'}
                 text={'삭제'}
