@@ -10,6 +10,9 @@ export const FEED_QUERY = gql`
         id
         avatar
         username
+        studyGroup
+        studyGroup2
+        studyGroup3
       }
       files {
         id
@@ -42,6 +45,9 @@ export const FEED_ALL_QUERY = gql`
         id
         avatar
         username
+        studyGroup
+        studyGroup2
+        studyGroup3
       }
       files {
         id
@@ -84,5 +90,16 @@ export const CREATE_POST = gql`
 export const EDIT_POST = gql`
   mutation editPost($postId: String!, $caption: String!, $location: String!) {
     editPost(postId: $postId, caption: $caption, location: $location)
+  }
+`;
+
+export const ME_GROUP = gql`
+  query me {
+    me {
+      id
+      studyGroup
+      studyGroup2
+      studyGroup3
+    }
   }
 `;

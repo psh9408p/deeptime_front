@@ -10,6 +10,7 @@ import GlobalStyles_potal from '../Styles/GlobalStyles_potal';
 import Theme from '../Styles/Theme';
 import Routes from './Routes';
 import Footer from './Footer';
+import Footer2 from './Footer2';
 import Header from './Header';
 import Header_welcome from './Header_welcome';
 
@@ -46,8 +47,8 @@ export default () => {
               window.location.hash !== '#/experience' && <Header_welcome />}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
-              {/* {window.location.hash !== '#/experience' &&
-                window.location.hash !== '#/study' && <Footer />} */}
+              {window.location.hash !== '#/experience' &&
+                window.location.hash !== '#/study' && <Footer2 />}
             </Wrapper>
           </>
         </Router>

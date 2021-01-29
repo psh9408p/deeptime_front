@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FEED_ALL_QUERY, CREATE_POST, EDIT_POST } from './FeedQueries';
+import {
+  FEED_ALL_QUERY,
+  CREATE_POST,
+  EDIT_POST,
+  ME_GROUP,
+} from './FeedQueries';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
@@ -44,6 +49,7 @@ export default () => {
       notifyOnNetworkStatusChange: true,
     },
   );
+  const { data: meData, loading: meLoading } = useQuery(ME_GROUP);
 
   const [files, setFiles] = useState([]);
 
@@ -151,12 +157,12 @@ export default () => {
 
   return (
     <Wrapper>
-      {networkStatus === 1 && (
+      {networkStatus === 1 && meLoading && (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
       )}
-      {networkStatus !== 1 && feedData && feedData.seeAllFeed && (
+      {networkStatus !== 1 && feedData && feedData.seeAllFeed && !meLoading && (
         <FeedPresenter
           feedData={feedData.seeAllFeed}
           myTabs={myTabs}
@@ -173,6 +179,7 @@ export default () => {
           setVariables={setVariables}
           feedTerm={feedTerm}
           networkStatus={networkStatus}
+          meData={meData.me}
         />
       )}
     </Wrapper>
