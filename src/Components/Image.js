@@ -1,5 +1,5 @@
 import React from 'react';
 
 export const Clock24 = () => (
-  <img src="/icon/24HourClock.png" alt="Previous" width="195" height="195" />
+  <img src="/icon/Clock24.png" alt="Previous" width="200" height="200" />
 );

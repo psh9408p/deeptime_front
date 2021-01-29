@@ -75,7 +75,7 @@ const ClockBox = styled.div`
   z-index: 10;
   display: flex;
   margin-top: 118px;
-  margin-left: 526px;
+  margin-left: 528px;
   justify-content: center;
   align-items: center;
   top: 0;
