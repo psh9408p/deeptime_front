@@ -47,8 +47,8 @@ export default () => {
               window.location.hash !== '#/experience' && <Header_welcome />}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
-              {window.location.hash !== '#/experience' &&
-                window.location.hash !== '#/study' && <Footer2 />}
+              {/* {window.location.hash !== '#/experience' &&
+                window.location.hash !== '#/study' && <Footer2 />} */}
             </Wrapper>
           </>
         </Router>
