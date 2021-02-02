@@ -809,10 +809,11 @@ let total_hour = 0;
 //영상처리
 let time = new Date().getTime();
 let interval = 0;
-let decision = [true, true, true, true, true, true];
+let decision = [false, false, false, false, false, false];
 let detection_area = Array.from({ length: 18 }, (_, i) => i + 1);
 let finalDecision = 1; //1.공부 2. 부재중 3. 잠
 let timeCount = 0;
+let decisionCount = 0;
 
 export default ({
   myInfoData,
@@ -850,6 +851,8 @@ export default ({
   setReCount,
   isAm,
   setIsAm,
+  aniBool,
+  setAniBool,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1787,14 +1790,20 @@ export default ({
       return obj;
     }, {});
 
-    if (temp.true > 2) {
-      finalDecision = 1; //공부
-      // console.log(finalDecision);
-      setStudyBool(true);
-    } else {
-      finalDecision = 2; //부재중
-      // console.log(finalDecision);
-      setStudyBool(false);
+    // 아바타 보더 깜빡임 멈추게 하기위한 카운트
+    decisionCount = decisionCount + 1;
+    if (decisionCount > 1) {
+      if (temp.true === 1) {
+        setAniBool(true);
+      } else if (temp.true >= 2) {
+        finalDecision = 1; //공부
+        setStudyBool(true);
+        setAniBool(false);
+      } else {
+        finalDecision = 2; //부재중
+        setStudyBool(false);
+        setAniBool(false);
+      }
     }
   };
   useInterval(async () => {
@@ -2293,6 +2302,7 @@ export default ({
           <Avatar
             size="md"
             url={myInfoData.avatar}
+            aniBool={aniBool}
             confirmSet={true}
             exist={studyBool}
           />
