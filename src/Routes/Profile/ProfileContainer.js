@@ -32,13 +32,16 @@ export default withRouter(
   }) => {
     // const profileTabContents = ['게시물', '구독 / 결제'];
     // const profileTabContents = ['게시물', '챌린지'];
-    const profileTabContents = ['게시물'];
-    const profileTabs = useTabs(0, profileTabContents);
+    const tabContents_me = ['게시물'];
+    const tabContents_other = ['게시물', '통계', '스케줄'];
+    const tabs_me = useTabs(0, tabContents_me);
+    const tabs_other = useTabs(0, tabContents_other);
     const [selectFile, setSelectFile] = useState(null);
     const followInput = useInput('');
 
-    const { data, loading, refetch } = useQuery(GET_USER, {
+    const { data, loading, refetch, networkStatus } = useQuery(GET_USER, {
       variables: { username },
+      notifyOnNetworkStatusChange: true,
     });
     const [logOut] = useMutation(LOG_OUT);
     const [editAvatarMuation] = useMutation(EDIT_AVATAR);
@@ -128,18 +131,19 @@ export default withRouter(
       }
     };
 
-    if (loading === true) {
+    if (networkStatus === 1) {
       return (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
       );
-    } else if (!loading && data && data.seeUser) {
+    } else {
       return (
         <ProfilePresenter
           logOut={logOut}
           userData={data.seeUser}
-          profileTabs={profileTabs}
+          tabs_me={tabs_me}
+          tabs_other={tabs_other}
           userRefetch={refetch}
           handleFileInput={handleFileInput}
           onAvatar={onAvatar}
@@ -149,6 +153,7 @@ export default withRouter(
           onAddFollow={onAddFollow}
           unFollowMuation={unFollowMuation}
           followMuation={followMuation}
+          networkStatus={networkStatus}
         />
       );
     }

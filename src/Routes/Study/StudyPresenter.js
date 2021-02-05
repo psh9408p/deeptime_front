@@ -479,10 +479,11 @@ const DDayDiv = styled.div`
 
 const DName = styled.div`
   font-size: 14px;
+  margin: 5px 0 5px 0;
 `;
 
 const DNumber = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   color: ${(props) => props.theme.classicBlue};
 `;
 
@@ -668,12 +669,21 @@ const IndiWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 5px 0 5px;
+  padding: 0 5px 0 5px;
   span {
-    text-align: center;
-    margin-top: 5px;
-    font-size: 12px;
-    font-weight: normal;
+    :first-child {
+      text-align: center;
+      font-size: 12px;
+      color: ${(props) => props.theme.classicBlue};
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    :nth-child(3) {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 12px;
+      font-weight: normal;
+    }
   }
 `;
 
@@ -683,8 +693,8 @@ const AddDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  width: 60px;
-  height: 50px;
+  width: 61px;
+  height: 65px;
   margin-bottom: 25px;
 `;
 
@@ -699,7 +709,7 @@ const PofileLink = styled(Link)`
 
 const BlackBack = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 13;
   width: 100%;
   height: 100%;
   background-color: black;
@@ -708,7 +718,7 @@ const BlackBack = styled.div`
 
 const CustomPopup = styled.div`
   position: absolute;
-  z-index: 11;
+  z-index: 14;
   width: 420px;
   height: 410px;
   display: flex;
@@ -2299,6 +2309,10 @@ export default ({
     if (index === 0) {
       return (
         <IndiWrap style={style}>
+          <span>
+            {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
+            {total_min.length === 1 ? '0' + total_min : total_min}
+          </span>
           <Avatar
             size="md"
             url={myInfoData.avatar}
@@ -2323,8 +2337,17 @@ export default ({
     } else {
       const index2 = index - 1;
       const indiUser = myInfoData.withFollowing[index2];
+      let exist_min = myInfoData.withFollowing[index2].todayTime.existTime / 60;
+      let last_hour = String(Math.floor(exist_min / 60));
+      exist_min = exist_min - last_hour * 60;
+      let last_min = String(Math.floor(exist_min));
+
       return (
         <IndiWrap style={style}>
+          <span>
+            {last_hour.length === 1 ? '0' + last_hour : last_hour} :{' '}
+            {last_min.length === 1 ? '0' + last_min : last_min}
+          </span>
           <Avatar
             size="md"
             url={indiUser.avatar}
@@ -2677,8 +2700,7 @@ export default ({
               </DonutWrap>
               <TotalTimeWrap>
                 <TotalNumber>
-                  학습 시간
-                  <br />
+                  <p style={{ marginBottom: '5px' }}>학습 시간</p>
                   <span>
                     {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
                     {total_min.length === 1 ? '0' + total_min : total_min}

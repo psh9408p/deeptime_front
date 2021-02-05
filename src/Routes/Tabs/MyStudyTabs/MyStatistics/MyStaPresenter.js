@@ -17,6 +17,7 @@ import {
   Button_refresh,
   Button_capture,
 } from '../../../../Components/Buttons/Button_click';
+import Tab from '../../../../Components/Tab';
 
 const Wrapper = styled.div`
   display: flex;
@@ -45,7 +46,7 @@ const BigBox = styled.div`
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   width: 654.5px;
-  height: 100%;
+  height: 1500px;
   padding-top: 10px;
   margin-bottom: 30px;
   position: relative;
@@ -293,6 +294,9 @@ const Capture2 = styled(Capture)`
 let taskArray = [];
 let taskArray_week = [];
 let taskArray_month = [];
+let taskArray_pre = [];
+let taskArray_week_pre = [];
+let taskArray_month_pre = [];
 let taskArray_schedule = [];
 let taskArray_schedule_week = [];
 let taskArray_schedule_month = [];
@@ -304,8 +308,11 @@ let taskArray_percentT = [];
 let schedule_label = [];
 let schedule_color = [];
 let scheduleList_selectDay = [];
+let scheduleList_pre = []; // 어제
 let scheduleList_selectDay_week = [[], [], [], [], [], [], []];
+let scheduleList_week_pre = [[], [], [], [], [], [], []]; // 저번주
 let scheduleList_selectDay_month = [];
+let scheduleList_month_pre = []; // 저번달
 let donutData_1 = 0;
 let donutData_2 = 0;
 let donutPercent = 0;
@@ -324,7 +331,6 @@ let total_hour = 0;
 export default ({
   StaTabs,
   selectDate,
-  nextDate,
   setSelectDate,
   myInfoData,
   myInfoRefetch,
@@ -338,47 +344,70 @@ export default ({
   selectPercent2,
   setSelectPercent2,
   onImgSave,
+  isSelf,
 }) => {
   const myState = ['자습', '강의'];
   const scheduleList = myInfoData.schedules;
+  const lastDate = new Date(selectDate);
+  lastDate.setDate(lastDate.getDate() - 7);
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
-  const lastMonthDate = new Date(
+  const {
+    real_weekStart: real_lastStart,
+    real_weekEnd: real_lastEnd,
+  } = WeekRange(lastDate);
+  const nextDate = new Date(selectDate);
+  nextDate.setDate(nextDate.getDate() + 1);
+  const lastMonthDate = new Date(selectDate);
+  lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+  const selectMonthDate = new Date(
     selectDate.getFullYear(),
     selectDate.getMonth() + 1,
     0,
   ).getDate();
   // daysOfMonth Area차트의 x축 라벨 변수
-  const daysOfMonth_tmp = Array.from(Array(lastMonthDate).keys());
+  const daysOfMonth_tmp = Array.from(Array(selectMonthDate).keys());
   const daysOfMonth_number = daysOfMonth_tmp.map((a) => a + 1);
   const daysOfMonth = daysOfMonth_number.map(String);
 
   const todaySchedule_calculate = () => {
     scheduleList_selectDay = [];
     for (let i = 0; i < scheduleList.length; i++) {
-      const startYear = new Date(scheduleList[i].start).getFullYear();
-      const startMonth = new Date(scheduleList[i].start).getMonth();
-      const startDate = new Date(scheduleList[i].start).getDate();
+      const scheStart = new Date(scheduleList[i].start);
+      const startYear = scheStart.getFullYear();
+      const startMonth = scheStart.getMonth();
+      const startDate = scheStart.getDate();
       if (
         startYear === selectDate.getFullYear() &&
         startMonth === selectDate.getMonth() &&
-        startDate === selectDate.getDate() &&
-        scheduleList[i].isPrivate === false
+        startDate === selectDate.getDate()
       ) {
         scheduleList_selectDay.push(scheduleList[i]);
+      } else if (
+        startYear === lastDate.getFullYear() &&
+        startMonth === lastDate.getMonth() &&
+        startDate === lastDate.getDate()
+      ) {
+        scheduleList_pre.push(scheduleList[i]);
       }
     }
     scheduleList_selectDay_length = scheduleList_selectDay.length;
   };
   const weekSchedule_calculate = () => {
     scheduleList_selectDay_week = [[], [], [], [], [], [], []];
+    scheduleList_week_pre = [[], [], [], [], [], [], []];
     for (let i = 0; i < scheduleList.length; i++) {
       if (
         new Date(scheduleList[i].start) >= real_weekStart &&
-        new Date(scheduleList[i].start) < real_weekEnd &&
-        scheduleList[i].isPrivate === false
+        new Date(scheduleList[i].start) < real_weekEnd
       ) {
         const dayIndex = new Date(scheduleList[i].start).getDay();
         scheduleList_selectDay_week[dayIndex].push(scheduleList[i]);
+      } else if (
+        new Date(scheduleList[i].start) >= real_lastStart &&
+        new Date(scheduleList[i].start) < real_lastEnd
+      ) {
+        const dayIndex = new Date(scheduleList[i].start).getDay();
+        scheduleList_week_pre[dayIndex].push(scheduleList[i]);
       }
     }
     // let schedule_length = 0;
@@ -394,10 +423,14 @@ export default ({
       const startMonth = new Date(scheduleList[i].start).getMonth();
       if (
         startYear === selectDate.getFullYear() &&
-        startMonth === selectDate.getMonth() &&
-        scheduleList[i].isPrivate === false
+        startMonth === selectDate.getMonth()
       ) {
         scheduleList_selectDay_month.push(scheduleList[i]);
+      } else if (
+        startYear === lastMonthDate.getFullYear() &&
+        startMonth === lastMonthDate.getMonth()
+      ) {
+        scheduleList_month_pre.push(scheduleList[i]);
       }
     }
     scheduleList_selectDay_month_length = scheduleList_selectDay_month.length;
@@ -407,10 +440,17 @@ export default ({
     // console.log(scheduleList_selectDay);
     // 초기화
     taskArray = new Array(24).fill(0);
+    taskArray_pre = new Array(24).fill(0);
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    // 오늘 생선된 시간이 있는 인덱스 구하기
+    // 오늘(어제, 내일) 생선된 시간이 있는 인덱스 구하기
+    let indexOflast = myInfoData.times.findIndex(
+      (i) =>
+        new Date(i.createdAt).getFullYear() == lastDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() == lastDate.getMonth() &&
+        new Date(i.createdAt).getDate() == lastDate.getDate(),
+    );
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
         new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
@@ -424,6 +464,13 @@ export default ({
         new Date(i.createdAt).getDate() == nextDate.getDate(),
     );
     // today Time 없을 경우 값이 0인 Time 추가해주기
+    if (indexOflast === -1) {
+      myInfoData.times.push({
+        existTime: 0,
+        time_24: new Array(288).fill(0),
+      });
+      indexOflast = myInfoData.times.length - 1;
+    }
     if (indexOfToday === -1) {
       myInfoData.times.push({
         existTime: 0,
@@ -439,6 +486,7 @@ export default ({
       indexOfNextday = myInfoData.times.length - 1;
     }
 
+    const lastTime = myInfoData.times[indexOflast];
     const todayTime = myInfoData.times[indexOfToday];
     const nextdayTime = myInfoData.times[indexOfNextday];
 
@@ -446,6 +494,10 @@ export default ({
     const arrayBox = SplitArray(todayTime.time_24, 12);
     let resultArray = arrayBox.map((a) => SumArray(a));
     taskArray = twoArraySum(taskArray, resultArray);
+    const arrayBox_pre = SplitArray(lastTime.time_24, 12);
+    let resultArray_pre = arrayBox_pre.map((a) => SumArray(a));
+    taskArray_pre = twoArraySum(taskArray_pre, resultArray_pre);
+
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
@@ -461,10 +513,7 @@ export default ({
     let lectureStudy_boxT = [];
     for (let j = 0; j < scheduleList_selectDay_length; j++) {
       // console.log(scheduleList_selectDay);
-      const totalMin =
-        (new Date(scheduleList_selectDay[j].end).getTime() -
-          new Date(scheduleList_selectDay[j].start).getTime()) /
-        60000;
+      const totalMin = scheduleList_selectDay[j].totalTime / 60;
       const totalMin_start =
         new Date(scheduleList_selectDay[j].start).getHours() * 60 +
         new Date(scheduleList_selectDay[j].start).getMinutes();
@@ -527,6 +576,9 @@ export default ({
     // AreaChart 계산
     taskArray.forEach(function (item, index) {
       taskArray[index] = item / 60;
+    });
+    taskArray_pre.forEach(function (item, index) {
+      taskArray_pre[index] = item / 60;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule !== []) {
@@ -609,10 +661,11 @@ export default ({
   const weekGraph_calculate = () => {
     // 초기화
     taskArray_week = new Array(7).fill(0);
+    taskArray_week_pre = new Array(7).fill(0);
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    // 이번주에 생선된 시간이 있는 인덱스 구하기
+    // 이번주에 생선된 시간이 있는 인덱스 구하기 & time 뽑기
     let indexOfWeek = [];
     let stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
     let slicedTimes = ObjectCopy(myInfoData.times);
@@ -646,10 +699,48 @@ export default ({
           myInfoData.times[indexOfWeek[k]].existTime;
       }
     }
+    // 저번주에 생선된 시간이 있는 인덱스 구하기 & time 뽑기
+    indexOfWeek = [];
+    stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
+    slicedTimes = ObjectCopy(myInfoData.times);
+    while (true) {
+      const index_tmp = slicedTimes.findIndex(
+        (i) =>
+          new Date(i.createdAt) >= real_lastStart &&
+          new Date(i.createdAt) < real_lastEnd,
+      );
+      if (index_tmp === -1) {
+        break;
+      } else {
+        indexOfWeek.push(index_tmp + stackIndex);
+        if (index_tmp === slicedTimes.length - 1) {
+          break;
+        }
+      }
+      slicedTimes = slicedTimes.slice(index_tmp + 1);
+      stackIndex = stackIndex + index_tmp + 1;
+    }
+    let arrayBox_pre = new Array(7).fill(null).map(() => {
+      return { existTime: 0, time_24: new Array(288).fill(0) };
+    });
+    if (indexOfWeek[0] !== undefined) {
+      for (let k = 0; k < indexOfWeek.length; k++) {
+        const dayIndex = new Date(
+          myInfoData.times[indexOfWeek[k]].createdAt,
+        ).getDay();
+        arrayBox_pre[dayIndex].time_24 =
+          myInfoData.times[indexOfWeek[k]].time_24;
+        arrayBox_pre[dayIndex].existTime =
+          myInfoData.times[indexOfWeek[k]].existTime;
+      }
+    }
 
     // AreaChart 계산
     let resultArray = arrayBox.map((a) => SumArray(a.time_24));
     taskArray_week = twoArraySum(taskArray_week, resultArray);
+    let resultArray_pre = arrayBox_pre.map((a) => SumArray(a.time_24));
+    taskArray_week_pre = twoArraySum(taskArray_week_pre, resultArray_pre);
+
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
@@ -667,10 +758,7 @@ export default ({
       const todayTime_24 = arrayBox[k].time_24;
       for (let j = 0; j < scheduleList_selectDay_week[k].length; j++) {
         // console.log(scheduleList_selectDay);
-        const totalMin =
-          (new Date(scheduleList_selectDay_week[k][j].end).getTime() -
-            new Date(scheduleList_selectDay_week[k][j].start).getTime()) /
-          60000;
+        const totalMin = scheduleList_selectDay_week[k][j].totalTime / 60;
         const totalMin_start =
           new Date(scheduleList_selectDay_week[k][j].start).getHours() * 60 +
           new Date(scheduleList_selectDay_week[k][j].start).getMinutes();
@@ -755,6 +843,9 @@ export default ({
     // AreaChart 계산
     taskArray_week.forEach(function (item, index) {
       taskArray_week[index] = item / 3600;
+    });
+    taskArray_week_pre.forEach(function (item, index) {
+      taskArray_week_pre[index] = item / 3600;
     });
     // 스케줄 그래프 계산
     if (taskArray_schedule_week !== []) {
@@ -845,11 +936,12 @@ export default ({
   };
   const monthGraph_calculate = () => {
     // 초기화
-    taskArray_month = new Array(lastMonthDate).fill(0);
+    taskArray_month = new Array(selectMonthDate).fill(0);
+    taskArray_month_pre = new Array(selectMonthDate).fill(0);
     donutData_1 = 0;
     donutData_2 = 0;
     donutPercent = 0;
-    // 이번달에 생선된 시간이 있는 인덱스 구하기
+    // 이번달에 생선된 시간이 있는 인덱스 구하기 & time 뽑기
     let indexOfMonth = [];
     let stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
     let slicedTimes = ObjectCopy(myInfoData.times);
@@ -870,7 +962,7 @@ export default ({
       slicedTimes = slicedTimes.slice(index_tmp + 1);
       stackIndex = stackIndex + index_tmp + 1;
     }
-    let arrayBox = new Array(lastMonthDate).fill(null).map(() => {
+    let arrayBox = new Array(selectMonthDate).fill(null).map(() => {
       return { existTime: 0, time_24: new Array(288).fill(0) };
     });
     if (indexOfMonth[0] !== undefined) {
@@ -880,10 +972,43 @@ export default ({
         arrayBox[dateIndex] = myInfoData.times[indexOfMonth[k]];
       }
     }
+    // 저번달에 생선된 시간이 있는 인덱스 구하기 & time 뽑기
+    indexOfMonth = [];
+    stackIndex = 0; // 원래 인덱스에서 잘려나간 부분을 추가해주는 변수
+    slicedTimes = ObjectCopy(myInfoData.times);
+    while (true) {
+      const index_tmp = slicedTimes.findIndex(
+        (i) =>
+          new Date(i.createdAt).getFullYear() == lastMonthDate.getFullYear() &&
+          new Date(i.createdAt).getMonth() == lastMonthDate.getMonth(),
+      );
+      if (index_tmp === -1) {
+        break;
+      } else {
+        indexOfMonth.push(index_tmp + stackIndex);
+        if (index_tmp === slicedTimes.length - 1) {
+          break;
+        }
+      }
+      slicedTimes = slicedTimes.slice(index_tmp + 1);
+      stackIndex = stackIndex + index_tmp + 1;
+    }
+    let arrayBox_pre = new Array(selectMonthDate).fill(null).map(() => {
+      return { existTime: 0, time_24: new Array(288).fill(0) };
+    });
+    if (indexOfMonth[0] !== undefined) {
+      for (let k = 0; k < indexOfMonth.length; k++) {
+        const dateIndex =
+          new Date(myInfoData.times[indexOfMonth[k]].createdAt).getDate() - 1;
+        arrayBox_pre[dateIndex] = myInfoData.times[indexOfMonth[k]];
+      }
+    }
 
     // AreaChart 계산
     let resultArray = arrayBox.map((a) => SumArray(a.time_24));
     taskArray_month = twoArraySum(taskArray_month, resultArray);
+    let resultArray_pre = arrayBox_pre.map((a) => SumArray(a.time_24));
+    taskArray_month_pre = twoArraySum(taskArray_month_pre, resultArray_pre);
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
     let resultArray_scheduleT = []; // 타겟타임용
@@ -901,10 +1026,7 @@ export default ({
       const dateIndex =
         new Date(scheduleList_selectDay_month[j].start).getDate() - 1;
       const todayTime_24 = arrayBox[dateIndex].time_24;
-      const totalMin =
-        (new Date(scheduleList_selectDay_month[j].end).getTime() -
-          new Date(scheduleList_selectDay_month[j].start).getTime()) /
-        60000;
+      const totalMin = scheduleList_selectDay_month[j].totalTime / 60;
       const totalMin_start =
         new Date(scheduleList_selectDay_month[j].start).getHours() * 60 +
         new Date(scheduleList_selectDay_month[j].start).getMinutes();
@@ -921,7 +1043,7 @@ export default ({
       ) {
         /// 토요일(일주일 끝나는날) 다음날에 걸치는 스케줄 있을시 다음날 시간 땡겨오기
         let nextdayTime_24 = [];
-        if (dateIndex + 1 === lastMonthDate) {
+        if (dateIndex + 1 === selectMonthDate) {
           const nextMonthFirstDay = new Date(
             selectDate.getFullYear(),
             selectDate.getMonth() + 1,
@@ -995,6 +1117,9 @@ export default ({
     taskArray_month.forEach(function (item, index) {
       taskArray_month[index] = item / 3600;
     });
+    taskArray_month_pre.forEach(function (item, index) {
+      taskArray_month_pre[index] = item / 3600;
+    });
     // 스케줄 그래프 계산
     if (taskArray_schedule_month !== []) {
       taskArray_schedule_month.forEach(function (item, index) {
@@ -1035,7 +1160,7 @@ export default ({
     }
     // 도넛차트 계산
     let existTime_tmp = 0;
-    for (let j = 0; j < lastMonthDate; j++) {
+    for (let j = 0; j < selectMonthDate; j++) {
       existTime_tmp = existTime_tmp + arrayBox[j].existTime;
     }
     existTime_tmp = existTime_tmp / 60;
@@ -1119,43 +1244,25 @@ export default ({
               customInput={<CustomInput />}
             />
           </DatePickDiv>
-          <RefreshDiv>
-            <Button_capture
-              onClick={() => {
-                onImgSave();
-              }}
-            />
-            <Button_refresh
-              onClick={() => {
-                myInfoRefetch();
-              }}
-            />
-            {/* {networkStatus === 7 && <IngSpan></IngSpan>}
-            {networkStatus === 4 && <IngSpan>ing...</IngSpan>} */}
-          </RefreshDiv>
+          {isSelf && (
+            <RefreshDiv>
+              <Button_capture
+                onClick={() => {
+                  onImgSave();
+                }}
+              />
+              <Button_refresh
+                onClick={() => {
+                  myInfoRefetch();
+                }}
+              />
+              {/* {networkStatus === 7 && <IngSpan></IngSpan>}
+             {networkStatus === 4 && <IngSpan>ing...</IngSpan>} */}
+            </RefreshDiv>
+          )}
         </StatisRow>
         <StatisRow>
-          {StaTabs.content.map((section, index) => {
-            if (index === StaTabs.currentIndex) {
-              return (
-                <ClassButton_Blue
-                  key={index}
-                  onClick={() => StaTabs.changeItem(index)}
-                >
-                  {section}
-                </ClassButton_Blue>
-              );
-            } else {
-              return (
-                <ClassButton
-                  key={index}
-                  onClick={() => StaTabs.changeItem(index)}
-                >
-                  {section}
-                </ClassButton>
-              );
-            }
-          })}
+          <Tab tabs={StaTabs} />
         </StatisRow>
       </>
     );
@@ -1209,7 +1316,11 @@ export default ({
                 <ChartWrap>
                   <AreaChart
                     data_1={taskArray}
+                    data_2={taskArray_pre}
                     labels={oneDayHours}
+                    legend={['오늘', '일주일 전']}
+                    max={60}
+                    stepSize={10}
                     title={'시간대별 Deep Time'}
                     title_y={'Deep Time(분)'}
                     dateRange={'today'}
@@ -1368,7 +1479,10 @@ export default ({
                 <ChartWrap>
                   <AreaChart
                     data_1={taskArray_week}
+                    data_2={taskArray_week_pre}
+                    stepSize={1}
                     labels={['일', '월', '화', '수', '목', '금', '토']}
+                    legend={['이번주', '저번주']}
                     title={'요일별 Deep Time'}
                     title_y={'시간(시)'}
                     dateRange={'week'}
@@ -1527,7 +1641,10 @@ export default ({
                 <ChartWrap>
                   <AreaChart
                     data_1={taskArray_month}
+                    data_2={taskArray_month_pre}
+                    stepSize={1}
                     labels={daysOfMonth}
+                    legend={['이번달', '저번달']}
                     title={'일별 Deep Time'}
                     title_y={'시간(시)'}
                     dateRange={'month'}

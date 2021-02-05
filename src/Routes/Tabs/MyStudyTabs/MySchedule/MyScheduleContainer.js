@@ -33,7 +33,12 @@ const dayList = ['일', '월', '화', '수', '목', '금', '토'];
 const fivemin = 1000 * 60 * 5;
 const stateBox = ['자습', '강의'];
 
-export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
+export default ({
+  myInfoData,
+  myInfoRefetch,
+  networkStatus,
+  isSelf = true,
+}) => {
   const start_range = (value) => value >= 0 && value <= 23 && value % 1 === 0;
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
 
@@ -72,14 +77,14 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
   );
   const [lastStart, setLastStart] = useState(
-    myInfoData.me.studyDefaultSet.scheduleStart,
+    myInfoData.studyDefaultSet.scheduleStart,
   );
   const [lastEnd, setLastEnd] = useState(
-    myInfoData.me.studyDefaultSet.scheduleEnd,
+    myInfoData.studyDefaultSet.scheduleEnd,
   );
   const overhours =
-    myInfoData.me.studyDefaultSet.scheduleEnd -
-    myInfoData.me.studyDefaultSet.scheduleStart;
+    myInfoData.studyDefaultSet.scheduleEnd -
+    myInfoData.studyDefaultSet.scheduleStart;
   const [scheHeight, setScheHeight] = useState(
     overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
   );
@@ -94,13 +99,13 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
   const subjectName = useInput('');
   const todolistName = useInput('');
   const scheduleStart = useInput(
-    myInfoData.me.studyDefaultSet.scheduleStart,
+    myInfoData.studyDefaultSet.scheduleStart,
     start_range,
     undefined,
     true,
   );
   const scheduleEnd = useInput(
-    myInfoData.me.studyDefaultSet.scheduleEnd,
+    myInfoData.studyDefaultSet.scheduleEnd,
     end_range,
     undefined,
     true,
@@ -233,7 +238,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         setStartRange={setStartRange}
         endRange={endRange}
         setEndRange={setEndRange}
-        myData={myInfoData.me}
+        myData={myInfoData}
         myRefetch={myInfoRefetch}
         saveScheduleMutation={saveScheduleMutation}
         subjectList={subjectData.mySubject}
@@ -300,6 +305,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
         scheLoading={scheLoading}
         setScheLoading={setScheLoading}
         timeError={timeError}
+        isSelf={isSelf}
       />
     );
   } else {

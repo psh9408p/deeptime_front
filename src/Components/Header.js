@@ -85,7 +85,7 @@ const AiBox = styled.div`
   color: black;
   padding: 10px 15px;
   height: 45px;
-  width: 115px;
+  width: 118px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: 23px;
   :hover {

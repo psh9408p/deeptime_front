@@ -30,10 +30,6 @@ export const ME = gql`
       avatar
       existToggle
       studyPurpose
-      todayTime {
-        attendanceStatus
-        absenceReason
-      }
       times {
         existTime
         time_24
@@ -79,6 +75,9 @@ export const ME = gql`
         avatar
         username
         existToggle
+        todayTime {
+          existTime
+        }
       }
       following {
         id

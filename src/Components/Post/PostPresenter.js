@@ -225,9 +225,11 @@ export default ({
         <FatText text={comment.user.username} />
         {comment.text}
       </CommetIn>
-      <DeleteDiv>
-        <Delete_12 onClick={() => onDeleteComment(comment.id)} />
-      </DeleteDiv>
+      {isSelf && (
+        <DeleteDiv>
+          <Delete_12 onClick={() => onDeleteComment(comment.id)} />
+        </DeleteDiv>
+      )}
     </Comment>
   );
 

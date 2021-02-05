@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import ClassStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
 import html2canvas from 'html2canvas';
 import moment from 'moment';
 
-export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
+export default ({
+  myInfoData,
+  myInfoRefetch,
+  networkStatus,
+  isSelf = true,
+}) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
   const StaTabs = useTabs(0, StaTabContents);
   const [selectDate, setSelectDate] = useState(new Date());
-  const [nextDate, setNextDate] = useState(new Date());
   const [selectPercent, setSelectPercent] = useState(false);
   const [selectPercent2, setSelectPercent2] = useState(false);
   const oneDayHours_tmp = Array.from(Array(24).keys());
@@ -55,24 +59,12 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
     );
   };
 
-  const isFirstRun = useRef(true);
-  useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      nextDate.setDate(new Date().getDate() + 1);
-      return;
-    }
-    nextDate.setTime(selectDate.getTime());
-    nextDate.setDate(nextDate.getDate() + 1);
-  }, [selectDate]);
-
   return (
     <ClassStaPresenter
       StaTabs={StaTabs}
       selectDate={selectDate}
-      nextDate={nextDate}
       setSelectDate={setSelectDate}
-      myInfoData={myInfoData.me}
+      myInfoData={myInfoData}
       myInfoRefetch={myInfoRefetch}
       networkStatus={networkStatus}
       oneDayHours={oneDayHours}
@@ -84,6 +76,7 @@ export default ({ myInfoData, myInfoRefetch, networkStatus }) => {
       selectPercent2={selectPercent2}
       setSelectPercent2={setSelectPercent2}
       onImgSave={onImgSave}
+      isSelf={isSelf}
     />
   );
 };

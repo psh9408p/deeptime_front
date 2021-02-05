@@ -7,7 +7,7 @@ const PopupClose = styled.a`
   position: absolute;
   color: ${(props) => props.theme.classicBlue};
   display: block;
-  padding: 0 5px 5px 5px;
+  padding: 3px 3px 1px 5px;
   line-height: 20px;
   right: ${(props) => (props.custom ? '-10px' : '-15px')}; //
   top: -10px;

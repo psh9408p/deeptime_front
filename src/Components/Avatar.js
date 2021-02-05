@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
-import { TrademarkCircleOutlined, TrophyOutlined } from '@ant-design/icons';
 
 const getSize = (size) => {
   let number;
@@ -32,19 +31,19 @@ const Container = styled.div`
 `;
 
 const Border = styled(Container)`
-  border: 5px solid ${(props) => (props.exist ? '#7BD5F5' : 'white')};
+  border: 4px solid ${(props) => (props.exist ? '#7BD5F5' : 'white')};
   box-shadow: 0 0 0 0 #c7c7c7;
 `;
 
 const Animation = keyframes`
     0%{
-        border:5px solid #7BD5F5;
+        border:4px solid #7BD5F5;
     }
     50%{
-        border:5px solid white;
+        border:4px solid white;
     }
     100%{
-        border:5px solid #7BD5F5;
+        border:4px solid #7BD5F5;
     }
 `;
 

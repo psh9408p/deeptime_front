@@ -6,7 +6,8 @@ import Avatar from '../../Components/Avatar';
 import FatText from '../../Components/FatText';
 import FollowButton from '../../Components/FollowButton';
 import PopupClose from '../../Components/Buttons/PopupClose';
-import ProfileTabs from '../Tabs/ProfileTabs';
+import ProfileTabs_me from '../Tabs/ProfileTabs_me';
+import ProfileTabs_other from '../Tabs/ProfileTabs_other';
 import { Link } from 'react-router-dom';
 import {
   Button_setting,
@@ -17,6 +18,7 @@ import PopupButton from '../../Components/Buttons/PopupButton';
 import Button_custom from '../../Components/Buttons/Button_custom';
 import Input from '../../Components/Input';
 import { FixedSizeList as ListApi } from 'react-window';
+import Tab from '../../Components/Tab';
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -100,43 +102,6 @@ const Bio = styled.p`
   max-width: 600px;
   white-space: pre-wrap;
   line-height: 20px;
-`;
-
-const Tabs = styled.div`
-  border-top: 1px solid #e6e6e6;
-  display: flex;
-  justify-content: center;
-`;
-const ProfileButton = styled.button`
-  width: 100px;
-  border: 0;
-  outline-color: black;
-  border-radius: ${(props) => props.theme.borderRadius};
-  font-weight: 600;
-  text-align: center;
-  padding: 7px 0px;
-  font-size: 14px;
-  cursor: pointer;
-  &:not(:last-child) {
-    margin-right: 60px;
-  }
-`;
-
-const ProfileButton_Blue = styled.button`
-  width: 100px;
-  border: 0;
-  color: white;
-  outline-color: black;
-  background-color: ${(props) => props.theme.classicBlue};
-  border-radius: ${(props) => props.theme.borderRadius};
-  font-weight: 600;
-  text-align: center;
-  padding: 7px 0px;
-  font-size: 14px;
-  cursor: pointer;
-  &:not(:last-child) {
-    margin-right: 60px;
-  }
 `;
 
 const ButtonWrap = styled.div`
@@ -263,10 +228,25 @@ const BlankDiv = styled.div`
   width: 10px;
 `;
 
+const TimeTitle = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 15px 0 5px 0;
+`;
+
+const FullTime = styled.div`
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: ${(props) => props.theme.classicBlue};
+`;
+
 export default ({
   userData,
   logOut,
-  profileTabs,
+  tabs_me,
+  tabs_other,
   userRefetch,
   handleFileInput,
   onAvatar,
@@ -276,6 +256,7 @@ export default ({
   onAddFollow,
   unFollowMuation,
   followMuation,
+  networkStatus,
 }) => {
   let history = useHistory();
 
@@ -479,7 +460,18 @@ export default ({
     studyGroup,
     studyGroup2,
     studyGroup3,
+    times,
   } = userData;
+
+  let existTime_sec = 0;
+  times.forEach((time) => {
+    existTime_sec += time.existTime;
+  });
+  let existTime_min = existTime_sec / 60;
+  const total_hour = String(Math.floor(existTime_min / 60));
+  existTime_min = existTime_min - total_hour * 60;
+  const total_min = String(Math.floor(existTime_min));
+
   return (
     <Wrapper>
       <Helmet>
@@ -489,12 +481,22 @@ export default ({
         {!isSelf ? (
           <HeaderColumn>
             <Avatar size="lg" url={avatar} />
+            <TimeTitle>총 학습 시간</TimeTitle>
+            <FullTime>
+              {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
+              {total_min.length === 1 ? '0' + total_min : total_min}
+            </FullTime>
           </HeaderColumn>
         ) : (
           <PopupCustom
             trigger={
               <HeaderColumn>
                 <Avatar size="lg" url={avatar} cursor={'pointer'} />
+                <TimeTitle>총 학습 시간</TimeTitle>
+                <FullTime>
+                  {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
+                  {total_min.length === 1 ? '0' + total_min : total_min}
+                </FullTime>
               </HeaderColumn>
             }
             closeOnDocumentClick={false}
@@ -698,39 +700,25 @@ export default ({
           )}
         </HeaderColumn>
       </Header>
-      <Tabs>
-        {profileTabs.content.map((section, index) => {
-          // 다른 사람 프로필에서 안나오는 탭 지정
-          if (!isSelf && index === 1) {
-            return null;
-          }
-
-          if (index === profileTabs.currentIndex) {
-            return (
-              <ProfileButton_Blue
-                key={index}
-                onClick={() => profileTabs.changeItem(index)}
-              >
-                {section}
-              </ProfileButton_Blue>
-            );
-          } else {
-            return (
-              <ProfileButton
-                key={index}
-                onClick={() => profileTabs.changeItem(index)}
-              >
-                {section}
-              </ProfileButton>
-            );
-          }
-        })}
-      </Tabs>
-      <ProfileTabs
-        pageIndex={profileTabs.currentIndex}
-        User={userData}
-        userRefetch={userRefetch}
-      />
+      {isSelf ? (
+        <>
+          <Tab tabs={tabs_me} border={true} />
+          <ProfileTabs_me
+            pageIndex={tabs_me.currentIndex}
+            User={userData}
+            userRefetch={userRefetch}
+          />
+        </>
+      ) : (
+        <>
+          <Tab tabs={tabs_other} border={true} />
+          <ProfileTabs_other
+            pageIndex={tabs_other.currentIndex}
+            User={userData}
+            networkStatus={networkStatus}
+          />
+        </>
+      )}
     </Wrapper>
   );
 };
