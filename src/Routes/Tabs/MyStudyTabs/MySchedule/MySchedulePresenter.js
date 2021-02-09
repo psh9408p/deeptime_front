@@ -523,7 +523,7 @@ const DatePickButton = styled.button`
   color: black;
   text-align: center;
   padding: 7px 10px;
-  font-size: 14px;
+  font-size: 12px;
   width: ${(props) => props.width};
   cursor: pointer;
 `;
@@ -744,6 +744,7 @@ export default ({
   scheLoading,
   setScheLoading,
   timeError,
+  isSelf,
 }) => {
   const { weekStart, weekEnd } = WeekRange(dayDate);
 
@@ -1302,7 +1303,7 @@ export default ({
   // };
 
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
-    console.log(scheduleData);
+    // console.log(scheduleData);
     const inputDate_s = new Date(scheduleData.start._date);
     const inputDate_e = new Date(scheduleData.end._date);
 
@@ -1938,456 +1939,464 @@ export default ({
         <DateRangeWrap>
           {startRange}~{endRange}
         </DateRangeWrap>
-        <SelectDiv>
-          <Button_refresh
-            onClick={() => {
-              myRefetch();
-              subjectRefetch();
-              // todolistRefetch();
-            }}
-          />
-          <Button_copy
-            onClick={() => {
-              setCopyBool(!copyBool);
-            }}
-            value={copyBool}
-          />
-          <PopupCustom9
-            trigger={<Button_copy2 />}
-            closeOnDocumentClick={false}
-            modal
-          >
-            {(close) => {
-              return (
-                <PBody2>
-                  <PopupClose onClick={() => close()} />
-                  <PopupCustom10
-                    trigger={
-                      <PopButton_custom
-                        text={'하루 스케줄 복사'}
-                        width={'308px'}
-                        height={'30px'}
-                        margin={'0 0 10px 0'}
-                      />
-                    }
-                    closeOnDocumentClick={false}
-                    modal
-                  >
-                    {(close) => {
-                      return (
-                        <PBody2>
-                          <PopupClose
-                            onClick={() => {
-                              close();
-                              setCopyDate(new Date());
-                              setPasteDate(
-                                new Date(nowDate.getTime() + 86400000),
-                              );
-                            }}
-                          />
-                          <PTitle text={'하루 스케줄 복사'} />
-                          <WeekWrap>
-                            <DateIndi>
-                              <DatePicker
-                                dateFormat={'yyyy/MM/dd'}
-                                selected={copyOne}
-                                onChange={(date) => {
-                                  setCopyOne(date);
-                                }}
-                                customInput={<CustomInput />}
-                              />
-                            </DateIndi>
-                            <NextWrap>
-                              <Next />
-                            </NextWrap>
-                            <DateIndi>
-                              <DatePicker
-                                dateFormat={'yyyy/MM/dd'}
-                                selected={pasteOne}
-                                onChange={(date) => {
-                                  setPasteOne(date);
-                                }}
-                                customInput={<CustomInput />}
-                              />
-                            </DateIndi>
-                          </WeekWrap>
-                          <ButtonDiv style={{ marginTop: '20px' }}>
-                            <PopupButton_solo
-                              type="button"
-                              onClick={async () => {
-                                const fucResult = await onCopyOne();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                              text={'복사'}
-                            />
-                          </ButtonDiv>
-                        </PBody2>
-                      );
-                    }}
-                  </PopupCustom10>
-                  <PopupCustom10
-                    trigger={
-                      <PopButton_custom
-                        text={'주간 스케줄 복사'}
-                        width={'308px'}
-                        height={'30px'}
-                        margin={'0'}
-                      />
-                    }
-                    closeOnDocumentClick={false}
-                    modal
-                  >
-                    {(close) => {
-                      const copyEnd_text = new Date(copyEnd.getTime() - 1000);
-                      const pasteEnd_text = new Date(pasteEnd.getTime() - 1000);
-                      return (
-                        <PBody2>
-                          <PopupClose
-                            onClick={() => {
-                              close();
-                              setCopyDate(nowDate);
-                              setPasteDate(
-                                new Date(nowDate.getTime() + 604800000),
-                              );
-                            }}
-                          />
-                          <PTitle text={'주간 스케줄 복사'} />
-                          <WeekWrap>
-                            <DateIndi>
-                              <DatePicker
-                                dateFormat={'yyyy/MM/dd'}
-                                selected={copyDate}
-                                onChange={(date) => {
-                                  setCopyDate(date);
-                                }}
-                                customInput={
-                                  <CustomInput
-                                    week={true}
-                                    text={`${moment(copyStart).format(
-                                      'MM.DD',
-                                    )}(일)~
-                                ${moment(copyEnd_text).format('MM.DD')}(토)`}
-                                  />
-                                }
-                              />
-                            </DateIndi>
-                            <NextWrap>
-                              <Next />
-                            </NextWrap>
-                            <DateIndi>
-                              <DatePicker
-                                dateFormat={'yyyy/MM/dd'}
-                                selected={pasteDate}
-                                onChange={(date) => {
-                                  setPasteDate(date);
-                                }}
-                                customInput={
-                                  <CustomInput
-                                    week={true}
-                                    text={`${moment(pasteStart).format(
-                                      'MM.DD',
-                                    )}(일)~
-                                  ${moment(pasteEnd_text).format('MM.DD')}(토)`}
-                                  />
-                                }
-                              />
-                            </DateIndi>
-                          </WeekWrap>
-                          <ButtonDiv style={{ marginTop: '20px' }}>
-                            <PopupButton_solo
-                              type="button"
-                              onClick={async () => {
-                                const fucResult = await onCopyWeek();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                              text={'복사'}
-                            />
-                          </ButtonDiv>
-                        </PBody2>
-                      );
-                    }}
-                  </PopupCustom10>
-                </PBody2>
-              );
-            }}
-          </PopupCustom9>
-          <PopupCustom8
-            trigger={<Button_setting />}
-            closeOnDocumentClick={false}
-            modal
-          >
-            {(close) => {
-              return (
-                <PBody2>
-                  <PopupClose onClick={() => close()} />
-                  <PTitle text={'기본값 세팅'} />
-                  <SetContentWrap>
-                    <SetContentBox>
-                      스케줄러 시작 :　
-                      <RefreshInputWrap>
-                        <Input_100
-                          placeholder={''}
-                          {...scheduleStart}
-                          type={'number'}
-                          step={1}
-                        />
-                      </RefreshInputWrap>
-                      시　/　끝 :　
-                      <RefreshInputWrap>
-                        <Input_100
-                          placeholder={''}
-                          {...scheduleEnd}
-                          type={'number'}
-                          step={1}
-                        />
-                      </RefreshInputWrap>
-                      시
-                    </SetContentBox>
-                  </SetContentWrap>
-                  <ButtonDiv style={{ marginTop: '20px' }}>
-                    <PopupButton_solo
-                      type="button"
-                      onClick={async () => {
-                        const fucResult = await onSaveSet();
-                        if (fucResult) {
-                          close();
-                        }
-                      }}
-                      text={'적용'}
-                    />
-                  </ButtonDiv>
-                </PBody2>
-              );
-            }}
-          </PopupCustom8>
-          <PopupCustom4
-            trigger={
-              <PopButton_custom
-                width={'80px'}
-                margin={'0 10px 0 0'}
-                text={'과목'}
-              />
-            }
-            closeOnDocumentClick={false}
-            modal
-          >
-            {(close) => (
-              <PBody>
-                <PopupClose onClick={() => close()} />
-                <PTitle text={'과목 관리'} />
-                <ThreeButtonWrap>
-                  <SpaceDiv />
-                  <SubjectButtonDiv>
-                    <PopupCustom
-                      trigger={<PopButton_100 text={'북마크'} />}
-                      closeOnDocumentClick={false}
-                      modal
-                    >
-                      {(close) => (
-                        <PBody>
-                          <PopupClose
-                            onClick={() => {
-                              close();
-                              setBookMarkCh(
-                                subjectList_book.map((_, index) => {
-                                  return subjectList_book[index].bookMark;
-                                }),
-                              );
-                            }}
-                          />
-                          <PTitle text={'과목 북마크'} />
-                          <BookMarkTitle>
-                            <BookLeft2>&#9989;</BookLeft2>
-                            <BookRight2>과목</BookRight2>
-                          </BookMarkTitle>
-                          <ListWrap>
-                            <BookmarkList
-                              height={300}
-                              itemCount={subjectList_book.length}
-                              itemSize={30}
-                              width={370}
-                            >
-                              {subjectRow}
-                            </BookmarkList>
-                          </ListWrap>
-                          <ButtonDiv>
-                            <PopupButton_solo
-                              type="button"
-                              text={'저장'}
-                              onClick={async () => {
-                                const fucResult = await onClickBookMark();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                            />
-                          </ButtonDiv>
-                        </PBody>
-                      )}
-                    </PopupCustom>
-                  </SubjectButtonDiv>
-                  <SubjectButtonDiv>
-                    <PopupCustom5
-                      trigger={<PopButton_100 text={'추가'} />}
-                      closeOnDocumentClick={false}
-                      modal
-                    >
-                      {(close) => (
-                        <PBody>
-                          <PopupClose
-                            onClick={() => {
-                              close();
-                              subjectClear();
-                            }}
-                          />
-                          <PTitle text={'과목 추가'} />
-                          <InputWrapper>
-                            <Input
-                              placeholder={'과목 이름 (예: 국어 or 독서)'}
-                              {...subjectName}
-                            />
-                          </InputWrapper>
-                          <ColorWrapper>
-                            <SubTitle text={'색상 선택'} />
-                            <SwatchesPicker
-                              color={subjectColor}
-                              onChangeComplete={handleChangeComplete}
-                            />
-                          </ColorWrapper>
-                          <ButtonDiv>
-                            <PopupButton_solo
-                              type="button"
-                              text={'추가'}
-                              onClick={async () => {
-                                const fucResult = await onSubmitAdd();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                            />
-                          </ButtonDiv>
-                        </PBody>
-                      )}
-                    </PopupCustom5>
-                  </SubjectButtonDiv>
-                  <SubjectButtonDiv>
-                    <PopupCustom2
-                      trigger={<PopButton_100 text={'수정'} />}
-                      closeOnDocumentClick={false}
-                      modal
-                    >
-                      {(close) => (
-                        <PBody>
-                          <PopupClose
-                            onClick={() => {
-                              subjectClear();
-                              close();
-                            }}
-                          />
-                          <PTitle text={'과목 수정'} />
-                          <SelectWrapDiv2>
-                            <SubTitle text={`과목:　`} />
-                            <SelectWrapper2>
-                              <Select
-                                {...mySubjectList}
-                                id={'mySubjectList_id'}
-                              />
-                            </SelectWrapper2>
-                            <RedButtonWrap>
-                              <Button_red
-                                type={'button'}
-                                text={'불러오기'}
-                                onClick={subjectLoad}
-                              />
-                            </RedButtonWrap>
-                          </SelectWrapDiv2>
-                          <InputWrapper>
-                            <Input
-                              placeholder={'과목 이름 (예: 국어 or 독서)'}
-                              {...subjectName}
-                            />
-                          </InputWrapper>
-                          <ColorWrapper>
-                            <SubTitle text={'색상 선택'} />
-                            <SwatchesPicker
-                              color={subjectColor}
-                              onChangeComplete={handleChangeComplete}
-                            />
-                          </ColorWrapper>
-                          <ButtonDiv>
-                            <PopupButton_solo
-                              type="button"
-                              text={'수정'}
-                              onClick={async () => {
-                                const fucResult = await onSubmitEdit();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                            />
-                          </ButtonDiv>
-                        </PBody>
-                      )}
-                    </PopupCustom2>
-                  </SubjectButtonDiv>
-                  <SubjectButtonDiv>
-                    <PopupCustom3
-                      trigger={<PopButton_100 text={'삭제'} />}
-                      closeOnDocumentClick={false}
-                      modal
-                    >
-                      {(close) => (
-                        <PBody>
-                          <PopupClose
-                            onClick={() => {
-                              close();
-                              subjectClear();
-                            }}
-                          />
-                          <PTitle text={'과목 삭제'} />
-                          <SelectWrapDiv>
-                            <SelectWrapper>
-                              <Select {...mySubjectList} id={'mySubject_id'} />
-                            </SelectWrapper>
-                          </SelectWrapDiv>
-                          <ButtonDiv>
-                            <PopupButton_solo
-                              type="button"
-                              text={'삭제'}
-                              onClick={async () => {
-                                const fucResult = await onSubmitDelete();
-                                if (fucResult) {
-                                  close();
-                                }
-                              }}
-                            />
-                          </ButtonDiv>
-                        </PBody>
-                      )}
-                    </PopupCustom3>
-                  </SubjectButtonDiv>
-                </ThreeButtonWrap>
-              </PBody>
-            )}
-          </PopupCustom4>
-          <SaveButtonDiv>
-            <Button_blue
-              text={'+'}
-              fontSize={'25px'}
+        {isSelf && (
+          <SelectDiv>
+            <Button_refresh
               onClick={() => {
-                setMakeView(true);
-                // onClickScheduleSave();
+                myRefetch();
+                subjectRefetch();
+                // todolistRefetch();
               }}
             />
-          </SaveButtonDiv>
-        </SelectDiv>
+            <Button_copy
+              onClick={() => {
+                setCopyBool(!copyBool);
+              }}
+              value={copyBool}
+            />
+            <PopupCustom9
+              trigger={<Button_copy2 />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => {
+                return (
+                  <PBody2>
+                    <PopupClose onClick={() => close()} />
+                    <PopupCustom10
+                      trigger={
+                        <PopButton_custom
+                          text={'하루 스케줄 복사'}
+                          width={'308px'}
+                          height={'30px'}
+                          margin={'0 0 10px 0'}
+                        />
+                      }
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => {
+                        return (
+                          <PBody2>
+                            <PopupClose
+                              onClick={() => {
+                                close();
+                                setCopyDate(new Date());
+                                setPasteDate(
+                                  new Date(nowDate.getTime() + 86400000),
+                                );
+                              }}
+                            />
+                            <PTitle text={'하루 스케줄 복사'} />
+                            <WeekWrap>
+                              <DateIndi>
+                                <DatePicker
+                                  dateFormat={'yyyy/MM/dd'}
+                                  selected={copyOne}
+                                  onChange={(date) => {
+                                    setCopyOne(date);
+                                  }}
+                                  customInput={<CustomInput />}
+                                />
+                              </DateIndi>
+                              <NextWrap>
+                                <Next />
+                              </NextWrap>
+                              <DateIndi>
+                                <DatePicker
+                                  dateFormat={'yyyy/MM/dd'}
+                                  selected={pasteOne}
+                                  onChange={(date) => {
+                                    setPasteOne(date);
+                                  }}
+                                  customInput={<CustomInput />}
+                                />
+                              </DateIndi>
+                            </WeekWrap>
+                            <ButtonDiv style={{ marginTop: '20px' }}>
+                              <PopupButton_solo
+                                type="button"
+                                onClick={async () => {
+                                  const fucResult = await onCopyOne();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                                text={'복사'}
+                              />
+                            </ButtonDiv>
+                          </PBody2>
+                        );
+                      }}
+                    </PopupCustom10>
+                    <PopupCustom10
+                      trigger={
+                        <PopButton_custom
+                          text={'주간 스케줄 복사'}
+                          width={'308px'}
+                          height={'30px'}
+                          margin={'0'}
+                        />
+                      }
+                      closeOnDocumentClick={false}
+                      modal
+                    >
+                      {(close) => {
+                        const copyEnd_text = new Date(copyEnd.getTime() - 1000);
+                        const pasteEnd_text = new Date(
+                          pasteEnd.getTime() - 1000,
+                        );
+                        return (
+                          <PBody2>
+                            <PopupClose
+                              onClick={() => {
+                                close();
+                                setCopyDate(nowDate);
+                                setPasteDate(
+                                  new Date(nowDate.getTime() + 604800000),
+                                );
+                              }}
+                            />
+                            <PTitle text={'주간 스케줄 복사'} />
+                            <WeekWrap>
+                              <DateIndi>
+                                <DatePicker
+                                  dateFormat={'yyyy/MM/dd'}
+                                  selected={copyDate}
+                                  onChange={(date) => {
+                                    setCopyDate(date);
+                                  }}
+                                  customInput={
+                                    <CustomInput
+                                      week={true}
+                                      text={`${moment(copyStart).format(
+                                        'MM.DD',
+                                      )}(일)~
+                                ${moment(copyEnd_text).format('MM.DD')}(토)`}
+                                    />
+                                  }
+                                />
+                              </DateIndi>
+                              <NextWrap>
+                                <Next />
+                              </NextWrap>
+                              <DateIndi>
+                                <DatePicker
+                                  dateFormat={'yyyy/MM/dd'}
+                                  selected={pasteDate}
+                                  onChange={(date) => {
+                                    setPasteDate(date);
+                                  }}
+                                  customInput={
+                                    <CustomInput
+                                      week={true}
+                                      text={`${moment(pasteStart).format(
+                                        'MM.DD',
+                                      )}(일)~
+                                  ${moment(pasteEnd_text).format('MM.DD')}(토)`}
+                                    />
+                                  }
+                                />
+                              </DateIndi>
+                            </WeekWrap>
+                            <ButtonDiv style={{ marginTop: '20px' }}>
+                              <PopupButton_solo
+                                type="button"
+                                onClick={async () => {
+                                  const fucResult = await onCopyWeek();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                                text={'복사'}
+                              />
+                            </ButtonDiv>
+                          </PBody2>
+                        );
+                      }}
+                    </PopupCustom10>
+                  </PBody2>
+                );
+              }}
+            </PopupCustom9>
+            <PopupCustom8
+              trigger={<Button_setting />}
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => {
+                return (
+                  <PBody2>
+                    <PopupClose onClick={() => close()} />
+                    <PTitle text={'기본값 세팅'} />
+                    <SetContentWrap>
+                      <SetContentBox>
+                        스케줄러 시작 :　
+                        <RefreshInputWrap>
+                          <Input_100
+                            placeholder={''}
+                            {...scheduleStart}
+                            type={'number'}
+                            step={1}
+                          />
+                        </RefreshInputWrap>
+                        시　/　끝 :　
+                        <RefreshInputWrap>
+                          <Input_100
+                            placeholder={''}
+                            {...scheduleEnd}
+                            type={'number'}
+                            step={1}
+                          />
+                        </RefreshInputWrap>
+                        시
+                      </SetContentBox>
+                    </SetContentWrap>
+                    <ButtonDiv style={{ marginTop: '20px' }}>
+                      <PopupButton_solo
+                        type="button"
+                        onClick={async () => {
+                          const fucResult = await onSaveSet();
+                          if (fucResult) {
+                            close();
+                          }
+                        }}
+                        text={'적용'}
+                      />
+                    </ButtonDiv>
+                  </PBody2>
+                );
+              }}
+            </PopupCustom8>
+            <PopupCustom4
+              trigger={
+                <PopButton_custom
+                  width={'80px'}
+                  margin={'0 10px 0 0'}
+                  text={'과목'}
+                />
+              }
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <PopupClose onClick={() => close()} />
+                  <PTitle text={'과목 관리'} />
+                  <ThreeButtonWrap>
+                    <SpaceDiv />
+                    <SubjectButtonDiv>
+                      <PopupCustom
+                        trigger={<PopButton_100 text={'북마크'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose
+                              onClick={() => {
+                                close();
+                                setBookMarkCh(
+                                  subjectList_book.map((_, index) => {
+                                    return subjectList_book[index].bookMark;
+                                  }),
+                                );
+                              }}
+                            />
+                            <PTitle text={'과목 북마크'} />
+                            <BookMarkTitle>
+                              <BookLeft2>&#9989;</BookLeft2>
+                              <BookRight2>과목</BookRight2>
+                            </BookMarkTitle>
+                            <ListWrap>
+                              <BookmarkList
+                                height={300}
+                                itemCount={subjectList_book.length}
+                                itemSize={30}
+                                width={370}
+                              >
+                                {subjectRow}
+                              </BookmarkList>
+                            </ListWrap>
+                            <ButtonDiv>
+                              <PopupButton_solo
+                                type="button"
+                                text={'저장'}
+                                onClick={async () => {
+                                  const fucResult = await onClickBookMark();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              />
+                            </ButtonDiv>
+                          </PBody>
+                        )}
+                      </PopupCustom>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom5
+                        trigger={<PopButton_100 text={'만들기'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose
+                              onClick={() => {
+                                close();
+                                subjectClear();
+                              }}
+                            />
+                            <PTitle text={'과목 만들기'} />
+                            <InputWrapper>
+                              <Input
+                                placeholder={'과목 이름 (예: 국어 or 독서)'}
+                                {...subjectName}
+                              />
+                            </InputWrapper>
+                            <ColorWrapper>
+                              <SubTitle text={'색상 선택'} />
+                              <SwatchesPicker
+                                color={subjectColor}
+                                onChangeComplete={handleChangeComplete}
+                              />
+                            </ColorWrapper>
+                            <ButtonDiv>
+                              <PopupButton_solo
+                                type="button"
+                                text={'추가'}
+                                onClick={async () => {
+                                  const fucResult = await onSubmitAdd();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              />
+                            </ButtonDiv>
+                          </PBody>
+                        )}
+                      </PopupCustom5>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom2
+                        trigger={<PopButton_100 text={'수정'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose
+                              onClick={() => {
+                                subjectClear();
+                                close();
+                              }}
+                            />
+                            <PTitle text={'과목 수정'} />
+                            <SelectWrapDiv2>
+                              <SubTitle text={`과목:　`} />
+                              <SelectWrapper2>
+                                <Select
+                                  {...mySubjectList}
+                                  id={'mySubjectList_id'}
+                                />
+                              </SelectWrapper2>
+                              <RedButtonWrap>
+                                <Button_red
+                                  type={'button'}
+                                  text={'불러오기'}
+                                  onClick={subjectLoad}
+                                />
+                              </RedButtonWrap>
+                            </SelectWrapDiv2>
+                            <InputWrapper>
+                              <Input
+                                placeholder={'과목 이름 (예: 국어 or 독서)'}
+                                {...subjectName}
+                              />
+                            </InputWrapper>
+                            <ColorWrapper>
+                              <SubTitle text={'색상 선택'} />
+                              <SwatchesPicker
+                                color={subjectColor}
+                                onChangeComplete={handleChangeComplete}
+                              />
+                            </ColorWrapper>
+                            <ButtonDiv>
+                              <PopupButton_solo
+                                type="button"
+                                text={'수정'}
+                                onClick={async () => {
+                                  const fucResult = await onSubmitEdit();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              />
+                            </ButtonDiv>
+                          </PBody>
+                        )}
+                      </PopupCustom2>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom3
+                        trigger={<PopButton_100 text={'삭제'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose
+                              onClick={() => {
+                                close();
+                                subjectClear();
+                              }}
+                            />
+                            <PTitle text={'과목 삭제'} />
+                            <SelectWrapDiv>
+                              <SelectWrapper>
+                                <Select
+                                  {...mySubjectList}
+                                  id={'mySubject_id'}
+                                />
+                              </SelectWrapper>
+                            </SelectWrapDiv>
+                            <ButtonDiv>
+                              <PopupButton_solo
+                                type="button"
+                                text={'삭제'}
+                                onClick={async () => {
+                                  const fucResult = await onSubmitDelete();
+                                  if (fucResult) {
+                                    close();
+                                  }
+                                }}
+                              />
+                            </ButtonDiv>
+                          </PBody>
+                        )}
+                      </PopupCustom3>
+                    </SubjectButtonDiv>
+                  </ThreeButtonWrap>
+                </PBody>
+              )}
+            </PopupCustom4>
+            <SaveButtonDiv>
+              <Button_blue
+                text={'+'}
+                fontSize={'25px'}
+                onClick={() => {
+                  setMakeView(true);
+                  // onClickScheduleSave();
+                }}
+              />
+            </SaveButtonDiv>
+          </SelectDiv>
+        )}
       </PanelWrap>
       <TUICalendar
         ref={cal}
+        isReadOnly={!isSelf}
         height={scheHeight}
         useCreationPopup={false}
         useDetailPopup={false}
@@ -2578,24 +2587,26 @@ export default ({
               </p>
               <p>{infoSche.state}</p>
             </InfoWrap>
-            <ButtonDiv style={{ marginTop: '20px' }}>
-              <PopupButton
-                type="button"
-                onClick={async () => {
-                  setModiView(true);
-                  setInfoView(false);
-                  inputSchedule(infoSche);
-                }}
-                text={'수정'}
-              />
-              <PopupButton
-                type="button"
-                onClick={() => onDeleteSche(infoSche.id)}
-                bgColor={'#DB4437'}
-                color={'black'}
-                text={'삭제'}
-              />
-            </ButtonDiv>
+            {isSelf && (
+              <ButtonDiv style={{ marginTop: '20px' }}>
+                <PopupButton
+                  type="button"
+                  onClick={async () => {
+                    setModiView(true);
+                    setInfoView(false);
+                    inputSchedule(infoSche);
+                  }}
+                  text={'수정'}
+                />
+                <PopupButton
+                  type="button"
+                  onClick={() => onDeleteSche(infoSche.id)}
+                  bgColor={'#DB4437'}
+                  color={'black'}
+                  text={'삭제'}
+                />
+              </ButtonDiv>
+            )}
           </CustomPopup2>
         </BlackBack>
       )}

@@ -13,7 +13,7 @@ export default {
   classicBlue: '#0F4C82',
   classicGray: '#DDE7E9',
   darkBlueColor: '#003569',
-  inputGray: '#f1f0ef',
+  inputGray: '#efefef',
   boxBorder: '1px solid #e6e6e6',
   borderRadius: '4px',
   whiteBox: `border:${BOX_BORDER};

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
 
 const getSize = (size) => {
@@ -30,15 +30,26 @@ const Container = styled.div`
   border-radius: 50%;
 `;
 
-const Container2 = styled.div`
-  cursor: ${(props) => props.cursor};
-  ${(props) => getSize(props.size)}
-  background-image: url(${(props) => props.url});
-  background-size: cover;
-  background-position: center center;
-  border-radius: 50%;
-  border: 4px solid ${(props) => (props.exist ? '#7ba9eb' : 'white')};
-  box-shadow: 0 0 0 1px #c7c7c7;
+const Border = styled(Container)`
+  border: 4px solid ${(props) => (props.exist ? '#7BD5F5' : 'white')};
+  box-shadow: 0 0 0 0 #c7c7c7;
+`;
+
+const Animation = keyframes`
+    0%{
+        border:4px solid #7BD5F5;
+    }
+    50%{
+        border:4px solid white;
+    }
+    100%{
+        border:4px solid #7BD5F5;
+    }
+`;
+
+const Border_Ani = styled(Border)`
+  animation: ${Animation} 2s linear;
+  animation-iteration-count: infinite;
 `;
 
 const Avatar = ({
@@ -49,10 +60,22 @@ const Avatar = ({
   cursor = 'normal',
   confirmSet = false,
   exist = false,
+  aniBool = false,
 }) => {
-  if (confirmSet) {
+  if (confirmSet && aniBool) {
     return (
-      <Container2
+      <Border_Ani
+        className={className}
+        size={size}
+        url={url}
+        onClick={onClick}
+        cursor={cursor}
+        exist={exist}
+      />
+    );
+  } else if (confirmSet) {
+    return (
+      <Border
         className={className}
         size={size}
         url={url}

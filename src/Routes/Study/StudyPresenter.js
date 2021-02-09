@@ -479,10 +479,11 @@ const DDayDiv = styled.div`
 
 const DName = styled.div`
   font-size: 14px;
+  margin: 5px 0 5px 0;
 `;
 
 const DNumber = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   color: ${(props) => props.theme.classicBlue};
 `;
 
@@ -668,12 +669,21 @@ const IndiWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 5px 0 5px;
+  padding: 0 5px 0 5px;
   span {
-    text-align: center;
-    margin-top: 5px;
-    font-size: 12px;
-    font-weight: normal;
+    :first-child {
+      text-align: center;
+      font-size: 12px;
+      color: ${(props) => props.theme.classicBlue};
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    :nth-child(3) {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 12px;
+      font-weight: normal;
+    }
   }
 `;
 
@@ -683,8 +693,8 @@ const AddDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  width: 60px;
-  height: 50px;
+  width: 61px;
+  height: 65px;
   margin-bottom: 25px;
 `;
 
@@ -699,7 +709,7 @@ const PofileLink = styled(Link)`
 
 const BlackBack = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 13;
   width: 100%;
   height: 100%;
   background-color: black;
@@ -708,7 +718,7 @@ const BlackBack = styled.div`
 
 const CustomPopup = styled.div`
   position: absolute;
-  z-index: 11;
+  z-index: 14;
   width: 420px;
   height: 410px;
   display: flex;
@@ -798,8 +808,6 @@ let nextScheduleIndex = -1;
 let nextTitle1 = '';
 let nextTitle2 = '';
 let next_TimeText = '';
-let break_title = '';
-let break_time = '';
 let break_boolean = false;
 let break_countdown = 0;
 let target_min = 0;
@@ -809,10 +817,11 @@ let total_hour = 0;
 //영상처리
 let time = new Date().getTime();
 let interval = 0;
-let decision = [true, true, true, true, true, true];
+let decision = [false, false, false, false, false, false];
 let detection_area = Array.from({ length: 18 }, (_, i) => i + 1);
 let finalDecision = 1; //1.공부 2. 부재중 3. 잠
 let timeCount = 0;
+let decisionCount = 0;
 
 export default ({
   myInfoData,
@@ -850,6 +859,8 @@ export default ({
   setReCount,
   isAm,
   setIsAm,
+  aniBool,
+  setAniBool,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1787,14 +1798,20 @@ export default ({
       return obj;
     }, {});
 
-    if (temp.true > 2) {
-      finalDecision = 1; //공부
-      // console.log(finalDecision);
-      setStudyBool(true);
-    } else {
-      finalDecision = 2; //부재중
-      // console.log(finalDecision);
-      setStudyBool(false);
+    // 아바타 보더 깜빡임 멈추게 하기위한 카운트
+    decisionCount = decisionCount + 1;
+    if (decisionCount > 1) {
+      if (temp.true === 1) {
+        setAniBool(true);
+      } else if (temp.true >= 2) {
+        finalDecision = 1; //공부
+        setStudyBool(true);
+        setAniBool(false);
+      } else {
+        finalDecision = 2; //부재중
+        setStudyBool(false);
+        setAniBool(false);
+      }
     }
   };
   useInterval(async () => {
@@ -1994,38 +2011,44 @@ export default ({
         moment(startPoint_next).format('hh:mma') +
         '~' +
         moment(endPoint_next).format('hh:mma');
-    } else {
-      nextTitle1 = '다음 스케줄';
-      nextTitle2 = '없음';
-      next_TimeText = '';
-    }
-    // breakTime 계산
-    if (nextScheduleIndex > 0) {
-      const startPoint_break = new Date(
-        scheduleList_selectDay[nextScheduleIndex - 1].end,
-      );
-      const endPoint_break = new Date(
-        scheduleList_selectDay[nextScheduleIndex].start,
-      );
-      const nowTime_break = new Date();
-      if (nowTime_break >= startPoint_break && nowTime_break < endPoint_break) {
+      // breakTime 계산
+      if (nowScheduleIndex === -1) {
+        const nowTime_break = new Date();
+        const endPoint_break = new Date(
+          scheduleList_selectDay[nextScheduleIndex].start,
+        );
         break_boolean = true;
-        break_title = '휴식 시간';
         break_countdown =
           endPoint_break.getTime() - nowTime_break.getTime() + 60000;
       } else {
         break_boolean = false;
-        break_title = '다음 휴식 시간';
       }
-      break_time =
-        moment(startPoint_break).format('hh:mma') +
-        '~' +
-        moment(endPoint_break).format('hh:mma');
     } else {
-      break_title = '다음 휴식';
-      break_time = '없음';
+      nextTitle1 = '다음 스케줄';
+      nextTitle2 = '없음';
+      next_TimeText = '';
       break_boolean = false;
     }
+    // breakTime 계산
+    // if (nextScheduleIndex > 0) {
+    //   const startPoint_break = new Date(
+    //     scheduleList_selectDay[nextScheduleIndex - 1].end,
+    //   );
+    //   const endPoint_break = new Date(
+    //     scheduleList_selectDay[nextScheduleIndex].start,
+    //   );
+    //   const nowTime_break = new Date();
+    //   if (nowTime_break >= startPoint_break && nowTime_break < endPoint_break) {
+    //     break_boolean = true;
+    //     break_countdown =
+    //       endPoint_break.getTime() - nowTime_break.getTime() + 60000;
+    //   } else {
+    //     break_boolean = false;
+    //   }
+    // } else {
+    //   break_boolean = false;
+    // }
+    // if (nowScheduleIndex )
 
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
@@ -2290,9 +2313,14 @@ export default ({
     if (index === 0) {
       return (
         <IndiWrap style={style}>
+          <span>
+            {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
+            {total_min.length === 1 ? '0' + total_min : total_min}
+          </span>
           <Avatar
             size="md"
             url={myInfoData.avatar}
+            aniBool={aniBool}
             confirmSet={true}
             exist={studyBool}
           />
@@ -2313,8 +2341,17 @@ export default ({
     } else {
       const index2 = index - 1;
       const indiUser = myInfoData.withFollowing[index2];
+      let exist_min = myInfoData.withFollowing[index2].todayTime.existTime / 60;
+      let last_hour = String(Math.floor(exist_min / 60));
+      exist_min = exist_min - last_hour * 60;
+      let last_min = String(Math.floor(exist_min));
+
       return (
         <IndiWrap style={style}>
+          <span>
+            {last_hour.length === 1 ? '0' + last_hour : last_hour} :{' '}
+            {last_min.length === 1 ? '0' + last_min : last_min}
+          </span>
           <Avatar
             size="md"
             url={indiUser.avatar}
@@ -2574,7 +2611,7 @@ export default ({
                             />
                           </SetContentBox>
                           <SetContentBox>
-                            현재 스케줄 부재시 시간 기록 :　
+                            현재 스케줄 있을 때만 시간기록 :　
                             <Switch
                               on={true}
                               off={false}
@@ -2667,8 +2704,7 @@ export default ({
               </DonutWrap>
               <TotalTimeWrap>
                 <TotalNumber>
-                  학습 시간
-                  <br />
+                  <p style={{ marginBottom: '5px' }}>학습 시간</p>
                   <span>
                     {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
                     {total_min.length === 1 ? '0' + total_min : total_min}
@@ -2741,27 +2777,6 @@ export default ({
                   )}
                 </TimeIn>
               </NextTimeDiv>
-              {/* <BreakTimeDiv>
-                  <IconWrap>
-                    <Coffee />
-                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>휴식</div>
-                  </IconWrap>
-                  <TimeIn>
-                    <p>{break_title}</p>
-                    <p>{break_time}</p>
-                    {break_boolean && (
-                      <Countdown
-                        date={Date.now() + break_countdown}
-                        renderer={({ hours, minutes }) => (
-                          <span style={{ color: 'red' }}>
-                            {hours > 0 && <span>{hours}시간 </span>}
-                            {minutes}분 남음
-                          </span>
-                        )}
-                      />
-                    )}
-                  </TimeIn>
-                </BreakTimeDiv> */}
             </NowNextWrap>
           </GraphDiv>
         </Wrapper>

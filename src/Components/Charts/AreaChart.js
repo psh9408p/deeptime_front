@@ -1,60 +1,52 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1, labels, title, title_y, dateRange }) => {
-  // const data_tmp = [
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  //   45,
-  //   50,
-  //   30,
-  //   35,
-  //   60,
-  //   10,
-  //   50,
-  //   35,
-  //   45,
-  //   45,
-  //   50,
-  //   10,
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  //   0,
-  // ];
+export default ({
+  data_1,
+  data_2,
+  labels,
+  legend,
+  title,
+  title_y,
+  dateRange,
+  max = 0,
+  stepSize,
+}) => {
+  const yTicks = {
+    beginAtZero: true,
+    min: 0,
+    stepSize,
+  };
+  if (max !== 0) {
+    yTicks.max = max;
+  }
 
   const chartConfig = {
     type: 'line',
     data: {
       labels,
       datasets: [
-        // {
-        //   label: "수업",
-        //   data: dat,
-        //   backgroundColor: ["rgba(255, 255, 255, 0.1)"],
-        //   borderColor: ["rgba(255, 255, 255, 0.2)"],
-        //   pointBackgroundColor: ["rgba(255, 255, 255, 0.2)"],
-        //   pointBorderColor: ["rgba(255, 255, 255, 0.2)"],
-        //   pointRadius: 0,
-        // },
         {
-          label: 'Deep Time',
+          label: legend[0],
           data: data_1,
           backgroundColor: ['rgba(123, 169, 235, 0)'],
           borderColor: ['#0F4C82'],
+          pointRadius: 3,
+        },
+        {
+          label: legend[1],
+          data: data_2,
+          backgroundColor: ['rgba(123, 169, 235, 0)'],
+          borderColor: ['rgba(123, 213, 245, 0.5)'],
+          // pointBackgroundColor: ["rgba(255, 255, 255, 0.2)"],
+          // pointBorderColor: ["rgba(255, 255, 255, 0.2)"],
           pointRadius: 3,
         },
       ],
     },
     options: {
       legend: {
-        display: false,
+        display: true,
       },
       responsive: true,
       hoverMode: 'index',
@@ -122,9 +114,7 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
               display: true,
               labelString: title_y,
             },
-            ticks: {
-              beginAtZero: true,
-            },
+            ticks: yTicks,
           },
         ],
       },
@@ -141,14 +131,17 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
     }
   }, [chartContainer]);
 
-  const updateDataset = (datasetIndex, newData) => {
-    chartInstance.data.datasets[datasetIndex].data = newData;
+  const updateDataset = (newArray) => {
+    // console.log(newArray, chartInstance);
+    for (let i = 0; i < newArray.length; i++) {
+      chartInstance.data.datasets[i].data = newArray[i];
+    }
+    chartInstance.data.labels = labels;
     chartInstance.update();
   };
 
   const AreaChartUpdate = () => {
-    updateDataset(0, data_1);
-    // updateDataset(0, data_tmp);
+    updateDataset([data_1, data_2]);
   };
 
   const isFirstRun = useRef(true);
@@ -158,7 +151,7 @@ export default ({ data_1, labels, title, title_y, dateRange }) => {
       return;
     }
     AreaChartUpdate();
-  }, [data_1]);
+  }, [data_1, data_2, labels]);
 
   return <canvas ref={chartContainer} />;
 };

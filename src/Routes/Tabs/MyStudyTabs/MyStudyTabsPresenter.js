@@ -11,7 +11,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
     // stopPolling();
     return (
       <MySchedule
-        myInfoData={myInfoData}
+        myInfoData={myInfoData.me}
         myInfoRefetch={myInfoRefetch}
         networkStatus={networkStatus}
       />
@@ -20,7 +20,7 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
     // startPolling(Number(refreshTerm.value) * 1000);
     return (
       <MyStatistics
-        myInfoData={myInfoData}
+        myInfoData={myInfoData.me}
         myInfoRefetch={myInfoRefetch}
         networkStatus={networkStatus}
       />

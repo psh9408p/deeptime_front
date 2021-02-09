@@ -97,6 +97,24 @@ export const Play = ({ onClick, margin = '0' }) => (
   </svg>
 );
 
+export const Play_black = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12Z"
+      fill="black"
+    />
+    <rect width="12" height="24" fill="black" />
+    <path d="M17 12L8 17V7L17 12Z" fill="#0F4C82" />
+    <path d="M17 12L8 17V7L17 12Z" fill="#0F4C82" />
+  </svg>
+);
+
 export const HeartEmpty = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

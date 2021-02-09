@@ -1,8 +1,14 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
-import SideNav, { NavItem, NavText } from '@trendmicro/react-sidenav';
+import SideNav, { NavItem, NavText, NavIcon } from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
+import {
+  Person_white,
+  People_white,
+  List,
+  Play_black,
+} from '../Components/Icons';
 
 const TmpDiv = styled.div`
   display: flex;
@@ -16,6 +22,7 @@ const TmpDiv = styled.div`
 
 const SideWrap = styled(SideNav)`
   margin-top: 68px;
+  background-color: white !important;
   background-color: ${(props) => props.theme.classicBlue} !important;
   position: fixed !important;
 `;
@@ -93,6 +100,14 @@ const ScrollPoint = styled.div`
   height: 68px;
 `;
 
+const IconWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
+
 export default () => {
   let history = useHistory();
   let location = useLocation();
@@ -124,54 +139,110 @@ export default () => {
           }
         }}
       >
-        <SideNav.Toggle />
-        <SideNav.Nav defaultSelected="schedule">
-          <NavItem eventKey="schedule">
+        <SideNav.Toggle style={{ backgroundColor: '#0F4C82' }} />
+        <SideNav.Nav defaultSelected="play">
+          <NavItem eventKey="play">
+            <NavIcon>
+              <IconWrap>
+                <Play_black />
+              </IconWrap>
+            </NavIcon>
             <NavText>
-              <NavTextWrap>스케줄 관리</NavTextWrap>
+              <NavTextWrap>Play</NavTextWrap>
             </NavText>
             <NavItem
-              eventKey="schedule"
+              eventKey="play"
               onClick={() => {
                 scrollToRef(0);
               }}
             >
-              <NavText>[TOP] 스케줄 관리</NavText>
+              <NavText>Play 소개</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="play"
               onClick={() => {
                 scrollToRef(1);
               }}
             >
-              <NavText>스케줄러 찾기</NavText>
+              <NavText>기본 정보</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="play"
               onClick={() => {
                 scrollToRef(2);
               }}
             >
-              <NavText>스케줄러 기본 설명</NavText>
+              <NavText>동행자</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="play"
               onClick={() => {
                 scrollToRef(3);
               }}
             >
-              <NavText>과목 북마크(즐겨찾기)</NavText>
+              <NavText>컨트롤 패널</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="play"
               onClick={() => {
                 scrollToRef(4);
               }}
             >
-              <NavText>과목 추가</NavText>
+              <NavText>기본값 세팅</NavText>
+            </NavItem>
+          </NavItem>
+
+          <NavItem eventKey="my">
+            <NavIcon>
+              <IconWrap>
+                <Person_white />
+              </IconWrap>
+            </NavIcon>
+            <NavText>
+              <NavTextWrap>나의 학습</NavTextWrap>
+            </NavText>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(0);
+              }}
+            >
+              <NavText>나의 학습 소개</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(1);
+              }}
+            >
+              <NavText>------[나의 스케줄]------</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(2);
+              }}
+            >
+              <NavText>기본 정보</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(3);
+              }}
+            >
+              <NavText>과목 북마크</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(4);
+              }}
+            >
+              <NavText>과목 만들기</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
               onClick={() => {
                 scrollToRef(5);
               }}
@@ -179,7 +250,7 @@ export default () => {
               <NavText>과목 수정</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="my"
               onClick={() => {
                 scrollToRef(6);
               }}
@@ -187,15 +258,15 @@ export default () => {
               <NavText>과목 삭제</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="my"
               onClick={() => {
                 scrollToRef(7);
               }}
             >
-              <NavText>스케줄 추가</NavText>
+              <NavText>스케줄 만들기</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="my"
               onClick={() => {
                 scrollToRef(8);
               }}
@@ -203,94 +274,148 @@ export default () => {
               <NavText>스케줄 수정</NavText>
             </NavItem>
             <NavItem
-              eventKey="schedule"
+              eventKey="my"
               onClick={() => {
                 scrollToRef(9);
               }}
             >
               <NavText>스케줄 삭제</NavText>
             </NavItem>
-          </NavItem>
-          <NavItem eventKey="statistics">
-            <NavText>
-              <NavTextWrap>학습 통계</NavTextWrap>
-            </NavText>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(0);
+                scrollToRef(10);
               }}
             >
-              <NavText>[TOP] 학습 통계</NavText>
+              <NavText>스케줄 복사</NavText>
             </NavItem>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(1);
+                scrollToRef(11);
               }}
             >
-              <NavText>학습 통계 찾기</NavText>
+              <NavText>기본값 세팅</NavText>
             </NavItem>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(2);
+                scrollToRef(12);
               }}
             >
-              <NavText>통계 기본 설명</NavText>
+              <NavText>-------[나의 통계]-------</NavText>
             </NavItem>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(3);
+                scrollToRef(13);
+              }}
+            >
+              <NavText>기본 정보</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(14);
+              }}
+            >
+              <NavText>총 학습 시간</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(15);
+              }}
+            >
+              <NavText>기간별 학습 시간</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="my"
+              onClick={() => {
+                scrollToRef(16);
               }}
             >
               <NavText>과목별 학습 시간</NavText>
             </NavItem>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(4);
+                scrollToRef(17);
               }}
             >
-              <NavText>시간대별 학습 시간</NavText>
+              <NavText>과목별 학습 시간 비율</NavText>
             </NavItem>
             <NavItem
-              eventKey="statistics"
+              eventKey="my"
               onClick={() => {
-                scrollToRef(5);
+                scrollToRef(18);
               }}
             >
-              <NavText>학습 성취도</NavText>
-            </NavItem>
-            <NavItem
-              eventKey="statistics"
-              onClick={() => {
-                scrollToRef(6);
-              }}
-            >
-              <NavText>과목별 시간 비율</NavText>
-            </NavItem>
-            <NavItem
-              eventKey="statistics"
-              onClick={() => {
-                scrollToRef(7);
-              }}
-            >
-              <NavText>자습&amp;강의 시간 비율</NavText>
+              <NavText>자습&amp;강의 학습 시간 비율</NavText>
             </NavItem>
           </NavItem>
-          {/* <NavItem eventKey="manager">
+
+          <NavItem eventKey="group">
+            <NavIcon>
+              <IconWrap>
+                <People_white />
+              </IconWrap>
+            </NavIcon>
             <NavText>
-              <NavTextWrap>관리자</NavTextWrap>
+              <NavTextWrap>그룹</NavTextWrap>
             </NavText>
-            <NavItem eventKey="manager/linechart">
-              <NavText>Line Chart</NavText>
+            <NavItem
+              eventKey="group"
+              onClick={() => {
+                alert('그룹 서비스 준비중...');
+              }}
+            >
+              <NavText>준비중...</NavText>
             </NavItem>
-            <NavItem eventKey="charts/barchart">
-              <NavText>Bar Chart</NavText>
+          </NavItem>
+
+          <NavItem eventKey="feed">
+            <NavIcon>
+              <IconWrap>
+                <List />
+              </IconWrap>
+            </NavIcon>
+            <NavText>
+              <NavTextWrap>게시판</NavTextWrap>
+            </NavText>
+            <NavItem
+              eventKey="feed"
+              onClick={() => {
+                scrollToRef(0);
+              }}
+            >
+              <NavText>게시판 소개</NavText>
             </NavItem>
-          </NavItem> */}
+            <NavItem
+              eventKey="feed"
+              onClick={() => {
+                scrollToRef(1);
+              }}
+            >
+              <NavText>기본 정보</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="feed"
+              onClick={() => {
+                scrollToRef(2);
+              }}
+            >
+              <NavText>게시물 만들기</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="feed"
+              onClick={() => {
+                scrollToRef(3);
+              }}
+            >
+              <NavText>게시물 수정</NavText>
+            </NavItem>
+          </NavItem>
         </SideNav.Nav>
       </SideWrap>
       <TmpDiv>

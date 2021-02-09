@@ -34,7 +34,8 @@ export default () => {
 
   const todolistName = useInput('');
   const scheduleTitle = useInput('');
-  const [studyBool, setStudyBool] = useState(false);
+  const [studyBool, setStudyBool] = useState(true);
+  const [aniBool, setAniBool] = useState(true);
   const [newTodoView, setNewTodoView] = useState(false);
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
@@ -145,6 +146,8 @@ export default () => {
         setReCount={setReCount}
         isAm={isAm}
         setIsAm={setIsAm}
+        aniBool={aniBool}
+        setAniBool={setAniBool}
       />
     );
   }
