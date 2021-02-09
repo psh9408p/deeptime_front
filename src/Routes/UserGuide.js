@@ -9,6 +9,7 @@ import {
   List,
   Play_black,
 } from '../Components/Icons';
+import PlayGuide from './GuideList/PlayGuide';
 
 const TmpDiv = styled.div`
   display: flex;
@@ -114,11 +115,14 @@ export default () => {
   const pageName = location.pathname.split('/userguide/')[1];
 
   // 클릭 스크롤 정의
+  const playRef = useRef([]);
   const focusTarget = useRef([]);
   const focusTarget2 = useRef([]);
   const scrollToRef = (value) => {
     let selectRef = null;
-    if (pageName === 'schedule') {
+    if (pageName === 'play') {
+      selectRef = playRef;
+    } else if (pageName === 'schedule') {
       selectRef = focusTarget;
     } else if (pageName === 'statistics') {
       selectRef = focusTarget2;
@@ -418,7 +422,9 @@ export default () => {
           </NavItem>
         </SideNav.Nav>
       </SideWrap>
+
       <TmpDiv>
+        {pageName === 'play' && <PlayGuide playRef={playRef} />}
         {pageName === 'schedule' && (
           <>
             <ScrollPoint ref={(el) => (focusTarget.current[0] = el)} />
