@@ -1280,7 +1280,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'총 Deep Time'}
+                    title={'총 학습 시간'}
                     labels={['학습', '목표']}
                   />
                 </ChartWrap_Donut>
@@ -1321,8 +1321,8 @@ export default ({
                     legend={['오늘', '일주일 전']}
                     max={60}
                     stepSize={10}
-                    title={'시간대별 Deep Time'}
-                    title_y={'Deep Time(분)'}
+                    title={'시간대별 학습 시간'}
+                    title_y={'시간(분)'}
                     dateRange={'today'}
                   />
                 </ChartWrap>
@@ -1343,7 +1343,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'학습'}
                     label_2={'목표'}
-                    title={'과목별 Deep Time'}
+                    title={'과목별 학습 시간'}
                     title_x={'시간(분)'}
                     dateRange={'today'}
                   />
@@ -1364,8 +1364,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 목표 Deep Time 비율'
-                        : '과목별 학습 Deep Time 비율'
+                        ? '과목별 목표 시간 비율'
+                        : '과목별 학습 시간 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1399,8 +1399,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 시간 ${myState[0]}&${myState[1]} 비율`
+                        : `학습 시간 ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
@@ -1443,7 +1443,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'총 Deep Time'}
+                    title={'총 학습 시간'}
                     labels={['학습', '목표']}
                   />
                 </ChartWrap_Donut>
@@ -1483,7 +1483,7 @@ export default ({
                     stepSize={1}
                     labels={['일', '월', '화', '수', '목', '금', '토']}
                     legend={['이번주', '저번주']}
-                    title={'요일별 Deep Time'}
+                    title={'요일별 학습 시간'}
                     title_y={'시간(시)'}
                     dateRange={'week'}
                   />
@@ -1505,7 +1505,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'학습'}
                     label_2={'목표'}
-                    title={'과목별 Deep Time'}
+                    title={'과목별 학습 시간'}
                     title_x={'시간(시)'}
                     dateRange={'week'}
                   />
@@ -1526,8 +1526,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 목표 Deep Time 비율'
-                        : '과목별 학습 Deep Time 비율'
+                        ? '과목별 목표 시간 비율'
+                        : '과목별 학습 시간 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1561,8 +1561,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 시간 ${myState[0]}&${myState[1]} 비율`
+                        : `학습 시간 ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}
@@ -1605,7 +1605,7 @@ export default ({
                   <DonutChart
                     data_1={donutData_1}
                     data_2={donutData_2}
-                    title={'총 Deep Time'}
+                    title={'총 학습 시간'}
                     labels={['학습', '목표']}
                   />
                 </ChartWrap_Donut>
@@ -1645,7 +1645,7 @@ export default ({
                     stepSize={1}
                     labels={daysOfMonth}
                     legend={['이번달', '저번달']}
-                    title={'일별 Deep Time'}
+                    title={'일별 학습 시간'}
                     title_y={'시간(시)'}
                     dateRange={'month'}
                   />
@@ -1667,7 +1667,7 @@ export default ({
                     labels={schedule_label}
                     label_1={'학습'}
                     label_2={'목표'}
-                    title={'과목별 Deep Time'}
+                    title={'과목별 학습 시간'}
                     title_x={'시간(시)'}
                     dateRange={'month'}
                   />
@@ -1688,8 +1688,8 @@ export default ({
                     labels={schedule_label}
                     title={
                       selectPercent
-                        ? '과목별 목표 Deep Time 비율'
-                        : '과목별 학습 Deep Time 비율'
+                        ? '과목별 목표 시간 비율'
+                        : '과목별 학습 시간 비율'
                     }
                     updateBoolean={selectPercent}
                   />
@@ -1723,8 +1723,8 @@ export default ({
                   <RowBarChart_selfPercent
                     title={
                       selectPercent2
-                        ? `목표 Deep Time ${myState[0]}&${myState[1]} 비율`
-                        : `학습 Deep Time ${myState[0]}&${myState[1]} 비율`
+                        ? `목표 시간 ${myState[0]}&${myState[1]} 비율`
+                        : `학습 시간 ${myState[0]}&${myState[1]} 비율`
                     }
                     data_1={selectPercent2 ? self_percentT : self_percent}
                     data_2={selectPercent2 ? lecture_percentT : lecture_percent}

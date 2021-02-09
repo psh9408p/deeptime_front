@@ -808,8 +808,6 @@ let nextScheduleIndex = -1;
 let nextTitle1 = '';
 let nextTitle2 = '';
 let next_TimeText = '';
-let break_title = '';
-let break_time = '';
 let break_boolean = false;
 let break_countdown = 0;
 let target_min = 0;
@@ -2013,38 +2011,44 @@ export default ({
         moment(startPoint_next).format('hh:mma') +
         '~' +
         moment(endPoint_next).format('hh:mma');
-    } else {
-      nextTitle1 = '다음 스케줄';
-      nextTitle2 = '없음';
-      next_TimeText = '';
-    }
-    // breakTime 계산
-    if (nextScheduleIndex > 0) {
-      const startPoint_break = new Date(
-        scheduleList_selectDay[nextScheduleIndex - 1].end,
-      );
-      const endPoint_break = new Date(
-        scheduleList_selectDay[nextScheduleIndex].start,
-      );
-      const nowTime_break = new Date();
-      if (nowTime_break >= startPoint_break && nowTime_break < endPoint_break) {
+      // breakTime 계산
+      if (nowScheduleIndex === -1) {
+        const nowTime_break = new Date();
+        const endPoint_break = new Date(
+          scheduleList_selectDay[nextScheduleIndex].start,
+        );
         break_boolean = true;
-        break_title = '휴식 시간';
         break_countdown =
           endPoint_break.getTime() - nowTime_break.getTime() + 60000;
       } else {
         break_boolean = false;
-        break_title = '다음 휴식 시간';
       }
-      break_time =
-        moment(startPoint_break).format('hh:mma') +
-        '~' +
-        moment(endPoint_break).format('hh:mma');
     } else {
-      break_title = '다음 휴식';
-      break_time = '없음';
+      nextTitle1 = '다음 스케줄';
+      nextTitle2 = '없음';
+      next_TimeText = '';
       break_boolean = false;
     }
+    // breakTime 계산
+    // if (nextScheduleIndex > 0) {
+    //   const startPoint_break = new Date(
+    //     scheduleList_selectDay[nextScheduleIndex - 1].end,
+    //   );
+    //   const endPoint_break = new Date(
+    //     scheduleList_selectDay[nextScheduleIndex].start,
+    //   );
+    //   const nowTime_break = new Date();
+    //   if (nowTime_break >= startPoint_break && nowTime_break < endPoint_break) {
+    //     break_boolean = true;
+    //     break_countdown =
+    //       endPoint_break.getTime() - nowTime_break.getTime() + 60000;
+    //   } else {
+    //     break_boolean = false;
+    //   }
+    // } else {
+    //   break_boolean = false;
+    // }
+    // if (nowScheduleIndex )
 
     // 스케줄 별 그래프 계산
     let resultArray_schedule = []; // exist 타임 용
@@ -2607,7 +2611,7 @@ export default ({
                             />
                           </SetContentBox>
                           <SetContentBox>
-                            현재 스케줄 부재시 시간 기록 :　
+                            현재 스케줄 있을 때만 시간기록 :　
                             <Switch
                               on={true}
                               off={false}
@@ -2773,27 +2777,6 @@ export default ({
                   )}
                 </TimeIn>
               </NextTimeDiv>
-              {/* <BreakTimeDiv>
-                  <IconWrap>
-                    <Coffee />
-                    <div style={{ fontSize: 13, fontWeight: 'bold' }}>휴식</div>
-                  </IconWrap>
-                  <TimeIn>
-                    <p>{break_title}</p>
-                    <p>{break_time}</p>
-                    {break_boolean && (
-                      <Countdown
-                        date={Date.now() + break_countdown}
-                        renderer={({ hours, minutes }) => (
-                          <span style={{ color: 'red' }}>
-                            {hours > 0 && <span>{hours}시간 </span>}
-                            {minutes}분 남음
-                          </span>
-                        )}
-                      />
-                    )}
-                  </TimeIn>
-                </BreakTimeDiv> */}
             </NowNextWrap>
           </GraphDiv>
         </Wrapper>

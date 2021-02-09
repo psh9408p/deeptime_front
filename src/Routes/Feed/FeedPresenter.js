@@ -232,7 +232,7 @@ export default ({
         </>
       ) : myTabs === 1 ? (
         <ContentBody onSubmit={onSubmit}>
-          <ContentTitle text={'게시물 작성'} />
+          <ContentTitle text={'게시물 만들기'} />
           <SubTitle>파일은 최대 3개 까지 업로드 가능</SubTitle>
           <ContentDiv>
             <ImgDrop

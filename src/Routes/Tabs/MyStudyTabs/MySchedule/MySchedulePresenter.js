@@ -2236,7 +2236,7 @@ export default ({
                     </SubjectButtonDiv>
                     <SubjectButtonDiv>
                       <PopupCustom5
-                        trigger={<PopButton_100 text={'추가'} />}
+                        trigger={<PopButton_100 text={'만들기'} />}
                         closeOnDocumentClick={false}
                         modal
                       >
@@ -2248,7 +2248,7 @@ export default ({
                                 subjectClear();
                               }}
                             />
-                            <PTitle text={'과목 추가'} />
+                            <PTitle text={'과목 만들기'} />
                             <InputWrapper>
                               <Input
                                 placeholder={'과목 이름 (예: 국어 or 독서)'}

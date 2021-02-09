@@ -160,13 +160,13 @@ export default ({ pageIndex, User, networkStatus }) => {
     );
   } else if (pageIndex === 2) {
     return (
-      <div>
+      <ContentWrap>
         <MySchedule
           myInfoData={User}
           networkStatus={networkStatus}
           isSelf={false}
         />
-      </div>
+      </ContentWrap>
     );
   }
 };

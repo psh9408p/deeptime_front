@@ -68,8 +68,7 @@ const LoggedInRoutes = () => {
   const location = useLocation();
   const pageName = location.pathname.split('/')[1];
   const { data: Mydata, loading, refetch: MyRefetch } = useQuery(MEPOSITION);
-
-  if (!loading && Mydata && Mydata.me) {
+  if (!loading) {
     userEmail = Mydata.me.email;
     if (Mydata.me.loginPosition === 'student') {
       // 학습을 제외한 페이지에서 채널톡 실행
@@ -91,7 +90,6 @@ const LoggedInRoutes = () => {
           },
         });
       }
-
       return (
         <Switch>
           <Route path="/study" component={Study} />
