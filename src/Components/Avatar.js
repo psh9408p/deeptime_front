@@ -31,19 +31,19 @@ const Container = styled.div`
 `;
 
 const Border = styled(Container)`
-  border: 4px solid ${(props) => (props.exist ? '#7BD5F5' : 'white')};
+  border: 4px solid ${(props) => (props.exist ? '#00BFFE' : 'white')};
   box-shadow: 0 0 0 0 #c7c7c7;
 `;
 
 const Animation = keyframes`
     0%{
-        border:4px solid #7BD5F5;
+        border:4px solid #00BFFE;
     }
     50%{
         border:4px solid white;
     }
     100%{
-        border:4px solid #7BD5F5;
+        border:4px solid #00BFFE;
     }
 `;
 
