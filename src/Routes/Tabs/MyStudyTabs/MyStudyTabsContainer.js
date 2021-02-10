@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Loader from '../../../Components/Loader';
 import MyStudyTabsPresenter from './MyStudyTabsPresenter';
-import { ME } from './MyStudyTabsQueries';
+import { ME, MY_SUBJECT } from './MyStudyTabsQueries';
 import { useQuery } from '@apollo/react-hooks';
 
 const LoaderWrapper = styled.div`
@@ -20,8 +20,19 @@ export default ({ pageIndex }) => {
   } = useQuery(ME, {
     notifyOnNetworkStatusChange: true,
   });
+  const {
+    data: subjectData,
+    loading: subjectLoading,
+    refetch: subjectRefetch,
+    networkStatus: subjectnetwork,
+  } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
 
-  if (networkStatus === 1) {
+  useEffect(() => {
+    myInfoRefetch();
+    subjectRefetch();
+  }, []);
+
+  if (networkStatus === 1 || subjectnetwork === 1) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -34,6 +45,9 @@ export default ({ pageIndex }) => {
         myInfoData={myInfoData}
         myInfoRefetch={myInfoRefetch}
         networkStatus={networkStatus}
+        subjectData={subjectData}
+        subjectRefetch={subjectRefetch}
+        subjectnetwork={subjectnetwork}
       />
     );
   }

@@ -88,3 +88,17 @@ export const ME = gql`
     }
   }
 `;
+
+export const MY_SUBJECT = gql`
+  query mySubject {
+    mySubject {
+      id
+      name
+      color
+      bgColor
+      dragBgColor
+      borderColor
+      bookMark
+    }
+  }
+`;

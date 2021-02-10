@@ -132,7 +132,13 @@ const ContentWrap = styled.div`
   width: 100%;
 `;
 
-export default ({ pageIndex, User, networkStatus }) => {
+export default ({
+  pageIndex,
+  User,
+  networkStatus,
+  subjectData,
+  subjectnetwork,
+}) => {
   if (pageIndex === 0) {
     return (
       <Posts>
@@ -164,6 +170,8 @@ export default ({ pageIndex, User, networkStatus }) => {
         <MySchedule
           myInfoData={User}
           networkStatus={networkStatus}
+          subjectList={subjectData.userSubject}
+          subjectnetwork={subjectnetwork}
           isSelf={false}
         />
       </ContentWrap>

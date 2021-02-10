@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import MyStatistics from './MyStatistics';
 import MySchedule from './MySchedule';
 
-export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
-  useEffect(() => {
-    myInfoRefetch();
-  }, []);
-
+export default ({
+  pageIndex,
+  myInfoData,
+  myInfoRefetch,
+  networkStatus,
+  subjectData,
+  subjectRefetch,
+  subjectnetwork,
+}) => {
   if (pageIndex === 0) {
     // stopPolling();
     return (
@@ -14,6 +18,9 @@ export default ({ pageIndex, myInfoData, myInfoRefetch, networkStatus }) => {
         myInfoData={myInfoData.me}
         myInfoRefetch={myInfoRefetch}
         networkStatus={networkStatus}
+        subjectList={subjectData.mySubject}
+        subjectRefetch={subjectRefetch}
+        subjectnetwork={subjectnetwork}
       />
     );
   } else if (pageIndex === 1) {

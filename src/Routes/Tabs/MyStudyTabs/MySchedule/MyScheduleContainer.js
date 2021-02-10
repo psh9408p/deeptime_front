@@ -38,6 +38,9 @@ export default ({
   myInfoRefetch,
   networkStatus,
   isSelf = true,
+  subjectList,
+  subjectRefetch,
+  subjectnetwork,
 }) => {
   const start_range = (value) => value >= 0 && value <= 23 && value % 1 === 0;
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
@@ -131,12 +134,6 @@ export default ({
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const [createScheMutation] = useMutation(CREATE_SCHEDULE);
   const [dragScheMutation] = useMutation(DRAG_SCHEDULE);
-  const {
-    data: subjectData,
-    loading: subjectLoading,
-    refetch: subjectRefetch,
-    networkStatus: subjectnetwork,
-  } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
   const {
     data: todolistData,
     loading: todolistLoading,
@@ -241,7 +238,7 @@ export default ({
         myData={myInfoData}
         myRefetch={myInfoRefetch}
         saveScheduleMutation={saveScheduleMutation}
-        subjectList={subjectData.mySubject}
+        subjectList={subjectList}
         subjectName={subjectName}
         todolistName={todolistName}
         subjectColor={subjectColor}

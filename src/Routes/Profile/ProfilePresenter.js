@@ -715,6 +715,7 @@ export default ({
           <ProfileTabs_other
             pageIndex={tabs_other.currentIndex}
             User={userData}
+            userRefetch={userRefetch}
             networkStatus={networkStatus}
           />
         </>
