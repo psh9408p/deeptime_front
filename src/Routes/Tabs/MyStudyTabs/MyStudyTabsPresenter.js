@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MyStatistics from './MyStatistics';
 import MySchedule from './MySchedule';
 
@@ -13,6 +13,10 @@ export default ({
 }) => {
   if (pageIndex === 0) {
     // stopPolling();
+    useEffect(() => {
+      myInfoRefetch();
+      subjectRefetch();
+    }, []);
     return (
       <MySchedule
         myInfoData={myInfoData.me}

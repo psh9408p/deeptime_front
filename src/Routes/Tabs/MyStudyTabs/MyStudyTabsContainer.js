@@ -27,11 +27,6 @@ export default ({ pageIndex }) => {
     networkStatus: subjectnetwork,
   } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
 
-  useEffect(() => {
-    myInfoRefetch();
-    subjectRefetch();
-  }, []);
-
   if (networkStatus === 1 || subjectnetwork === 1) {
     return (
       <LoaderWrapper>
