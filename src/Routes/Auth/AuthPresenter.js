@@ -8,7 +8,6 @@ import Button from '../../Components/Buttons/Button';
 import Button_gray from '../../Components/Buttons/Button_gray';
 import PopButton_auth from '../../Components/Buttons/PopButton_auth';
 import PopButton from '../../Components/Buttons/PopButton';
-import PopupButton from '../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import PopupClose from '../../Components/Buttons/PopupClose';
 import FatText from '../../Components/FatText';
@@ -202,11 +201,8 @@ const CheckLabel = styled.label`
   width: 100%;
 `;
 
-const CheckLabel2 = styled.label`
-  display: flex;
+const CheckLabel2 = styled(CheckLabel)`
   flex-direction: row;
-  align-items: center;
-  width: 100%;
 `;
 
 const TermButton = styled.button`
@@ -294,8 +290,6 @@ const PurposeContent = styled.div`
 export default ({
   setAction,
   action,
-  setAction2,
-  action2,
   studyGroup,
   studyGroup2,
   studyGroup3,
@@ -306,8 +300,6 @@ export default ({
   emailKey,
   phoneNumber,
   phoneKey,
-  organizationName,
-  detailAddress,
   onSubmit,
   password,
   password2,
@@ -327,7 +319,6 @@ export default ({
   sPhoneOnClick_findEmail,
   allClear,
   sEmailOnClick_findPassword,
-  managerSecret,
 }) => {
   const responseGoogle = async (response) => {
     const {
@@ -612,283 +603,6 @@ export default ({
                       </PBody>
                     )}
                   </PopupCustom2>
-                </CheckLabel>
-              </AllCheckDiv>
-              <JoinButtonDiv>
-                <Button text={'가입'} />
-              </JoinButtonDiv>
-            </form>
-            <GoogleLogin
-              clientId="1097644872887-t6iqbst952qs511f0kiu5a3sptiu72qb.apps.googleusercontent.com"
-              render={(renderProps) => (
-                <GoogleLoginButton
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                  align="center"
-                >
-                  <span style={{ fontSize: 16, fontWeight: 600 }}>
-                    Google에서 내 정보 불러오기
-                  </span>
-                </GoogleLoginButton>
-              )}
-              buttonText="Login"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              cookiePolicy={'single_host_origin'}
-            />
-            <FacebookLogin
-              appId="672262500184302"
-              autoLoad={false}
-              fields="first_name,last_name,email,picture"
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <FacebookLoginButton
-                  onClick={renderProps.onClick}
-                  align="center"
-                >
-                  <span style={{ fontSize: 16, fontWeight: 600 }}>
-                    Facebook에서 내 정보 불러오기
-                  </span>
-                </FacebookLoginButton>
-              )}
-            />
-          </>
-        )}
-        {action === 'signUp_manager' && (
-          <>
-            <Helmet>
-              <title>회원가입 | DEEPTIME</title>
-            </Helmet>
-            <form onSubmit={onSubmit}>
-              <NameInputDiv>
-                <Input placeholder={'성 (예: 홍)'} {...lastName} />
-                <Input placeholder={'이름 (예: 길동)'} {...firstName} />
-              </NameInputDiv>
-              <Input placeholder={'닉네임 (10글자 이내)'} {...username} />
-              <VerficationInputDiv>
-                <Input
-                  placeholder={'Email [인증 버튼 클릭 ▶]'}
-                  value={email.value}
-                  onChange={() => {}}
-                />
-                <PopupCustom
-                  trigger={
-                    <PopButton_auth text={'Email 인증'} type={'button'} />
-                  }
-                  closeOnDocumentClick={false}
-                  modal
-                >
-                  {(close) => (
-                    <PBody>
-                      <PTitle text={'Email 인증'} />
-                      <EmailInputDiv>
-                        <Input
-                          placeholder={'Email (deeptime@google.com)'}
-                          {...email}
-                          type="email"
-                        />
-                        <PopButton_auth
-                          type={'button'}
-                          onClick={sEmailOnClick}
-                          text={'인증번호 발송'}
-                        />
-                      </EmailInputDiv>
-                      <SmallInput placeholder={'인증번호 입력'} {...emailKey} />
-                      <ButtonDiv>
-                        <PopupButton
-                          type="button"
-                          text={'인증'}
-                          onClick={async () => {
-                            const fucResult = await cEmailOnClick();
-                            if (fucResult) {
-                              close();
-                            }
-                          }}
-                        />
-                        <PopupButton
-                          type="button"
-                          onClick={() => {
-                            close();
-                            emailKey.setValue(``);
-                          }}
-                          text={'닫기'}
-                        />
-                      </ButtonDiv>
-                    </PBody>
-                  )}
-                </PopupCustom>
-              </VerficationInputDiv>
-              <VerficationInputDiv>
-                <Input
-                  placeholder={'휴대폰 번호 [인증 버튼 클릭 ▶]'}
-                  value={phoneNumber.value}
-                  onChange={() => {}}
-                />
-                <PopupCustom
-                  trigger={
-                    <PopButton_auth text={'휴대폰 인증'} type={'button'} />
-                  }
-                  closeOnDocumentClick={false}
-                  modal
-                >
-                  {(close) => (
-                    <PBody>
-                      <PTitle text={'휴대폰 인증'} />
-                      <VerifiInputDiv>
-                        <PhoneInput
-                          country={'kr'}
-                          value={phoneNumber.value}
-                          onChange={(phone) => phoneNumber.setValue(phone)}
-                        />
-                        <PopButton
-                          type={'button'}
-                          onClick={sPhoneOnClick}
-                          text={'인증번호 발송'}
-                        />
-                      </VerifiInputDiv>
-                      <SmallInput placeholder={'인증번호 입력'} {...phoneKey} />
-                      <ButtonDiv>
-                        <PopupButton
-                          type="button"
-                          text={'인증'}
-                          onClick={async () => {
-                            const fucResult = await cPhoneOnClick();
-                            if (fucResult) {
-                              close();
-                            }
-                          }}
-                        />
-                        <PopupButton
-                          type="button"
-                          onClick={() => {
-                            close();
-                            phoneKey.setValue(``);
-                          }}
-                          text={'닫기'}
-                        />
-                      </ButtonDiv>
-                    </PBody>
-                  )}
-                </PopupCustom>
-              </VerficationInputDiv>
-              <Input
-                placeholder={'기관 이름 (예: IAM독서실)'}
-                {...organizationName}
-              />
-              <SelectDiv>
-                <span>
-                  기관
-                  <br />
-                  주소
-                </span>
-                <Select {...myAddress1} id={'myAddress1_id'} />
-                <Select {...myAddress2} id={'myAddress2_id'} />
-              </SelectDiv>
-              <Input
-                placeholder={'기관 상세주소 (예: 삼성로85길 42)'}
-                {...detailAddress}
-              />
-              <Input
-                placeholder={'비밀번호 (예: ABCD1234)'}
-                type="password"
-                {...password}
-              />
-              {password.errorChk && (
-                <div style={{ color: 'red', marginBottom: '7px' }}>
-                  비밀번호는 6글자 이상이어야 합니다
-                </div>
-              )}
-              <Input
-                placeholder={'비밀번호 확인 (예: ABCD1234)'}
-                type="password"
-                {...password2}
-              />
-              {password2.errorChk && (
-                <div style={{ color: 'red', marginBottom: '7px' }}>
-                  비밀번호가 일치하지 않습니다
-                </div>
-              )}{' '}
-              <AllCheckDiv>
-                <CheckBox
-                  id="allTermChk"
-                  checked={tos && top && marketing}
-                  onChange={onChangeAllTerm}
-                  boxSize={'35px'}
-                  margin={'0 10px 0 0'}
-                />
-                <CheckLabel htmlFor="allTermChk">
-                  <FatText text={'만 14세 이상이며, 약관에 모두 동의합니다'} />
-                  <PopupCustom
-                    trigger={
-                      <TermButton type="button">
-                        (약관 및 세부사항 선택)
-                      </TermButton>
-                    }
-                    closeOnDocumentClick={false}
-                    modal
-                  >
-                    {(close) => (
-                      <PBody>
-                        <PTitle text={'약관 및 세부사항 선택'} />
-                        <AllCheckDiv>
-                          <CheckBox
-                            id="tosChk"
-                            checked={tos}
-                            onChange={onChangeTos}
-                            boxSize={'35px'}
-                            margin={'0 10px 0 0'}
-                          />
-                          <CheckLabel2 htmlFor="tosChk">
-                            <Link target="_blank" to="/tosm" replace>
-                              서비스 이용약관
-                            </Link>
-                            &nbsp;동의
-                            <span style={{ color: 'red' }}>&nbsp;(필수)</span>
-                          </CheckLabel2>
-                        </AllCheckDiv>
-                        <AllCheckDiv>
-                          <CheckBox
-                            id="topChk"
-                            checked={top}
-                            onChange={onChangeTop}
-                            boxSize={'35px'}
-                            margin={'0 10px 0 0'}
-                          />
-                          <CheckLabel2 htmlFor="topChk">
-                            <Link target="_blank" to="/top" replace>
-                              개인정보 취급방침
-                            </Link>
-                            &nbsp;동의
-                            <span style={{ color: 'red' }}>&nbsp;(필수)</span>
-                          </CheckLabel2>
-                        </AllCheckDiv>
-                        <AllCheckDiv>
-                          <CheckBox
-                            id="marketingChk"
-                            checked={marketing}
-                            onChange={onChangeMarketing}
-                            boxSize={'35px'}
-                            margin={'0 10px 0 0'}
-                          />
-                          <CheckLabel2 htmlFor="marketingChk">
-                            <Link target="_blank" to="/tom" replace>
-                              마케팅 정보 수신 동의
-                            </Link>
-                            <span style={{ color: 'gray' }}>&nbsp;(선택)</span>
-                          </CheckLabel2>
-                        </AllCheckDiv>
-                        <ButtonDiv>
-                          <PopupButton_solo
-                            type="button"
-                            onClick={() => {
-                              close();
-                            }}
-                            text={'닫기'}
-                          />
-                        </ButtonDiv>
-                      </PBody>
-                    )}
-                  </PopupCustom>
                 </CheckLabel>
               </AllCheckDiv>
               <JoinButtonDiv>

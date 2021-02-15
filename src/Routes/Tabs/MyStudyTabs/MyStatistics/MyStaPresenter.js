@@ -447,21 +447,21 @@ export default ({
     // 오늘(어제, 내일) 생선된 시간이 있는 인덱스 구하기
     let indexOflast = myInfoData.times.findIndex(
       (i) =>
-        new Date(i.createdAt).getFullYear() == lastDate.getFullYear() &&
-        new Date(i.createdAt).getMonth() == lastDate.getMonth() &&
-        new Date(i.createdAt).getDate() == lastDate.getDate(),
+        new Date(i.createdAt).getFullYear() === lastDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() === lastDate.getMonth() &&
+        new Date(i.createdAt).getDate() === lastDate.getDate(),
     );
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
-        new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
-        new Date(i.createdAt).getMonth() == selectDate.getMonth() &&
-        new Date(i.createdAt).getDate() == selectDate.getDate(),
+        new Date(i.createdAt).getFullYear() === selectDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() === selectDate.getMonth() &&
+        new Date(i.createdAt).getDate() === selectDate.getDate(),
     );
     let indexOfNextday = myInfoData.times.findIndex(
       (i) =>
-        new Date(i.createdAt).getFullYear() == nextDate.getFullYear() &&
-        new Date(i.createdAt).getMonth() == nextDate.getMonth() &&
-        new Date(i.createdAt).getDate() == nextDate.getDate(),
+        new Date(i.createdAt).getFullYear() === nextDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() === nextDate.getMonth() &&
+        new Date(i.createdAt).getDate() === nextDate.getDate(),
     );
     // today Time 없을 경우 값이 0인 Time 추가해주기
     if (indexOflast === -1) {
@@ -778,10 +778,10 @@ export default ({
           if (k === 6) {
             const indexOfNextday = myInfoData.times.findIndex(
               (i) =>
-                new Date(i.createdAt).getFullYear() ==
+                new Date(i.createdAt).getFullYear() ===
                   real_weekEnd.getFullYear() &&
-                new Date(i.createdAt).getMonth() == real_weekEnd.getMonth() &&
-                new Date(i.createdAt).getDate() == real_weekEnd.getDate(),
+                new Date(i.createdAt).getMonth() === real_weekEnd.getMonth() &&
+                new Date(i.createdAt).getDate() === real_weekEnd.getDate(),
             );
             if (indexOfNextday === -1) {
               nextdayTime_24 = new Array(288).fill(0);
@@ -948,8 +948,8 @@ export default ({
     while (true) {
       const index_tmp = slicedTimes.findIndex(
         (i) =>
-          new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
-          new Date(i.createdAt).getMonth() == selectDate.getMonth(),
+          new Date(i.createdAt).getFullYear() === selectDate.getFullYear() &&
+          new Date(i.createdAt).getMonth() === selectDate.getMonth(),
       );
       if (index_tmp === -1) {
         break;
@@ -979,8 +979,8 @@ export default ({
     while (true) {
       const index_tmp = slicedTimes.findIndex(
         (i) =>
-          new Date(i.createdAt).getFullYear() == lastMonthDate.getFullYear() &&
-          new Date(i.createdAt).getMonth() == lastMonthDate.getMonth(),
+          new Date(i.createdAt).getFullYear() === lastMonthDate.getFullYear() &&
+          new Date(i.createdAt).getMonth() === lastMonthDate.getMonth(),
       );
       if (index_tmp === -1) {
         break;
@@ -1051,11 +1051,11 @@ export default ({
           );
           const indexOfNextday = myInfoData.times.findIndex(
             (i) =>
-              new Date(i.createdAt).getFullYear() ==
+              new Date(i.createdAt).getFullYear() ===
                 nextMonthFirstDay.getFullYear() &&
-              new Date(i.createdAt).getMonth() ==
+              new Date(i.createdAt).getMonth() ===
                 nextMonthFirstDay.getMonth() &&
-              new Date(i.createdAt).getDate() == nextMonthFirstDay.getDate(),
+              new Date(i.createdAt).getDate() === nextMonthFirstDay.getDate(),
           );
           if (indexOfNextday === -1) {
             nextdayTime_24 = new Array(288).fill(0);

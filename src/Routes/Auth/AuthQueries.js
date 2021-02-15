@@ -34,36 +34,6 @@ export const CREATE_ACCOUNT = gql`
   }
 `;
 
-export const CREATE_ACCOUNT_M = gql`
-  mutation createAccount_M(
-    $firstName: String!
-    $lastName: String!
-    $username: String!
-    $email: String!
-    $phoneNumber: String!
-    $organizationName: String!
-    $password: String!
-    $address1: String!
-    $address2: String!
-    $detailAddress: String!
-    $termsOfMarketing: Boolean!
-  ) {
-    createAccount_M(
-      firstName: $firstName
-      lastName: $lastName
-      username: $username
-      email: $email
-      phoneNumber: $phoneNumber
-      organizationName: $organizationName
-      password: $password
-      address1: $address1
-      address2: $address2
-      detailAddress: $detailAddress
-      termsOfMarketing: $termsOfMarketing
-    )
-  }
-`;
-
 export const REQUEST_LOGIN = gql`
   mutation requestLogin($email: String!, $password: String!) {
     requestLogin(email: $email, password: $password)

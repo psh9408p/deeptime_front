@@ -14,10 +14,14 @@ export const GET_USER = gql`
       studyGroup
       studyGroup2
       studyGroup3
+      pubOfFeed
+      pubOfStatistic
+      pubOfSchedule
       postsCount
       followingCount
       followersCount
       isFollowing
+      isFollowed
       times {
         existTime
         time_24

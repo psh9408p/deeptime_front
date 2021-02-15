@@ -15,6 +15,9 @@ export const EDIT_ACCOUNT = gql`
     $address1: String!
     $address2: String!
     $termsOfMarketing: Boolean!
+    $pubOfFeed: Boolean!
+    $pubOfStatistic: Boolean!
+    $pubOfSchedule: Boolean!
   ) {
     editAccount(
       firstName: $firstName
@@ -30,34 +33,9 @@ export const EDIT_ACCOUNT = gql`
       address1: $address1
       address2: $address2
       termsOfMarketing: $termsOfMarketing
-    )
-  }
-`;
-
-export const EDIT_ACCOUNT_M = gql`
-  mutation editAccount_M(
-    $firstName: String!
-    $lastName: String!
-    $username: String!
-    $email: String!
-    $phoneNumber: String!
-    $name: String!
-    $address1: String!
-    $address2: String!
-    $detailAddress: String!
-    $termsOfMarketing: Boolean!
-  ) {
-    editAccount_M(
-      firstName: $firstName
-      lastName: $lastName
-      username: $username
-      email: $email
-      phoneNumber: $phoneNumber
-      name: $name
-      address1: $address1
-      address2: $address2
-      detailAddress: $detailAddress
-      termsOfMarketing: $termsOfMarketing
+      pubOfFeed: $pubOfFeed
+      pubOfStatistic: $pubOfStatistic
+      pubOfSchedule: $pubOfSchedule
     )
   }
 `;

@@ -15,7 +15,6 @@ import { useMutation } from '@apollo/react-hooks';
 import AccountTabsPresenter from './AccountTabsPresenter';
 import {
   EDIT_ACCOUNT,
-  EDIT_ACCOUNT_M,
   EDIT_PASSWORD,
   S_PHONE_VERIFICATION,
   S_EMAIL_VERIFICATION,
@@ -42,6 +41,9 @@ export default ({ pageIndex, meData, meRefetch }) => {
   const organizationName = useInput(meData.organization?.name);
   const detailAddress = useInput(meData.organization?.detailAddress);
   const [marketing, setMarketing] = useState(meData.termsOfMarketing);
+  const [pubOfFeed, setPubOfFeed] = useState(meData.pubOfFeed);
+  const [pubOfStatistic, setPubOfStatistic] = useState(meData.pubOfStatistic);
+  const [pubOfSchedule, setPubOfSchedule] = useState(meData.pubOfSchedule);
   const password_pre = useInput('');
   const password = useInput('', '', minLen_6);
   const passChk = (value) => value !== password.value;
@@ -89,7 +91,6 @@ export default ({ pageIndex, meData, meRefetch }) => {
   };
 
   const [editAccountMutation] = useMutation(EDIT_ACCOUNT);
-  const [editAccountMMutation] = useMutation(EDIT_ACCOUNT_M);
   const [editPasswordMutation] = useMutation(EDIT_PASSWORD);
   const [sPhoneVerificationMutation] = useMutation(S_PHONE_VERIFICATION, {
     variables: {
@@ -114,6 +115,30 @@ export default ({ pageIndex, meData, meRefetch }) => {
     },
   });
 
+  const onChangeAllTerm = () => {
+    if (pubOfFeed && pubOfStatistic && pubOfSchedule) {
+      setPubOfFeed(false);
+      setPubOfStatistic(false);
+      setPubOfSchedule(false);
+    } else {
+      setPubOfFeed(true);
+      setPubOfStatistic(true);
+      setPubOfSchedule(true);
+    }
+  };
+
+  const onChangeFeed = (e) => {
+    setPubOfFeed(e.target.checked);
+  };
+
+  const onChangeSta = (e) => {
+    setPubOfStatistic(e.target.checked);
+  };
+
+  const onChangesche = (e) => {
+    setPubOfSchedule(e.target.checked);
+  };
+
   const onEditAccount = async (e) => {
     e.preventDefault();
     if (meData.loginPosition === 'student') {
@@ -136,39 +161,12 @@ export default ({ pageIndex, meData, meRefetch }) => {
             address1: myAddress1.option,
             address2: myAddress2.option,
             termsOfMarketing: marketing,
+            pubOfFeed,
+            pubOfStatistic,
+            pubOfSchedule,
           },
         });
         if (!editAccount) {
-          alert('프로필을 수정할 수 없습니다.');
-        } else {
-          await meRefetch();
-          history.push(`${username.value}`);
-          toast.success('프로필 수정이 완료되었습니다.');
-        }
-      } catch (e) {
-        const realText = e.message.split('GraphQL error: ');
-        alert(realText[1]);
-      }
-    } else {
-      try {
-        toast.info('프로필 수정 중...');
-        const {
-          data: { editAccount_M },
-        } = await editAccountMMutation({
-          variables: {
-            firstName: firstName.value,
-            lastName: lastName.value,
-            username: username.value,
-            email: email.value,
-            phoneNumber: phoneNumber.value,
-            name: organizationName.value,
-            address1: myAddress1.option,
-            address2: myAddress2.option,
-            detailAddress: detailAddress.value,
-            termsOfMarketing: marketing,
-          },
-        });
-        if (!editAccount_M) {
           alert('프로필을 수정할 수 없습니다.');
         } else {
           await meRefetch();
@@ -309,6 +307,13 @@ export default ({ pageIndex, meData, meRefetch }) => {
       password_pre={password_pre}
       password={password}
       password2={password2}
+      pubOfFeed={pubOfFeed}
+      pubOfStatistic={pubOfStatistic}
+      pubOfSchedule={pubOfSchedule}
+      onChangeAllTerm={onChangeAllTerm}
+      onChangeFeed={onChangeFeed}
+      onChangeSta={onChangeSta}
+      onChangesche={onChangesche}
     />
   );
 };

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Input from '../../../Components/Input';
 import Popup from 'reactjs-popup';
 import PopButton_auth from '../../../Components/Buttons/PopButton_auth';
-import PopupButton from '../../../Components/Buttons/PopupButton';
 import PopupButton_solo from '../../../Components/Buttons/PopupButton_solo';
 import PopupClose from '../../../Components/Buttons/PopupClose';
 import FatText from '../../../Components/FatText';
@@ -69,6 +68,13 @@ const PopupCustom = styled(Popup)`
     justify-content: center;
     align-items: center;
     border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const PopupCustom2 = styled(PopupCustom)`
+  &-content {
+    width: 420px !important;
+    height: 200px !important;
   }
 `;
 
@@ -140,8 +146,19 @@ const AllCheckDiv = styled.div`
 
 const CheckLabel = styled.label`
   display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
+  font-weight: 600;
   width: 100%;
+`;
+
+const TermButton = styled.button`
+  border: none;
+  background: none;
+  color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  padding: 0;
 `;
 
 const JoinButtonDiv = styled.div`
@@ -202,6 +219,13 @@ export default ({
   password_pre,
   password,
   password2,
+  pubOfFeed,
+  pubOfStatistic,
+  pubOfSchedule,
+  onChangeAllTerm,
+  onChangeFeed,
+  onChangeSta,
+  onChangesche,
 }) => {
   if (pageIndex === 0) {
     return (
@@ -384,6 +408,68 @@ export default ({
               />
               <CheckLabel htmlFor="marketingChk">
                 <FatText text={'마케팅 정보 수신 동의'} />
+              </CheckLabel>
+            </AllCheckDiv>
+            <AllCheckDiv>
+              <CheckBox
+                id="publickChk"
+                checked={pubOfFeed && pubOfStatistic && pubOfSchedule}
+                onChange={onChangeAllTerm}
+                boxSize={'35px'}
+                margin={'0 10px 0 0'}
+              />
+              <CheckLabel htmlFor="publickChk">
+                <FatText text={'개인 데이터 모두 공개'} />
+                <PopupCustom2
+                  trigger={
+                    <TermButton type="button">
+                      &nbsp;&nbsp;(공개 범위 선택)
+                    </TermButton>
+                  }
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => (
+                    <PBody>
+                      <PopupClose onClick={() => close()} />
+                      <PTitle text={'개인 데이터 공개 범위 선택'} />
+                      <AllCheckDiv>
+                        <CheckBox
+                          id="feedChk"
+                          checked={pubOfFeed}
+                          onChange={onChangeFeed}
+                          boxSize={'35px'}
+                          margin={'0 10px 0 0'}
+                        />
+                        <CheckLabel htmlFor="feedChk">게시물 공개</CheckLabel>
+                      </AllCheckDiv>
+                      <AllCheckDiv>
+                        <CheckBox
+                          id="statisticChk"
+                          checked={pubOfStatistic}
+                          onChange={onChangeSta}
+                          boxSize={'35px'}
+                          margin={'0 10px 0 0'}
+                        />
+                        <CheckLabel htmlFor="statisticChk">
+                          통계 공개
+                        </CheckLabel>
+                      </AllCheckDiv>
+                      <AllCheckDiv>
+                        <CheckBox
+                          id="scheduleChk"
+                          checked={pubOfSchedule}
+                          onChange={onChangesche}
+                          boxSize={'35px'}
+                          margin={'0 10px 0 0'}
+                        />
+                        <CheckLabel htmlFor="scheduleChk">
+                          스케줄 공개
+                        </CheckLabel>
+                      </AllCheckDiv>
+                    </PBody>
+                  )}
+                </PopupCustom2>
               </CheckLabel>
             </AllCheckDiv>
             <JoinButtonDiv>

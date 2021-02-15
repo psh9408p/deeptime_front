@@ -831,7 +831,7 @@ export default ({
     }
   });
   todoTask_tmp = todoTask_tmp.filter(function (el) {
-    return el != undefined;
+    return el !== undefined;
   });
   const listName_tmp = todoTask_tmp.map((List) => `${List.name}`);
   const listId_tmp = todoTask_tmp.map((List) => `${List.id}`);
@@ -1204,7 +1204,7 @@ export default ({
       }
     });
     calendars = calendars_tmp.filter(function (el) {
-      return el != undefined;
+      return el !== undefined;
     });
   };
 

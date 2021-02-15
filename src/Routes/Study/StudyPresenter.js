@@ -1925,15 +1925,15 @@ export default ({
     // 오늘 생선된 시간이 있는 인덱스 구하기
     let indexOfToday = myInfoData.times.findIndex(
       (i) =>
-        new Date(i.createdAt).getFullYear() == selectDate.getFullYear() &&
-        new Date(i.createdAt).getMonth() == selectDate.getMonth() &&
-        new Date(i.createdAt).getDate() == selectDate.getDate(),
+        new Date(i.createdAt).getFullYear() === selectDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() === selectDate.getMonth() &&
+        new Date(i.createdAt).getDate() === selectDate.getDate(),
     );
     let indexOfNextday = myInfoData.times.findIndex(
       (i) =>
-        new Date(i.createdAt).getFullYear() == nextDate.getFullYear() &&
-        new Date(i.createdAt).getMonth() == nextDate.getMonth() &&
-        new Date(i.createdAt).getDate() == nextDate.getDate(),
+        new Date(i.createdAt).getFullYear() === nextDate.getFullYear() &&
+        new Date(i.createdAt).getMonth() === nextDate.getMonth() &&
+        new Date(i.createdAt).getDate() === nextDate.getDate(),
     );
     // today Time 없을 경우 값이 0인 Time 추가해주기
     if (indexOfToday === -1) {
@@ -2155,7 +2155,7 @@ export default ({
           rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
           slicedTimes = slicedTimes.slice(index_tmp);
         }
-        const index_tmp2 = slicedTimes.findIndex((i) => i == 0);
+        const index_tmp2 = slicedTimes.findIndex((i) => i === 0);
         if (index_tmp2 === -1) {
           slicedTimeBox.push(slicedTimes);
           rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
