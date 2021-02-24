@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
-import Footer3 from '../../Components/Footer3';
+import Footer from '../../Components/Footer';
 import Payment from './Payment';
 import styled from 'styled-components';
-import './fullpage.css';
 import Video from './Video';
 import { BrowserView, MobileView } from 'react-device-detect';
 
@@ -56,7 +55,7 @@ const Fullpage = () => (
               <Payment />
             </div>
             <div className="section ">
-              <Footer3 />
+              <Footer />
             </div>
           </ReactFullpage.Wrapper>
         </>

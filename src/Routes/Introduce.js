@@ -9,9 +9,8 @@ import RigtNav from './LandingPage/RightNav';
 import Burger from './LandingPage/Burger';
 import Payment from './LandingPage/Payment';
 
-import Footer3 from '../Components/Footer3';
+import Footer from '../Components/Footer';
 import Fullpage from './LandingPage/Fullpage';
-import ModalPage from '../Components/Modal/ModalPage';
 const Header = styled.div`
   width: 100%;
   display: flex;
@@ -123,7 +122,6 @@ export default () => {
   const [visible, setVisible] = useState(false);
   return (
     <div>
-      {/* <ModalPage /> */}
       <Header>
         <TopHeader>
           <Logo />
@@ -132,10 +130,7 @@ export default () => {
         </TopHeader>
       </Header>
       <Fullpage />
-
       <Payment />
     </div>
   );
 };
-
-// 8399B96F-5C5C4927-ABD5A842-D8D658BC
