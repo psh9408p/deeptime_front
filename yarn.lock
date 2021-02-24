@@ -877,6 +877,14 @@
     "@babel/helper-create-regexp-features-plugin" "^7.8.3"
     "@babel/helper-plugin-utils" "^7.8.3"
 
+"@babel/polyfill@^7.2.5":
+  version "7.12.1"
+  resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.12.1.tgz#1f2d6371d1261bbd961f3c5d5909150e12d0bd96"
+  integrity sha512-X0pi0V6gxLi6lFZpGmeNa4zxtwEmCs42isWLNjZZDE0Y8yVfgu0T2OAHlzBbdYlqbW/YXVvoBHpATEM+goCj8g==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.4"
+
 "@babel/preset-env@7.9.0", "@babel/preset-env@^7.4.5":
   version "7.9.0"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.9.0.tgz#a5fc42480e950ae8f5d9f8f2bbc03f52722df3a8"
@@ -1187,6 +1195,14 @@
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
+
+"@fullpage/react-fullpage@^0.1.18":
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/@fullpage/react-fullpage/-/react-fullpage-0.1.18.tgz#cdc26ba731d38824e0d234cd2e1153b68bba7786"
+  integrity sha512-Ibhv8bM8oyHMIkGs/SKOtnXbEXM8uevIR7PpGuc+f2Rvs6AnlSqdh6nwtW8aQ9gDUdlniqgM6JOmqDUWgxkQSw==
+  dependencies:
+    "@babel/polyfill" "^7.2.5"
+    fullpage.js "^3.0.9"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -3615,6 +3631,11 @@ core-js@^2.4.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
+core-js@^2.6.5:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+
 core-js@^3.5.0:
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.6.4.tgz#440a83536b458114b9cb2ac1580ba377dc470647"
@@ -5579,6 +5600,11 @@ fsevents@^1.2.7:
   dependencies:
     bindings "^1.5.0"
     nan "^2.12.1"
+
+fullpage.js@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/fullpage.js/-/fullpage.js-3.0.9.tgz#fc7dba41d521f020a51e9c00fb0fee0d2e11d552"
+  integrity sha512-CBJZwOkOjX/RToG0L93LwJW4a+/67+AqGEvEagWh1N5KRgDXEOVKlo/TJzCzSI1LsOulb7yqXE8mOzRZzqeYMA==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -10145,6 +10171,13 @@ react-dev-utils@^10.2.1:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
+react-device-detect@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-1.15.0.tgz#5321f94ae3c4d51ef399b0502a6c739e32d0f315"
+  integrity sha512-ywjtWW04U7vaJK87IAFHhKozZhTPeDVWsfYx5CxQSQCjU5+fnMMxWZt9HnVWaNTqBEn6g8wCNWyqav7sXJrURg==
+  dependencies:
+    ua-parser-js "^0.7.23"
+
 react-dom@16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"
@@ -10261,10 +10294,10 @@ react-phone-input-2@^2.13.3:
     lodash.startswith "^4.2.1"
     prop-types "^15.7.2"
 
-react-player@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/react-player/-/react-player-2.7.0.tgz#7f25c83b6111770adbae51679f7ad27fb0fa0269"
-  integrity sha512-S+d9EfFCb2UlDBKf5U8jTgVQI3QCRfZ8k7kFUgpYLrSjLuowdV/NyZAKprplUNJEho1LmdwtqsDKg21kMIVymw==
+react-player@^2.8.2:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/react-player/-/react-player-2.8.2.tgz#20fb5c4bcbf304ad719ca5566551ddb3ddefcd93"
+  integrity sha512-AiCvWJGpFxgxjwMxDMiaeTyL2IgDaKuPZfERzNULGPx7X67Mh9D0UqKZG6YHqJQ1KbpbCdE0VBtICrzRxr28pg==
   dependencies:
     deepmerge "^4.0.0"
     load-script "^1.0.0"
@@ -12113,6 +12146,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+ua-parser-js@^0.7.23:
+  version "0.7.24"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.24.tgz#8d3ecea46ed4f1f1d63ec25f17d8568105dc027c"
+  integrity sha512-yo+miGzQx5gakzVK3QFfN0/L9uVhosXBBO7qmnk7c2iw1IhL212wfA3zbnI54B0obGwC/5NWub/iT9sReMx+Fw==
 
 uncontrollable@^7.1.1:
   version "7.1.1"

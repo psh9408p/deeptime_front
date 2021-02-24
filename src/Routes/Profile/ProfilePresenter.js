@@ -107,6 +107,7 @@ const Tabs = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const ProfileButton = styled.button`
   width: 100px;
   border: 0;

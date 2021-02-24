@@ -10,10 +10,16 @@ import GlobalStyles_potal from '../Styles/GlobalStyles_potal';
 import Theme from '../Styles/Theme';
 import Routes from './Routes';
 import Footer from './Footer';
-import Footer2 from './Footer2';
+import Footer3 from './Footer3';
 import Header from './Header';
 import Header_welcome from './Header_welcome';
 
+import RightNav from '../Routes/LandingPage/RightNav';
+
+// import Fullpage from '../Components/LandingPage/Fullpage';
+import Introduce from '../Routes/Introduce';
+import Fullpage from '../Routes/LandingPage/Fullpage';
+import Video from '../Routes/LandingPage/Video';
 const QUERY = gql`
   {
     isLoggedIn @client
@@ -40,15 +46,16 @@ export default () => {
         )}
         <Router>
           <>
-            {isLoggedIn === true && window.location.hash !== '#/study' && (
+            {/* <Footer3 /> */}
+            {/* {isLoggedIn === true && window.location.hash !== '#/study' && (
               <Header />
-            )}
-            {isLoggedIn === false &&
-              window.location.hash !== '#/experience' && <Header_welcome />}
+            )} */}
+            {/* {isLoggedIn === false &&
+              window.location.hash !== '#/experience' && <Header_welcome />} */}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
               {/* {window.location.hash !== '#/experience' &&
-                window.location.hash !== '#/study' && <Footer2 />} */}
+                window.location.hash !== '#/study' && <Footer3 />} */}
             </Wrapper>
           </>
         </Router>
