@@ -10,7 +10,6 @@ import GlobalStyles_potal from '../Styles/GlobalStyles_potal';
 import Theme from '../Styles/Theme';
 import Routes from './Routes';
 import Footer from './Footer';
-import Footer2 from './Footer2';
 import Header from './Header';
 import Header_welcome from './Header_welcome';
 
