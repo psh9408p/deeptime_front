@@ -122,7 +122,7 @@ export default ({ close, groupInfo, selectId, closeActive = false }) => {
       if (!deleteGroup) {
         alert('그룹을 삭제할 수 없습니다.');
       } else {
-        close();
+        // close();
         toast.success('그룹을 삭제하였습니다.');
       }
     } catch (e) {

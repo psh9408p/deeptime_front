@@ -108,13 +108,15 @@ export default ({ groupData, onBookmark, myTabs }) => {
           </AddBox>
         )}
       </MyGroupsWrap>
-      <OneGroupWrap>
-        <OneGroup
-          close={() => {}}
-          groupInfo={groupData[selectIndex]}
-          selectId={selectId}
-        />
-      </OneGroupWrap>
+      {groupData[selectIndex] && (
+        <OneGroupWrap>
+          <OneGroup
+            close={() => {}}
+            groupInfo={groupData[selectIndex]}
+            selectId={selectId}
+          />
+        </OneGroupWrap>
+      )}
     </Wrapper>
   );
 };
