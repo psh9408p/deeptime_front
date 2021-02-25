@@ -27,11 +27,11 @@ const Section = styled.div`
   background: #0f4c82;
   width: 100%;
   color: white;
-  height: 100vh;
+  height: ${(props) => (props.isIntro ? '100vh' : 'auto')};
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
+  margin-top: ${(props) => (props.isIntro ? '0' : '15vh')};
   bottom: 0;
   z-index: 9999;
 `;
@@ -82,7 +82,7 @@ const FooterTop_Left = styled.ul`
 `;
 const FooterTop_Left_Item = styled.li`
   /* margin-right: 8px; */
-  width: 50px;
+  width: 60px;
   &:hover {
     color: #908991;
   }
@@ -152,9 +152,13 @@ const FooterMid = styled.div`
   }
 `;
 const FooterMidBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   font-size: 25px;
-  margin-top: 5px;
   margin-left: 5px;
+  transform: rotate(90deg);
 `;
 
 const FooterMidToggle = styled.div`
@@ -199,7 +203,7 @@ const FooterBotli = styled.li`
   }
 `;
 
-export default () => {
+export default ({ isIntro = false }) => {
   const [toggle, setToggle] = useState(false);
 
   const toggleHandler = () => {
@@ -210,7 +214,7 @@ export default () => {
     }
   };
   return (
-    <Section>
+    <Section isIntro={isIntro}>
       <Footer>
         <FooterTop>
           <FooterTop_Left>
@@ -284,9 +288,9 @@ export default () => {
         <FooterMid onClick={toggleHandler}>
           <span>딥타임 사업자 정보</span>
           {!toggle ? (
-            <FooterMidBtn> &#709;</FooterMidBtn>
+            <FooterMidBtn>&#8250;</FooterMidBtn>
           ) : (
-            <FooterMidBtn> &#708;</FooterMidBtn>
+            <FooterMidBtn>&#8249;</FooterMidBtn>
           )}
         </FooterMid>
         {toggle && (

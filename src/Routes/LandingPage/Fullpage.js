@@ -55,7 +55,7 @@ const Fullpage = () => (
               <Payment />
             </div>
             <div className="section ">
-              <Footer />
+              <Footer isIntro={true} />
             </div>
           </ReactFullpage.Wrapper>
         </>

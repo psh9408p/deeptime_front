@@ -19,9 +19,10 @@ import Button_custom from '../../Components/Buttons/Button_custom';
 import Input from '../../Components/Input';
 import { FixedSizeList as ListApi } from 'react-window';
 import Tab from '../../Components/Tab';
+import Footer from '../../Components/Footer';
 
 const Wrapper = styled.div`
-  min-height: 100vh;
+  /* min-height: 100vh; */
 `;
 
 const Header = styled.header`
@@ -720,6 +721,7 @@ export default ({
           />
         </>
       )}
+      <Footer />
     </Wrapper>
   );
 };
