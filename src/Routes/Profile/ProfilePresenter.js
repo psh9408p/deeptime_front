@@ -6,8 +6,8 @@ import Avatar from '../../Components/Avatar';
 import FatText from '../../Components/FatText';
 import FollowButton from '../../Components/FollowButton';
 import PopupClose from '../../Components/Buttons/PopupClose';
-import ProfileTabs_me from '../Tabs/ProfileTabs_me';
-import ProfileTabs_other from '../Tabs/ProfileTabs_other';
+import ProfileTabs_me from '../Tabs/ProfileTabs/ProfileTabs_me';
+import ProfileTabs_other from '../Tabs/ProfileTabs/ProfileTabs_other';
 import { Link } from 'react-router-dom';
 import {
   Button_setting,

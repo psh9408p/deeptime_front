@@ -8,6 +8,9 @@ import {
   Control,
   Copy,
   Copy2,
+  Information,
+  Trash,
+  Out,
 } from '../Icons';
 
 const Container = styled.button`
@@ -66,6 +69,18 @@ export const Button_copy = ({ onClick, margin = '0 10px 0 0', value }) => (
   </Container_hold>
 );
 
+export const Button_delete = ({ onClick, margin = '0 10px 0 0', value }) => (
+  <Container_hold onClick={onClick} margin={margin} value={value}>
+    <Trash />
+  </Container_hold>
+);
+
+export const Button_out = ({ onClick, margin = '0 10px 0 0', value }) => (
+  <Container_hold onClick={onClick} margin={margin} value={value}>
+    <Out />
+  </Container_hold>
+);
+
 export const Button_copy2 = forwardRef(
   ({ onClick, margin = '0 10px 0 0' }, ref) => (
     <Container onClick={onClick} margin={margin}>
@@ -86,6 +101,14 @@ export const Button_control = forwardRef(
   ({ onClick, margin = '0 10px 0 0' }, ref) => (
     <Container ref={ref} onClick={onClick} margin={margin}>
       <Control />
+    </Container>
+  ),
+);
+
+export const Button_info = forwardRef(
+  ({ onClick, margin = '0 10px 0 0' }, ref) => (
+    <Container ref={ref} onClick={onClick} margin={margin}>
+      <Information />
     </Container>
   ),
 );

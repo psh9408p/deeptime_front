@@ -703,7 +703,7 @@ const PofileLink = styled(Link)`
   position: absolute;
   width: 50px;
   height: 50px;
-  margin-bottom: 25px;
+  margin-top: 12px;
   border-radius: 50%;
 `;
 

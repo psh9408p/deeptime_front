@@ -6,11 +6,9 @@ import Auth from '../Routes/Auth';
 import Attendance from '../Routes/Attendance';
 import Supervision from '../Routes/Supervision';
 import Marking from '../Routes/Marking';
-import Academy from '../Routes/Academy';
 import Class from '../Routes/Class';
 import Student from '../Routes/Student';
 import Profile from '../Routes/Profile';
-import Profile_M from '../Routes/Profile_M';
 import Study from '../Routes/Study';
 import { ME } from '../SharedQueries';
 import { useQuery } from '@apollo/react-hooks';
@@ -40,6 +38,7 @@ import Timelapse from '../Routes/Timelapse';
 import { gql } from 'apollo-boost';
 import ChannelService from './ChannelService';
 import Feed from '../Routes/Feed';
+import Group from '../Routes/Group/GroupContainer';
 
 export const MEPOSITION = gql`
   query me {
@@ -93,6 +92,7 @@ const LoggedInRoutes = () => {
       return (
         <Switch>
           <Route path="/study" component={Study} />
+          <Route path="/group" component={Group} />
           <Route path="/feed" component={Feed} />
           <Route path="/userguide" component={UserGuide} />
           <Route path="/timelapse" component={Timelapse} />
@@ -121,7 +121,6 @@ const LoggedInRoutes = () => {
           <Route path="/shop" component={Shop_M} />
           <Route path="/payment/result" component={PaymentResult} />
           <Route path="/account" component={Account} />
-          <Route path="/:username" component={Profile_M} />
           <Redirect from="*" to="/" />
         </Switch>
       );

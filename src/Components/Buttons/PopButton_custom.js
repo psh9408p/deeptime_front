@@ -31,8 +31,4 @@ const PopButton = forwardRef(
   },
 );
 
-PopButton.propTypes = {
-  text: PropTypes.string.isRequired,
-};
-
 export default PopButton;

@@ -4,11 +4,19 @@ import selectChange from './SelectChange';
 import PropTypes from 'prop-types';
 
 const Container = styled.select`
-  width: 100%;
-  height: 100%;
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
 `;
 
-const Select = ({ optionList, valueList, option, onChange, id }) => {
+const Select = ({
+  optionList,
+  valueList,
+  option,
+  onChange,
+  id,
+  width = '100%',
+  height = '100%',
+}) => {
   // const isFirstRun = useRef(true);
   useEffect(() => {
     // if (isFirstRun.current) {
@@ -19,7 +27,7 @@ const Select = ({ optionList, valueList, option, onChange, id }) => {
   }, [option]);
 
   return (
-    <Container id={id} onChange={onChange}>
+    <Container id={id} onChange={onChange} width={width} height={height}>
       {optionList.map((address, key) => (
         <option key={key} value={key}>
           {address}

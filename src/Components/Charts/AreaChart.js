@@ -16,6 +16,12 @@ export default ({
     beginAtZero: true,
     min: 0,
     stepSize,
+    callback: function (value, index, values) {
+      if (value > 60) {
+        return '';
+      }
+      return value;
+    },
   };
   if (max !== 0) {
     yTicks.max = max;

@@ -1319,7 +1319,7 @@ export default ({
                     data_2={taskArray_pre}
                     labels={oneDayHours}
                     legend={['오늘', '일주일 전']}
-                    max={60}
+                    max={62}
                     stepSize={10}
                     title={'시간대별 학습 시간'}
                     title_y={'시간(분)'}

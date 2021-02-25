@@ -60,8 +60,4 @@ const Button = ({
   </Container>
 );
 
-Button.propTypes = {
-  text: PropTypes.string.isRequired,
-};
-
 export default Button;

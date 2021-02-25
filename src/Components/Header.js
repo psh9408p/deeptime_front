@@ -200,111 +200,54 @@ export default withRouter(() => {
             </Link>
           </HeaderColumn>
           <HeaderColumn>
-            {data.me && data.me.loginPosition === 'student' && (
-              <AiBox
-                onClick={() => {
-                  onClickPotal_student();
-                }}
-              >
-                <Play margin={'0 10px 0 0'} />
-                Play
-              </AiBox>
-            )}
-            {/* {data.me && data.me.loginPosition.includes('manager') && (
-              <AiBox>
-                <Shutter />
-                <AiHeaderLink to="/" replace>
-                  출석
-                </AiHeaderLink>
-                <AiHeaderLink to="/supervision" replace>
-                  감독
-                </AiHeaderLink>
-                <AiHeaderLink to="/marking" replace>
-                  채점
-                </AiHeaderLink>
-              </AiBox>
-            )} */}
+            <AiBox
+              onClick={() => {
+                onClickPotal_student();
+              }}
+            >
+              <Play margin={'0 10px 0 0'} />
+              Play
+            </AiBox>
           </HeaderColumn>
-          {data.me && data.me.loginPosition.includes('manager') && (
-            <HeaderColumn>
-              {/* <HeaderLink to="/" replace>
-                학원
-              </HeaderLink>
-              <HeaderLink to="/class" replace>
-                클래스
-              </HeaderLink>
-              <HeaderLink to="/student" replace>
-                학생
-              </HeaderLink> */}
-              {/* <HeaderLink to="/shop" replace>
-                <Shop />
-              </HeaderLink> */}
-              <TmpButton
-                type="button"
-                onClick={() => {
-                  alert('상품 구매는 준비 중 입니다.');
-                }}
-              >
-                <Shop />
-              </TmpButton>
-              {!data.me ? (
-                <HeaderLink to="/#">
-                  <User />
-                </HeaderLink>
-              ) : (
-                <HeaderLink to={'/' + data.me.username} replace>
-                  <Avatar size="sm" url={data.me.avatar} />
-                </HeaderLink>
-              )}
-            </HeaderColumn>
-          )}
-          {data.me && data.me.loginPosition === 'student' && (
-            <HeaderColumn>
-              <HeaderLink to="/" replace>
-                {/* <VisualLong>My</VisualLong>
+          <HeaderColumn>
+            <HeaderLink to="/" replace>
+              {/* <VisualLong>My</VisualLong>
                 <VisualShort>
                   <MyStudy />
                 </VisualShort> */}
-                {pageName === '' ? (
-                  <Person_black fill={'#0F4C82'} />
-                ) : (
-                  <Person_white />
-                )}
-              </HeaderLink>
-              {/* <HeaderLink
-                onClick={() => {
-                  alert('그룹 서비스는 준비 중이니 조금만 더 기다려주세요. 😁');
-                }}
-                // to="/group"
-                // replace
-              >
-                {pageName === 'group' ? (
-                  <People_black fill={'#0F4C82'} />
-                ) : (
-                  <People_white />
-                )}
-              </HeaderLink> */}
-              <HeaderLink to="/feed" replace>
-                <List fill={pageName === 'feed' ? '#0F4C82' : 'black'} />
-              </HeaderLink>
-              {/* <HeaderLink target="_blank" to="/userguide" replace>
+              {pageName === '' ? (
+                <Person_black fill={'#0F4C82'} />
+              ) : (
+                <Person_white />
+              )}
+            </HeaderLink>
+            <HeaderLink to="/group" replace>
+              {pageName === 'group' ? (
+                <People_black fill={'#0F4C82'} />
+              ) : (
+                <People_white />
+              )}
+            </HeaderLink>
+            <HeaderLink to="/feed" replace>
+              <List fill={pageName === 'feed' ? '#0F4C82' : 'black'} />
+            </HeaderLink>
+            {/* <HeaderLink target="_blank" to="/userguide" replace>
                 {pageName === 'userguide' ? (
                   <Guide_black fill={'#0F4C82'} />
                 ) : (
                   <Guide_white />
                 )}
               </HeaderLink> */}
-              {!data.me ? (
-                <HeaderLink to="/#">
-                  <User />
-                </HeaderLink>
-              ) : (
-                <HeaderLink to={'/' + data.me.username} replace>
-                  <Avatar size="sm2" url={data.me.avatar} />
-                </HeaderLink>
-              )}
-            </HeaderColumn>
-          )}
+            {!data.me ? (
+              <HeaderLink to="/#">
+                <User />
+              </HeaderLink>
+            ) : (
+              <HeaderLink to={'/' + data.me.username} replace>
+                <Avatar size="sm2" url={data.me.avatar} />
+              </HeaderLink>
+            )}
+          </HeaderColumn>
         </HeaderWrapper>
       </Header>
     );
