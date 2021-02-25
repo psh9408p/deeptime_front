@@ -151,8 +151,8 @@ export default ({
   const group1 = useSelect(getAll, getAll, meData.studyGroup);
 
   const [filterdData, setFilterdData] = useState(feedData);
+
   const getData = () => {
-    console.log('getData');
     if (group1.option === '전체') {
       setFilterdData(feedData);
     } else {
@@ -169,12 +169,8 @@ export default ({
   // };
   // let category1 = feedData.filter(
   //   (ctr) => ctr.user.studyGroup === group1.option,
-
   useEffect(() => {
     getData();
-    return () => {
-      filtering = false;
-    };
   }, [group1.option]);
 
   return (

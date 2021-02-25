@@ -1,180 +1,202 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const Footer = styled.div`
-  margin-top: 5rem;
-  padding-top: 3rem;
-  /* border-top: solid 4px; */
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: white;
-  flex-direction: column;
-  color: white;
-`;
-
-const MainWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0;
-  padding: 0;
-`;
-
-const MainFooter = styled.div`
-  display: flex;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px 0;
-  background: white;
-  align-items: flex-start;
-`;
-
-const SubFooter = styled.div`
-  max-width: 100%;
-  background: white;
-  margin-bottom: 15px;
-  align-items: center;
-  /* padding: 0px 16px; */
-  display: flex;
-  cursor: pointer;
-  color: rgb(126, 137, 146);
-`;
-
-const SubFooterIn = styled.span`
-  display: flex;
-  color: black;
-  justify-content: flex-start;
-  align-items: center;
-  max-width: 1200px;
+const TopStick = styled.span`
+  position: relative;
   font-size: 12px;
-  &:hover {
-    color: #908991;
-  }
-`;
-
-const SubFooterInArrow = styled.span`
-  display: flex;
   align-items: center;
-  font-size: 22px;
-  margin-left: 5px;
-  margin-top: 5px;
-`;
-
-const SubFooter2 = styled.div`
-  background: white;
-  width: 100%;
-  color: black;
-  font-size: 12px;
-  margin: 15px 0px;
-`;
-
-const SubFooter2Wrap = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const SubFooterUl = styled.ul`
-  display: flex;
-  margin-left: 15px;
-`;
-const SubFooterLi = styled.li`
-  cursor: pointer;
-  &:hover {
-    color: #908991;
-  }
-`;
-const FlexBox = styled.ul`
-  display: flex;
-  background: white;
-  margin-right: 100px;
-  font-size: 1rem;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-const SubFlexBox = styled.li`
-  color: black;
-  margin-bottom: 16px;
-  cursor: pointer;
-  &:hover {
-    color: #908991;
-  }
-`;
-
-const MainFlexBox = styled.ul`
-  display: flex;
-  font-size: 14px;
-  @media only screen and (max-width: 960px) {
-    width: 300px;
-  }
-`;
-
-const LeftFooter = styled.ul`
-  display: flex;
-  justify-content: flex-start;
-  font-size: 1.5rem;
-  margin-right: 140px;
-  cursor: pointer;
-  &:hover {
-    color: gray;
-  }
-`;
-
-const LeftFooterTitle = styled.span`
-  color: black;
-  font-size: 20px;
-  &:hover {
-    color: gray;
-  }
+  content: '|';
+  z-index: 999;
+  top: -0.5px;
+  color: #525a61;
+  margin: 0 5.5px;
+  margin-top: 1.5px;
 `;
 
 const Stick = styled.span`
-  display: flex;
-  align-items: center;
   position: relative;
-  content: ' ';
-  margin: 0 10px;
-  border-left: 1px solid #525a61;
+  font-size: 6px;
+  content: '|';
+  z-index: 999;
+  top: -0.5px;
+  color: #525a61;
+  margin: 0 5.5px;
 `;
 
-const SubList = styled.div`
-  display: flex;
-  justify-content: flex-start;
+const Section = styled.div`
+  background: #0f4c82;
   width: 100%;
-  background: white;
-`;
-
-const ToggleWrap = styled.div`
+  color: white;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  /* max-width: 1200px; */
-  width: 105%;
-  color: black;
-  padding-bottom: 16px;
-`;
-const ToggleList = styled.div`
-  width: 100%;
-  background: white;
-  margin-bottom: 15px;
-  height: 1.5rem;
-  padding: 0px 16px;
-  display: flex;
-  flex-direction: column;
-
-  color: black;
-`;
-
-const ToggleListIn = styled.div`
-  font-size: 10px;
-  width: 100%;
-  display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 10px;
+  margin: 0 auto;
+  bottom: 0;
+  z-index: 9999;
+`;
+
+const Footer = styled.div`
+  background: #0f4c82;
+  color: white;
+
+  width: 480px;
+  padding-bottom: 14px;
+  margin-left: 10%;
+  margin-right: 10%;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; */
+  @media (min-width: 950px) {
+    width: 50%;
+    margin: 0 auto;
+    padding-inline-start: 0px;
+
+    /* align-items: center; */
+  }
+`;
+
+const FooterTop = styled.div`
+  width: 110%;
+  display: flex;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  @media (min-width: 950px) {
+  }
+`;
+
+const FooterTop_Left = styled.ul`
+  padding-top: 16px;
+  font-size: 18px;
+  width: 30%;
+  display: flex;
+  margin-bottom: 16px;
+  /* flex-basis: 300; */
+  @media (min-width: 950px) {
+    /* margin: 0 auto; */
+    width: 30%;
+    margin-right: -60px;
+  }
+`;
+const FooterTop_Left_Item = styled.li`
+  /* margin-right: 8px; */
+  width: 50px;
+  &:hover {
+    color: #908991;
+  }
+`;
+
+const FooterTop_Right = styled.ul`
+  padding-top: 16px;
+  width: 70%;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 14px;
+  flex-basis: 550px;
+  @media (max-width: 950px) {
+    display: none;
+  }
+`;
+const FooterTop_Right_Item = styled.li`
+  margin-bottom: 16px;
+  margin-right: 24px;
+
+  &:hover {
+    color: #908991;
+  }
+`;
+
+const HiddenFooterTop_Right = styled.ul`
+  list-style: none;
+  margin-bottom: 16px;
+  margin-right: 24px;
+  margin: 0 16px auto;
+
+  @media (min-width: 950px) {
+    display: none;
+  }
+`;
+const HiddenFooterTop_Right_Item = styled.li`
+  list-style: none;
+  padding-top: 16px;
+  margin-bottom: 16px;
+  margin-right: 24px;
+  &:hover {
+    color: #908991;
+  }
+  @media (min-width: 950px) {
+    display: none;
+  }
+`;
+
+// const FooterTop_Right2_ItemList = styled.ul``;
+// const FooterTop_Right2_Item = styled.li`
+//   margin-bottom: 16px;
+//   &:hover {
+//     color: #908991;
+//   }
+// `;
+const FooterMid = styled.div`
+  width: 100%;
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  /* justify-content: center; */
+  &:hover {
+    color: #908991;
+  }
+  @media (min-width: 950px) {
+    width: 40%;
+  }
+`;
+const FooterMidBtn = styled.div`
+  font-size: 25px;
+  margin-top: 5px;
+  margin-left: 5px;
+`;
+
+const FooterMidToggle = styled.div`
+  font-size: 10px;
+  margin-bottom: 8px;
+  flex-basis: 2000px;
+  @media (min-width: 950px) {
+    width: 40%;
+  }
+`;
+
+const FooterMidToggle_Itemlist = styled.div`
+  margin-bottom: 4px;
+  width: 1000px;
+`;
+
+const FooterMidToggle_Item = styled.span``;
+
+const FooterBot = styled.div`
+  width: 100%;
+  font-size: 14px;
+
+  @media (min-width: 950px) {
+    width: 40%;
+  }
+`;
+
+const FooterBot_Title = styled.p`
+  margin-bottom: 8px;
+`;
+
+const FooterBotUl = styled.ul`
+  display: flex;
+  font-size: 11px;
+  /* margin-right: 5.5px; */
+  width: 1000px;
+`;
+const FooterBotli = styled.li`
+  /* margin-right: 5.5px; */
+  &:hover {
+    color: #908991;
+  }
 `;
 
 export default () => {
@@ -188,92 +210,124 @@ export default () => {
     }
   };
   return (
-    <Footer>
-      <MainWrap>
-        <MainFooter>
-          <LeftFooter>
-            <LeftFooterTitle>사용법</LeftFooterTitle>
-            <Stick></Stick>
-            <LeftFooterTitle>FAQ</LeftFooterTitle>
-          </LeftFooter>
-          <MainFlexBox>
+    <Section>
+      <Footer>
+        <FooterTop>
+          <FooterTop_Left>
+            <FooterTop_Left_Item>사용법</FooterTop_Left_Item>
+            <TopStick>|</TopStick>
+            <FooterTop_Left_Item>FAQ</FooterTop_Left_Item>
+          </FooterTop_Left>
+          <FooterTop_Right>
             <li>
-              <FlexBox>
-                <SubFlexBox>공지사항</SubFlexBox>
-                <SubFlexBox>첼린지</SubFlexBox>
-              </FlexBox>
+              <ul>
+                <FooterTop_Right_Item>공지사항</FooterTop_Right_Item>
+                <FooterTop_Right_Item>첼린지</FooterTop_Right_Item>
+              </ul>
             </li>
             <li>
-              <FlexBox>
-                <SubFlexBox>사업 제휴 문의</SubFlexBox>
-                <SubFlexBox>취소 및 환불정책</SubFlexBox>
-              </FlexBox>
+              <ul>
+                <FooterTop_Right_Item>사업 제휴문의</FooterTop_Right_Item>
+                <FooterTop_Right_Item>취소 및 환불정책</FooterTop_Right_Item>
+              </ul>
             </li>
             <li>
-              <FlexBox>
-                <SubFlexBox>유투브</SubFlexBox>
-                <SubFlexBox>인스타그램</SubFlexBox>
-                <SubFlexBox>페이스북</SubFlexBox>
-              </FlexBox>
+              <ul>
+                <FooterTop_Right_Item>유투브</FooterTop_Right_Item>
+                <FooterTop_Right_Item>인스타그램</FooterTop_Right_Item>
+                <FooterTop_Right_Item>페이스북</FooterTop_Right_Item>
+              </ul>
             </li>
             <li>
-              <FlexBox>
-                <SubFlexBox>회사 소개</SubFlexBox>
-                <SubFlexBox>인재 채용</SubFlexBox>
-              </FlexBox>
+              <ul>
+                <FooterTop_Right_Item>회사소개</FooterTop_Right_Item>
+                <FooterTop_Right_Item>인재채용</FooterTop_Right_Item>
+              </ul>
             </li>
-          </MainFlexBox>
-        </MainFooter>
-        <SubList>
-          <SubFooter onClick={toggleHandler}>
-            <SubFooterIn>딥타임 사업자 정보</SubFooterIn>
-            <SubFooterInArrow>
-              {!toggle ? <span>&#709;</span> : <span>&#708;</span>}
-            </SubFooterInArrow>
-          </SubFooter>
-        </SubList>
-        {!toggle ? (
-          <div />
-        ) : (
-          <ToggleWrap>
-            <ToggleList>
-              <ToggleListIn>
-                <span>대표자 박영석</span>
-                <Stick />
-                <span>사업자 등록번호 656-23-00836</span>
-                <Stick />
-                <span>통신판매업</span>
-              </ToggleListIn>
-              <ToggleListIn>
-                <span>이메일 deeptime.customer@gmail.com</span>
-                <Stick />
-                <span>대표전화 02-xxxx-xxxx</span>
-              </ToggleListIn>
-              <ToggleListIn>
-                <span>
-                  주소 서울특별시 성동구 성수일로99 AK밸리 8층 802호 서울숲
-                  스타트업센터
-                </span>
-              </ToggleListIn>
-            </ToggleList>
-          </ToggleWrap>
+          </FooterTop_Right>
+          <li style={{ listStyle: 'none' }}>
+            <HiddenFooterTop_Right>
+              <HiddenFooterTop_Right_Item>공지사항</HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>첼린지</HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>
+                사업 제휴문의
+              </HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>
+                취소 및 환불정책
+              </HiddenFooterTop_Right_Item>
+            </HiddenFooterTop_Right>
+          </li>
+          <li style={{ listStyle: 'none' }}>
+            <HiddenFooterTop_Right>
+              <HiddenFooterTop_Right_Item>유투브</HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>
+                인스타그램
+              </HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>
+                {/* <a
+                  style={{
+                    hover: 'black',
+                    textDecoration: 'none',
+                    outline: 'none',
+                    color: 'white',
+                  }}
+                  href="https://www.facebook.com/"
+                > */}
+                페이스북
+                {/* </a> */}
+              </HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>회사소개</HiddenFooterTop_Right_Item>
+              <HiddenFooterTop_Right_Item>인재채용</HiddenFooterTop_Right_Item>
+            </HiddenFooterTop_Right>
+          </li>
+        </FooterTop>
+        <FooterMid onClick={toggleHandler}>
+          <span>딥타임 사업자 정보</span>
+          {!toggle ? (
+            <FooterMidBtn> &#709;</FooterMidBtn>
+          ) : (
+            <FooterMidBtn> &#708;</FooterMidBtn>
+          )}
+        </FooterMid>
+        {toggle && (
+          <FooterMidToggle>
+            <FooterMidToggle_Itemlist>
+              <FooterMidToggle_Item>대표자 박영석</FooterMidToggle_Item>
+              <Stick>|</Stick>
+              <FooterMidToggle_Item>
+                사업자 등록번호 656-23-00836
+              </FooterMidToggle_Item>
+              <Stick>|</Stick>
+              <FooterMidToggle_Item>통신판매업</FooterMidToggle_Item>
+            </FooterMidToggle_Itemlist>
+            <FooterMidToggle_Itemlist>
+              <FooterMidToggle_Item>
+                이메일 deeptime.customer@gmail.com
+              </FooterMidToggle_Item>
+              <Stick>|</Stick>
+              <FooterMidToggle_Item>대표전화 02-xxxx-xxxx</FooterMidToggle_Item>
+            </FooterMidToggle_Itemlist>
+            <FooterMidToggle_Itemlist>
+              <FooterMidToggle_Item>
+                주소 서울특별시 성동구 성수일로99 AK밸리 8층 802호 서울숲
+                스타트업센터
+              </FooterMidToggle_Item>
+            </FooterMidToggle_Itemlist>
+          </FooterMidToggle>
         )}
-        <SubFooter2>
-          <SubFooter2Wrap>
-            <p>© RIDI Corp.</p>
-            <SubFooterUl>
-              <SubFooterLi>이용약관</SubFooterLi>
-              <Stick />
-              <SubFooterLi>개인정보 처리방침</SubFooterLi>
-              <Stick />
-              <SubFooterLi>사업자</SubFooterLi>
-              <Stick />
-              <SubFooterLi>정보 확인</SubFooterLi>
-            </SubFooterUl>
-          </SubFooter2Wrap>
-        </SubFooter2>
-        {/* <Copyright>&copy; {new Date().getFullYear()} DEEPTIME FROM SLOG</Copyright> */}
-      </MainWrap>
-    </Footer>
+        <FooterBot>
+          <FooterBot_Title>@SLOG.</FooterBot_Title>
+          <FooterBotUl>
+            <FooterBotli>이용 약관</FooterBotli>
+            <Stick>|</Stick>
+            <FooterBotli>개인정보 처리방침</FooterBotli>
+            <Stick>|</Stick>
+            <FooterBotli>사업자</FooterBotli>
+            <Stick>|</Stick>
+            <FooterBotli>정보 확인</FooterBotli>
+          </FooterBotUl>
+        </FooterBot>
+      </Footer>
+    </Section>
   );
 };
