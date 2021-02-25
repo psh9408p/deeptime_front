@@ -31,7 +31,7 @@ const Fullpage = () => (
     navigationTooltips
     lockAnchors
     // sectionsColor={['orange', 'purple', 'green']}
-    licenseKey={'8399B96F-5C5C4927-ABD5A842-D8D658BC'}
+    licenseKey={process.env.REACT_APP_FULLPAGE_KEY}
     scrollingSpeed={1000} /* Options here */
     render={({ state, fullpageApi }) => {
       return (
