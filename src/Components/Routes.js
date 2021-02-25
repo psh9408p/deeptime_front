@@ -39,6 +39,7 @@ import { gql } from 'apollo-boost';
 import ChannelService from './ChannelService';
 import Feed from '../Routes/Feed';
 import Group from '../Routes/Group/GroupContainer';
+import Test from '../Routes/testRoute';
 
 export const MEPOSITION = gql`
   query me {
@@ -144,7 +145,7 @@ const LoggedOutRoutes = () => {
   }
   return (
     <Switch>
-      <Route exact path="/" component={Introduce} />
+      <Route exact path="/" component={Test} />
       <Route path="/userguide" component={UserGuide} />
       <Route path="/shopping" component={Shopping} />
       <Route path="/support" component={Support} />

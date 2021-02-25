@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-import * as posenet from '@tensorflow-models/posenet';
+// import * as posenet from '@tensorflow-models/posenet';
+import * as tf from '@tensorflow/tfjs';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 // import * as faceapi from "face-api.js"
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 // import LoadCamera from "../Components/LoadCamera/LoadCamera"
-import useMouseLeave from '../../Hooks/useMouseLeave';
-import useMouseEnter from '../../Hooks/useMouseEnter';
-import useInterval from '../../Hooks/useInterval';
-import { userEmail } from '../../Components/Routes';
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
 import SplitArray from '../../Components/Array/SplitArray';
 import SumArray from '../../Components/Array/SumArray';
@@ -19,10 +16,7 @@ import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
 import {
-  Coffee,
   NextSchedule,
-  Study_true,
-  Study_false,
   Flag,
   Delete,
   Add_12,
@@ -33,7 +27,6 @@ import Countdown from 'react-countdown';
 import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import PopupButton from '../../Components/Buttons/PopupButton';
 import PopupClose from '../../Components/Buttons/PopupClose';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
@@ -248,8 +241,10 @@ const ControlTop2 = styled.div`
 const VideoBox = styled.video`
   position: absolute;
   z-index: 2;
-  width: 450px;
-  height: 340px;
+  /* width: 450px;
+  height: 340px; */
+  width: 640;
+  height: 480;
   border-radius: ${(props) => props.theme.borderRadius};
   margin-top: 120px;
 `;
@@ -257,8 +252,10 @@ const VideoBox = styled.video`
 const CanvasBox = styled.canvas`
   position: absolute;
   z-index: 3;
-  width: 450px;
-  height: 340px;
+  /* width: 450px;
+  height: 340px; */
+  width: 640;
+  height: 480;
   border-radius: ${(props) => props.theme.borderRadius};
   margin-top: 120px;
 `;
@@ -861,6 +858,8 @@ export default ({
   setIsAm,
   aniBool,
   setAniBool,
+  canvasRef,
+  webcamRef,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1814,59 +1813,6 @@ export default ({
       }
     }
   };
-  useInterval(async () => {
-    updateTime();
-    // if (modelPose !== null && modelDetect !== null) {
-    if (modelDetect !== null) {
-      if (timeCount % 10 === 1) {
-        detectFromVideoFrame(video1.current);
-        // console.log(decision);
-        timeCount = timeCount + 1;
-      } else {
-        // const ctx = canvas1.current.getContext('2d');
-        // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        // ctx.drawImage(
-        //   video1.current,
-        //   0,
-        //   0,
-        //   ctx.canvas.width,
-        //   ctx.canvas.height,
-        // );
-        timeCount = timeCount + 1;
-      }
-      if (Mutation === true && interval > 59 * 1000) {
-        interval = interval - 59 * 1000;
-        if (finalDecision === 1) {
-          // console.log('Final decision : true');
-          existToggleMutation({
-            variables: { email: userEmail, existToggle: true },
-          });
-          // 타임랩스용 이미지 저장
-          if (timelapse) {
-            await setCoverView(true);
-            onImgSave();
-          }
-        } else if (finalDecision === 2) {
-          // console.log('Final decision : false');
-          existToggleMutation({
-            variables: { email: userEmail, existToggle: false },
-          });
-        }
-      }
-    }
-  }, 1000);
-
-  const whatNee = () => {
-    console.log('왔니?');
-  };
-  const donleaveme = () => {
-    // alert('마우스를 화면에 올려 놓으세요!!!');
-    console.log('날 떠나지마');
-  };
-
-  // useMouseEnter(whatNee);
-
-  // useMouseLeave(donleaveme)
 
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -2402,8 +2348,8 @@ export default ({
                 <Logo />
               </WhiteBox>
             </AvatarBoxCover>
-            <CanvasBox ref={canvas1} />
-            <VideoBox ref={video1} playsInline autoPlay muted />
+            <CanvasBox ref={canvasRef} />
+            <VideoBox ref={webcamRef} playsInline autoPlay muted />
           </VideoWrap>
           <GraphDiv>
             <HeaderDiv>
