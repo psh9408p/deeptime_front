@@ -13,10 +13,6 @@ import Footer from './Footer';
 import Header from './Header';
 import Header_welcome from './Header_welcome';
 
-// import Fullpage from '../Components/LandingPage/Fullpage';
-// import Introduce from '../Routes/Introduce';
-// import Fullpage from '../Routes/LandingPage/Fullpage';
-// import Video from '../Routes/LandingPage/Video';
 const QUERY = gql`
   {
     isLoggedIn @client
@@ -43,16 +39,15 @@ export default () => {
         )}
         <Router>
           <>
-            {/* <Footer3 /> */}
-            {/* {isLoggedIn === true && window.location.hash !== '#/study' && (
+            {isLoggedIn === true && window.location.hash !== '#/study' && (
               <Header />
-            )} */}
-            {/* {isLoggedIn === false &&
-              window.location.hash !== '#/experience' && <Header_welcome />} */}
+            )}
+            {isLoggedIn === false &&
+              window.location.hash !== '#/experience' && <Header_welcome />}
             <Wrapper>
               <Routes isLoggedIn={isLoggedIn} />
               {/* {window.location.hash !== '#/experience' &&
-                window.location.hash !== '#/study' && <Footer/>} */}
+                window.location.hash !== '#/study' && <Footer2 />} */}
             </Wrapper>
           </>
         </Router>
