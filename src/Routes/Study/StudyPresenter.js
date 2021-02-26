@@ -50,12 +50,6 @@ import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const UPDATE_EXISTTOGGLE = gql`
-  mutation update_existToggle($email: String!, $existToggle: Boolean!) {
-    update_existToggle(email: $email, existToggle: $existToggle)
-  }
-`;
-
 const ClockBox = styled.div`
   width: 200px;
   height: 200px;
@@ -963,7 +957,7 @@ export default ({
   const video1 = useRef();
   const canvas1 = useRef();
 
-  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
+  // const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   // todolist 미완료&북마크 된거 구분
   let todolistData_new = [];

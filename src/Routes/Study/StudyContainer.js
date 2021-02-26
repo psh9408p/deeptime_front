@@ -25,6 +25,7 @@ import {
   EXTENSION_SCHEDULE,
   EDIT_STUDYSET,
   GO_WITH,
+  UPDATE_EXISTTOGGLE,
 } from './StudyQueries';
 
 const LoaderWrapper = styled.div`
@@ -42,7 +43,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 8000 * 1;
+let detect_interval = 9000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -71,7 +72,7 @@ export default () => {
   const todolistName = useInput('');
   const scheduleTitle = useInput('');
   const [studyBool, setStudyBool] = useState(true);
-  const [aniBool, setAniBool] = useState(true);
+  const [aniBool, setAniBool] = useState(false);
   const [newTodoView, setNewTodoView] = useState(false);
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
@@ -92,6 +93,7 @@ export default () => {
   const [extensionScheduleMutation] = useMutation(EXTENSION_SCHEDULE);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const [goWithMutation] = useMutation(GO_WITH);
+  const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
 
   const {
     data: myInfoData,
@@ -397,13 +399,20 @@ export default () => {
       finalDecisionCellphone = false;
     }
 
+    console.log('ema', myInfoData);
     //final decision
     if (finalDecisionPerson === true) {
       if (finalDecisionNorm === true) {
         if (finalDecisionCellphone === true) {
           console.log('cell phone');
+          existToggleMutation({
+            variables: { email: myInfoData.me.email, existToggle: true },
+          });
         } else if (finalDecisionCellphone === false) {
           console.log('study');
+          existToggleMutation({
+            variables: { email: myInfoData.me.email, existToggle: true },
+          });
         }
       } else if (finalDecisionNorm === false) {
         console.log('sleep or none');
@@ -413,8 +422,14 @@ export default () => {
         if (normArray_decision_high.length >= decision_size) {
           if (finalDecisionCellphone === true) {
             console.log('cell phone');
+            existToggleMutation({
+              variables: { email: myInfoData.me.email, existToggle: true },
+            });
           } else {
             console.log('study');
+            existToggleMutation({
+              variables: { email: myInfoData.me.email, existToggle: true },
+            });
           }
         } else if (normArray_decision_high.length < decision_size) {
           console.log('none');
