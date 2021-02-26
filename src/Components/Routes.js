@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom';
 import Auth from '../Routes/Auth';
 import Attendance from '../Routes/Attendance';
-import Supervision from '../Routes/Supervision';
 import Marking from '../Routes/Marking';
 import Class from '../Routes/Class';
 import Student from '../Routes/Student';
@@ -114,11 +113,6 @@ const LoggedInRoutes = () => {
       return (
         <Switch>
           <Route exact path="/" component={Introduce_M} />
-          {/* <Route path="/supervision" component={Supervision} />
-          <Route path="/marking" component={Marking} />
-          <Route exact path="/" component={Academy} />
-          <Route path="/class" component={Class} /> */}
-          {/* <Route path="/student" component={Student} /> */}
           <Route path="/shop" component={Shop_M} />
           <Route path="/payment/result" component={PaymentResult} />
           <Route path="/account" component={Account} />
@@ -145,7 +139,7 @@ const LoggedOutRoutes = () => {
   }
   return (
     <Switch>
-      <Route exact path="/" component={Test} />
+      <Route exact path="/" component={Introduce} />
       <Route path="/userguide" component={UserGuide} />
       <Route path="/shopping" component={Shopping} />
       <Route path="/support" component={Support} />

@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-// import * as posenet from '@tensorflow-models/posenet';
-import * as tf from '@tensorflow/tfjs';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
-// import * as faceapi from "face-api.js"
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
-// import LoadCamera from "../Components/LoadCamera/LoadCamera"
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
-import SplitArray from '../../Components/Array/SplitArray';
 import SumArray from '../../Components/Array/SumArray';
 import twoArraySum from '../../Components/twoArraySum';
 import ObjectCopy from '../../Components/ObjectCopy';
@@ -241,10 +236,8 @@ const ControlTop2 = styled.div`
 const VideoBox = styled.video`
   position: absolute;
   z-index: 2;
-  /* width: 450px;
-  height: 340px; */
-  width: 640;
-  height: 480;
+  width: 450px;
+  height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
   margin-top: 120px;
 `;
@@ -252,10 +245,8 @@ const VideoBox = styled.video`
 const CanvasBox = styled.canvas`
   position: absolute;
   z-index: 3;
-  /* width: 450px;
-  height: 340px; */
-  width: 640;
-  height: 480;
+  width: 450px;
+  height: 340px;
   border-radius: ${(props) => props.theme.borderRadius};
   margin-top: 120px;
 `;
@@ -860,6 +851,8 @@ export default ({
   setAniBool,
   canvasRef,
   webcamRef,
+  LoadCamera,
+  Predict,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1629,7 +1622,7 @@ export default ({
   // 1. SetVideoElement
   // 1. LoadCamera
   // 1. ConnectElAndCamera
-  const LoadCamera = async () => {
+  const LoadCamera2 = async () => {
     console.log('Load camera');
     const getUserMedia =
       navigator.mediaDevices.getUserMedia ||
@@ -1797,6 +1790,7 @@ export default ({
       return obj;
     }, {});
 
+    console.log(temp, 'aa');
     // 아바타 보더 깜빡임 멈추게 하기위한 카운트
     decisionCount = decisionCount + 1;
     if (decisionCount > 1) {
@@ -1820,8 +1814,10 @@ export default ({
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
+      // LoadCamera();
+      // LoadModel();
       LoadCamera();
-      LoadModel();
+      Predict();
       isFirstRun.current = false;
       return;
     }

@@ -33,69 +33,16 @@ const LoaderWrapper = styled.div`
 
 let videoDeviceIds = [];
 
-// // val : pixel's diff
-// let normArray = new Array(24).fill(5000);
-// // 1.personBbox area
-// let personDecisionArray = new Array(24).fill(30000);
-
-let normArray = [
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-  5000,
-]; // val : pixel's diff
-let personDecisionArray = [
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-  30000,
-]; // 1.personBbox area
+// val : pixel's diff
+let normArray = new Array(24).fill(5000);
+// 1.personBbox area
+let personDecisionArray = new Array(24).fill(30000);
 
 let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
-let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
+// let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 100 * 1;
+let detect_interval = 8000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -203,6 +150,7 @@ export default () => {
   };
 
   const Predict = async () => {
+    console.log('zz');
     // const posenet_model = await posenet.load({
     //   architecture: "ResNet50",
     //   outputStride: 32,
@@ -210,12 +158,15 @@ export default () => {
     //   quantBytes: 2,
     // })
     const ssd_model = await cocoSsd.load({ base: 'mobilenet_v2' });
+    console.log('dfds');
 
     const videoWidth = webcamRef.current.width;
     const videoHeight = webcamRef.current.height;
     let beforeImg = tf.zeros([camera_height, camera_width, 3]);
 
+    console.log('dd');
     while (true) {
+      console.log('aa');
       await sleep(detect_interval);
 
       if (webcamRef.current.readyState >= 3) {
@@ -499,11 +450,6 @@ export default () => {
     }
   }, [isAm]);
 
-  useEffect(() => {
-    LoadCamera();
-    Predict();
-  });
-
   if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
       <LoaderWrapper>
@@ -552,6 +498,8 @@ export default () => {
         setAniBool={setAniBool}
         canvasRef={canvasRef}
         webcamRef={webcamRef}
+        LoadCamera={LoadCamera}
+        Predict={Predict}
       />
     );
   }

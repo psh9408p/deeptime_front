@@ -62,7 +62,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 100 * 1;
+let detect_interval = 1000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -82,7 +82,7 @@ let camera_height = 480;
 let detect_count = 0;
 let doDrawResult = true;
 
-export default function StudyPredictWhile() {
+export default () => {
   const canvasRef = useRef();
   // const subCanvasRef = useRef()
   const webcamRef = useRef();
@@ -101,7 +101,6 @@ export default function StudyPredictWhile() {
     }
 
     const deviceIds = await navigator.mediaDevices.enumerateDevices();
-
     deviceIds.forEach(function (deviceId) {
       if (deviceId.kind === 'videoinput') {
         videoDeviceIds.push(deviceId);
@@ -320,6 +319,7 @@ export default function StudyPredictWhile() {
       personDecision_size,
     ); //detect using the data for 2 min
 
+    console.log(personDecisionArray_decision, 'aaa');
     personDecisionArray_decision = personDecisionArray_decision.filter(
       (Decision) => Decision > personSizeThreshold,
     );
@@ -430,4 +430,4 @@ export default function StudyPredictWhile() {
       </div> */}
     </>
   );
-}
+};
