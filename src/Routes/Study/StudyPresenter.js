@@ -847,6 +847,8 @@ export default ({
   webcamRef,
   LoadCamera,
   Predict,
+  timelapse,
+  setTimelapse,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -883,9 +885,6 @@ export default ({
   );
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
-  );
-  const [timelapse, setTimelapse] = useState(
-    myInfoData.studyDefaultSet.timelapseRecord,
   );
   const [dDayOn, setDDayOn] = useState(myInfoData.studyDefaultSet.dDayOn);
   const dDateName = useInput(myInfoData.studyDefaultSet.dDateName, max10);
@@ -1812,6 +1811,7 @@ export default ({
       // LoadModel();
       LoadCamera();
       Predict();
+      setTimelapse(myInfoData.studyDefaultSet.timelapseRecord);
       isFirstRun.current = false;
       return;
     }

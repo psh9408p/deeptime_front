@@ -77,6 +77,7 @@ export default () => {
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
   const [coverView, setCoverView] = useState(false);
+  const [timelapse, setTimelapse] = useState(false);
   const [isAm, setIsAm] = useState(new Date().getHours() < 12);
   const [reCount, setReCount] = useState(0);
 
@@ -152,7 +153,6 @@ export default () => {
   };
 
   const Predict = async () => {
-    console.log('zz');
     // const posenet_model = await posenet.load({
     //   architecture: "ResNet50",
     //   outputStride: 32,
@@ -160,15 +160,12 @@ export default () => {
     //   quantBytes: 2,
     // })
     const ssd_model = await cocoSsd.load({ base: 'mobilenet_v2' });
-    console.log('dfds');
 
     const videoWidth = webcamRef.current.width;
     const videoHeight = webcamRef.current.height;
     let beforeImg = tf.zeros([camera_height, camera_width, 3]);
 
-    console.log('dd');
     while (true) {
-      console.log('aa');
       await sleep(detect_interval);
 
       if (webcamRef.current.readyState >= 3) {
@@ -515,6 +512,8 @@ export default () => {
         webcamRef={webcamRef}
         LoadCamera={LoadCamera}
         Predict={Predict}
+        timelapse={timelapse}
+        setTimelapse={setTimelapse}
       />
     );
   }
