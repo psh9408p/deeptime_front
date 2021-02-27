@@ -30,6 +30,7 @@ import {
 import videoCanvas from 'video-canvas';
 import html2canvas from 'html2canvas';
 import moment from 'moment';
+import useInterval from '../../Hooks/useInterval';
 
 const LoaderWrapper = styled.div`
   margin: 250px 0px;
@@ -46,7 +47,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 1000 * 1;
+let detect_interval = 9000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -65,6 +66,11 @@ let camera_width = 640;
 let camera_height = 480;
 let detect_count = 0;
 let doDrawResult = false;
+
+let ssd_model = null;
+let videoWidth = null;
+let videoHeight = null;
+let beforeImg = null;
 
 export default () => {
   ChannelService.shutdown();
@@ -208,77 +214,11 @@ export default () => {
     //   inputResolution: { width: 257, height: 200 },
     //   quantBytes: 2,
     // })
-    const ssd_model = await cocoSsd.load({ base: 'mobilenet_v2' });
+    ssd_model = await cocoSsd.load({ base: 'mobilenet_v2' });
 
-    const videoWidth = webcamRef.current.width;
-    const videoHeight = webcamRef.current.height;
-    let beforeImg = tf.zeros([camera_height, camera_width, 3]);
-
-    // while (true) {
-    setInterval(async () => {
-      // await sleep(detect_interval);
-
-      if (webcamRef.current.readyState >= 3) {
-        const ssd_result = await ssd_model.detect(webcamRef.current);
-        // const pose_result = await posenet_model.estimateMultiplePoses(webcamRef.current)
-        // console.log(pose_result)
-        const personDetections = ssd_result.filter((p) => p.class === 'person');
-        // console.log(personDetections)
-
-        const cellphoneDetections = ssd_result.filter(
-          (p) => p.class === 'cell phone',
-        );
-        // console.log(cellphoneDetections)
-
-        let img = tf.browser.fromPixels(webcamRef.current);
-
-        let sub = tf.sub(img, beforeImg);
-        let temp = sub.norm(2).sum();
-        let norm = await temp.array(1);
-
-        if (normArray.length >= window_size) {
-          normArray.pop();
-        }
-
-        normArray = [norm, ...normArray];
-        sub.dispose();
-        temp.dispose();
-        beforeImg.dispose();
-        // console.log(normArray)
-        beforeImg = img;
-
-        if (doDrawResult === true) {
-          drawResult(
-            // pose_result,
-            personDetections,
-            cellphoneDetections,
-            webcamRef.current,
-            videoWidth,
-            videoHeight,
-            canvasRef,
-          );
-        }
-
-        personDecision(personDetections);
-        cellphoneDecision(cellphoneDetections);
-
-        if (detect_count % mutation_interval === 0) {
-          ConcludeFinalDecision();
-          detect_count = 0;
-        }
-
-        // if (imgTensorArray.length === window_size + 1) {
-        //   console.log("here")
-        //   // console.log(imgTensorArray.length)
-        //   await imgTensorArray[window_size].dispose()
-        //   imgTensorArray[window_size].print()
-        // }
-        detect_count = detect_count + 1;
-        console.log(detect_count);
-
-        await tf.nextFrame();
-      }
-    }, detect_interval);
+    videoWidth = webcamRef.current.width;
+    videoHeight = webcamRef.current.height;
+    beforeImg = tf.zeros([camera_height, camera_width, 3]);
   };
 
   const drawResult = (
@@ -390,7 +330,6 @@ export default () => {
       variables: { email: myInfoData.me.email, existToggle: true },
     });
     // 타임랩스용 이미지 저장
-    console.log('aa', timelapse);
     if (timelapse) {
       await setCoverView(true);
       onImgSave();
@@ -491,6 +430,72 @@ export default () => {
     }
   };
   /////////////////////////////////////
+
+  // while (true) {
+  useInterval(async () => {
+    // await sleep(detect_interval);
+
+    if (webcamRef.current.readyState >= 3) {
+      const ssd_result = await ssd_model.detect(webcamRef.current);
+      // const pose_result = await posenet_model.estimateMultiplePoses(webcamRef.current)
+      // console.log(pose_result)
+      const personDetections = ssd_result.filter((p) => p.class === 'person');
+      // console.log(personDetections)
+
+      const cellphoneDetections = ssd_result.filter(
+        (p) => p.class === 'cell phone',
+      );
+      // console.log(cellphoneDetections)
+
+      let img = tf.browser.fromPixels(webcamRef.current);
+
+      let sub = tf.sub(img, beforeImg);
+      let temp = sub.norm(2).sum();
+      let norm = await temp.array(1);
+
+      if (normArray.length >= window_size) {
+        normArray.pop();
+      }
+
+      normArray = [norm, ...normArray];
+      sub.dispose();
+      temp.dispose();
+      beforeImg.dispose();
+      // console.log(normArray)
+      beforeImg = img;
+
+      if (doDrawResult === true) {
+        drawResult(
+          // pose_result,
+          personDetections,
+          cellphoneDetections,
+          webcamRef.current,
+          videoWidth,
+          videoHeight,
+          canvasRef,
+        );
+      }
+
+      personDecision(personDetections);
+      cellphoneDecision(cellphoneDetections);
+
+      if (detect_count % mutation_interval === 0) {
+        ConcludeFinalDecision();
+        detect_count = 0;
+      }
+
+      // if (imgTensorArray.length === window_size + 1) {
+      //   console.log("here")
+      //   // console.log(imgTensorArray.length)
+      //   await imgTensorArray[window_size].dispose()
+      //   imgTensorArray[window_size].print()
+      // }
+      detect_count = detect_count + 1;
+      console.log(detect_count);
+
+      await tf.nextFrame();
+    }
+  }, detect_interval);
 
   // Today 도넛 차트 am pm 자동 전환
   const isFirstRun = useRef(true);

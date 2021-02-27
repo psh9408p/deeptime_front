@@ -1760,7 +1760,6 @@ export default ({
       // LoadModel();
       LoadCamera();
       Predict();
-      console.log('fdsfa', myInfoData.studyDefaultSet);
       setTimelapse(myInfoData.studyDefaultSet.timelapseRecord);
       isFirstRun.current = false;
       return;
