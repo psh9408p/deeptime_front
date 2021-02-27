@@ -27,6 +27,9 @@ import {
   GO_WITH,
   UPDATE_EXISTTOGGLE,
 } from './StudyQueries';
+import videoCanvas from 'video-canvas';
+import html2canvas from 'html2canvas';
+import moment from 'moment';
 
 const LoaderWrapper = styled.div`
   margin: 250px 0px;
@@ -43,7 +46,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 9000 * 1;
+let detect_interval = 1000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -117,6 +120,52 @@ export default () => {
     refetch: subjectRefetch,
   } = useQuery(MY_SUBJECT);
 
+  //캡쳐 코드
+  const onImgSave = () => {
+    // const ctx = canvas1.current.getContext('2d');
+    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
+    videoCanvas(webcamRef.current, {
+      canvas: canvasRef.current,
+    });
+
+    const saveAs = (uri, filename) => {
+      var link = document.createElement('a');
+      if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        window.open(uri);
+      }
+    };
+
+    const now_Date = new Date();
+    const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
+    const target = document.querySelector('#capture');
+    html2canvas(target, {
+      width: target.clientWidth + 20,
+      useCORS: true,
+      // removeContainer: false,
+    }).then((canvas) => {
+      // document.body.appendChild(canvas);
+      saveAs(
+        canvas.toDataURL('image/png'),
+        'deeptime_play_' + file_tail + '.png',
+      );
+    });
+    // 팔로워 영역 임시 화면 꺼주기
+    setCoverView(false);
+    // 주기적으로 캐시 지우기위해 새로고침 30회 마다
+    if (reCount === 29) {
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      setReCount(reCount + 1);
+    }
+  };
+
   ///////////////////////////////////// 학습 판단 코드
   async function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -165,8 +214,9 @@ export default () => {
     const videoHeight = webcamRef.current.height;
     let beforeImg = tf.zeros([camera_height, camera_width, 3]);
 
-    while (true) {
-      await sleep(detect_interval);
+    // while (true) {
+    setInterval(async () => {
+      // await sleep(detect_interval);
 
       if (webcamRef.current.readyState >= 3) {
         const ssd_result = await ssd_model.detect(webcamRef.current);
@@ -228,7 +278,7 @@ export default () => {
 
         await tf.nextFrame();
       }
-    }
+    }, detect_interval);
   };
 
   const drawResult = (
@@ -335,6 +385,19 @@ export default () => {
     // console.log(cellphoneDecisionArray)
   };
 
+  const ThrowTime = async () => {
+    existToggleMutation({
+      variables: { email: myInfoData.me.email, existToggle: true },
+    });
+    // 타임랩스용 이미지 저장
+    console.log('aa', timelapse);
+    if (timelapse) {
+      await setCoverView(true);
+      onImgSave();
+    }
+    console.log('throw time!');
+  };
+
   const ConcludeFinalDecision = () => {
     // normArray = [] // val : pixel's diff
     // personDecisionArray = [] // 1.true 2.false
@@ -396,20 +459,15 @@ export default () => {
       finalDecisionCellphone = false;
     }
 
-    console.log('ema', myInfoData);
     //final decision
     if (finalDecisionPerson === true) {
       if (finalDecisionNorm === true) {
         if (finalDecisionCellphone === true) {
           console.log('cell phone');
-          existToggleMutation({
-            variables: { email: myInfoData.me.email, existToggle: true },
-          });
+          ThrowTime();
         } else if (finalDecisionCellphone === false) {
           console.log('study');
-          existToggleMutation({
-            variables: { email: myInfoData.me.email, existToggle: true },
-          });
+          ThrowTime();
         }
       } else if (finalDecisionNorm === false) {
         console.log('sleep or none');
@@ -419,14 +477,10 @@ export default () => {
         if (normArray_decision_high.length >= decision_size) {
           if (finalDecisionCellphone === true) {
             console.log('cell phone');
-            existToggleMutation({
-              variables: { email: myInfoData.me.email, existToggle: true },
-            });
+            ThrowTime();
           } else {
             console.log('study');
-            existToggleMutation({
-              variables: { email: myInfoData.me.email, existToggle: true },
-            });
+            ThrowTime();
           }
         } else if (normArray_decision_high.length < decision_size) {
           console.log('none');
@@ -514,6 +568,7 @@ export default () => {
         Predict={Predict}
         timelapse={timelapse}
         setTimelapse={setTimelapse}
+        onImgSave={onImgSave}
       />
     );
   }

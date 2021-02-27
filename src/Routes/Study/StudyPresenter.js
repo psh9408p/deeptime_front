@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
-import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import styled from 'styled-components';
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
 import SumArray from '../../Components/Array/SumArray';
@@ -33,18 +31,13 @@ import {
   Button_setting,
   Button_control,
 } from '../../Components/Buttons/Button_click';
-import html2canvas from 'html2canvas';
-import {
-  FixedSizeGrid as ListGrid,
-  FixedSizeList as FixedList,
-} from 'react-window';
+import { FixedSizeList as FixedList } from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
 import { toast } from 'react-toastify';
 import useSelect from '../../Hooks/useSelect';
 import useInput from '../../Hooks/useInput';
 import Select from '../../Components/Select';
 import Input from '../../Components/Input';
-import videoCanvas from 'video-canvas';
 import Avatar from '../../Components/Avatar';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import DatePicker from 'react-datepicker';
@@ -849,6 +842,7 @@ export default ({
   Predict,
   timelapse,
   setTimelapse,
+  onImgSave,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1012,51 +1006,6 @@ export default ({
   const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
   const stateBox = ['자습', '강의'];
   const stateList = useSelect(stateBox, stateBox);
-
-  const onImgSave = () => {
-    // const ctx = canvas1.current.getContext('2d');
-    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // ctx.drawImage(video1.current, 0, 0, ctx.canvas.width, ctx.canvas.height); //중요함, video를 그냥 넣어주면 최대 크기의 사진이 들어옴
-    videoCanvas(video1.current, {
-      canvas: canvas1.current,
-    });
-
-    const saveAs = (uri, filename) => {
-      var link = document.createElement('a');
-      if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        window.open(uri);
-      }
-    };
-
-    const now_Date = new Date();
-    const file_tail = moment(now_Date).format('YYMMDD_HHmmss');
-    const target = document.querySelector('#capture');
-    html2canvas(target, {
-      width: target.clientWidth + 20,
-      useCORS: true,
-      // removeContainer: false,
-    }).then((canvas) => {
-      // document.body.appendChild(canvas);
-      saveAs(
-        canvas.toDataURL('image/png'),
-        'deeptime_play_' + file_tail + '.png',
-      );
-    });
-    // 팔로워 영역 임시 화면 꺼주기
-    setCoverView(false);
-    // 주기적으로 캐시 지우기위해 새로고침 30회 마다
-    if (reCount === 29) {
-      setTimeout(() => window.location.reload(), 1000);
-    } else {
-      setReCount(reCount + 1);
-    }
-  };
 
   const maxTimeCal = (nowDate) => {
     let maxTermMin = 0;
@@ -1811,6 +1760,7 @@ export default ({
       // LoadModel();
       LoadCamera();
       Predict();
+      console.log('fdsfa', myInfoData.studyDefaultSet);
       setTimelapse(myInfoData.studyDefaultSet.timelapseRecord);
       isFirstRun.current = false;
       return;
