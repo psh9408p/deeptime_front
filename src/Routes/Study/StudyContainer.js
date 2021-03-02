@@ -41,13 +41,13 @@ let videoDeviceIds = [];
 // val : pixel's diff
 let normArray = new Array(24).fill(5000);
 // 1.personBbox area
-let personDecisionArray = new Array(24).fill(30000);
+let personDecisionArray = new Array(24).fill(0);
 
 let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 9000 * 1;
+let detect_interval = 3000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -64,7 +64,7 @@ const normArrayThreshold_high = 10000;
 let displayDetectResult = true;
 let camera_width = 640;
 let camera_height = 480;
-let detect_count = 0;
+let detect_count = 5;
 let doDrawResult = false;
 
 let ssd_model = null;
@@ -81,7 +81,7 @@ export default () => {
   const todolistName = useInput('');
   const scheduleTitle = useInput('');
   const [studyBool, setStudyBool] = useState(true);
-  const [aniBool, setAniBool] = useState(false);
+  const [aniBool, setAniBool] = useState(true);
   const [newTodoView, setNewTodoView] = useState(false);
   const [popupView, setPopupView] = useState(false);
   const [onLoading, setOnLoading] = useState(false);
@@ -173,10 +173,6 @@ export default () => {
   };
 
   ///////////////////////////////////// 학습 판단 코드
-  async function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const LoadCamera = async () => {
     console.log('Load camera');
     const getUserMedia = await navigator.mediaDevices.getUserMedia;
@@ -325,9 +321,9 @@ export default () => {
     // console.log(cellphoneDecisionArray)
   };
 
-  const ThrowTime = async () => {
+  const ThrowTime = async (existToggle, userStatus) => {
     existToggleMutation({
-      variables: { email: myInfoData.me.email, existToggle: true },
+      variables: { email: myInfoData.me.email, existToggle, userStatus },
     });
     // 타임랩스용 이미지 저장
     if (timelapse) {
@@ -337,6 +333,7 @@ export default () => {
     console.log('throw time!');
   };
 
+  const isFirstRun = useRef(true);
   const ConcludeFinalDecision = () => {
     // normArray = [] // val : pixel's diff
     // personDecisionArray = [] // 1.true 2.false
@@ -402,31 +399,45 @@ export default () => {
     if (finalDecisionPerson === true) {
       if (finalDecisionNorm === true) {
         if (finalDecisionCellphone === true) {
-          console.log('cell phone');
-          ThrowTime();
+          console.log('phone');
+          ThrowTime(true, 'phone');
+          setStudyBool(true);
         } else if (finalDecisionCellphone === false) {
           console.log('study');
-          ThrowTime();
+          ThrowTime(true, 'study');
+          setStudyBool(true);
         }
       } else if (finalDecisionNorm === false) {
-        console.log('sleep or none');
+        console.log('sleep');
+        ThrowTime(false, 'sleep');
+        setStudyBool(false);
       }
     } else if (finalDecisionPerson === false) {
       if (finalDecisionNorm === true) {
         if (normArray_decision_high.length >= decision_size) {
           if (finalDecisionCellphone === true) {
-            console.log('cell phone');
-            ThrowTime();
+            console.log('phone');
+            ThrowTime(true, 'phone');
+            setStudyBool(true);
           } else {
             console.log('study');
-            ThrowTime();
+            ThrowTime(true, 'study');
+            setStudyBool(true);
           }
         } else if (normArray_decision_high.length < decision_size) {
           console.log('none');
+          ThrowTime(false, 'none');
+          setStudyBool(false);
         }
       } else if (finalDecisionNorm === false) {
         console.log('none');
+        ThrowTime(false, 'none');
+        setStudyBool(false);
       }
+    }
+    if (isFirstRun.current) {
+      setAniBool(false);
+      isFirstRun.current = false;
     }
   };
   /////////////////////////////////////
@@ -434,8 +445,7 @@ export default () => {
   // while (true) {
   useInterval(async () => {
     // await sleep(detect_interval);
-
-    if (webcamRef.current.readyState >= 3) {
+    if (ssd_model && webcamRef.current && webcamRef.current.readyState >= 3) {
       const ssd_result = await ssd_model.detect(webcamRef.current);
       // const pose_result = await posenet_model.estimateMultiplePoses(webcamRef.current)
       // console.log(pose_result)
@@ -479,6 +489,7 @@ export default () => {
       personDecision(personDetections);
       cellphoneDecision(cellphoneDetections);
 
+      console.log(detect_count);
       if (detect_count % mutation_interval === 0) {
         ConcludeFinalDecision();
         detect_count = 0;
@@ -491,14 +502,12 @@ export default () => {
       //   imgTensorArray[window_size].print()
       // }
       detect_count = detect_count + 1;
-      console.log(detect_count);
 
       await tf.nextFrame();
     }
   }, detect_interval);
 
   // Today 도넛 차트 am pm 자동 전환
-  const isFirstRun = useRef(true);
   useEffect(() => {
     const nowDate = new Date();
     const { startDate, endDate } = todayDateRange(nowDate);
@@ -515,9 +524,6 @@ export default () => {
       setTimeout(() => {
         setIsAm(true);
       }, setTime);
-    }
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
     }
   }, [isAm]);
 

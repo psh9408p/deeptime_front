@@ -121,7 +121,15 @@ export const GO_WITH = gql`
 `;
 
 export const UPDATE_EXISTTOGGLE = gql`
-  mutation update_existToggle($email: String!, $existToggle: Boolean!) {
-    update_existToggle(email: $email, existToggle: $existToggle)
+  mutation update_existToggle(
+    $email: String!
+    $existToggle: Boolean!
+    $userStatus: String!
+  ) {
+    update_existToggle(
+      email: $email
+      existToggle: $existToggle
+      userStatus: $userStatus
+    )
   }
 `;

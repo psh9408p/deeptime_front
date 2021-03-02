@@ -168,12 +168,12 @@ export default withRouter(() => {
           <HeaderLink to="/auth" replace>
             로그인
           </HeaderLink>
-          {/* <PotalButton type="button" onClick={onClickPotal_student}>
+          <PotalButton type="button" onClick={onClickPotal_student}>
             <Play />
             <DisplayDiv>
               <IamText>체험하기</IamText>
             </DisplayDiv>
-          </PotalButton> */}
+          </PotalButton>
         </HeaderColumn>
       </HeaderWrapper>
     </Header>
