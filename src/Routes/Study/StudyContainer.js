@@ -323,14 +323,19 @@ export default () => {
 
   const ThrowTime = async (existToggle, userStatus) => {
     existToggleMutation({
-      variables: { email: myInfoData.me.email, existToggle, userStatus },
+      variables: {
+        email: myInfoData.me.email,
+        existToggle,
+        userStatus,
+      },
     });
+    setStudyBool(existToggle);
     // 타임랩스용 이미지 저장
     if (timelapse) {
       await setCoverView(true);
       onImgSave();
     }
-    console.log('throw time!');
+    console.log('throw time!', existToggle, userStatus);
   };
 
   const isFirstRun = useRef(true);
@@ -401,16 +406,13 @@ export default () => {
         if (finalDecisionCellphone === true) {
           console.log('phone');
           ThrowTime(true, 'phone');
-          setStudyBool(true);
         } else if (finalDecisionCellphone === false) {
           console.log('study');
           ThrowTime(true, 'study');
-          setStudyBool(true);
         }
       } else if (finalDecisionNorm === false) {
         console.log('sleep');
         ThrowTime(false, 'sleep');
-        setStudyBool(false);
       }
     } else if (finalDecisionPerson === false) {
       if (finalDecisionNorm === true) {
@@ -418,21 +420,17 @@ export default () => {
           if (finalDecisionCellphone === true) {
             console.log('phone');
             ThrowTime(true, 'phone');
-            setStudyBool(true);
           } else {
             console.log('study');
             ThrowTime(true, 'study');
-            setStudyBool(true);
           }
         } else if (normArray_decision_high.length < decision_size) {
           console.log('none');
           ThrowTime(false, 'none');
-          setStudyBool(false);
         }
       } else if (finalDecisionNorm === false) {
         console.log('none');
         ThrowTime(false, 'none');
-        setStudyBool(false);
       }
     }
     if (isFirstRun.current) {
