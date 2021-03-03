@@ -677,10 +677,7 @@ export default ({
   setStartRange,
   endRange,
   setEndRange,
-  myData,
   saveScheduleMutation,
-  myRefetch,
-  subjectList,
   subjectName,
   todolistName,
   subjectColor,
@@ -690,8 +687,11 @@ export default ({
   editSubjectMutation,
   deleteSubjectMutation,
   bookMarkSubjectMutation,
+  scheduleList,
+  scheduleRefetch,
+  schedulenetwork,
+  subjectList,
   subjectRefetch,
-  networkStatus,
   subjectnetwork,
   todolistData,
   addTodolistMutation,
@@ -728,8 +728,6 @@ export default ({
   scheTitle,
   scheLocation,
   createScheMutation,
-  dayDate,
-  setDayDate,
   makeView,
   setMakeView,
   nowDate,
@@ -746,8 +744,6 @@ export default ({
   timeError,
   isSelf,
 }) => {
-  const { weekStart, weekEnd } = WeekRange(dayDate);
-
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
@@ -940,7 +936,7 @@ export default ({
           alert('해당 과목을 삭제할 수 없습니다.');
         } else {
           await subjectRefetch();
-          await myRefetch();
+          await scheduleRefetch();
           await subjectClear();
           toast.success('해당 과목이 삭제되었습니다.');
           return true;
@@ -1032,7 +1028,6 @@ export default ({
 
   // 스케줄 초기화
   const clearSchedule = () => {
-    setDayDate(nowDate);
     setDayBool(
       dayList.map((_, index) => {
         return nowDate.getDay() === index ? true : false;
@@ -1050,7 +1045,6 @@ export default ({
 
   // 스케줄 수정 시 값 넣어주기
   const inputSchedule = (Sche) => {
-    setDayDate(Sche.start._date);
     setDayBool(
       dayList.map((_, index) => {
         return Sche.start._date.getDay() === index ? true : false;
@@ -1132,7 +1126,7 @@ export default ({
       if (!saveSchedule_my) {
         alert('스케줄을 복사할 수 없습니다.');
       } else {
-        await myRefetch();
+        await scheduleRefetch();
         // await todolistRefetch();
         setCopyDate(nowDate);
         setPasteDate(new Date(nowDate.getTime() + 604800000));
@@ -1183,7 +1177,7 @@ export default ({
       if (!saveSchedule_my) {
         alert('스케줄을 복사할 수 없습니다.');
       } else {
-        await myRefetch();
+        await scheduleRefetch();
         // await todolistRefetch();
         setCopyOne(new Date());
         setPasteOne(new Date(nowDate.getTime() + 86400000));
@@ -1210,7 +1204,7 @@ export default ({
 
   //스케줄 넣기
   const inputSchedules = () => {
-    schedules = myData.schedules.map((List) => {
+    schedules = scheduleList.map((List) => {
       let category = 'time';
       const endDate = new Date(List.end);
       if (List.isAllDay === true) {
@@ -1245,8 +1239,6 @@ export default ({
     setEndRange(
       moment(calendarInstance.getDateRangeEnd()._date).format('YYYY.MM.DD'),
     );
-    // 다중 스케줄 만들기 날짜 변경
-    setDayDate(calendarInstance.getDateRangeStart()._date);
   };
   const handleClickPrevButton = () => {
     // 캘린더 데이터 변경
@@ -1258,8 +1250,6 @@ export default ({
     setEndRange(
       moment(calendarInstance.getDateRangeEnd()._date).format('YYYY.MM.DD'),
     );
-    // 다중 스케줄 만들기 날짜 변경
-    setDayDate(calendarInstance.getDateRangeStart()._date);
   };
   const handleClickTodayButton = () => {
     const calendarInstance = cal.current.getInstance();
@@ -1278,37 +1268,12 @@ export default ({
     setInfoSche(e.schedule);
   }, []);
 
-  // const onClickScheduleSave = async () => {
-  //   try {
-  //     toast.info('스케줄 변경사항 저장 중...');
-  //     const {
-  //       data: { saveSchedule_my },
-  //     } = await saveScheduleMutation({
-  //       variables: {
-  //         scheduleArray: newScheduleArray,
-  //       },
-  //     });
-  //     if (!saveSchedule_my) {
-  //       alert('스케줄을 변경할 수 없습니다.');
-  //     } else {
-  //       await myRefetch();
-  //       // await todolistRefetch();
-  //       newScheduleArray = [];
-  //       toast.success('변경된 스케줄이 저장되었습니다.');
-  //     }
-  //   } catch (e) {
-  //     const realText = e.message.split('GraphQL error: ');
-  //     alert(realText[1]);
-  //   }
-  // };
-
   const onBeforeCreateSchedule = useCallback((scheduleData) => {
     // console.log(scheduleData);
     const inputDate_s = new Date(scheduleData.start._date);
     const inputDate_e = new Date(scheduleData.end._date);
 
     setMakeView(true);
-    setDayDate(inputDate_s);
     setDayBool(
       dayList.map((_, index) => {
         return inputDate_s.getDay() === index ? true : false;
@@ -1316,78 +1281,6 @@ export default ({
     );
     setSTime(inputDate_s);
     setETime(inputDate_e);
-
-    //   if (scheduleData.calendarId === undefined) {
-    //     alert('과목 선택은 필수입니다.\n과목 추가 및 북마크를 진행하세요.');
-    //     return;
-    //   }
-
-    //   let overlap = false;
-    //   schedules.map((sch) => {
-    //     if (
-    //       new Date(sch.end._date ? sch.end._date : sch.end) >
-    //         scheduleData.start._date &&
-    //       new Date(sch.start._date ? sch.start._date : sch.start) <
-    //         scheduleData.end._date
-    //     ) {
-    //       overlap = true;
-    //     }
-    //   });
-    //   if (overlap) {
-    //     alert('스케줄 시간은 중복될 수 없습니다.');
-    //     return;
-    //   }
-
-    //   const generateId =
-    //     Math.random().toString(36).substring(2, 15) +
-    //     Math.random().toString(36).substring(2, 15);
-    //   // 0시0분에 끝나면 끝나는 시간 -1초
-    //   const tmpEndDate = new Date(scheduleData.end._date);
-    //   if (
-    //     scheduleData.end._date.getMinutes() === 0 &&
-    //     scheduleData.end._date.getHours() === 0
-    //   ) {
-    //     tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-    //   }
-
-    //   const schedule = {
-    //     id: generateId,
-    //     title: scheduleData.title,
-    //     isAllDay: scheduleData.isAllDay,
-    //     isPrivate: scheduleData.raw.class === 'private' ? true : false,
-    //     start: scheduleData.start,
-    //     end: scheduleData.end,
-    //     category: scheduleData.isAllDay ? 'allday' : 'time',
-    //     dueDateClass: '',
-    //     location: scheduleData.location,
-    //     raw: {
-    //       class: scheduleData.raw.class === 'private' ? 'private' : 'public',
-    //     },
-    //     state: scheduleData.state,
-    //     calendarId: scheduleData.calendarId,
-    //   };
-
-    //   const schedule_tmp = {
-    //     id: generateId,
-    //     title: scheduleData.title,
-    //     isAllDay: scheduleData.isAllDay,
-    //     isPrivate: scheduleData.raw.class === 'private' ? true : false,
-    //     start: scheduleData.start._date,
-    //     end: tmpEndDate,
-    //     location: scheduleData.location,
-    //     state: scheduleData.state,
-    //     totalTime:
-    //       (scheduleData.end._date.getTime() -
-    //         scheduleData.start._date.getTime()) /
-    //       1000,
-    //     calendarId: scheduleData.calendarId ? scheduleData.calendarId : '',
-    //     option: 'create',
-    //   };
-
-    //   newScheduleArray.push(schedule_tmp);
-    //   // console.log(newScheduleArray);
-    //   schedules.push(schedule);
-    //   cal.current.calendarInst.createSchedules([schedule]);
   }, []);
 
   const onBeforeDeleteSchedule = useCallback(async (res) => {
@@ -1461,7 +1354,7 @@ export default ({
               : '스케줄을 수정할 수 없습니다.',
           );
         } else {
-          await myRefetch();
+          await scheduleRefetch();
           setCopyBool(false);
         }
       } catch (e) {
@@ -1470,149 +1363,6 @@ export default ({
       } finally {
         setScheLoading(false);
       }
-
-      // const checkSche = { ...res.schedule, ...res.changes };
-      // if (checkSche.calendarId === '') {
-      //   alert('과목을 할당해야 수정&복사가 가능합니다.');
-      //   return;
-      // }
-
-      // if (res.changes !== null) {
-      //   if (res.changes.start !== undefined && res.changes.end !== undefined) {
-      //     const dateSumVar = {
-      //       start: res.changes.start._date,
-      //       end: res.changes.end._date,
-      //     };
-      //     const dateRmVar = { start: '', end: '' };
-      //     ObjectUnassign(res.changes, dateRmVar);
-      //     Object.assign(res.changes, dateSumVar);
-      //   } else if (res.changes.start !== undefined) {
-      //     const dateSumVar = { start: res.changes.start._date };
-      //     const dateRmVar = { start: '' };
-      //     ObjectUnassign(res.changes, dateRmVar);
-      //     Object.assign(res.changes, dateSumVar);
-      //   } else if (res.changes.end !== undefined) {
-      //     const dateSumVar = { end: res.changes.end._date };
-      //     const dateRmVar = { end: '' };
-      //     ObjectUnassign(res.changes, dateRmVar);
-      //     Object.assign(res.changes, dateSumVar);
-      //   }
-
-      //   let totalTime_tmp = 0;
-      //   if (res.changes.start !== undefined && res.changes.end !== undefined) {
-      //     totalTime_tmp =
-      //       res.changes.end.getTime() - res.changes.start.getTime();
-      //   } else if (res.changes.start !== undefined) {
-      //     totalTime_tmp =
-      //       res.schedule.end._date.getTime() - res.changes.start.getTime();
-      //   } else if (res.changes.end !== undefined) {
-      //     totalTime_tmp =
-      //       res.changes.end.getTime() - res.schedule.start._date.getTime();
-      //   } else {
-      //     totalTime_tmp =
-      //       res.schedule.end._date.getTime() -
-      //       res.schedule.start._date.getTime();
-      //   }
-      //   totalTime_tmp = totalTime_tmp / 1000;
-
-      //   const generateId =
-      //     Math.random().toString(36).substring(2, 15) +
-      //     Math.random().toString(36).substring(2, 15);
-      //   // 0시 0분으로 끝나면 1초 빼주기
-      //   const tmpEndDate = new Date(res.changes.end);
-      //   if (
-      //     res.changes.end !== undefined &&
-      //     res.changes.end.getMinutes() === 0 &&
-      //     res.changes.end.getHours() === 0
-      //   ) {
-      //     tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-      //   }
-
-      //   const schedule_tmp = {
-      //     id: copyBool ? generateId : res.schedule.id,
-      //     isAllDay: res.schedule.isAllDay,
-      //     isPrivate: res.schedule.isPrivate,
-      //     title:
-      //       res.changes.title !== undefined
-      //         ? res.changes.title
-      //         : res.schedule.title,
-      //     location:
-      //       res.changes.location !== undefined
-      //         ? res.changes.location
-      //         : res.schedule.location,
-      //     state:
-      //       res.changes.state !== undefined
-      //         ? res.changes.state
-      //         : res.schedule.state,
-      //     start:
-      //       res.changes.start !== undefined
-      //         ? res.changes.start
-      //         : res.schedule.start._date,
-      //     end:
-      //       res.changes.end !== undefined ? tmpEndDate : res.schedule.end._date,
-      //     totalTime: totalTime_tmp,
-      //     calendarId:
-      //       res.changes.calendarId !== undefined
-      //         ? res.changes.calendarId
-      //         : res.schedule.calendarId,
-      //     option: copyBool ? 'create' : 'update',
-      //   };
-      //   Object.assign(schedule_tmp, res.changes);
-
-      //   let overlap = false;
-      //   const schedules_test = ObjectCopy(schedules);
-      //   const checkExist = (a) => a.id === res.schedule.id;
-      //   const checkIndex2 = schedules.findIndex(checkExist);
-      //   // 복사는 기존에 데이터가 없으니 뺄필요가 없지롱
-      //   if (!copyBool) {
-      //     schedules_test.splice(checkIndex2, 1);
-      //   }
-      //   schedules_test.map((sch) => {
-      //     if (
-      //       new Date(sch.end._date ? sch.end._date : sch.end) >
-      //         schedule_tmp.start &&
-      //       new Date(sch.start._date ? sch.start._date : sch.start) <
-      //         schedule_tmp.end
-      //     ) {
-      //       overlap = true;
-      //     }
-      //   });
-      //   if (overlap) {
-      //     alert('스케줄 시간은 중복될 수 없습니다.');
-      //     return;
-      //   }
-
-      //   const { schedule, changes } = res;
-      //   if (copyBool) {
-      //     // 복사
-      //     newScheduleArray.push(schedule_tmp);
-
-      //     schedules.push({ ...schedule, ...changes, id: generateId });
-
-      //     cal.current.calendarInst.createSchedules([
-      //       { ...schedule, ...changes, id: generateId },
-      //     ]);
-      //     setCopyBool(false);
-      //   } else {
-      //     // 업데이트
-      //     const checkIndex = newScheduleArray.findIndex(checkExist);
-      //     if (checkIndex === -1) {
-      //       newScheduleArray.push(schedule_tmp);
-      //     } else {
-      //       newScheduleArray.splice(checkIndex, 1);
-      //       newScheduleArray.push(schedule_tmp);
-      //     }
-
-      //     schedules.splice(checkIndex2, 1);
-      //     schedules.push({ ...schedule, ...changes });
-
-      //     cal.current.calendarInst.updateSchedule(
-      //       schedule.id,
-      //       schedule.calendarId,
-      //       changes,
-      //     );
-      //   }
-      // }
     },
     [copyBool],
   );
@@ -1745,7 +1495,7 @@ export default ({
       if (!createSchedule) {
         alert('스케줄을 만들 수 없습니다.');
       } else {
-        await myRefetch();
+        await scheduleRefetch();
         clearSchedule();
         setMakeView(false);
       }
@@ -1901,10 +1651,10 @@ export default ({
     inputCalendars();
   }
   // 스케줄의 리페치가 완료되야지만 새로운 스케줄 넣기
-  if (networkStatus === 4) {
+  if (schedulenetwork === 4) {
     isRefectRun = true;
   }
-  if (isRefectRun && networkStatus === 7) {
+  if (isRefectRun && schedulenetwork === 7) {
     isRefectRun = false;
     inputSchedules();
   }
@@ -1924,7 +1674,6 @@ export default ({
     );
   }, []);
 
-  // console.log(networkStatus, subjectnetwork);
   return (
     <Wrapper>
       {scheLoading && (
@@ -1943,7 +1692,7 @@ export default ({
           <SelectDiv>
             <Button_refresh
               onClick={() => {
-                myRefetch();
+                scheduleRefetch();
                 subjectRefetch();
                 // todolistRefetch();
               }}
@@ -2423,26 +2172,6 @@ export default ({
               custom={true}
             />
             <PTitle text={makeView ? '스케줄 만들기' : '스케줄 수정'} />
-            {/* <DatePicker
-              dateFormat={'yyyy/MM/dd'}
-              selected={dayDate}
-              onChange={(date) => {
-                setDayDate(date);
-                setDayBool(
-                  dayList.map((_, index) => {
-                    return date.getDay() === index ? true : false;
-                  }),
-                );
-              }}
-              customInput={
-                <CustomInput
-                  margin={'0 0 10px 0'}
-                  week={true}
-                  text={`${moment(weekStart).format('MM.DD')}(일)~
-                                ${moment(weekEnd).format('MM.DD')}(토)`}
-                />
-              }
-            /> */}
             <DayWrap>
               {dayList.map((day, index) => {
                 return (
