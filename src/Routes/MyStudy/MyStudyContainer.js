@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Loader from '../../Components/Loader';
 import MyStudyPresenter from './MyStudyPresenter';
-import { ME, MY_SUBJECT } from './MyStudyQueries';
+import { MY_STUDYDEFAULTSET } from './MyStudyQueries';
 import { useQuery } from '@apollo/react-hooks';
 import useTabs from '../../Hooks/useTabs';
 import Tab from '../../Components/Tab';
@@ -21,39 +21,21 @@ export default () => {
   const myTabContents = ['나의 스케줄', '나의 통계'];
   const myTabs = useTabs(0, myTabContents);
 
-  const {
-    data: myInfoData,
-    loading: myInfoLoading,
-    refetch: myInfoRefetch,
-    // startPolling,
-    // stopPolling,
-    networkStatus,
-  } = useQuery(ME, {
-    notifyOnNetworkStatusChange: true,
-  });
-  const {
-    data: subjectData,
-    loading: subjectLoading,
-    refetch: subjectRefetch,
-    networkStatus: subjectnetwork,
-  } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
+  const { data: defaultSet, loading: defaultSetLoading } = useQuery(
+    MY_STUDYDEFAULTSET,
+  );
 
   return (
     <Wrapper>
       <Tab tabs={myTabs} />
-      {networkStatus === 1 || subjectnetwork === 1 ? (
+      {defaultSetLoading ? (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
       ) : (
         <MyStudyPresenter
           pageIndex={myTabs.currentIndex}
-          myInfoData={myInfoData}
-          myInfoRefetch={myInfoRefetch}
-          networkStatus={networkStatus}
-          subjectData={subjectData}
-          subjectRefetch={subjectRefetch}
-          subjectnetwork={subjectnetwork}
+          defaultSet={defaultSet.myStudyDefaultSet}
         />
       )}
     </Wrapper>
