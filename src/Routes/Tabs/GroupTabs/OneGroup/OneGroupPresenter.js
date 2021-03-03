@@ -20,6 +20,7 @@ import Popup from 'reactjs-popup';
 import { Link } from 'react-router-dom';
 import CUGroup from '../CUGroup';
 
+import GroupChart from '../../../../Components/GroupChart';
 const Wrapper = styled.div`
   position: relative;
   display: flex;
@@ -541,6 +542,9 @@ export default ({
             <p>평균 시간: {averageTime}초</p>
             <p>나의 시간: {myTime}초</p>
             <p>그룹 최소 학습 시간: {groupData.targetTime}시간</p>
+          </ContentRow>
+          <ContentRow>
+            <GroupChart averageTime={groupData.targetTime} myTime={myTime} />
           </ContentRow>
           <ContentRow>
             {groupData.member.map((member, index) => (

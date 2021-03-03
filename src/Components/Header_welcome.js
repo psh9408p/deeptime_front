@@ -11,7 +11,7 @@ const Header = styled.header`
   top: 0;
   left: 0;
   background-color: white;
-  border-bottom: ${(props) => props.theme.boxBorder};
+  /* border-bottom: ${(props) => props.theme.boxBorder}; */
   border-radius: 0px;
   display: flex;
   justify-content: center;
@@ -168,12 +168,12 @@ export default withRouter(() => {
           <HeaderLink to="/auth" replace>
             로그인
           </HeaderLink>
-          <PotalButton type="button" onClick={onClickPotal_student}>
+          {/* <PotalButton type="button" onClick={onClickPotal_student}>
             <Play />
             <DisplayDiv>
               <IamText>체험하기</IamText>
             </DisplayDiv>
-          </PotalButton>
+          </PotalButton> */}
         </HeaderColumn>
       </HeaderWrapper>
     </Header>

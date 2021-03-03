@@ -16,14 +16,14 @@ const MyGroupsWrap = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  height: 120px;
+  height: 150px;
   width: 800px;
   padding: 10px 15px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: white;
 `;
-
+const IndiGroupWrap = styled.div``;
 const IndiGroup = styled.div`
   cursor: pointer;
   width: 250px;
@@ -44,7 +44,17 @@ const IndiGroup = styled.div`
     }
   }
 `;
+const IndiGroupTitle = styled.div`
+  margin-top: 10px;
+  padding-left: 2.5px;
+`;
 
+const MaxMember = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  /* align-items: flex-end; */
+  position: fixed;
+`;
 const AddBox = styled(IndiGroup)`
   display: flex;
   justify-content: center;
@@ -81,21 +91,24 @@ export default ({ groupData, onBookmark, myTabs }) => {
         {groupData.map((group, index) => {
           const selectBool = group.id === selectId;
           return (
-            <IndiGroup
-              key={index}
-              selectBool={selectBool}
-              onClick={() => {
-                setSelectId(group.id);
-              }}
-            >
-              {group.name}
-              <Star
-                fill={group.bookmark ? 'yellow' : 'grey'}
+            <IndiGroupWrap>
+              <IndiGroup
+                key={index}
+                selectBool={selectBool}
                 onClick={() => {
-                  onBookmark(group.id, !group.bookmark);
+                  setSelectId(group.id);
                 }}
-              />
-            </IndiGroup>
+              >
+                <MaxMember>{'인원수'}</MaxMember>
+                <Star
+                  fill={group.bookmark ? 'yellow' : 'grey'}
+                  onClick={() => {
+                    onBookmark(group.id, !group.bookmark);
+                  }}
+                />
+              </IndiGroup>
+              <IndiGroupTitle>{group.name}</IndiGroupTitle>
+            </IndiGroupWrap>
           );
         })}
         {groupData.length < 3 && (
