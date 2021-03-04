@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SquarePost from '../../../../Components/SquarePost';
 import MyStatistics from '../../../../Routes/Tabs/MyStudyTabs/MyStatistics';
-import MySchedule from '../../../../Routes/Tabs/MyStudyTabs/MySchedule';
+import OtherSchedule from './OtherSchedule';
 
 const Posts = styled.div`
   margin-top: 20px;
@@ -59,13 +59,14 @@ export default ({
       return <NonPublicDiv>비공개 계정입니다</NonPublicDiv>;
     } else {
       return (
-        <ContentWrap>
-          <MyStatistics
-            myInfoData={User}
-            networkStatus={networkStatus}
-            isSelf={false}
-          />
-        </ContentWrap>
+        // <ContentWrap>
+        //   <MyStatistics
+        //     myInfoData={User}
+        //     networkStatus={networkStatus}
+        //     isSelf={false}
+        //   />
+        // </ContentWrap>
+        <NonPublicDiv>통계 서비스 준비중...</NonPublicDiv>
       );
     }
   } else if (pageIndex === 2) {
@@ -74,13 +75,7 @@ export default ({
     } else {
       return (
         <ContentWrap>
-          <MySchedule
-            myInfoData={User}
-            networkStatus={networkStatus}
-            subjectList={subjectData.userSubject}
-            subjectnetwork={subjectnetwork}
-            isSelf={false}
-          />
+          <OtherSchedule userData={User} />
         </ContentWrap>
       );
     }

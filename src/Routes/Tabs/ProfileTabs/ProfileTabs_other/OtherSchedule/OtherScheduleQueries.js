@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
-export const MY_SCHEDULE = gql`
-  query mySchedule {
-    mySchedule {
+export const USER_SCHEDULE = gql`
+  query userSchedule($userId: String!) {
+    userSchedule(userId: $userId) {
       id
       isAllDay
       isPrivate
@@ -21,9 +21,9 @@ export const MY_SCHEDULE = gql`
   }
 `;
 
-export const MY_SUBJECT = gql`
-  query mySubject {
-    mySubject {
+export const USER_SUBJECT = gql`
+  query userSubject($userId: String!) {
+    userSubject(userId: $userId) {
       id
       name
       color
@@ -31,23 +31,6 @@ export const MY_SUBJECT = gql`
       dragBgColor
       borderColor
       bookMark
-    }
-  }
-`;
-
-export const MY_TODOLIST = gql`
-  query myTodolist {
-    myTodolist {
-      id
-      name
-      finish
-      finishAt
-      subject {
-        id
-        name
-        bgColor
-        bookMark
-      }
     }
   }
 `;

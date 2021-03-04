@@ -1,63 +1,18 @@
-import React, { useCallback, useEffect, useState, forwardRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import ObjectUnassign from '../../../../Components/ObjectUnassign';
 import Popup from 'reactjs-popup';
 import TUICalendar from '@toast-ui/react-calendar';
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-import Select from '../../../../Components/Select';
-import todayDateRange from '../../../../Components/Date/todayDateRange';
-import Button_blue from '../../../../Components/Buttons/Button_blue';
-import Button_red from '../../../../Components/Buttons/Button_red';
-import Button_custom from '../../../../Components/Buttons/Button_custom';
-import Input from '../../../../Components/Input';
-import Input_100 from '../../../../Components/Input_100';
-import PopupButton from '../../../../Components/Buttons/PopupButton';
-import PopupButton_solo from '../../../../Components/Buttons/PopupButton_solo';
-import PopButton_100 from '../../../../Components/Buttons/PopButton_100';
-import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
-import PopupClose from '../../../../Components/Buttons/PopupClose';
-import FatText from '../../../../Components/FatText';
-import { toast } from 'react-toastify';
-import { SwatchesPicker } from 'react-color';
-import useSelect from '../../../../Hooks/useSelect';
-import { FixedSizeList as BookmarkList, DaymarkList } from 'react-window';
-import CheckBox from '../../../../Components/CheckBox';
-import ObjectCopy from '../../../../Components/ObjectCopy';
-import { Delete, Flag, Next, Study_false } from '../../../../Components/Icons';
-import {
-  Button_refresh,
-  Button_setting,
-  Button_copy,
-  Button_copy2,
-} from '../../../../Components/Buttons/Button_click';
-import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
-import useInput from '../../../../Hooks/useInput';
-import 'rc-time-picker/assets/index.css';
-import TimePicker from 'rc-time-picker';
-import WeekRange from '../../../../Components/Date/WeekRange';
-import Loader from '../../../../Components/Loader';
-import { sum } from '@tensorflow/tfjs';
+import PopupClose from '../../../../../Components/Buttons/PopupClose';
+import FatText from '../../../../../Components/FatText';
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1400px;
   position: relative;
-`;
-
-const LoaderWrapper = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 const ControlButton = styled.button`
@@ -657,19 +612,12 @@ const InfoWrap = styled.div`
   }
 `;
 
-const TimeText = styled.span`
-  color: ${(props) => (props.timeError ? 'red' : 'black')};
-`;
-
-let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
 
 let isFirstRun = true;
 let isRefectRun = false;
 let isRefectRun2 = false;
-const dayList = ['일', '월', '화', '수', '목', '금', '토'];
-const fivemin = 1000 * 60 * 5;
 
 export default ({
   cal,
@@ -677,231 +625,18 @@ export default ({
   setStartRange,
   endRange,
   setEndRange,
-  subjectName,
-  todolistName,
-  subjectColor,
-  setSubjectColor,
-  handleChangeComplete,
   scheduleList,
-  scheduleRefetch,
   schedulenetwork,
   subjectList,
-  subjectRefetch,
   subjectnetwork,
-  todolistData,
-  todolistRefetch,
-  scheduleStart,
-  scheduleEnd,
   scheHeight,
   lastStart,
   lastEnd,
-  copyBool,
-  setCopyBool,
-  copyDate,
-  setCopyDate,
-  pasteDate,
-  setPasteDate,
-  copyStart,
-  copyEnd,
-  pasteStart,
-  pasteEnd,
-  copyOne,
-  setCopyOne,
-  pasteOne,
-  setPasteOne,
-  dayBool,
-  setDayBool,
-  sTime,
-  setSTime,
-  eTime,
-  setETime,
-  stateList,
-  scheTitle,
-  scheLocation,
-  makeView,
-  setMakeView,
-  nowDate,
   infoView,
   setInfoView,
   infoSche,
   setInfoSche,
-  modiView,
-  setModiView,
-  scheLoading,
-  setScheLoading,
-  timeError,
 }) => {
-  // subjectlist 오름차순 정렬
-  subjectList.sort(function (a, b) {
-    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-  });
-
-  // subjectlist 기타가 아래로오게
-  subjectList.sort(function (a, b) {
-    const word = '기타';
-    return a.name !== word && b.name === word
-      ? -1
-      : a.name === word && b.name !== word
-      ? 1
-      : 0;
-  });
-
-  // todolistData 오름차순 정렬
-  todolistData.sort(function (a, b) {
-    return a.subject.name < b.subject.name
-      ? -1
-      : a.subject.name > b.subject.name
-      ? 1
-      : // : a.name < b.name
-        // ? -1
-        // : a.name > b.name
-        // ? 1
-        0;
-  });
-  // todolistData Task 없음이 위로오게
-  todolistData.sort(function (a, b) {
-    const word = '과목 없음';
-    return a.subject.name === word && b.subject.name !== word
-      ? -1
-      : a.subject.name !== word && b.subject.name === word
-      ? 1
-      : 0;
-  });
-
-  //todolist 완료된거랑 아닌거 구분
-  let todolistData_new = [];
-  let todolistData_finish = [];
-  todolistData.map((todolist) => {
-    if (todolist.finish) {
-      todolistData_finish.push(todolist);
-    } else {
-      todolistData_new.push(todolist);
-    }
-  });
-  //todolist_finish 끝날 날짜 순으로 정렬(최근이 위로)
-  todolistData_finish.sort(function (a, b) {
-    const aDate = new Date(a.finishAt);
-    const bDate = new Date(b.finishAt);
-    return a.subject.name < b.subject.name
-      ? -1
-      : a.subject.name > b.subject.name
-      ? 1
-      : aDate > bDate
-      ? -1
-      : aDate < bDate
-      ? 1
-      : 0;
-  });
-  // todolistData_finish Task 없음이 위로오게
-  todolistData_finish.sort(function (a, b) {
-    const word = '과목 없음';
-    return a.subject.name === word && b.subject.name !== word
-      ? -1
-      : a.subject.name !== word && b.subject.name === word
-      ? 1
-      : 0;
-  });
-
-  // 과목 전용 리스트
-  const mySubjectList = useSelect(
-    subjectList.map((List) => `${List.name}`),
-    subjectList.map((List) => `${List.id}`),
-  );
-  // TOdolist에 쓸 과목 전용(북마크 필터)
-  let todoTask_tmp = subjectList.map((subject) => {
-    if (subject.bookMark) {
-      return subject;
-    }
-  });
-  todoTask_tmp = todoTask_tmp.filter(function (el) {
-    return el !== undefined;
-  });
-  const listName_tmp = todoTask_tmp.map((List) => `${List.name}`);
-  const listId_tmp = todoTask_tmp.map((List) => `${List.id}`);
-  const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
-
-  const todolistClear = () => {
-    todolistName.setValue('');
-    mySubjectList2.setOption('');
-  };
-
-  const subjectClear = () => {
-    subjectName.setValue('');
-    setSubjectColor(`#0F4C82`);
-    mySubjectList.setOption(mySubjectList.valueList[0]);
-  };
-
-  const subjectLoad = () => {
-    subjectName.setValue(subjectList[mySubjectList.optionIndex].name);
-    setSubjectColor(subjectList[mySubjectList.optionIndex].bgColor);
-  };
-
-  // 스케줄 초기화
-  const clearSchedule = () => {
-    setDayBool(
-      dayList.map((_, index) => {
-        return nowDate.getDay() === index ? true : false;
-      }),
-    );
-    mySubjectList2.setOption(mySubjectList2.valueList[0]);
-    stateList.setOption('자습');
-    scheTitle.setValue('');
-    scheLocation.setValue('');
-    setSTime(new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin));
-    setETime(
-      new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
-    );
-  };
-
-  // 스케줄 수정 시 값 넣어주기
-  const inputSchedule = (Sche) => {
-    setDayBool(
-      dayList.map((_, index) => {
-        return Sche.start._date.getDay() === index ? true : false;
-      }),
-    );
-    mySubjectList2.setOption(Sche.calendarId);
-    stateList.setOption(Sche.state);
-    scheTitle.setValue(Sche.title);
-    scheLocation.setValue(Sche.location);
-    setSTime(Sche.start._date);
-    setETime(Sche.end._date);
-  };
-
-  //스케줄 가공 전처리
-  const schePreTreat = ({ sches, diffTime = 0 }) => {
-    let checkEmpty = true;
-    const tmpSchedules = sches.map((sche) => {
-      if (sche.calendarId === '') {
-        checkEmpty = false;
-      }
-      delete sche.category;
-      delete sche.raw;
-      delete sche.dueDateClass;
-      delete sche.isVisible;
-      delete sche.bgColor;
-      delete sche.borderColor;
-      delete sche.dragBgColor;
-      delete sche.color;
-      sche.totalTime = (sche.end.getTime() - sche.start.getTime()) / 1000;
-      sche.option = 'create';
-      if (diffTime !== 0) {
-        sche.start.setTime(sche.start.getTime() + diffTime);
-        sche.end.setTime(sche.end.getTime() + diffTime);
-      }
-      const generateId =
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
-      sche.id = generateId;
-      return sche;
-    });
-
-    if (!checkEmpty) {
-      return false;
-    }
-    return tmpSchedules;
-  };
-
   //과목 종류 넣기
   const inputCalendars = () => {
     const calendars_tmp = subjectList.map((subject) => {
@@ -980,67 +715,6 @@ export default ({
     setInfoSche(e.schedule);
   }, []);
 
-  const onBeforeCreateSchedule = useCallback((scheduleData) => {
-    // console.log(scheduleData);
-    const inputDate_s = new Date(scheduleData.start._date);
-    const inputDate_e = new Date(scheduleData.end._date);
-
-    setMakeView(true);
-    setDayBool(
-      dayList.map((_, index) => {
-        return inputDate_s.getDay() === index ? true : false;
-      }),
-    );
-    setSTime(inputDate_s);
-    setETime(inputDate_e);
-  }, []);
-
-  const onBeforeDeleteSchedule = useCallback(async (res) => {
-    // console.log('c', res.schedule);
-
-    // 0시0분에 끝나면 끝나는 시간 -1초
-    const tmpEndDate = new Date(res.schedule.end._date);
-    if (
-      res.schedule.end._date.getMinutes() === 0 &&
-      res.schedule.end._date.getHours() === 0
-    ) {
-      tmpEndDate.setTime(tmpEndDate.getTime() - 1000);
-    }
-
-    const schedule_tmp = {
-      id: res.schedule.id,
-      isAllDay: res.schedule.isAllDay,
-      isPrivate: res.schedule.isPrivate,
-      title: res.schedule.title,
-      location: res.schedule.location,
-      state: res.schedule.state,
-      start: res.schedule.start._date,
-      end: tmpEndDate,
-      totalTime:
-        (res.schedule.end._date.getTime() -
-          res.schedule.start._date.getTime()) /
-        1000,
-      calendarId: res.schedule.calendarId,
-      option: 'delete',
-    };
-
-    const checkExist = (a) => a.id === res.schedule.id;
-    const checkIndex = newScheduleArray.findIndex(checkExist);
-    const checkIndex2 = schedules.findIndex(checkExist);
-    if (checkIndex === -1) {
-      newScheduleArray.push(schedule_tmp);
-    } else {
-      newScheduleArray.splice(checkIndex, 1);
-    }
-    // 랜더링되는 스케줄 변수는 딜리트 시 무조건 지움
-    schedules.splice(checkIndex2, 1);
-
-    cal.current.calendarInst.deleteSchedule(
-      res.schedule.id,
-      res.schedule.calendarId,
-    );
-  }, []);
-
   function _getFormattedTime(time) {
     const date = new Date(time);
     const h = date.getHours();
@@ -1117,125 +791,6 @@ export default ({
     },
   };
 
-  // 다중 스케줄 만들기
-  const onCheckDay = (index) => (e) => {
-    let newArr = [...dayBool];
-    newArr[index] = e.target.checked;
-    setDayBool(newArr);
-    // 요일 1개만 선택시 스케줄 시작 마침 시간도 변경해주기
-    if (newArr.filter(Boolean).length === 1) {
-      const sTmp = new Date(sTime);
-      const eTmp = new Date(eTime);
-      const diffDay = index - sTmp.getDay();
-      sTmp.setDate(sTmp.getDate() + diffDay);
-      eTmp.setDate(eTmp.getDate() + diffDay);
-      setSTime(sTmp);
-      setETime(eTmp);
-    }
-  };
-
-  // 과목 북마크 관련
-  // '기타' 북마크 못건드리게 제거
-  const subjectList_book = ObjectCopy(subjectList);
-  const etcIndex = subjectList.findIndex((a) => a.name === '기타');
-  subjectList_book.splice(etcIndex, 1);
-
-  const [bookMarkCh, setBookMarkCh] = useState(
-    subjectList_book.map((_, index) => {
-      return subjectList_book[index].bookMark;
-    }),
-  );
-  const onChangeCheck = (index) => (e) => {
-    let newArr = [...bookMarkCh];
-    newArr[index] = e.target.checked;
-    setBookMarkCh(newArr);
-  };
-  const subjectRow = ({ index, style }) => (
-    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-      <CheckBoxWrap isOdd={Boolean(index % 2)}>
-        <CheckBox
-          checked={bookMarkCh[index] !== undefined ? bookMarkCh[index] : true}
-          onChange={onChangeCheck(index)}
-          boxSize={'25px'}
-          margin={'0 15px 0 0'}
-        />
-      </CheckBoxWrap>
-      <ColorBox2
-        size={'18px'}
-        radius={'9px'}
-        bgColor={subjectList_book[index].bgColor}
-      />
-      <TaskNameDiv>{subjectList_book[index].name}</TaskNameDiv>
-    </IndiviList>
-  );
-  // const todolistRow_new = ({ index, style }) => (
-  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-  //     <ColorBox
-  //       size={'18px'}
-  //       radius={'9px'}
-  //       bgColor={todolistData_new[index].subject.bgColor}
-  //     />
-  //     <TaskName_todo isOdd={Boolean(index % 2)}>
-  //       {todolistData_new[index].subject.name}
-  //     </TaskName_todo>
-  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
-  //       {todolistData_new[index].name}
-  //     </TodoNameDiv>
-  //     <TodoIconDiv2>
-  //       <Flag
-  //         onClick={() => {
-  //           onTodolistFinish(todolistData_new[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv2>
-  //     <TodoIconDiv2>
-  //       <Delete
-  //         onClick={() => {
-  //           onTodolistDelete(todolistData_new[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv2>
-  //   </IndiviList>
-  // );
-  // const todolistRow_finish = ({ index, style }) => (
-  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-  //     <ColorBox
-  //       size={'18px'}
-  //       radius={'9px'}
-  //       bgColor={todolistData_finish[index].subject.bgColor}
-  //     />
-  //     <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
-  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
-  //       {todolistData_finish[index].name}
-  //     </TodoNameDiv>
-  //     <TodoFinishDiv isOdd={Boolean(index % 2)}>
-  //       {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
-  //     </TodoFinishDiv>
-  //     <TodoIconDiv>
-  //       <Delete
-  //         onClick={() => {
-  //           onTodolistDelete(todolistData_finish[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv>
-  //   </IndiviList>
-  // );
-
-  const CustomInput = forwardRef(
-    ({ value, onClick, text, week = false, margin, width = '150px' }, ref) => {
-      return (
-        <DatePickButton
-          ref={ref}
-          onClick={onClick}
-          margin={margin}
-          width={width}
-        >
-          {week ? text : value}
-        </DatePickButton>
-      );
-    },
-  );
-
   // 맨처음 스케줄, 과목 넣기
   if (isFirstRun) {
     isFirstRun = false;
@@ -1275,11 +830,6 @@ export default ({
 
   return (
     <Wrapper>
-      {scheLoading && (
-        <LoaderWrapper>
-          <Loader />
-        </LoaderWrapper>
-      )}
       <PanelWrap>
         <ControlButton onClick={handleClickTodayButton}>Today</ControlButton>
         <ControlButton onClick={handleClickPrevButton} />
@@ -1302,152 +852,7 @@ export default ({
         usageStatistics={true}
         week={{ hourStart: lastStart, hourEnd: lastEnd }}
         onClickSchedule={onClickSchedule}
-        onBeforeCreateSchedule={onBeforeCreateSchedule}
-        onBeforeDeleteSchedule={onBeforeDeleteSchedule}
-        onBeforeUpdateSchedule={onBeforeUpdateSchedule}
       />
-      {(makeView || modiView) && (
-        <BlackBack>
-          <CustomPopup>
-            <PopupClose
-              onClick={() => {
-                setMakeView(false);
-                setModiView(false);
-              }}
-              custom={true}
-            />
-            <PTitle text={makeView ? '스케줄 만들기' : '스케줄 수정'} />
-            <DayWrap>
-              {dayList.map((day, index) => {
-                return (
-                  <DayIndiWrap key={index}>
-                    {day}
-                    <br />
-                    <CheckBox
-                      checked={
-                        dayBool[index] !== undefined ? dayBool[index] : true
-                      }
-                      onChange={onCheckDay(index)}
-                      boxSize={'25px'}
-                      margin={'0'}
-                    />
-                  </DayIndiWrap>
-                );
-              })}
-            </DayWrap>
-            <SelectWrap>
-              <SelectInL>
-                <Select {...mySubjectList2} id={'mySubject_id_sche'} />
-              </SelectInL>
-              <SelectInR>
-                <Select {...stateList} id={'mySubject_state_sche'} />
-              </SelectInR>
-            </SelectWrap>
-            <NewScheContent>
-              <Input
-                placeholder={'(필수) 제목'}
-                height={'28px'}
-                {...scheTitle}
-              />
-            </NewScheContent>
-            <NewScheContent>
-              <Input
-                placeholder={'(선택) 위치'}
-                height={'28px'}
-                {...scheLocation}
-              />
-            </NewScheContent>
-            <DateTotalDiv>
-              <DateWrap>
-                <DateContent>
-                  <DatePicker
-                    dateFormat={'yyyy/MM/dd'}
-                    selected={sTime}
-                    onChange={(date) => {
-                      setSTime(date);
-                      setDayBool(
-                        dayList.map((_, index) => {
-                          return date.getDay() === index ? true : false;
-                        }),
-                      );
-                    }}
-                    customInput={
-                      <CustomInput width={'92px'} margin={'0 0 5px 0'} />
-                    }
-                  />
-                </DateContent>
-                <DateContent>
-                  <TimeText timeError={timeError}>시작 :</TimeText>
-                  <TimePicker
-                    value={moment(sTime)}
-                    onChange={(value) => {
-                      setSTime(value._d);
-                    }}
-                    style={{
-                      width: 50,
-                      marginLeft: 10,
-                    }}
-                    showSecond={false}
-                    allowEmpty={false}
-                    minuteStep={5}
-                  />
-                </DateContent>
-              </DateWrap>
-              <DateWrap>
-                <DateContent2>
-                  <DatePicker
-                    dateFormat={'yyyy/MM/dd'}
-                    selected={eTime}
-                    onChange={(date) => {
-                      setETime(date);
-                    }}
-                    customInput={
-                      <CustomInput width={'92px'} margin={'0 0 5px 0'} />
-                    }
-                  />
-                </DateContent2>
-                <DateContent2>
-                  <TimeText timeError={timeError}>마침 :</TimeText>
-                  <TimePicker
-                    value={moment(eTime)}
-                    onChange={(value) => {
-                      setETime(value._d);
-                    }}
-                    style={{ width: 50, marginLeft: 10 }}
-                    showSecond={false}
-                    allowEmpty={false}
-                    minuteStep={5}
-                  />
-                </DateContent2>
-              </DateWrap>
-            </DateTotalDiv>
-            <ButtonDiv style={{ marginTop: '20px' }}>
-              {makeView && (
-                <Button_custom
-                  width={'100px'}
-                  margin={'0'}
-                  height={'32px'}
-                  bgColor={'#0F4C82'}
-                  text={'만들기'}
-                  color={'white'}
-                  onClick={async () => onCreateSche('create', '')}
-                />
-              )}
-              {modiView && (
-                <Button_custom
-                  width={'100px'}
-                  margin={'0'}
-                  height={'32px'}
-                  bgColor={'#0F4C82'}
-                  text={'수정'}
-                  color={'white'}
-                  onClick={async () => onCreateSche('update', infoSche.id)}
-                />
-              )}
-            </ButtonDiv>
-          </CustomPopup>
-        </BlackBack>
-      )}
       {infoView && infoSche.title && (
         <BlackBack>
           <CustomPopup2 color={infoSche.bgColor}>
