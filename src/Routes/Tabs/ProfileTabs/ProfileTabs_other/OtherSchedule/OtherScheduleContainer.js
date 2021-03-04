@@ -21,22 +21,21 @@ export default ({ userData }) => {
   const [infoSche, setInfoSche] = useState({});
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
-  const [lastStart, setLastStart] = useState(userData.defaultSet.scheduleStart);
-  const [lastEnd, setLastEnd] = useState(userData.defaultSet.scheduleEnd);
   const overhours =
-    userData.defaultSet.scheduleEnd - userData.defaultSet.scheduleStart;
+    userData.studyDefaultSet.scheduleEnd -
+    userData.studyDefaultSet.scheduleStart;
   const [scheHeight, setScheHeight] = useState(
     overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
   );
 
   const scheduleStart = useInput(
-    userData.defaultSet.scheduleStart,
+    userData.studyDefaultSet.scheduleStart,
     start_range,
     undefined,
     true,
   );
   const scheduleEnd = useInput(
-    userData.defaultSet.scheduleEnd,
+    userData.studyDefaultSet.scheduleEnd,
     end_range,
     undefined,
     true,
@@ -72,15 +71,14 @@ export default ({ userData }) => {
         setStartRange={setStartRange}
         endRange={endRange}
         setEndRange={setEndRange}
-        scheduleList={scheduleData.mySchedule}
+        scheduleList={scheduleData.userSchedule}
         schedulenetwork={schedulenetwork}
-        subjectList={subjectData.mySubject}
+        subjectList={subjectData.userSubject}
         subjectnetwork={subjectnetwork}
         scheduleStart={scheduleStart}
         scheduleEnd={scheduleEnd}
         scheHeight={scheHeight}
-        lastStart={lastStart}
-        lastEnd={lastEnd}
+        setScheHeight={setScheHeight}
         infoView={infoView}
         setInfoView={setInfoView}
         infoSche={infoSche}

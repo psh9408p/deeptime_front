@@ -8,6 +8,9 @@ import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import PopupClose from '../../../../../Components/Buttons/PopupClose';
 import FatText from '../../../../../Components/FatText';
+import { Button_setting } from '../../../../../Components/Buttons/Button_click';
+import Input_100 from '../../../../../Components/Input_100';
+import PopupButton_solo from '../../../../../Components/Buttons/PopupButton_solo';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -630,8 +633,9 @@ export default ({
   subjectList,
   subjectnetwork,
   scheHeight,
-  lastStart,
-  lastEnd,
+  setScheHeight,
+  scheduleStart,
+  scheduleEnd,
   infoView,
   setInfoView,
   infoSche,
@@ -813,6 +817,51 @@ export default ({
     inputSchedules();
   }
 
+  const TimeRangeDiv = (close) => {
+    return (
+      <PBody2>
+        <PopupClose onClick={() => close()} />
+        <PTitle text={'기본값 세팅'} />
+        <SetContentWrap>
+          <SetContentBox>
+            스케줄러 시작 :　
+            <RefreshInputWrap>
+              <Input_100
+                placeholder={''}
+                {...scheduleStart}
+                type={'number'}
+                step={1}
+              />
+            </RefreshInputWrap>
+            시　/　끝 :　
+            <RefreshInputWrap>
+              <Input_100
+                placeholder={''}
+                {...scheduleEnd}
+                type={'number'}
+                step={1}
+              />
+            </RefreshInputWrap>
+            시
+          </SetContentBox>
+        </SetContentWrap>
+        <ButtonDiv style={{ marginTop: '20px' }}>
+          <PopupButton_solo
+            type="button"
+            onClick={() => {
+              const diffHours = scheduleEnd.value - scheduleStart.value;
+              setScheHeight(
+                diffHours < 11 ? '605px' : 605 + (diffHours - 10) * 52 + 'px',
+              );
+              close();
+            }}
+            text={'적용'}
+          />
+        </ButtonDiv>
+      </PBody2>
+    );
+  };
+
   // useEffect 관련
   useEffect(() => {
     //날짜 범위 세팅
@@ -837,6 +886,15 @@ export default ({
         <DateRangeWrap>
           {startRange}~{endRange}
         </DateRangeWrap>
+        <SelectDiv>
+          <PopupCustom8
+            trigger={<Button_setting />}
+            closeOnDocumentClick={false}
+            modal
+          >
+            {(close) => TimeRangeDiv(close)}
+          </PopupCustom8>
+        </SelectDiv>
       </PanelWrap>
       <TUICalendar
         ref={cal}
@@ -850,7 +908,7 @@ export default ({
         taskView={false}
         scheduleView={['time']}
         usageStatistics={true}
-        week={{ hourStart: lastStart, hourEnd: lastEnd }}
+        week={{ hourStart: scheduleStart.value, hourEnd: scheduleEnd.value }}
         onClickSchedule={onClickSchedule}
       />
       {infoView && infoSche.title && (

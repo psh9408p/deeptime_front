@@ -22,6 +22,14 @@ export const GET_USER = gql`
       followersCount
       isFollowing
       isFollowed
+      times {
+        existTime
+        createdAt
+      }
+      studyDefaultSet {
+        scheduleStart
+        scheduleEnd
+      }
       followDates {
         id
         followId

@@ -28,13 +28,7 @@ const NonPublicDiv = styled.div`
   margin: 150px auto;
 `;
 
-export default ({
-  pageIndex,
-  User,
-  networkStatus,
-  subjectData,
-  subjectnetwork,
-}) => {
+export default ({ pageIndex, User }) => {
   if (pageIndex === 0) {
     if (!User.pubOfFeed && !User.isFollowed) {
       return <NonPublicDiv>비공개 계정입니다</NonPublicDiv>;
@@ -62,8 +56,6 @@ export default ({
         // <ContentWrap>
         //   <MyStatistics
         //     myInfoData={User}
-        //     networkStatus={networkStatus}
-        //     isSelf={false}
         //   />
         // </ContentWrap>
         <NonPublicDiv>통계 서비스 준비중...</NonPublicDiv>

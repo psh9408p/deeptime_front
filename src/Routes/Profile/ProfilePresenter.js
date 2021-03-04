@@ -257,7 +257,6 @@ export default ({
   onAddFollow,
   unFollowMuation,
   followMuation,
-  networkStatus,
 }) => {
   let history = useHistory();
 
@@ -716,8 +715,6 @@ export default ({
           <ProfileTabs_other
             pageIndex={tabs_other.currentIndex}
             User={userData}
-            userRefetch={userRefetch}
-            networkStatus={networkStatus}
           />
         </>
       )}
