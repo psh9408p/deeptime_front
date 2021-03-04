@@ -47,7 +47,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 9900 * 1;
+let detect_interval = 1000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -173,6 +173,7 @@ export default () => {
   };
 
   ///////////////////////////////////// 학습 판단 코드
+  const [camIndex, setCamIndex] = useState(0);
   const LoadCamera = async () => {
     console.log('Load camera');
     const getUserMedia = await navigator.mediaDevices.getUserMedia;
@@ -192,7 +193,9 @@ export default () => {
 
     if (getUserMedia) {
       await navigator.mediaDevices
-        .getUserMedia({ video: { deviceId: videoDeviceIds[0].deviceId } })
+        .getUserMedia({
+          video: { deviceId: videoDeviceIds[camIndex].deviceId },
+        })
         .then(function (stream) {
           webcamRef.current.srcObject = stream;
         })
@@ -525,6 +528,16 @@ export default () => {
     }
   }, [isAm]);
 
+  const isFirstRun2 = useRef(true);
+  useEffect(() => {
+    if (isFirstRun2.current) {
+      isFirstRun2.current = false;
+      return;
+    }
+    console.log('aaa');
+    LoadCamera();
+  }, [camIndex]);
+
   if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
       <LoaderWrapper>
@@ -578,6 +591,8 @@ export default () => {
         timelapse={timelapse}
         setTimelapse={setTimelapse}
         onImgSave={onImgSave}
+        setCamIndex={setCamIndex}
+        camIndex={camIndex}
       />
     );
   }

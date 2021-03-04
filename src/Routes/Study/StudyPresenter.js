@@ -843,6 +843,8 @@ export default ({
   timelapse,
   setTimelapse,
   onImgSave,
+  setCamIndex,
+  camIndex,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -2315,9 +2317,10 @@ export default ({
                 />
                 <Button_refresh
                   onClick={() => {
-                    myInfoRefetch();
-                    subjectRefetch();
+                    // myInfoRefetch();
+                    // subjectRefetch();
                     // todolistRefetch();
+                    setCamIndex(camIndex === 1 ? 0 : 1);
                   }}
                 />
                 <PopupCustom2
