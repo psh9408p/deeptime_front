@@ -105,6 +105,7 @@ const LoggedInRoutes = () => {
           <Route path="/order-history" component={OrderHistory} />
           <Route path="/voucher" component={Voucher} />
           <Route path="/account" component={Account} />
+          <Route path="/auth" component={MyStudy} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>

@@ -36,7 +36,7 @@ const LoaderWrapper = styled.div`
   margin: 250px 0px;
 `;
 
-let videoDeviceIds = [];
+let videoDevices = [];
 
 // val : pixel's diff
 let normArray = new Array(24).fill(5000);
@@ -80,6 +80,9 @@ export default () => {
 
   const todolistName = useInput('');
   const scheduleTitle = useInput('');
+
+  // const camSelect = useSelect();
+
   const [studyBool, setStudyBool] = useState(true);
   const [aniBool, setAniBool] = useState(true);
   const [newTodoView, setNewTodoView] = useState(false);
@@ -89,6 +92,7 @@ export default () => {
   const [timelapse, setTimelapse] = useState(false);
   const [isAm, setIsAm] = useState(new Date().getHours() < 12);
   const [reCount, setReCount] = useState(0);
+  const [camEmpty, setCamEmpty] = useState(false);
 
   // ESC누르면 Popup 꺼지게
   useKey_oneUp('Escape', [popupView], [setPopupView]);
@@ -173,10 +177,10 @@ export default () => {
   };
 
   ///////////////////////////////////// 학습 판단 코드
-  const [camIndex, setCamIndex] = useState(0);
-  const LoadCamera = async () => {
-    console.log('Load camera');
-    const getUserMedia = await navigator.mediaDevices.getUserMedia;
+  const camSearch = async () => {
+    console.log('Cam search');
+    // //카메라 권한 요청
+    // navigator.mediaDevices.getUserMedia;
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
       console.log('enumerateDevices() not supported.');
@@ -184,26 +188,11 @@ export default () => {
     }
 
     const deviceIds = await navigator.mediaDevices.enumerateDevices();
-
-    deviceIds.forEach(function (deviceId) {
-      if (deviceId.kind === 'videoinput') {
-        videoDeviceIds.push(deviceId);
+    deviceIds.forEach(function (device) {
+      if (device.kind === 'videoinput') {
+        videoDevices.push(device);
       }
     });
-
-    if (getUserMedia) {
-      await navigator.mediaDevices
-        .getUserMedia({
-          video: { deviceId: videoDeviceIds[camIndex].deviceId },
-        })
-        .then(function (stream) {
-          webcamRef.current.srcObject = stream;
-        })
-        .catch(function (error) {
-          console.log(error);
-          console.log('Something went wrong!');
-        });
-    }
   };
 
   const Predict = async () => {
@@ -531,12 +520,11 @@ export default () => {
   const isFirstRun2 = useRef(true);
   useEffect(() => {
     if (isFirstRun2.current) {
+      camSearch();
       isFirstRun2.current = false;
       return;
     }
-    console.log('aaa');
-    LoadCamera();
-  }, [camIndex]);
+  }, []);
 
   if (networkStatus === 1 || todolistLoading || subjectLoading) {
     return (
@@ -586,13 +574,13 @@ export default () => {
         setAniBool={setAniBool}
         canvasRef={canvasRef}
         webcamRef={webcamRef}
-        LoadCamera={LoadCamera}
         Predict={Predict}
         timelapse={timelapse}
         setTimelapse={setTimelapse}
         onImgSave={onImgSave}
-        setCamIndex={setCamIndex}
-        camIndex={camIndex}
+        camEmpty={camEmpty}
+        setCamEmpty={setCamEmpty}
+        videoDevices={videoDevices}
       />
     );
   }

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import styled from 'styled-components';
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
 import SumArray from '../../Components/Array/SumArray';
@@ -474,7 +473,7 @@ const SetDiv = styled.div`
 const PopupCustom = styled(Popup)`
   &-content {
     width: 460px !important;
-    height: 440px !important;
+    height: 480px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -789,14 +788,6 @@ let target_min = 0;
 let target_hour = 0;
 let total_min = 0;
 let total_hour = 0;
-//영상처리
-let time = new Date().getTime();
-let interval = 0;
-let decision = [false, false, false, false, false, false];
-let detection_area = Array.from({ length: 18 }, (_, i) => i + 1);
-let finalDecision = 1; //1.공부 2. 부재중 3. 잠
-let timeCount = 0;
-let decisionCount = 0;
 
 export default ({
   myInfoData,
@@ -838,13 +829,13 @@ export default ({
   setAniBool,
   canvasRef,
   webcamRef,
-  LoadCamera,
   Predict,
   timelapse,
   setTimelapse,
   onImgSave,
-  setCamIndex,
-  camIndex,
+  camEmpty,
+  setCamEmpty,
+  videoDevices,
 }) => {
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -944,16 +935,6 @@ export default ({
     }
   };
 
-  // 영상 처리 변수
-  const [modelPose, setModelPose] = useState(null);
-  const [modelDetect, setModelDetect] = useState(null);
-  const [Mutation, setMutation] = useState(true);
-
-  const video1 = useRef();
-  const canvas1 = useRef();
-
-  // const [existToggleMutation] = useMutation(UPDATE_EXISTTOGGLE);
-
   // todolist 미완료&북마크 된거 구분
   let todolistData_new = [];
   todolistData.map((todolist) => {
@@ -1004,10 +985,40 @@ export default ({
 
   const listName_tmp = task_tmp.map((List) => `${List.name}`);
   const listId_tmp = task_tmp.map((List) => `${List.id}`);
+  const camList = useSelect(
+    videoDevices.map((a) => a.label),
+    videoDevices.map((a) => a.deviceId),
+  );
   const mySubjectList = useSelect([...listName_tmp], [...listId_tmp]);
   const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
   const stateBox = ['자습', '강의'];
   const stateList = useSelect(stateBox, stateBox);
+
+  const LoadCamera = async () => {
+    console.log('Load camera');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      console.log('enumerateDevices() not supported.');
+      return;
+    }
+
+    // 비디오 소스가 없으면 없다고 화면에 표시
+    if (videoDevices.length === 0) {
+      setCamEmpty(true);
+    } else {
+      await navigator.mediaDevices
+        .getUserMedia({
+          video: { deviceId: camList.option },
+        })
+        .then(function (stream) {
+          webcamRef.current.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.log(error);
+          console.log('Something went wrong!');
+        });
+    }
+  };
 
   const maxTimeCal = (nowDate) => {
     let maxTermMin = 0;
@@ -1545,229 +1556,22 @@ export default ({
     }
   };
 
-  function updateTime() {
-    const newTime = new Date().getTime();
-    interval = interval + (newTime - time);
-    // console.log(interval / 1000);
-
-    time = newTime;
-  }
-
-  const LoadModel = async () => {
-    console.log('Load model');
-
-    // const loadedModelPose = await posenet.load();
-    const loadedModelDetect = await cocoSsd.load({ base: 'mobilenet_v2' });
-    // setModelPose(loadedModelPose);
-    setModelDetect(loadedModelDetect);
-  };
-
-  // for # Camera
-  // 1. SetVideoElement
-  // 1. LoadCamera
-  // 1. ConnectElAndCamera
-  const LoadCamera2 = async () => {
-    console.log('Load camera');
-    const getUserMedia =
-      navigator.mediaDevices.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia;
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      console.log('enumerateDevices() not supported.');
-      return;
-    }
-
-    const deviceIds = await navigator.mediaDevices.enumerateDevices();
-    const videoDeviceIds = [];
-
-    deviceIds.forEach(function (deviceId) {
-      if (deviceId.kind === 'videoinput') {
-        videoDeviceIds.push(deviceId);
-      }
-    });
-
-    for (let i = 0; i < 1; i++) {
-      if (getUserMedia) {
-        navigator.mediaDevices
-          .getUserMedia({ video: { deviceId: videoDeviceIds[i].deviceId } })
-          .then(function (stream) {
-            video1.current.srcObject = stream;
-          })
-          .catch(function (error) {
-            console.log(error);
-            console.log('Something went wrong!');
-          });
-      }
-    }
-  };
-
-  const detectFromVideoFrame = async (video) => {
-    try {
-      const posePredictions = 0;
-      // const posePredictions = await modelPose.estimateMultiplePoses(video, {
-      //   flipHorizontal: false,
-      //   maxDetections: 1,
-      //   minPoseConfidence: 0.15,
-      //   minPartConfidence: 0.1,
-      //   scoreThreshold: 0.5,
-      //   nmsRadius: 30,
-      // });
-
-      const objectPredictions = await modelDetect.detect(video);
-      const personDetections = objectPredictions.filter(
-        (p) => p.class === 'person',
-      );
-
-      // showDetections(posePredictions, personDetections);
-      const Finaldecision = await ConcludeFinaldecision(
-        posePredictions,
-        personDetections,
-      );
-      return Finaldecision;
-    } catch (error) {
-      console.log("Couldn't start the webcam");
-      console.error(error);
-    }
-  };
-
-  // const showDetections = (posePredictions, objectPredictions) => {
-  //   console.log('Show detect');
-
-  //   // const ctx = canvas.current.getContext('2d');
-  //   const font = '20px Arial';
-  //   ctx.font = font;
-  //   if (poseButton) {
-  //     posePredictions.forEach((poses) => {
-  //       const area_data = 3;
-  //       ctx.strokeStyle = '0F4C81';
-  //       ctx.lineWidth = 4;
-
-  //       const area = new Array(area_data);
-  //       for (var i = 0; i < area.length; i++) {
-  //         area[i] = false;
-  //       }
-  //       //   const img_width = video.webcamVideoElement.width
-  //       const img_width = canvas1.current.width;
-  //       ctx.strokeStyle = '#0F4C81';
-  //       ctx.lineWidth = 4;
-  //       for (var j = 0; j < poses.keypoints.length; j++) {
-  //         ctx.strokeRect(
-  //           poses.keypoints[j].position.x,
-  //           poses.keypoints[j].position.y,
-  //           1,
-  //           1,
-  //         );
-  //         area[
-  //           Math.floor(
-  //             (poses.keypoints[0].position.x / img_width) * area.length,
-  //           )
-  //         ] = true;
-  //       }
-  //     });
-  //   }
-  //   if (detectButton) {
-  //     objectPredictions.forEach((prediction) => {
-  //       ctx.strokeStyle = '#0F4C81';
-  //       ctx.lineWidth = 4;
-  //       ctx.strokeRect(...prediction.bbox);
-
-  //       const x = prediction.bbox[0];
-  //       const y = prediction.bbox[1];
-  //       const height = prediction.bbox[3];
-  //       const label = prediction.class;
-  //       // console.log(prediction.class)
-  //       ctx.fillStyle = '#0F4C81';
-  //       const textWidth = ctx.measureText(label).width;
-  //       const textHeight = parseInt(font, 10);
-  //       ctx.fillRect(x, y, textWidth + 10, textHeight + 5);
-  //       // ctx.fillRect(x, y + height - textHeight - 5, textWidth + 15, textHeight + 20)
-
-  //       ctx.fillStyle = '#FFFFFF';
-  //       ctx.fillText(label, x, y + textHeight);
-  //       // ctx.fillText(prediction.score.toFixed(2), x + 5, y + height - textHeight)
-  //     });
-  //   }
-  // };
-
-  const createPredictionArray = (prediction) => {
-    const bbox = prediction.bbox;
-    const len_x = bbox[2];
-    const len_y = bbox[3];
-    return len_x; //x값을 이용하여 가장 크게 잡힌 객체 감지
-  };
-
-  const ConcludeFinaldecision = (posePredictions, objectPredictions) => {
-    // 1. 모든 사람 인식 결과를 array 데이터로 변환
-    // 2. 가장큰 사람 인식 결과 판단
-    // 3. objectPrediction에 판단 결과 저장 1. 공부중 2. 부재중 3. 잠
-    let result = [];
-    let maxBboxArea = 100000;
-    if (objectPredictions.length > 0) {
-      const temp = objectPredictions.map(createPredictionArray);
-      const maxObject = objectPredictions[temp.indexOf(Math.max(...temp))];
-      maxBboxArea = maxObject.bbox[2] * maxObject.bbox[3];
-      // console.log(maxBboxArea);
-      detection_area = detection_area.slice(1);
-      detection_area = [...detection_area, maxBboxArea];
-    }
-    if (
-      objectPredictions.length > 0 &&
-      // posePredictions.length > 0 &&
-      maxBboxArea > 30000
-    ) {
-      result = true;
-    } else {
-      result = false;
-    }
-
-    decision = decision.slice(1);
-    decision = [...decision, result];
-
-    const temp = decision.reduce((obj, value, index, array) => {
-      if (obj.hasOwnProperty(value)) {
-        obj[value] += 1;
-      } else {
-        obj[value] = 1;
-      }
-      return obj;
-    }, {});
-
-    console.log(temp, 'aa');
-    // 아바타 보더 깜빡임 멈추게 하기위한 카운트
-    decisionCount = decisionCount + 1;
-    if (decisionCount > 1) {
-      if (temp.true === 1) {
-        setAniBool(true);
-      } else if (temp.true >= 2) {
-        finalDecision = 1; //공부
-        setStudyBool(true);
-        setAniBool(false);
-      } else {
-        finalDecision = 2; //부재중
-        setStudyBool(false);
-        setAniBool(false);
-      }
-    }
-  };
-
   const isFirstRun = useRef(true);
   useEffect(() => {
     if (isFirstRun.current) {
       if (myInfoData.studyDefaultSet.autoRefresh) {
         startPolling(autoRefreshTerm.value * 1000);
       }
-      // LoadCamera();
-      // LoadModel();
       LoadCamera();
       Predict();
       setTimelapse(myInfoData.studyDefaultSet.timelapseRecord);
       isFirstRun.current = false;
       return;
     }
-  }, []);
+    LoadCamera();
+  }, [camList.option]);
 
+  //스케줄 계산
   const scheduleList = myInfoData.schedules;
   const selectDate = new Date();
   const nextDate = new Date();
@@ -2265,14 +2069,24 @@ export default ({
       <TopWrap>
         <Wrapper id="capture">
           <VideoWrap>
-            <div style={{ paddingTop: '100px' }}>
-              <Loader />
-              <br />
-              <VideoText>카메라 로딩중...</VideoText>
-              <span style={{ color: '#DB4437' }}>
-                (로딩 중 조작, 닫기 금지!!!)
-              </span>
-            </div>
+            {camEmpty ? (
+              <div style={{ paddingTop: '100px' }}>
+                <VideoText>카메라 장치 없음</VideoText>
+                <span style={{ color: '#DB4437' }}>
+                  (카메라 기기 연결 후 새로고침)
+                </span>
+              </div>
+            ) : (
+              <div style={{ paddingTop: '100px' }}>
+                <Loader />
+                <br />
+                <VideoText>카메라 로딩중...</VideoText>
+                <span style={{ color: '#DB4437' }}>
+                  (로딩 중 조작, 닫기 금지!!!)
+                </span>
+              </div>
+            )}
+
             <AvatarBox display={coverView ? 'none' : 'flex'}>
               <FixedList
                 height={110}
@@ -2317,10 +2131,9 @@ export default ({
                 />
                 <Button_refresh
                   onClick={() => {
-                    // myInfoRefetch();
-                    // subjectRefetch();
+                    myInfoRefetch();
+                    subjectRefetch();
                     // todolistRefetch();
-                    setCamIndex(camIndex === 1 ? 0 : 1);
                   }}
                 />
                 <PopupCustom2
@@ -2467,6 +2280,15 @@ export default ({
                         <PopupClose onClick={() => close()} />
                         <PTitle text={'기본값 세팅'} />
                         <SetContentWrap>
+                          <SetContentBox>
+                            카메라 선택 :<p>　</p>
+                            <Select
+                              {...camList}
+                              id={'camselect_id'}
+                              width={'250px'}
+                              height={'32px'}
+                            />
+                          </SetContentBox>
                           <SetContentBox>
                             D-day :　
                             <Switch
