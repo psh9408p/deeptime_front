@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import Video from './Video';
 const TitleWrap = styled.div`
   width: 80%;
   min-width: 320px;
@@ -9,10 +9,12 @@ const TitleWrap = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  position: relative;
 `;
 const Title = styled.div`
   font-size: 80px;
   margin-top: 80px;
+  font-weight: bold;
 
   @media (max-width: 570px) {
     font-size: 40px;

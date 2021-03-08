@@ -135,7 +135,8 @@ const GroupListWrap = styled.div`
 const GroupBox = styled.div`
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  padding: 5px 5px;
+  /* flex-direction: column; */
   width: 100%;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -146,6 +147,29 @@ const GroupBox = styled.div`
   :not(:last-child) {
     margin-bottom: 10px;
   }
+`;
+const ImageWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ImageBox = styled.div`
+  width: 50px;
+  height: 50px;
+  background: dodgerblue;
+  border-radius: 50%;
+`;
+const MemberWrap = styled.div`
+  margin-left: 10px;
+`;
+const MemberDiv = styled.div`
+  display: flex;
+  margin-top: 8px;
+`;
+
+const MemberList = styled.p`
+  margin-right: 10px;
 `;
 
 const PopupCustom = styled(Popup)`
@@ -194,14 +218,23 @@ export default ({
                 key={group.id}
                 trigger={
                   <GroupBox>
-                    <p>{group.name}</p>
-                    <p>{group.category}</p>
-                    <p>최소 학습 시간: {group.targetTime}시간</p>
-                    <p>
-                      인원: {group.memberCount}/{group.maxMember}
-                    </p>
-                    <p>방장: {group.manager.username}</p>
-                    <p>{group.publicBool ? '공개방' : '비공개방'}</p>
+                    <ImageWrap>
+                      <ImageBox></ImageBox>
+                    </ImageWrap>
+                    <MemberWrap>
+                      <p style={{ fontSize: '16px' }}>{group.name}</p>
+                      <p>{group.category}</p>
+                      <p>최소 학습 시간: {group.targetTime}시간</p>
+                      <MemberDiv>
+                        <MemberList>
+                          인원: {group.memberCount}/{group.maxMember}
+                        </MemberList>
+                        <MemberList>방장: {group.manager.username}</MemberList>
+                        <MemberList>
+                          {group.publicBool ? '공개방' : '비공개방'}
+                        </MemberList>
+                      </MemberDiv>
+                    </MemberWrap>
                   </GroupBox>
                 }
                 closeOnDocumentClick={false}

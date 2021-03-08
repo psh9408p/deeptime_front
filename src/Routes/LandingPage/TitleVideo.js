@@ -1,11 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-
 const VideoWrap = styled.div`
-  height: 100%;
-  width: 100%;
   background-position: center;
   background-size: cover;
+  filter: brightness(100%);
+  opacity: 0.3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;
 
 const VideoIn = styled.video`
@@ -16,7 +24,7 @@ const VideoIn = styled.video`
   background-size: cover;
 `;
 
-const Video = () => {
+const TitleVideo = () => {
   return (
     <VideoWrap>
       <VideoIn
@@ -27,19 +35,11 @@ const Video = () => {
         //   controls
         muted
         data-autoplay
-        // style={{
-        //   width: '100%',
-        //   height: '100vh',
-        //   objectFit: 'contain',
-        //   position: 'absolute',
-        //   top: '-6%',
-        //   //   left: '0%',
-        //   zIndex: '-100',
       >
-        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"></source>
+        <source src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/IntroTimelapse.mp4"></source>
       </VideoIn>
     </VideoWrap>
   );
 };
 
-export default Video;
+export default TitleVideo;

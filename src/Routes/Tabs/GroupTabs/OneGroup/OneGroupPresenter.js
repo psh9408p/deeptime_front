@@ -75,6 +75,18 @@ const ContentRow = styled.div`
   }
 `;
 
+const ChartWrap = styled.div`
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 100%;
+`;
+
 const DatePickDiv = styled.div`
   width: 50%;
   display: flex;
@@ -543,9 +555,13 @@ export default ({
             <p>나의 시간: {myTime}초</p>
             <p>그룹 최소 학습 시간: {groupData.targetTime}시간</p>
           </ContentRow>
-          <ContentRow>
-            <GroupChart averageTime={groupData.targetTime} myTime={myTime} />
-          </ContentRow>
+          <ChartWrap>
+            <GroupChart
+              averageTime={groupData.targetTime}
+              myTime={myTime}
+              targetTime={groupData.targetTime}
+            />
+          </ChartWrap>
           <ContentRow>
             {groupData.member.map((member, index) => (
               <Avatars key={index} member={member} />

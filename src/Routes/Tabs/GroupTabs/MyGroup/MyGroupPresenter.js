@@ -50,10 +50,9 @@ const IndiGroupTitle = styled.div`
 `;
 
 const MaxMember = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  /* align-items: flex-end; */
-  position: fixed;
+  margin-top: 75px;
+  margin-left: 3px;
+  position: absolute;
 `;
 const AddBox = styled(IndiGroup)`
   display: flex;
@@ -99,7 +98,9 @@ export default ({ groupData, onBookmark, myTabs }) => {
                   setSelectId(group.id);
                 }}
               >
-                <MaxMember>{'인원수'}</MaxMember>
+                <MaxMember>{`${group.memberCount} / ${
+                  group.MaxMember ? group.MaxMember : group.memberCount
+                }`}</MaxMember>
                 <Star
                   fill={group.bookmark ? 'yellow' : 'grey'}
                   onClick={() => {

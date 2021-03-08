@@ -7,6 +7,8 @@ import Video from './Video';
 import { BrowserView, MobileView } from 'react-device-detect';
 import LandingContent from './LandingContent';
 import LandingTitle from './LandingTitle';
+import TitleVideo from './TitleVideo';
+
 const IsBrowser = styled.div`
   background: black;
   color: white;
@@ -42,7 +44,7 @@ const Fullpage = () => (
               <Introduce />
             </div> */}
             <div className="section ">
-              {/* <Video /> */}
+              <TitleVideo />
               <LandingTitle />
             </div>
             <div className="section" data-anchor="2">
