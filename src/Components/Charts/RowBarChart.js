@@ -43,7 +43,6 @@ export default ({
       ],
     },
     options: {
-      responsive: false,
       title: {
         display: true,
         fontSize: 13,

@@ -1,15 +1,19 @@
 import React, { useState, useRef } from 'react';
-import ClassStaPresenter from './MyStaPresenter';
+import styled from 'styled-components';
+import MyStaPresenter from './MyStaPresenter';
 import useTabs from '../../../../Hooks/useTabs';
 import html2canvas from 'html2canvas';
 import moment from 'moment';
+import { useQuery } from '@apollo/react-hooks';
+import { ME } from './MyStaQueries';
+import Loader from '../../../../Components/Loader';
 
-export default ({
-  myInfoData,
-  myInfoRefetch,
-  networkStatus,
-  isSelf = true,
-}) => {
+const LoaderWrapper = styled.div`
+  min-height: 100vh;
+  padding: 100px 0;
+`;
+
+export default ({ isSelf = true }) => {
   const StaTabContents = ['Today', 'Week', 'Month'];
   const StaTabs = useTabs(0, StaTabContents);
   const [selectDate, setSelectDate] = useState(new Date());
@@ -20,6 +24,13 @@ export default ({
   const todayCalLoading = useRef(true);
   const weekCalLoading = useRef(true);
   const monthCalLoading = useRef(true);
+
+  // 임시 쿼리
+  const {
+    data: myInfoData,
+    refetch: myInfoRefetch,
+    networkStatus,
+  } = useQuery(ME, { notifyOnNetworkStatusChange: true });
 
   const onImgSave = () => {
     const saveAs = (uri, filename) => {
@@ -59,24 +70,32 @@ export default ({
     );
   };
 
-  return (
-    <ClassStaPresenter
-      StaTabs={StaTabs}
-      selectDate={selectDate}
-      setSelectDate={setSelectDate}
-      myInfoData={myInfoData}
-      myInfoRefetch={myInfoRefetch}
-      networkStatus={networkStatus}
-      oneDayHours={oneDayHours}
-      todayCalLoading={todayCalLoading}
-      weekCalLoading={weekCalLoading}
-      monthCalLoading={monthCalLoading}
-      selectPercent={selectPercent}
-      setSelectPercent={setSelectPercent}
-      selectPercent2={selectPercent2}
-      setSelectPercent2={setSelectPercent2}
-      onImgSave={onImgSave}
-      isSelf={isSelf}
-    />
-  );
+  if (networkStatus === 1) {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
+    );
+  } else {
+    return (
+      <MyStaPresenter
+        StaTabs={StaTabs}
+        selectDate={selectDate}
+        setSelectDate={setSelectDate}
+        myInfoData={myInfoData.me}
+        myInfoRefetch={myInfoRefetch}
+        networkStatus={networkStatus}
+        oneDayHours={oneDayHours}
+        todayCalLoading={todayCalLoading}
+        weekCalLoading={weekCalLoading}
+        monthCalLoading={monthCalLoading}
+        selectPercent={selectPercent}
+        setSelectPercent={setSelectPercent}
+        selectPercent2={selectPercent2}
+        setSelectPercent2={setSelectPercent2}
+        onImgSave={onImgSave}
+        isSelf={isSelf}
+      />
+    );
+  }
 };
