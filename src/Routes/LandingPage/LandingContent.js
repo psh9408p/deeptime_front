@@ -8,13 +8,16 @@ const ContentWrap = styled.div`
   min-width: 320px;
   /* 나중에 지우기 */
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
   @media (max-width: 768px) {
     flex-direction: column;
   }
 `;
+
 const ContentTitleWrap = styled.div``;
+
 const ContentTitle = styled.h1`
   font-weight: bold;
   font-size: 4rem;
@@ -48,16 +51,16 @@ const LandingContent = ({ title, subTitle1, subTitle2, subTitle3 }) => {
   return (
     <div>
       <ContentWrap>
-        <ContentTitleWrap>
-          <ContentTitle>{title}</ContentTitle>
-          <ContetnSubTitle>
-            {subTitle1}
-            <br /> {subTitle2}
-            <br />
-            {subTitle3}
-          </ContetnSubTitle>
-          {/* <ContentBtn>READ MORE</ContentBtn> */}
-        </ContentTitleWrap>
+        {/* <ContentTitleWrap> */}
+        <ContentTitle>{title}</ContentTitle>
+        <ContetnSubTitle>
+          {subTitle1}
+          <br /> {subTitle2}
+          <br />
+          {subTitle3}
+        </ContetnSubTitle>
+        {/* <ContentBtn>READ MORE</ContentBtn> */}
+        {/* </ContentTitleWrap> */}
         <MediaWrap>{/* <Video /> */}</MediaWrap>
       </ContentWrap>
     </div>
