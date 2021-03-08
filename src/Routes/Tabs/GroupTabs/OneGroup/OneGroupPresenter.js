@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -19,8 +19,9 @@ import Button_custom from '../../../../Components/Buttons/Button_custom';
 import Popup from 'reactjs-popup';
 import { Link } from 'react-router-dom';
 import CUGroup from '../CUGroup';
-
 import GroupChart from '../../../../Components/GroupChart';
+import RowBarChart_group from '../../../../Components/Charts/RowBarChart_group';
+
 const Wrapper = styled.div`
   position: relative;
   display: flex;
@@ -58,7 +59,7 @@ const ContentRow = styled.div`
   &:nth-child(3) {
     position: relative;
     flex-direction: column;
-    height: 120px;
+    height: 200px;
   }
   &:nth-child(4) {
     height: auto;
@@ -550,18 +551,28 @@ export default ({
             <Tab tabs={DateTabs} />
           </ContentRow>
           <ContentRow>
-            <p>1등 시간: {firstTime}초</p>
-            <p>평균 시간: {averageTime}초</p>
-            <p>나의 시간: {myTime}초</p>
-            <p>그룹 최소 학습 시간: {groupData.targetTime}시간</p>
+            {DateTabs.currentIndex === 0 && (
+              <RowBarChart_group
+                data_1={[firstTime / 60, myTime / 60, averageTime / 60]}
+                data_2={new Array(3).fill(groupData.targetTime * 60)}
+                dateRange={'today'}
+              />
+            )}
+            {DateTabs.currentIndex !== 0 && (
+              <RowBarChart_group
+                data_1={[firstTime / 3600, myTime / 3600, averageTime / 3600]}
+                // data_2={new Array(3).fill(groupData.targetTime)}
+                dateRange={'other'}
+              />
+            )}
           </ContentRow>
-          <ChartWrap>
+          {/* <ChartWrap>
             <GroupChart
               averageTime={groupData.targetTime}
               myTime={myTime}
               targetTime={groupData.targetTime}
             />
-          </ChartWrap>
+          </ChartWrap> */}
           <ContentRow>
             {groupData.member.map((member, index) => (
               <Avatars key={index} member={member} />

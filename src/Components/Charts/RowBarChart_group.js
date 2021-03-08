@@ -1,20 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({
-  data_1,
-  data_2,
-  data_color,
-  labels,
-  label_1,
-  label_2,
-  title,
-  title_x,
-  dateRange,
-}) => {
-  // const data_tmp_1 = [40, 60, 30, 50, 40];
-  // const data_tmp_2 = [60, 90, 30, 60, 100];
-  // const labels_tmp = ['국어', '영어', '수학', '과학', '사회'];
+export default ({ data_1, data_2, dateRange }) => {
+  const labels = ['1st', 'Me', 'Group'];
+  const title = '학습 시간 통계';
+  const data_color = ['red', '#00BFFE', '#6de8a6'];
 
   const chartConfig = {
     type: 'horizontalBar',
@@ -22,7 +12,7 @@ export default ({
       labels: labels,
       datasets: [
         {
-          label: label_1,
+          // label: label_1,
           backgroundColor: data_color,
           categoryPercentage: 0.8,
           barPercentage: 0.9,
@@ -32,7 +22,7 @@ export default ({
           stack: 'background',
         },
         {
-          label: label_2,
+          // label: label_2,
           backgroundColor: 'rgba(233, 236, 244, 1)',
           categoryPercentage: 0.8,
           barPercentage: 0.9,
@@ -67,12 +57,17 @@ export default ({
               decimalTime = decimalTime - hours * 60;
               minutes = Math.round(decimalTime);
             } else {
-              hours = Math.floor(decimalTime);
-              decimalTime = decimalTime - hours;
-              minutes = Math.round(decimalTime * 60);
+              decimalTime = decimalTime * 60;
+              hours = Math.floor(decimalTime / 60);
+              decimalTime = decimalTime - hours * 60;
+              minutes = Math.round(decimalTime);
             }
             return (
-              (tooltipItem.datasetIndex === 0 ? label_1 : label_2) +
+              (tooltipItem.datasetIndex === 0
+                ? tooltipItem.label === 'Group'
+                  ? '평균 시간'
+                  : '학습 시간'
+                : '최소 시간') +
               ': ' +
               hours +
               '시간 ' +
@@ -92,7 +87,12 @@ export default ({
             // },
             scaleLabel: {
               display: true,
-              labelString: title_x,
+              labelString: dateRange === 'today' ? '시간(분)' : '시간(시)',
+            },
+            ticks: {
+              beginAtZero: true,
+              // min: 0,
+              stepSize: dateRange === 'today' ? 10 : 1,
             },
           },
         ],
@@ -148,7 +148,9 @@ export default ({
       return;
     }
     AreaChartUpdate();
-  }, [data_1, data_2, data_color]);
+  }, [data_1, data_2, data_color, dateRange]);
 
-  return <canvas ref={chartContainer} />;
+  return (
+    <canvas ref={chartContainer} style={{ width: '90%', height: '90%' }} />
+  );
 };

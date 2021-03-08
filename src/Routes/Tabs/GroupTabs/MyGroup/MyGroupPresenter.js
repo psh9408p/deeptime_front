@@ -90,9 +90,8 @@ export default ({ groupData, onBookmark, myTabs }) => {
         {groupData.map((group, index) => {
           const selectBool = group.id === selectId;
           return (
-            <IndiGroupWrap>
+            <IndiGroupWrap key={index}>
               <IndiGroup
-                key={index}
                 selectBool={selectBool}
                 onClick={() => {
                   setSelectId(group.id);
@@ -113,13 +112,16 @@ export default ({ groupData, onBookmark, myTabs }) => {
           );
         })}
         {groupData.length < 3 && (
-          <AddBox
-            onClick={() => {
-              myTabs.changeItem(1);
-            }}
-          >
-            <Add fill={'#0F4C82'} />
-          </AddBox>
+          <IndiGroupWrap>
+            <AddBox
+              onClick={() => {
+                myTabs.changeItem(1);
+              }}
+            >
+              <Add fill={'#0F4C82'} />
+            </AddBox>
+            <IndiGroupTitle>그룹 검색(만들기)</IndiGroupTitle>
+          </IndiGroupWrap>
         )}
       </MyGroupsWrap>
       {groupData[selectIndex] && (
