@@ -54,27 +54,6 @@ export const FINISH_TODOLIST = gql`
   }
 `;
 
-export const MY_SCHEDULE = gql`
-  query mySchedule {
-    mySchedule {
-      id
-      isAllDay
-      isPrivate
-      title
-      location
-      state
-      start
-      end
-      totalTime
-      subject {
-        id
-        name
-        bgColor
-      }
-    }
-  }
-`;
-
 export const MY_SUBJECT = gql`
   query mySubject {
     mySubject {

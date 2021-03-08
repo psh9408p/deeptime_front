@@ -4,7 +4,7 @@ import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import StudyPresenter from './StudyPresenter';
-import { ME } from '../MyStudy/MyStudyQueries';
+import { ME } from './StudyQueries';
 import Loader from '../../Components/Loader';
 import todayDateRange from '../../Components/Date/todayDateRange';
 import useInput from '../../Hooks/useInput';

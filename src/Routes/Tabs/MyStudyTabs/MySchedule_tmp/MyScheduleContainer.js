@@ -9,7 +9,6 @@ import {
   SAVE_SCHEDULE,
   ADD_SUBJECT,
   DELETE_SUBJECT,
-  MY_SCHEDULE,
   MY_SUBJECT,
   EDIT_SUBJECT,
   BOOKMARK_SUBJECT,
@@ -34,7 +33,15 @@ const dayList = ['일', '월', '화', '수', '목', '금', '토'];
 const fivemin = 1000 * 60 * 5;
 const stateBox = ['자습', '강의'];
 
-export default ({ defaultSet, isSelf = true }) => {
+export default ({
+  myInfoData,
+  myInfoRefetch,
+  networkStatus,
+  isSelf = true,
+  subjectList,
+  subjectRefetch,
+  subjectnetwork,
+}) => {
   const start_range = (value) => value >= 0 && value <= 23 && value % 1 === 0;
   const end_range = (value) => value >= 1 && value <= 24 && value % 1 === 0;
 
@@ -50,6 +57,7 @@ export default ({ defaultSet, isSelf = true }) => {
   const [infoView, setInfoView] = useState(false);
   const [modiView, setModiView] = useState(false);
   const [infoSche, setInfoSche] = useState({});
+  const [dayDate, setDayDate] = useState(nowDate);
   const [copyOne, setCopyOne] = useState(nowDate);
   const [pasteOne, setPasteOne] = useState(
     new Date(nowDate.getTime() + 86400000),
@@ -71,9 +79,15 @@ export default ({ defaultSet, isSelf = true }) => {
   const [eTime, setETime] = useState(
     new Date(Math.ceil(nowDate.getTime() / fivemin) * fivemin + fivemin),
   );
-  const [lastStart, setLastStart] = useState(defaultSet.scheduleStart);
-  const [lastEnd, setLastEnd] = useState(defaultSet.scheduleEnd);
-  const overhours = defaultSet.scheduleEnd - defaultSet.scheduleStart;
+  const [lastStart, setLastStart] = useState(
+    myInfoData.studyDefaultSet.scheduleStart,
+  );
+  const [lastEnd, setLastEnd] = useState(
+    myInfoData.studyDefaultSet.scheduleEnd,
+  );
+  const overhours =
+    myInfoData.studyDefaultSet.scheduleEnd -
+    myInfoData.studyDefaultSet.scheduleStart;
   const [scheHeight, setScheHeight] = useState(
     overhours < 11 ? '605px' : 605 + (overhours - 10) * 52 + 'px',
   );
@@ -88,13 +102,13 @@ export default ({ defaultSet, isSelf = true }) => {
   const subjectName = useInput('');
   const todolistName = useInput('');
   const scheduleStart = useInput(
-    defaultSet.scheduleStart,
+    myInfoData.studyDefaultSet.scheduleStart,
     start_range,
     undefined,
     true,
   );
   const scheduleEnd = useInput(
-    defaultSet.scheduleEnd,
+    myInfoData.studyDefaultSet.scheduleEnd,
     end_range,
     undefined,
     true,
@@ -120,19 +134,6 @@ export default ({ defaultSet, isSelf = true }) => {
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const [createScheMutation] = useMutation(CREATE_SCHEDULE);
   const [dragScheMutation] = useMutation(DRAG_SCHEDULE);
-
-  const {
-    data: scheduleData,
-    refetch: scheduleRefetch,
-    loading: scheduleLoading,
-    networkStatus: schedulenetwork,
-  } = useQuery(MY_SCHEDULE, { notifyOnNetworkStatusChange: true });
-  const {
-    data: subjectData,
-    refetch: subjectRefetch,
-    loading: subjectLoading,
-    networkStatus: subjectnetwork,
-  } = useQuery(MY_SUBJECT, { notifyOnNetworkStatusChange: true });
   const {
     data: todolistData,
     loading: todolistLoading,
@@ -196,7 +197,7 @@ export default ({ defaultSet, isSelf = true }) => {
       if (!deleteSchedule) {
         alert('스케줄을 삭제할 수 없습니다.');
       } else {
-        await scheduleRefetch();
+        await myInfoRefetch();
         setInfoView(false);
         setScheLoading(false);
       }
@@ -226,11 +227,7 @@ export default ({ defaultSet, isSelf = true }) => {
     setTimeError(overError || orderError);
   }, [sTime, eTime]);
 
-  if (
-    (schedulenetwork === 4 || schedulenetwork === 7) &&
-    (subjectnetwork === 4 || subjectnetwork === 7) &&
-    !todolistLoading
-  ) {
+  if ((subjectnetwork === 7 || subjectnetwork === 4) && !todolistLoading) {
     return (
       <MySchedulePresenter
         cal={cal}
@@ -238,7 +235,10 @@ export default ({ defaultSet, isSelf = true }) => {
         setStartRange={setStartRange}
         endRange={endRange}
         setEndRange={setEndRange}
+        myData={myInfoData}
+        myRefetch={myInfoRefetch}
         saveScheduleMutation={saveScheduleMutation}
+        subjectList={subjectList}
         subjectName={subjectName}
         todolistName={todolistName}
         subjectColor={subjectColor}
@@ -248,11 +248,8 @@ export default ({ defaultSet, isSelf = true }) => {
         editSubjectMutation={editSubjectMutation}
         deleteSubjectMutation={deleteSubjectMutation}
         bookMarkSubjectMutation={bookMarkSubjectMutation}
-        scheduleList={scheduleData.mySchedule}
-        scheduleRefetch={scheduleRefetch}
-        schedulenetwork={schedulenetwork}
-        subjectList={subjectData.mySubject}
         subjectRefetch={subjectRefetch}
+        networkStatus={networkStatus}
         subjectnetwork={subjectnetwork}
         todolistData={todolistData.myTodolist}
         addTodolistMutation={addTodolistMutation}
@@ -289,6 +286,8 @@ export default ({ defaultSet, isSelf = true }) => {
         scheTitle={scheTitle}
         scheLocation={scheLocation}
         createScheMutation={createScheMutation}
+        dayDate={dayDate}
+        setDayDate={setDayDate}
         makeView={makeView}
         setMakeView={setMakeView}
         nowDate={nowDate}

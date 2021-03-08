@@ -39,9 +39,8 @@ export default withRouter(
     const [selectFile, setSelectFile] = useState(null);
     const followInput = useInput('');
 
-    const { data, loading, refetch, networkStatus } = useQuery(GET_USER, {
+    const { data, loading: userLoading, refetch } = useQuery(GET_USER, {
       variables: { username },
-      notifyOnNetworkStatusChange: true,
     });
     const [logOut] = useMutation(LOG_OUT);
     const [editAvatarMuation] = useMutation(EDIT_AVATAR);
@@ -131,7 +130,7 @@ export default withRouter(
       }
     };
 
-    if (networkStatus === 1) {
+    if (userLoading) {
       return (
         <LoaderWrapper>
           <Loader />
@@ -153,7 +152,6 @@ export default withRouter(
           onAddFollow={onAddFollow}
           unFollowMuation={unFollowMuation}
           followMuation={followMuation}
-          networkStatus={networkStatus}
         />
       );
     }

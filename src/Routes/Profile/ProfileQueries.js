@@ -24,37 +24,11 @@ export const GET_USER = gql`
       isFollowed
       times {
         existTime
-        time_24
         createdAt
       }
-      schedules {
-        id
-        isAllDay
-        isPrivate
-        title
-        location
-        state
-        start
-        end
-        totalTime
-        subject {
-          id
-          name
-          bgColor
-        }
-      }
       studyDefaultSet {
-        timelapseRecord
-        nonScheduleRecord
-        autoRefresh
-        autoRefreshTerm
-        startScheduleTerm
-        cutExtenTerm
         scheduleStart
         scheduleEnd
-        dDayOn
-        dDateName
-        dDate
       }
       followDates {
         id
