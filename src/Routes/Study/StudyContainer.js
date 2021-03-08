@@ -51,8 +51,8 @@ let detect_interval = 9900 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
-let normDecision_size = decision_size * 4;
-let personDecision_size = decision_size * 2;
+let normDecision_size = decision_size * 3;
+let personDecision_size = decision_size;
 let cellphoneDecision_size = decision_size;
 let window_size = decision_size * 5;
 
@@ -370,7 +370,7 @@ export default () => {
 
     if (
       normArray_decision_Average > normArrayThreshold_midle ||
-      normArray_decision_high.length > 4
+      normArray_decision_high.length > 9
     ) {
       finalDecisionNorm = true;
     } else {
@@ -452,6 +452,9 @@ export default () => {
       let sub = tf.sub(img, beforeImg);
       let temp = sub.norm(2).sum();
       let norm = await temp.array(1);
+      if (norm > 11000) {
+        norm = 11000;
+      }
 
       if (normArray.length >= window_size) {
         normArray.pop();

@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { BrowserView } from 'react-device-detect';
+
 const VideoWrap = styled.div`
   background-position: center;
   background-size: cover;
@@ -11,9 +13,10 @@ const VideoWrap = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  @media (max-width: 767px) {
+  height: calc(100vh - 50px);
+  /* @media (max-width: 767px) {
     display: none;
-  }
+  } */
 `;
 
 const VideoIn = styled.video`
@@ -27,17 +30,19 @@ const VideoIn = styled.video`
 const TitleVideo = () => {
   return (
     <VideoWrap>
-      <VideoIn
-        //   autoPlay
-        //   playsInline
-        //   muted
-        loop
-        //   controls
-        muted
-        data-autoplay
-      >
-        <source src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/IntroTimelapse.mp4"></source>
-      </VideoIn>
+      <BrowserView>
+        <VideoIn
+          //   autoPlay
+          //   playsInline
+          //   muted
+          loop
+          //   controls
+          muted
+          data-autoplay
+        >
+          <source src="https://slog-iam.s3.ap-northeast-2.amazonaws.com/IntroTimelapse.mp4"></source>
+        </VideoIn>
+      </BrowserView>
     </VideoWrap>
   );
 };

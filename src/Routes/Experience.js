@@ -168,8 +168,8 @@ let detect_interval = (10000 * 1) / 6;
 let mutation_interval = 6;
 
 let decision_size = 6;
-let normDecision_size = decision_size * 4;
-let personDecision_size = decision_size * 2;
+let normDecision_size = decision_size * 3;
+let personDecision_size = decision_size;
 let cellphoneDecision_size = decision_size;
 let window_size = decision_size * 5;
 
@@ -440,7 +440,7 @@ export default () => {
 
     if (
       normArray_decision_Average > normArrayThreshold_midle ||
-      normArray_decision_high.length > 4
+      normArray_decision_high.length > 9
     ) {
       finalDecisionNorm = true;
     } else {
@@ -463,39 +463,48 @@ export default () => {
     }
 
     //final decision
+    //   if (finalDecisionPerson === true) {
+    //     if (finalDecisionNorm === true) {
+    //       if (finalDecisionCellphone === true) {
+    //         console.log('phone');
+    //         ThrowTime(true, 'phone');
+    //       } else if (finalDecisionCellphone === false) {
+    //         console.log('study');
+    //         ThrowTime(true, 'study');
+    //       }
+    //     } else if (finalDecisionNorm === false) {
+    //       console.log('sleep');
+    //       ThrowTime(false, 'sleep');
+    //     }
+    //   } else if (finalDecisionPerson === false) {
+    //     if (finalDecisionNorm === true) {
+    //       if (normArray_decision_high.length >= decision_size) {
+    //         if (finalDecisionCellphone === true) {
+    //           console.log('phone');
+    //           ThrowTime(true, 'phone');
+    //         } else {
+    //           console.log('study');
+    //           ThrowTime(true, 'study');
+    //         }
+    //       } else if (normArray_decision_high.length < decision_size) {
+    //         console.log('none');
+    //         ThrowTime(false, 'none');
+    //       }
+    //     } else if (finalDecisionNorm === false) {
+    //       console.log('none');
+    //       ThrowTime(false, 'none');
+    //     }
+    //   }
+
     if (finalDecisionPerson === true) {
-      if (finalDecisionNorm === true) {
-        if (finalDecisionCellphone === true) {
-          console.log('phone');
-          ThrowTime(true, 'phone');
-        } else if (finalDecisionCellphone === false) {
-          console.log('study');
-          ThrowTime(true, 'study');
-        }
-      } else if (finalDecisionNorm === false) {
-        console.log('sleep');
-        ThrowTime(false, 'sleep');
-      }
-    } else if (finalDecisionPerson === false) {
-      if (finalDecisionNorm === true) {
-        if (normArray_decision_high.length >= decision_size) {
-          if (finalDecisionCellphone === true) {
-            console.log('phone');
-            ThrowTime(true, 'phone');
-          } else {
-            console.log('study');
-            ThrowTime(true, 'study');
-          }
-        } else if (normArray_decision_high.length < decision_size) {
-          console.log('none');
-          ThrowTime(false, 'none');
-        }
-      } else if (finalDecisionNorm === false) {
-        console.log('none');
-        ThrowTime(false, 'none');
-      }
+      console.log('study');
+      ThrowTime(true, 'study');
+    } else {
+      console.log('none');
+      ThrowTime(false, 'none');
     }
   };
+
   /////////////////////////////////////
 
   // while (true) {
@@ -518,6 +527,9 @@ export default () => {
       let sub = tf.sub(img, beforeImg);
       let temp = sub.norm(2).sum();
       let norm = await temp.array(1);
+      if (norm > 11000) {
+        norm = 11000;
+      }
 
       if (normArray.length >= window_size) {
         normArray.pop();
