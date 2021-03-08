@@ -10,13 +10,16 @@ const ContentWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 const ContentTitleWrap = styled.div``;
 const ContentTitle = styled.h1`
   font-weight: bold;
-  font-size: 80px;
+  font-size: 4rem;
   margin-top: 50px;
-  max-width: 425px;
+  min-width: 320px;
   @media (max-width: 570px) {
     font-size: 40px;
   }
@@ -25,7 +28,7 @@ const ContentTitle = styled.h1`
 const ContetnSubTitle = styled.div`
   font-size: 30px;
   margin-top: 20px;
-  min-width: 425px;
+  min-width: 320px;
   @media (max-width: 570px) {
     font-size: 20px;
   }
@@ -55,9 +58,7 @@ const LandingContent = ({ title, subTitle1, subTitle2, subTitle3 }) => {
           </ContetnSubTitle>
           {/* <ContentBtn>READ MORE</ContentBtn> */}
         </ContentTitleWrap>
-        {/* <MediaWrap>
-          <Video />
-        </MediaWrap> */}
+        <MediaWrap>{/* <Video /> */}</MediaWrap>
       </ContentWrap>
     </div>
   );

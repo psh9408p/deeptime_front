@@ -1,15 +1,11 @@
 import React from 'react';
 import Chart from 'react-apexcharts';
 
-const GroupChart = ({ averageTime, myTime }) => {
+const GroupChart = ({ averageTime, myTime, targetTime }) => {
   const chartOption = {
     series: [
-      {
-        data: [averageTime],
-      },
-      {
-        data: [10],
-      },
+      { name: '나', data: [2, targetTime] },
+      { name: '최소학습시간', data: [averageTime, targetTime] },
     ],
     options: {
       chart: {
@@ -54,7 +50,7 @@ const GroupChart = ({ averageTime, myTime }) => {
                 series={chartOption.series}
                 type="bar"
                 width="600"
-                height="200"
+                height="300"
               />
             </div>
           </div>
