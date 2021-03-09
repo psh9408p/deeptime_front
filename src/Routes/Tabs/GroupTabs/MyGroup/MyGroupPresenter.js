@@ -97,9 +97,7 @@ export default ({ groupData, onBookmark, myTabs }) => {
                   setSelectId(group.id);
                 }}
               >
-                <MaxMember>{`${group.memberCount} / ${
-                  group.MaxMember ? group.MaxMember : group.memberCount
-                }`}</MaxMember>
+                <MaxMember>{`${group.memberCount} / ${group.maxMember}`}</MaxMember>
                 <Star
                   fill={group.bookmark ? 'yellow' : 'grey'}
                   onClick={() => {
