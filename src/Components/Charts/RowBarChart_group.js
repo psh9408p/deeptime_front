@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chartjs from 'chart.js';
 
-export default ({ data_1, data_2, dateRange }) => {
-  const labels = ['1st', 'Me', 'Group'];
+export default ({ data_1, data_2, dateRange, isSearch = false }) => {
+  const labels = isSearch ? ['1st', 'Group'] : ['1st', 'Me', 'Group'];
   const title = '학습 시간 통계';
-  const data_color = ['red', '#00BFFE', '#6de8a6'];
+  const data_color = isSearch
+    ? ['red', '#6de8a6']
+    : ['red', '#00BFFE', '#6de8a6'];
 
   const chartConfig = {
     type: 'horizontalBar',

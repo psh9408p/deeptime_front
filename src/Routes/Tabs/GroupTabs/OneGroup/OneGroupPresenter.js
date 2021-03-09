@@ -234,18 +234,7 @@ export default ({
   updateLoad,
   groupPush,
   onOutMember,
-  myTimes,
 }) => {
-  // 맴버에 내가 없으면 나의 데이터 넣어주기
-  if (isSearch) {
-    const findMe = (a) => a.isSelf === true;
-    const meIndex = groupData.member.findIndex(findMe);
-    if (meIndex === -1) {
-      const me_tmp = { id: 'tmpData', isSelf: false, times: myTimes };
-      groupData.member.push(me_tmp);
-    }
-  }
-
   // 날짜 관련
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
   const selectMonthDate = new Date(
@@ -354,29 +343,17 @@ export default ({
   };
 
   const statisticsCal = () => {
-    // 1등, 평균 시간은 전체 데이터에 임시 나의 시간이 들어갔을 경우 그걸 빼주고 계산해야해서 tmpData 제외하는 식 추가
-    let timeArray_notTmp = ObjectCopy(existTime_Array);
-    const findTmp = (a) => a.id === 'tmpData';
-    const tmpTimeIndex = groupData.member.findIndex(findTmp);
-    if (tmpTimeIndex !== -1) {
-      timeArray_notTmp.splice(tmpTimeIndex, 1);
-    }
-
     // 1등 시간 계산
-    firstTime = timeArray_notTmp.reduce(function (a, b) {
+    firstTime = existTime_Array.reduce(function (a, b) {
       return Math.max(a, b);
     });
     // 평균 시간 계산
-    const timeSum = timeArray_notTmp.reduce((a, b) => a + b, 0);
-    averageTime = timeSum / timeArray_notTmp.length;
+    const timeSum = existTime_Array.reduce((a, b) => a + b, 0);
+    averageTime = timeSum / existTime_Array.length;
     // 나의 시간 있으면 추가
-    if (tmpTimeIndex === -1) {
-      const checkSelf = (a) => a.isSelf === true;
-      selfIndex = groupData.member.findIndex(checkSelf);
-      myTime = selfIndex === -1 ? 0 : existTime_Array[selfIndex];
-    } else {
-      myTime = existTime_Array[tmpTimeIndex];
-    }
+    const checkSelf = (a) => a.isSelf === true;
+    selfIndex = groupData.member.findIndex(checkSelf);
+    myTime = selfIndex === -1 ? 0 : existTime_Array[selfIndex];
   };
 
   // 맴버 개별 데이터 계산
@@ -576,9 +553,16 @@ export default ({
           <ContentRow>
             {DateTabs.currentIndex === 0 && (
               <RowBarChart_group
-                data_1={[firstTime / 60, myTime / 60, averageTime / 60]}
-                data_2={new Array(3).fill(groupData.targetTime * 60)}
+                data_1={
+                  isSearch
+                    ? [firstTime / 60, averageTime / 60]
+                    : [firstTime / 60, myTime / 60, averageTime / 60]
+                }
+                data_2={new Array(isSearch ? 2 : 3).fill(
+                  groupData.targetTime * 60,
+                )}
                 dateRange={'today'}
+                isSearch={isSearch}
               />
             )}
             {DateTabs.currentIndex !== 0 && (

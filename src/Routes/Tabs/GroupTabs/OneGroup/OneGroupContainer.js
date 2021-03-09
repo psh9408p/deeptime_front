@@ -12,7 +12,6 @@ import {
   SEEONE_GROUP,
   EDIT_GROUP,
   OUT_MEMBER,
-  ME,
 } from './OneGroupQueries';
 import { SEE_GROUP } from '../SearchGroup/SearchGroupQueries';
 import { MY_GROUP } from '../MyGroup/MyGroupQueries';
@@ -50,8 +49,6 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
       notifyOnNetworkStatusChange: true,
     },
   );
-
-  const { data: myData, loading: myLoading } = useQuery(ME);
 
   const [joinGroupMutation] = useMutation(JOIN_GROUP, {
     refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
@@ -234,7 +231,7 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
     setViewTabs(0);
   }, [selectId]);
 
-  if (networkStatus === 1 || myLoading) {
+  if (networkStatus === 1) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -267,7 +264,6 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
         updateLoad={updateLoad}
         groupPush={groupPush}
         onOutMember={onOutMember}
-        myTimes={myData.me.times}
       />
     );
   }
