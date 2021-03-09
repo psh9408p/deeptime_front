@@ -214,7 +214,7 @@ export default ({
   setSelectDate,
   DateTabs,
   close,
-  closeActive,
+  isSearch,
   groupData,
   groupRefetch,
   networkStatus,
@@ -234,7 +234,18 @@ export default ({
   updateLoad,
   groupPush,
   onOutMember,
+  myTimes,
 }) => {
+  // 맴버에 내가 없으면 나의 데이터 넣어주기
+  if (isSearch) {
+    const findMe = (a) => a.isSelf === true;
+    const meIndex = groupData.member.findIndex(findMe);
+    if (meIndex === -1) {
+      const me_tmp = { id: 'tmpData', isSelf: true, times: myTimes };
+      groupData.member.push(me_tmp);
+    }
+  }
+
   // 날짜 관련
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
   const selectMonthDate = new Date(
@@ -574,11 +585,14 @@ export default ({
             />
           </ChartWrap> */}
           <ContentRow>
-            {groupData.member.map((member, index) => (
-              <Avatars key={index} member={member} />
-            ))}
+            {groupData.member.map((member, index) => {
+              // 그룹 서치에서 통계를 위한 임시 myData있으면 아바타에서는 제거(화면에 표현X)
+              if (member.id !== 'tmpData') {
+                return <Avatars key={index} member={member} />;
+              }
+            })}
           </ContentRow>
-          {closeActive && <PopupClose onClick={() => close()} />}
+          {isSearch && <PopupClose onClick={() => close()} />}
           {(networkStatus === 4 || networkStatus === 2) && (
             <LoaderWrapper>
               <Loader />

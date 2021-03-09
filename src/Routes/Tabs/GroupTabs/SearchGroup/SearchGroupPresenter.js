@@ -242,11 +242,7 @@ export default ({
               >
                 {(close) => {
                   return (
-                    <OneGroup
-                      close={close}
-                      groupInfo={group}
-                      closeActive={true}
-                    />
+                    <OneGroup close={close} groupInfo={group} isSearch={true} />
                   );
                 }}
               </PopupCustom>

@@ -12,6 +12,7 @@ import {
   SEEONE_GROUP,
   EDIT_GROUP,
   OUT_MEMBER,
+  ME,
 } from './OneGroupQueries';
 import { SEE_GROUP } from '../SearchGroup/SearchGroupQueries';
 import { MY_GROUP } from '../MyGroup/MyGroupQueries';
@@ -26,7 +27,7 @@ const LoaderWrapper = styled.div`
   height: 300px;
 `;
 
-export default ({ close, groupInfo, selectId, closeActive = false }) => {
+export default ({ close, groupInfo, selectId, isSearch = false }) => {
   const preventFloat = (value) => value % 1 === 0;
 
   const [selectDate, setSelectDate] = useState(new Date());
@@ -49,6 +50,9 @@ export default ({ close, groupInfo, selectId, closeActive = false }) => {
       notifyOnNetworkStatusChange: true,
     },
   );
+
+  const { data: myData, loading: myLoading } = useQuery(ME);
+
   const [joinGroupMutation] = useMutation(JOIN_GROUP, {
     refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
   });
@@ -230,7 +234,7 @@ export default ({ close, groupInfo, selectId, closeActive = false }) => {
     setViewTabs(0);
   }, [selectId]);
 
-  if (networkStatus === 1) {
+  if (networkStatus === 1 || myLoading) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -243,7 +247,7 @@ export default ({ close, groupInfo, selectId, closeActive = false }) => {
         setSelectDate={setSelectDate}
         DateTabs={DateTabs}
         close={close}
-        closeActive={closeActive}
+        isSearch={isSearch}
         groupData={groupData.seeOneGroup}
         groupRefetch={groupRefetch}
         networkStatus={networkStatus}
@@ -263,6 +267,7 @@ export default ({ close, groupInfo, selectId, closeActive = false }) => {
         updateLoad={updateLoad}
         groupPush={groupPush}
         onOutMember={onOutMember}
+        myTimes={myData.me.times}
       />
     );
   }

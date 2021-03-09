@@ -78,3 +78,16 @@ export const EDIT_GROUP = gql`
     )
   }
 `;
+
+export const ME = gql`
+  query me {
+    me {
+      id
+      times {
+        id
+        existTime
+        createdAt
+      }
+    }
+  }
+`;
