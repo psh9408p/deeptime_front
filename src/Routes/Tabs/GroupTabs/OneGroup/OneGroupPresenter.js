@@ -241,7 +241,7 @@ export default ({
     const findMe = (a) => a.isSelf === true;
     const meIndex = groupData.member.findIndex(findMe);
     if (meIndex === -1) {
-      const me_tmp = { id: 'tmpData', isSelf: true, times: myTimes };
+      const me_tmp = { id: 'tmpData', isSelf: false, times: myTimes };
       groupData.member.push(me_tmp);
     }
   }
@@ -354,17 +354,29 @@ export default ({
   };
 
   const statisticsCal = () => {
+    // 1등, 평균 시간은 전체 데이터에 임시 나의 시간이 들어갔을 경우 그걸 빼주고 계산해야해서 tmpData 제외하는 식 추가
+    let timeArray_notTmp = ObjectCopy(existTime_Array);
+    const findTmp = (a) => a.id === 'tmpData';
+    const tmpTimeIndex = groupData.member.findIndex(findTmp);
+    if (tmpTimeIndex !== -1) {
+      timeArray_notTmp.splice(tmpTimeIndex, 1);
+    }
+
     // 1등 시간 계산
-    firstTime = existTime_Array.reduce(function (a, b) {
+    firstTime = timeArray_notTmp.reduce(function (a, b) {
       return Math.max(a, b);
     });
     // 평균 시간 계산
-    const timeSum = existTime_Array.reduce((a, b) => a + b, 0);
-    averageTime = timeSum / existTime_Array.length;
+    const timeSum = timeArray_notTmp.reduce((a, b) => a + b, 0);
+    averageTime = timeSum / timeArray_notTmp.length;
     // 나의 시간 있으면 추가
-    const checkSelf = (a) => a.isSelf === true;
-    selfIndex = groupData.member.findIndex(checkSelf);
-    myTime = selfIndex === -1 ? 0 : existTime_Array[selfIndex];
+    if (tmpTimeIndex === -1) {
+      const checkSelf = (a) => a.isSelf === true;
+      selfIndex = groupData.member.findIndex(checkSelf);
+      myTime = selfIndex === -1 ? 0 : existTime_Array[selfIndex];
+    } else {
+      myTime = existTime_Array[tmpTimeIndex];
+    }
   };
 
   // 맴버 개별 데이터 계산
