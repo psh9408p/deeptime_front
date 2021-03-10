@@ -569,8 +569,8 @@ export default ({
               <RowBarChart_group
                 data_1={
                   isSearch
-                    ? [firstTime / 60, averageTime / 60]
-                    : [firstTime / 60, myTime / 60, averageTime / 60]
+                    ? [firstTime / 3600, averageTime / 3600]
+                    : [firstTime / 3600, myTime / 3600, averageTime / 3600]
                 }
                 // data_2={new Array(3).fill(groupData.targetTime)}
                 dateRange={'other'}
