@@ -149,6 +149,7 @@ export default ({
   getAll.unshift('전체');
 
   const group1 = useSelect(getAll, getAll, meData.studyGroup);
+  console.log('feed,', meData);
 
   const [filterdData, setFilterdData] = useState(feedData);
 

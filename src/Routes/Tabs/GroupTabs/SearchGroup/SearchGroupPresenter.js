@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Post from '../../../../Components/Post';
-import { Add } from '../../../../Components/Icons';
+import { Add, Lock } from '../../../../Components/Icons';
 import PopupButton from '../../../../Components/Buttons/PopupButton';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
 import FatText from '../../../../Components/FatText';
 import Input_100 from '../../../../Components/Input_100';
 import Textarea from '../../../../Components/Textarea';
 import { FEED_ALL_QUERY } from './SearchGroupQueries';
-// import useSelect from '../../../Hooks/useSelect';
 import Popup from 'reactjs-popup';
 
-import { studyOption_group } from '../../../../Components/LongArray';
 import Select from '../../../../Components/Select';
 import useSelect from '../../../../Hooks/useSelect';
 import useSelect_dynamic from '../../../../Hooks/useSelect_dynamic';
@@ -19,6 +17,8 @@ import useSelect_dynamic2 from '../../../../Hooks/useSelect_dynamic2';
 import OneGroup from '../OneGroup/';
 import Loader from '../../../../Components/Loader';
 import CUGroup from '../CUGroup';
+
+import { studyOption_group } from '../../../../Components/LongArray';
 
 const FilterdSelect = styled.div`
   width: 30%;
@@ -57,7 +57,7 @@ const LoaderWrapper = styled.div`
 const HeaderDiv = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 600px;
@@ -163,13 +163,19 @@ const ImageBox = styled.div`
 const MemberWrap = styled.div`
   margin-left: 10px;
 `;
+
+const MemberTitle = styled.div`
+  display: flex;
+`;
+
 const MemberDiv = styled.div`
   display: flex;
   margin-top: 8px;
+  flex-direction: column;
 `;
 
 const MemberList = styled.p`
-  margin-right: 10px;
+  display: flex;
 `;
 
 const PopupCustom = styled(Popup)`
@@ -182,6 +188,7 @@ const PopupCustom = styled(Popup)`
     border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
+let filtering = false;
 
 export default ({
   viewTabs,
@@ -197,14 +204,43 @@ export default ({
   groupData,
   makeLoad,
 }) => {
+  console.log('스터디', studyOption_group);
+
+  const getAll = studyOption_group.slice();
+  getAll.unshift('전체');
+  console.log('겟올', getAll);
+
+  const group1 = useSelect(getAll, getAll, groupData.category);
+
+  const [filData, setFilData] = useState(groupData);
+
+  console.log('hihi', filData);
+  console.log('op', group1.option);
+  console.log('fil', groupData[0].category);
+  const getData = () => {
+    if (group1.option === '전체') {
+      setFilData(groupData);
+    } else {
+      const filGroup = groupData.filter((ctr) => ctr.category === group1.option);
+      console.log('겟데이타', filGroup);
+      setFilData(filGroup);
+            console.log('겟데이타2', filGroup);
+
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [group1.option]);
+
   return (
     <>
       {viewTabs === 0 ? (
         <>
           <HeaderDiv>
-            {/* <FilterdSelect>
+            <FilterdSelect>
               <Select {...group1} id={'testSelect'} />
-            </FilterdSelect> */}
+            </FilterdSelect>
             <Add
               fill={'#0F4C82'}
               onClick={() => {
@@ -213,7 +249,7 @@ export default ({
             />
           </HeaderDiv>
           <GroupListWrap>
-            {groupData.map((group) => (
+            {filData.map((group) => (
               <PopupCustom
                 key={group.id}
                 trigger={
@@ -222,16 +258,27 @@ export default ({
                       <ImageBox></ImageBox>
                     </ImageWrap>
                     <MemberWrap>
-                      <p style={{ fontSize: '16px' }}>{group.name}</p>
-                      <p>{group.category}</p>
-                      <p>최소 학습 시간: {group.targetTime}시간</p>
+                      <MemberTitle>
+                        <p style={{ fontSize: '16px', fontWeight: '600' }}>
+                          {group.name}
+                        </p>
+                        {!group.publicBool && <Lock marginLeft={'6px'} />}
+                      </MemberTitle>
                       <MemberDiv>
+                        <p style={{ marginBottom: '3px' }}>{group.category}</p>
+                        <p style={{ marginBottom: '3px' }}>
+                          최소 학습 시간: {group.targetTime}시간
+                        </p>
                         <MemberList>
-                          인원: {group.memberCount}/{group.maxMember}
-                        </MemberList>
-                        <MemberList>방장: {group.manager.username}</MemberList>
-                        <MemberList>
-                          {group.publicBool ? '공개방' : '비공개방'}
+                          <span style={{ marginRight: '10px' }}>
+                            인원: {group.memberCount}/{group.maxMember}
+                          </span>
+                          <span style={{ marginRight: '10px' }}>
+                            방장: {group.manager.username}
+                          </span>
+                          <span style={{ marginRight: '10px' }}>
+                            {group.publicBool ? '공개방' : '비공개방'}
+                          </span>
                         </MemberList>
                       </MemberDiv>
                     </MemberWrap>
