@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import SquarePost from '../../../../Components/SquarePost';
-import MyStatistics from '../../../../Routes/Tabs/MyStudyTabs/MyStatistics';
+import OtherStatistics from './OtherStatistics';
 import OtherSchedule from './OtherSchedule';
 
 const Posts = styled.div`
@@ -25,26 +25,27 @@ const NonPublicDiv = styled.div`
   font-size: 28px;
   font-weight: 600;
   text-align: center;
-  margin: 150px auto;
+  margin: 180px auto;
 `;
 
 export default ({ pageIndex, User }) => {
   if (pageIndex === 0) {
     if (!User.pubOfFeed && !User.isFollowed) {
       return <NonPublicDiv>비공개 계정입니다</NonPublicDiv>;
+    } else if (User.posts.length === 0) {
+      return <NonPublicDiv>게시물이 없습니다.</NonPublicDiv>;
     } else {
       return (
         <Posts>
-          {User.posts &&
-            User.posts.map((post) => (
-              <SquarePost
-                key={post.id}
-                postId={post.id}
-                likeCount={post.likeCount}
-                commentCount={post.commentCount}
-                file={post.files[0]}
-              />
-            ))}
+          {User.posts.map((post) => (
+            <SquarePost
+              key={post.id}
+              postId={post.id}
+              likeCount={post.likeCount}
+              commentCount={post.commentCount}
+              file={post.files[0]}
+            />
+          ))}
         </Posts>
       );
     }
@@ -53,12 +54,9 @@ export default ({ pageIndex, User }) => {
       return <NonPublicDiv>비공개 계정입니다</NonPublicDiv>;
     } else {
       return (
-        // <ContentWrap>
-        //   <MyStatistics
-        //     myInfoData={User}
-        //   />
-        // </ContentWrap>
-        <NonPublicDiv>통계 서비스 준비중...</NonPublicDiv>
+        <ContentWrap>
+          <OtherStatistics userData={User} />
+        </ContentWrap>
       );
     }
   } else if (pageIndex === 2) {

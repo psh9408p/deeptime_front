@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
 import Footer from '../../Components/Footer';
-import Payment from './Payment';
 import styled from 'styled-components';
 import Video from './Video';
 import { BrowserView, MobileView } from 'react-device-detect';

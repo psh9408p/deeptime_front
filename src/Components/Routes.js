@@ -22,8 +22,6 @@ import TermsOfPrivacy from '../Routes/TermsOfPrivacy';
 import TermsOfMarketing from '../Routes/TermsOfMarketing';
 import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
-import Shop from '../Routes/Shop';
-import Shop_M from '../Routes/Shop_M';
 import PaymentResult from '../Routes/PaymentResult';
 import ManageSubscription from '../Routes/ManageSubscription';
 import OrderHistory from '../Routes/OrderHistory';
@@ -39,6 +37,7 @@ import ChannelService from './ChannelService';
 import Feed from '../Routes/Feed';
 import Group from '../Routes/Group/GroupContainer';
 import Test from '../Routes/testRoute';
+import Shop from '../Routes/Shop';
 
 export const MEPOSITION = gql`
   query me {
@@ -114,7 +113,6 @@ const LoggedInRoutes = () => {
       return (
         <Switch>
           <Route exact path="/" component={Introduce_M} />
-          <Route path="/shop" component={Shop_M} />
           <Route path="/payment/result" component={PaymentResult} />
           <Route path="/account" component={Account} />
           <Redirect from="*" to="/" />
