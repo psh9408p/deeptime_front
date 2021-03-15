@@ -124,6 +124,14 @@ const Posts = styled.div`
   grid-auto-rows: 200px;
 `;
 
+const NonPublicDiv = styled.div`
+  width: 100%;
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  margin: 180px auto;
+`;
+
 export default ({
   pageIndex,
   User,
@@ -136,10 +144,12 @@ export default ({
   const location = useLocation();
 
   if (pageIndex === 0) {
-    return (
-      <Posts>
-        {User.posts &&
-          User.posts.map((post) => (
+    if (User.posts.length === 0) {
+      return <NonPublicDiv>게시물이 없습니다.</NonPublicDiv>;
+    } else {
+      return (
+        <Posts>
+          {User.posts.map((post) => (
             <SquarePost
               key={post.id}
               postId={post.id}
@@ -148,9 +158,10 @@ export default ({
               file={post.files[0]}
             />
           ))}
-      </Posts>
-    );
-  } else if (pageIndex === 1) {
+        </Posts>
+      );
+    }
+  } else if (pageIndex === 2) {
     return (
       <Regist>
         <ContentButton
@@ -163,11 +174,11 @@ export default ({
         </ContentButton>
       </Regist>
     );
-  } else if (pageIndex === 2) {
+  } else if (pageIndex === 1) {
     return (
       <Regist>
         <ContentLink to="/manage-subscription" replace>
-          구독 관리
+          유료 회원 정보
         </ContentLink>
         <ContentLink to="/order-history" replace>
           결제/이용권 내역

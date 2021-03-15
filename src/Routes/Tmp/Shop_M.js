@@ -223,7 +223,7 @@ export default () => {
   };
 
   if (!paymentSetLoading && paymentSetData && paymentSetData.myPaymentSet) {
-    seatRatio = paymentSetData.myPaymentSet.user.organization.seatRatio;
+    // seatRatio = paymentSetData.myPaymentSet.user.organization.seatRatio;
     merchantName_1 = `DEEPTIME 1개월 이용권 (${8 * (seatRatio - 1) + 1}~${
       8 * seatRatio
     }개 좌석)`;

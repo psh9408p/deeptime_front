@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
-export const ME = gql`
-  query me {
-    me {
+export const GET_USER = gql`
+  query seeUser($username: String!) {
+    seeUser(username: $username) {
       id
       times {
         id

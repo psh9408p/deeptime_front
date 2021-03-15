@@ -152,7 +152,7 @@ const IndiWrap = styled.div`
 
 const PopupCustom = styled(Popup)`
   &-content {
-    width: 650px !important;
+    width: 430px !important;
     max-height: 820px !important;
     display: flex;
     justify-content: center;
@@ -201,6 +201,50 @@ const PopupBody = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
+`;
+
+const InfoDiv = styled.div``;
+const GroupInfoWrap = styled.div`
+  margin-top: 20px;
+  width: 400px;
+  border: 0;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: rgb(238, 238, 239);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 8px;
+  margin: 0 auto;
+  margin-bottom: 8px;
+`;
+
+const GroupInfo = styled.div`
+  display: flex;
+  width: 300px;
+`;
+
+const GroupIntro = styled.div`
+  width: 400px;
+  margin-top: 30px;
+  border: 0;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: rgb(238, 238, 239);
+  margin: 0 auto;
+  margin-bottom: 12px;
+  max-height: 300px;
+  overflow: auto;
+`;
+
+const GroupIntroTitle = styled.div`
+  font-weight: 600;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding-top: 8px;
+  padding-left: 8px;
+`;
+const GroupIntroArea = styled.div`
+  padding: 8px 8px;
 `;
 
 let firstTime = 0;
@@ -464,18 +508,18 @@ export default ({
 
   const InforDiv = ({ close }) => {
     return (
-      <div>
+      <InfoDiv>
         <PopupClose
           onClick={() => {
             close();
           }}
         />
-        <p>임시</p>
         {groupData.imManager && (
           <Button_custom
-            width={'100px'}
+            width={'400px'}
             height={'32px'}
             text={'그룹 정보 수정'}
+            margin={'12px auto 8px auto'}
             onClick={() => {
               close();
               groupPush();
@@ -483,10 +527,38 @@ export default ({
             }}
           />
         )}
-      </div>
+        <GroupInfoWrap>
+          <div>
+            <GroupInfo>
+              <div>
+                <span style={{ fontWeight: '600' }}>수용인원</span>
+                <span>
+                  {' '}
+                  : {groupData.memberCount} / {groupData.maxMember}
+                </span>
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                <span style={{ fontWeight: '600' }}>카테고리</span>
+                <span> : {groupData.category}</span>
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span style={{ fontWeight: '600' }}>최소 학습 시간</span>
+                <span> : {groupData.targetTime} 시간</span>
+              </div>
+            </GroupInfo>
+          </div>
+        </GroupInfoWrap>
+        <GroupIntro>
+          <GroupIntroTitle>그룹소개</GroupIntroTitle>
+          <GroupIntroArea>{groupData.bio}</GroupIntroArea>
+        </GroupIntro>
+      </InfoDiv>
     );
   };
-
   return (
     <Wrapper>
       {viewTabs === 0 ? (
