@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Add, Star } from '../../../../Components/Icons';
+import { Add, Star, Lock } from '../../../../Components/Icons';
 import OneGroup from '../OneGroup';
 
 const Wrapper = styled.div`
@@ -47,11 +47,18 @@ const IndiGroup = styled.div`
 const IndiGroupTitle = styled.div`
   margin-top: 10px;
   padding-left: 2.5px;
+  font-weight: 600;
+`;
+
+const StarLock = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 8px;
 `;
 
 const MaxMember = styled.div`
   margin-top: 75px;
-  margin-left: 3px;
+  margin-left: 8px;
   position: absolute;
 `;
 const AddBox = styled(IndiGroup)`
@@ -98,12 +105,15 @@ export default ({ groupData, onBookmark, myTabs }) => {
                 }}
               >
                 <MaxMember>{`${group.memberCount} / ${group.maxMember}`}</MaxMember>
-                <Star
-                  fill={group.bookmark ? 'yellow' : 'grey'}
-                  onClick={() => {
-                    onBookmark(group.id, !group.bookmark);
-                  }}
-                />
+                <StarLock>
+                  <Star
+                    fill={group.bookmark ? 'yellow' : 'grey'}
+                    onClick={() => {
+                      onBookmark(group.id, !group.bookmark);
+                    }}
+                  />
+                  {!group.publicBool && <Lock />}
+                </StarLock>
               </IndiGroup>
               <IndiGroupTitle>{group.name}</IndiGroupTitle>
             </IndiGroupWrap>
