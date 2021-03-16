@@ -12,7 +12,7 @@ const Regist = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 320px;
-  margin: 0 auto;
+  margin: 40px auto;
   padding: 25px 0;
 `;
 
@@ -177,8 +177,8 @@ export default ({
   } else if (pageIndex === 1) {
     return (
       <Regist>
-        <ContentLink to="/manage-subscription" replace>
-          유료 회원 정보
+        <ContentLink to="/manage-membership" replace>
+          멤버십 정보
         </ContentLink>
         <ContentLink to="/order-history" replace>
           결제/이용권 내역

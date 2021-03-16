@@ -41,6 +41,8 @@ import Avatar from '../../Components/Avatar';
 import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import useSound from 'use-sound';
+import beepSound from '../../Components/Sound/beep.mp3';
 
 const ClockBox = styled.div`
   width: 200px;
@@ -788,6 +790,9 @@ let target_min = 0;
 let target_hour = 0;
 let total_min = 0;
 let total_hour = 0;
+// 스케줄 알람용
+let beep_scheId = '';
+let beep_beforeTen = true; // true가 10분전 알림을 이미 준거
 
 export default ({
   myInfoData,
@@ -837,6 +842,9 @@ export default ({
   setCamEmpty,
   videoDevices,
 }) => {
+  // 비프음
+  const [beepPlay] = useSound(beepSound);
+
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
     const findUser = (a) => a.id === myInfoData.followDates[i].followId;
@@ -1114,7 +1122,8 @@ export default ({
         alert('기본값 세팅을 적용할 수 없습니다.');
       } else {
         if (autoRefresh) {
-          startPolling(autoRefreshTerm.value * 1000);
+          // startPolling(autoRefreshTerm.value * 1000);
+          startPolling(3000);
         } else {
           stopPolling();
         }
@@ -1206,6 +1215,54 @@ export default ({
         await myInfoRefetch();
         toast.success('현재 스케줄을 연장했습니다.');
         close();
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+    }
+  };
+
+  const tenExtensionSchedule = async () => {
+    toast.info('현재 스케줄 연장 중...');
+
+    // 연장시간
+    const start = new Date(scheduleList_selectDay[nowScheduleIndex].start);
+    const end = new Date(scheduleList_selectDay[nowScheduleIndex].end);
+    let deleteArray = [];
+    let cutId = '';
+    let cutTotalTime = 0;
+    end.setTime(end.getTime() + 600000); // 10분 추가
+    // 삭제할 단축할 스케줄 계산
+    for (var i = 0; i < scheduleList_selectDay.length; i++) {
+      const start_tmp = new Date(scheduleList_selectDay[i].start);
+      const end_tmp = new Date(scheduleList_selectDay[i].end);
+      if (start < start_tmp && end >= end_tmp) {
+        deleteArray.push({ id: scheduleList_selectDay[i].id });
+      } else if (start < start_tmp && end > start_tmp) {
+        cutId = scheduleList_selectDay[i].id;
+        cutTotalTime = (end_tmp.getTime() - end.getTime()) / 1000;
+      }
+    }
+
+    try {
+      const {
+        data: { extensionSchedule_study },
+      } = await extensionScheduleMutation({
+        variables: {
+          scheduleId: scheduleList_selectDay[nowScheduleIndex].id,
+          totalTime: (end.getTime() - start.getTime()) / 1000,
+          end,
+          cutId,
+          cutTotalTime,
+          deleteArray,
+        },
+      });
+      if (!extensionSchedule_study) {
+        alert('현재 스케줄을 연장할 수 없습니다.');
+        beep_beforeTen = true;
+      } else {
+        await myInfoRefetch();
+        toast.success('현재 스케줄을 연장했습니다.');
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
@@ -1571,6 +1628,53 @@ export default ({
     LoadCamera();
   }, [camList.option]);
 
+  // // 시작 알림 & 10분전 알림 관련
+  const beepAlert = () => {
+    if (nowScheduleIndex !== -1 && autoRefresh) {
+      const beep_nowSche = scheduleList_selectDay[nowScheduleIndex];
+      const beep_endDate = new Date(beep_nowSche.end);
+      // 기존에 감지한 스케줄인지
+      if (beep_scheId === beep_nowSche.id) {
+        // 10분 알림 안한 상태인지
+        if (!beep_beforeTen) {
+          // 현재 스케줄 끝 시간이 10분 이내인지
+          if (beep_endDate.getTime() - nowDate_tmp.getTime() <= 600000) {
+            beepPlay();
+            toast.info('현재 스케줄이 10분 이내로 남았습니다.');
+            beep_beforeTen = true;
+            // if (
+            //   beep_endDate.getHours() === 23 &&
+            //   beep_endDate.getMinutes() > 50
+            // ) {
+            //   alert('현재 스케줄이 10분 남았습니다.');
+            // } else {
+            //   if (
+            //     window.confirm(
+            //       '현재 스케줄이 10분 남았습니다.\n10분을 연장하시겠습니까?',
+            //     ) === false
+            //   ) {
+            //     beep_beforeTen = true;
+            //     return;
+            //   } else {
+            //     await tenExtensionSchedule();
+            //   }
+            // }
+          }
+        }
+      } else {
+        beepPlay();
+        toast.info(
+          `[${beep_nowSche.subject.name}]${beep_nowSche.title}이 시작됐습니다.`,
+        );
+        beep_scheId = beep_nowSche.id;
+        // 시작한 스케줄의 총 길이가 10분 보다 적으면 10분 알람 할필요 없으니 값 수정
+        if (beep_nowSche.totalTime / 60 > 10) {
+          beep_beforeTen = false;
+        }
+      }
+    }
+  };
+
   //스케줄 계산
   const scheduleList = myInfoData.schedules;
   const selectDate = new Date();
@@ -1916,6 +2020,7 @@ export default ({
   if (7 === networkStatus) {
     todaySchedule_calculate();
     todayGraph_calculate();
+    beepAlert();
   }
 
   const todolistRow = ({ columnIndex, rowIndex, style }) => {

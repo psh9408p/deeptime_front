@@ -231,9 +231,9 @@ export default withRouter(() => {
             <HeaderLink to="/feed" replace>
               <List fill={pageName === 'feed' ? '#0F4C82' : 'black'} />
             </HeaderLink>
-            {/* <HeaderLink to="/shop" replace>
+            <HeaderLink to="/shop" replace>
               <Shop fill={pageName === 'shop' ? '#0F4C82' : 'black'} />
-            </HeaderLink> */}
+            </HeaderLink>
             {/* <HeaderLink target="_blank" to="/userguide" replace>
                 {pageName === 'userguide' ? (
                   <Guide_black fill={'#0F4C82'} />

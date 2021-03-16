@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
@@ -115,29 +115,16 @@ const Content = styled.div`
   }
 `;
 
-let trap = true;
-
 export default () => {
-  const {
-    data: paymentData,
-    loading: paymentLoading,
-    refetch: paymentRefetch,
-  } = useQuery(MY_PAYMENT);
+  const { data: paymentData, loading: paymentLoading } = useQuery(MY_PAYMENT);
 
   const openReceipt = (url) => {
     if (url === '' || url === undefined || url === null) {
+      alert('영수증 기간 만료 또는 영수증 정보가 없습니다.');
       return;
     }
     window.open(url);
   };
-
-  useEffect(() => {
-    if (trap) {
-      trap = false;
-      return;
-    }
-    paymentRefetch();
-  }, []);
 
   if (!paymentLoading && paymentData && paymentData.my_payment) {
     // console.log(paymentData.my_payment);
@@ -145,8 +132,8 @@ export default () => {
       <Wrapper>
         <TitleDiv>결제/이용권 내역</TitleDiv>
         <SubTitleDiv>
-          <SubContent>날짜</SubContent>
-          <SubContent>내용 (영수증)</SubContent>
+          <SubContent>날짜(영수증)</SubContent>
+          <SubContent>내용</SubContent>
           <SubContent>결제 수단</SubContent>
           <SubContent>금액(원)</SubContent>
         </SubTitleDiv>
@@ -160,6 +147,8 @@ export default () => {
             date.getDate() >= 10 ? date.getDate() : '0' + date.getDate();
           if (myPayment.pay_method === 'card') {
             myPayment.pay_method = '카드';
+          } else if (myPayment.pay_method === 'point') {
+            myPayment.pay_method = '간편결제';
           }
           const amount = NumberWithCommas(myPayment.amount);
           const hours =

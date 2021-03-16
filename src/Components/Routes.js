@@ -23,7 +23,7 @@ import TermsOfMarketing from '../Routes/TermsOfMarketing';
 import MyStudy from '../Routes/MyStudy';
 import ClassStudy from '../Routes/ClassStudy';
 import PaymentResult from '../Routes/PaymentResult';
-import ManageSubscription from '../Routes/ManageSubscription';
+import ManageMembership from '../Routes/ManageMembership';
 import OrderHistory from '../Routes/OrderHistory';
 import Voucher from '../Routes/Voucher';
 import Introduce_M from '../Routes/Introduce_M';
@@ -100,7 +100,7 @@ const LoggedInRoutes = () => {
           <Route path="/classstudy" component={ClassStudy} />
           <Route path="/shop" component={Shop} />
           <Route path="/payment/result" component={PaymentResult} />
-          <Route path="/manage-subscription" component={ManageSubscription} />
+          <Route path="/manage-membership" component={ManageMembership} />
           <Route path="/order-history" component={OrderHistory} />
           <Route path="/voucher" component={Voucher} />
           <Route path="/account" component={Account} />
