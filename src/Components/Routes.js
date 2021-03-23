@@ -142,7 +142,7 @@ const LoggedOutRoutes = () => {
   }
   return (
     <Switch>
-      <Route exact path="/" component={Refund} />
+      <Route exact path="/" component={Introduce} />
       <Route path="/userguide" component={UserGuide} />
       <Route path="/shopping" component={Shopping} />
       <Route path="/support" component={Support} />
