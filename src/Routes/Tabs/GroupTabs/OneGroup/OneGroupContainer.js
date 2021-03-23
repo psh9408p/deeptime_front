@@ -167,8 +167,8 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   const onEditGroup = async (e) => {
     e.preventDefault();
 
-    if (maxMember.value < 2 || maxMember.value > 50) {
-      alert('수용인원을 2~50명 이내로 설정하세요.');
+    if (maxMember.value < 2 || maxMember.value > 30) {
+      alert('수용인원을 2~30명 이내로 설정하세요.');
       return;
     } else if (targetTime.value < 1 || targetTime.value > 18) {
       alert('최소 학습 시간을 1~18시간 이내로 설정하세요.');

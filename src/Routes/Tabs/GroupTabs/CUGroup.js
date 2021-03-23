@@ -140,7 +140,7 @@ export default ({
           {...name}
         />
         <InputWrap>
-          <span>수용인원(2~50) :</span>
+          <span>수용인원(2~30) :</span>
           <Input_100
             placeholder={''}
             {...maxMember}
