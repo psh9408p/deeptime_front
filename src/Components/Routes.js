@@ -38,6 +38,9 @@ import Feed from '../Routes/Feed';
 import Group from '../Routes/Group/GroupContainer';
 import Test from '../Routes/testRoute';
 import Shop from '../Routes/Shop';
+import Refund from '../Routes/Refund';
+import Notice from '../Routes/Notice';
+import Chat from '../Routes/Chat';
 
 export const MEPOSITION = gql`
   query me {
@@ -105,6 +108,7 @@ const LoggedInRoutes = () => {
           <Route path="/voucher" component={Voucher} />
           <Route path="/account" component={Account} />
           <Route path="/auth" component={MyStudy} />
+          <Route path="/refund" component={Refund} />
           <Route path="/:username" component={Profile} />
           <Redirect from="*" to="/" />
         </Switch>
@@ -138,7 +142,7 @@ const LoggedOutRoutes = () => {
   }
   return (
     <Switch>
-      <Route exact path="/" component={Introduce} />
+      <Route exact path="/" component={Refund} />
       <Route path="/userguide" component={UserGuide} />
       <Route path="/shopping" component={Shopping} />
       <Route path="/support" component={Support} />
@@ -148,6 +152,7 @@ const LoggedOutRoutes = () => {
       <Route path="/tosm" component={TermsOfService_M} />
       <Route path="/top" component={TermsOfPrivacy} />
       <Route path="/tom" component={TermsOfMarketing} />
+      <Route path="/refund" component={Refund} />
       <Redirect from="*" to="/" />
     </Switch>
   );

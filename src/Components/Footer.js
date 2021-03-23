@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TopStick = styled.span`
@@ -102,7 +103,7 @@ const FooterTop_Right = styled.ul`
 const FooterTop_Right_Item = styled.li`
   margin-bottom: 16px;
   margin-right: 24px;
-
+  color: white;
   &:hover {
     color: #908991;
   }
@@ -232,7 +233,9 @@ export default ({ isIntro = false }) => {
             <li>
               <ul>
                 <FooterTop_Right_Item>사업 제휴문의</FooterTop_Right_Item>
-                <FooterTop_Right_Item>취소 및 환불정책</FooterTop_Right_Item>
+                <Link to="/refund">
+                  <FooterTop_Right_Item>취소 및 환불정책 </FooterTop_Right_Item>
+                </Link>
               </ul>
             </li>
             <li>
