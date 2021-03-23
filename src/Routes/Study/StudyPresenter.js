@@ -42,7 +42,8 @@ import PopupButton_solo from '../../Components/Buttons/PopupButton_solo';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import useSound from 'use-sound';
-import beepSound from '../../Components/Sound/beep.mp3';
+import startSound from '../../Components/Sound/start.mp3';
+import midSound from '../../Components/Sound/mid.mp3';
 
 const ClockBox = styled.div`
   width: 200px;
@@ -843,7 +844,8 @@ export default ({
   videoDevices,
 }) => {
   // 비프음
-  const [beepPlay] = useSound(beepSound);
+  const [startPlay] = useSound(startSound);
+  const [midPlay] = useSound(midSound);
 
   // 팔로우한 각 유저 데이터에 알맞은 createdAt 넣어주기(내가가 언제 팔로우 했는지)
   for (let i = 0; i < myInfoData.followDates.length; i++) {
@@ -1659,7 +1661,7 @@ export default ({
         if (!beep_beforeTen) {
           // 현재 스케줄 끝 시간이 10분 이내인지
           if (beep_endDate.getTime() - nowDate_tmp.getTime() <= 600000) {
-            beepPlay();
+            midPlay();
             toast.error('현재 스케줄이 10분 이내로 남았습니다.');
             beep_beforeTen = true;
             // if (
@@ -1682,7 +1684,7 @@ export default ({
           }
         }
       } else {
-        beepPlay();
+        startPlay();
         toast.info('새로운 스케줄이 시작됐습니다.');
         beep_scheId = beep_nowSche.id;
         // 시작한 스케줄의 총 길이가 10분 보다 적으면 10분 알람 할필요 없으니 값 수정
