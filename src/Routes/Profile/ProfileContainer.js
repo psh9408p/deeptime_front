@@ -32,8 +32,8 @@ export default withRouter(
   }) => {
     // const profileTabContents = ['게시물', '구독 / 결제'];
     // const profileTabContents = ['게시물', '챌린지'];
-    // const tabContents_me = ['게시물'];
-    const tabContents_me = ['게시물', '결제/이용권'];
+    const tabContents_me = ['게시물'];
+    // const tabContents_me = ['게시물', '결제/이용권'];
     const tabContents_other = ['게시물', '통계', '스케줄'];
     const tabs_me = useTabs(0, tabContents_me);
     const tabs_other = useTabs(0, tabContents_other);
