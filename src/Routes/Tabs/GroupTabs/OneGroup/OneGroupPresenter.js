@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,6 +7,7 @@ import {
   Button_info,
   Button_delete,
   Button_out,
+  Button_attend,
 } from '../../../../Components/Buttons/Button_click';
 import Tab from '../../../../Components/Tab';
 import PopupClose from '../../../../Components/Buttons/PopupClose';
@@ -21,6 +22,10 @@ import { Link } from 'react-router-dom';
 import CUGroup from '../CUGroup';
 import GroupChart from '../../../../Components/GroupChart';
 import RowBarChart_group from '../../../../Components/Charts/RowBarChart_group';
+import FatText from '../../../../Components/FatText';
+import { FixedSizeList as AttendanceList } from 'react-window';
+import CheckBox from '../../../../Components/CheckBox';
+import moment from 'moment';
 
 const Wrapper = styled.div`
   position: relative;
@@ -168,6 +173,12 @@ const PopupCustom2 = styled(PopupCustom)`
   }
 `;
 
+const PopupCustom3 = styled(PopupCustom)`
+  &-content {
+    width: 500px !important;
+  }
+`;
+
 const PofileLink = styled(Link)`
   cursor: pointer;
   display: flex;
@@ -247,11 +258,105 @@ const GroupIntroArea = styled.div`
   padding: 8px 8px;
 `;
 
+const PBody = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+`;
+
+const PTitle = styled(FatText)`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 5px;
+`;
+
+const PSubTitle = styled.div`
+  font-size: 14px;
+  margin-bottom: 20px;
+`;
+
+const AttendanceTitle = styled.div`
+  border: ${(props) => props.theme.boxBorder};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 442px;
+  height: 25px;
+  color: white;
+  background-color: ${(props) => props.theme.classicBlue};
+  border-top-right-radius: ${(props) => props.theme.borderRadius};
+  border-top-left-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const ListWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const IndiviList = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  height: 100%;
+  background-color: ${(props) => (props.isOdd ? '#FAFAFA' : '#c7c7c7')};
+`;
+
+const CheckBoxWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 45px;
+  :not(:last-child) {
+    border-right: 2px solid #e6e6e6;
+    border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')};
+  }
+`;
+
+const FirstTitle = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 100px;
+  padding-left: 10px;
+  :not(:last-child) {
+    border-right: 2px solid white;
+  }
+`;
+
+const DayTitle = styled(FirstTitle)`
+  justify-content: center;
+  width: 45px;
+  padding: 0;
+`;
+
+const DatePickButton2 = styled.button`
+  border: 0;
+  outline-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.classicGray};
+  font-weight: 600;
+  color: black;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 12px;
+  width: 150px;
+  cursor: pointer;
+`;
+
 let firstTime = 0;
 let averageTime = 0;
 let existTime_Array = [];
 let selfIndex = -1;
 let myTime = 0;
+const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
+let attend_member = [];
+let attend_Array = [];
 
 export default ({
   selectDate,
@@ -278,8 +383,19 @@ export default ({
   updateLoad,
   groupPush,
   onOutMember,
+  attendDate,
+  setAttendDate,
+  setSelectFile,
 }) => {
+  // 리랜더
+  const [renderBool, setRenderBool] = useState(false);
+
   // 날짜 관련
+  const {
+    real_weekStart: attendRS,
+    real_weekEnd: attendRE,
+    weekEnd: attendE,
+  } = WeekRange(attendDate);
   const { real_weekStart, real_weekEnd } = WeekRange(selectDate);
   const selectMonthDate = new Date(
     selectDate.getFullYear(),
@@ -294,6 +410,44 @@ export default ({
       </DatePickButton>
     );
   });
+
+  const CustomInput2 = forwardRef(({ onClick, text }, ref) => {
+    return (
+      <DatePickButton2 ref={ref} onClick={onClick}>
+        {text}
+      </DatePickButton2>
+    );
+  });
+
+  const attend_calculate = () => {
+    attend_member = [];
+    attend_Array = []; // 출석여부 넣기
+    for (let k = 0; k < groupData.member.length; k++) {
+      const nowMember = groupData.member[k];
+      let default_attend = new Array(7).fill(false);
+      // 선택할 날짜 일요일부터 일주일 출석 점검
+      for (let j = 0; j < 7; j++) {
+        const baseDate = new Date(attendRS);
+        baseDate.setDate(attendRS.getDate() + j);
+        const indexOfTime = nowMember.times.findIndex(
+          (i) =>
+            new Date(i.createdAt).getFullYear() === baseDate.getFullYear() &&
+            new Date(i.createdAt).getMonth() === baseDate.getMonth() &&
+            new Date(i.createdAt).getDate() === baseDate.getDate(),
+        );
+        if (indexOfTime !== -1) {
+          //해당 날짜 총 시간 시간으로 환산
+          const timesHour = nowMember.times[indexOfTime].existTime / 3600;
+          if (timesHour >= groupData.targetTime) {
+            default_attend[j] = true;
+          }
+        }
+      }
+      attend_member.push(nowMember);
+      attend_Array.push(default_attend);
+    }
+    setRenderBool(!renderBool);
+  };
 
   const todayTime_calculate = ({ times }) => {
     let indiTimes = times;
@@ -445,6 +599,10 @@ export default ({
     }
   }
 
+  useEffect(() => {
+    attend_calculate();
+  }, [attendDate, networkStatus]);
+
   const Avatars = ({ member }) => {
     return (
       <IndiWrap>
@@ -506,6 +664,67 @@ export default ({
     );
   };
 
+  const attendanceRow = ({ index, style }) => (
+    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
+      <FirstTitle>{attend_member[index].username}</FirstTitle>
+      {dayArray.map((day, index2) => (
+        <CheckBoxWrap key={index2} isOdd={Boolean(index % 2)}>
+          <CheckBox
+            checked={attend_Array[index][index2]}
+            onChange={() => {}}
+            boxSize={'25px'}
+            margin={'0'}
+          />
+        </CheckBoxWrap>
+      ))}
+    </IndiviList>
+  );
+
+  const AttendanceDiv = ({ close }) => {
+    return (
+      <PBody>
+        <PopupClose
+          onClick={() => {
+            close();
+          }}
+        />
+        <PTitle text={'출석부'} />
+        <PSubTitle>(목표 시간 : {groupData.targetTime}시간)</PSubTitle>
+        <div style={{ marginBottom: '10px' }}>
+          <DatePicker
+            dateFormat={'yyyy/MM/dd'}
+            selected={attendDate}
+            onChange={(date) => {
+              setAttendDate(date);
+            }}
+            customInput={
+              <CustomInput2
+                text={`${moment(attendRS).format('MM.DD')}(일) ~
+                                ${moment(attendE).format('MM.DD')}(토)`}
+              />
+            }
+          />
+        </div>
+        <AttendanceTitle>
+          <FirstTitle>그룹원</FirstTitle>
+          {dayArray.map((day, index) => (
+            <DayTitle key={index}>{day}</DayTitle>
+          ))}
+        </AttendanceTitle>
+        <ListWrap>
+          <AttendanceList
+            height={300}
+            itemCount={groupData.member.length}
+            itemSize={30}
+            width={440}
+          >
+            {attendanceRow}
+          </AttendanceList>
+        </ListWrap>
+      </PBody>
+    );
+  };
+
   const InforDiv = ({ close }) => {
     return (
       <InfoDiv>
@@ -514,12 +733,14 @@ export default ({
             close();
           }}
         />
+        <div style={{ height: '12px' }} />
         {groupData.imManager && (
           <Button_custom
             width={'400px'}
             height={'32px'}
             text={'그룹 정보 수정'}
-            margin={'12px auto 8px auto'}
+            bgColor={'#DB4437'}
+            margin={'0 auto 8px auto'}
             onClick={() => {
               close();
               groupPush();
@@ -546,8 +767,20 @@ export default ({
             </GroupInfo>
             <GroupInfo>
               <div>
-                <span style={{ fontWeight: '600' }}>최소 학습 시간</span>
+                <span style={{ fontWeight: '600' }}>목표 시간</span>
                 <span> : {groupData.targetTime} 시간</span>
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span style={{ fontWeight: '600' }}>평균 학습 시간</span>
+                <span> : {groupData.lastStudyTime.toFixed(0)} 시간</span>
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span style={{ fontWeight: '600' }}>평균 출석률</span>
+                <span> : {groupData.lastAttendance.toFixed(0)} %</span>
               </div>
             </GroupInfo>
           </div>
@@ -584,6 +817,13 @@ export default ({
                     groupRefetch();
                   }}
                 />
+                <PopupCustom3
+                  trigger={<Button_attend />}
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => <AttendanceDiv close={close} />}
+                </PopupCustom3>
                 <PopupCustom
                   trigger={<Button_info />}
                   closeOnDocumentClick={false}
@@ -681,10 +921,12 @@ export default ({
           targetTime={targetTime}
           password={password}
           bio={bio}
+          imgUrl={groupData.imgUrl}
           name={name}
           onSubmit={onEditGroup}
           groupClear={groupClear}
           loading={updateLoad}
+          setSelectFile={setSelectFile}
         />
       )}
     </Wrapper>

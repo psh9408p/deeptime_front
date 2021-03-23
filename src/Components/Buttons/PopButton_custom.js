@@ -1,12 +1,13 @@
 import React, { forwardRef } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 
 const Container = styled.button`
   border: 0;
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.bgColor};
+  color: ${(props) => props.color};
   font-weight: 600;
   text-align: center;
   font-size: 14px;
@@ -15,7 +16,19 @@ const Container = styled.button`
 `;
 
 const PopButton = forwardRef(
-  ({ type, text, onClick, width = '100px', height = '100%', margin }, ref) => {
+  (
+    {
+      type,
+      text,
+      onClick,
+      bgColor,
+      color,
+      width = '100px',
+      height = '100%',
+      margin,
+    },
+    ref,
+  ) => {
     return (
       <Container
         ref={ref}
@@ -24,6 +37,8 @@ const PopButton = forwardRef(
         width={width}
         height={height}
         margin={margin}
+        bgColor={bgColor}
+        color={color}
       >
         {text}
       </Container>

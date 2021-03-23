@@ -8,6 +8,7 @@ import { CREATE_GROUP, SEE_GROUP } from './SearchGroupQueries';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import Loader from '../../../../Components/Loader';
 import { MY_GROUP } from '../MyGroup/MyGroupQueries';
+import axios from 'axios';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,11 +28,13 @@ export default ({ myTabs }) => {
 
   const [viewTabs, setViewTabs] = useState(0);
   const [makeLoad, setMakeLoad] = useState(false);
+  const [selectFile, setSelectFile] = useState(null);
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
   const name = useInput('');
   const password = useInput('');
   const bio = useInput('');
+
   const groupCategory = useSelect(studyOption_group, studyOption_group);
 
   const {
@@ -51,6 +54,7 @@ export default ({ myTabs }) => {
     targetTime.setValue(1);
     password.setValue('');
     bio.setValue('');
+    setSelectFile(null);
   };
 
   const onCreateGroup = async (e) => {
@@ -65,7 +69,22 @@ export default ({ myTabs }) => {
     }
 
     setMakeLoad(true);
+    let upResult = null;
     try {
+      if (selectFile) {
+        const formData = new FormData();
+        formData.append('file', selectFile);
+        upResult = await axios.post(
+          process.env.REACT_APP_BACKEND_URI + '/api/upload/group',
+          formData,
+          {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          },
+        );
+      }
+
       const {
         data: { createGroup },
       } = await createGroupMutation({
@@ -76,6 +95,8 @@ export default ({ myTabs }) => {
           targetTime: targetTime.value,
           password: password.value,
           bio: bio.value,
+          imgUrl: selectFile ? upResult.data.location : '',
+          imgKey: selectFile ? upResult.data.key : '',
         },
       });
       if (!createGroup) {
@@ -115,6 +136,7 @@ export default ({ myTabs }) => {
             groupClear={groupClear}
             groupData={groupData.seeGroup}
             makeLoad={makeLoad}
+            setSelectFile={setSelectFile}
           />
         </>
       )}

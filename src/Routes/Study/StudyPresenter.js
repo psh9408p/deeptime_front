@@ -881,6 +881,9 @@ export default ({
   const [autoRefresh, setAutoRefresh] = useState(
     myInfoData.studyDefaultSet.autoRefresh,
   );
+  const [scheAlarm, setScheAlarm] = useState(
+    myInfoData.studyDefaultSet.scheAlarm,
+  );
   const [dDayOn, setDDayOn] = useState(myInfoData.studyDefaultSet.dDayOn);
   const dDateName = useInput(myInfoData.studyDefaultSet.dDateName, max10);
   const autoRefreshTerm = useInput(
@@ -933,6 +936,13 @@ export default ({
       setAutoRefresh(false);
     } else {
       setAutoRefresh(true);
+    }
+  };
+  const alarmSwitch = () => {
+    if (scheAlarm) {
+      setScheAlarm(false);
+    } else {
+      setScheAlarm(true);
     }
   };
   const dDaySwitch = () => {
@@ -1102,7 +1112,7 @@ export default ({
     }
 
     try {
-      toast.info('기본값 세팅 적용 중...');
+      toast.info('기본값 세팅 저장 중...');
       const {
         data: { editStudySet },
       } = await editStudySetMutation({
@@ -1111,6 +1121,7 @@ export default ({
           nonScheduleRecord,
           autoRefresh,
           autoRefreshTerm: Number(autoRefreshTerm.value),
+          scheAlarm: autoRefresh ? scheAlarm : false,
           startScheduleTerm: Number(startScheduleTerm_forSet.value),
           cutExtenTerm: Number(extensionTerm_forSet.value),
           dDayOn,
@@ -1119,7 +1130,7 @@ export default ({
         },
       });
       if (!editStudySet) {
-        alert('기본값 세팅을 적용할 수 없습니다.');
+        alert('기본값 세팅을 저장할 수 없습니다.');
       } else {
         if (autoRefresh) {
           // startPolling(autoRefreshTerm.value * 1000);
@@ -1130,7 +1141,7 @@ export default ({
         startScheduleTerm.setValue(startScheduleTerm_forSet.value);
         extensionTerm.setValue(extensionTerm_forSet.value);
         await myInfoRefetch();
-        toast.success('새로운 기본값 세팅을 적용하였습니다.');
+        toast.success('새로운 기본값 세팅을 저장하였습니다.');
         return true;
       }
     } catch (e) {
@@ -1196,6 +1207,14 @@ export default ({
       }
     }
 
+    // 연장시 남는 시간이 10분 이상이면 10분 알림 재설정
+    const resetTenAlarm = () => {
+      const nowTmpDate = new Date();
+      if (end.getTime() - nowTmpDate.getTime() >= 600000) {
+        beep_beforeTen = false;
+      }
+    };
+
     try {
       const {
         data: { extensionSchedule_study },
@@ -1213,6 +1232,7 @@ export default ({
         alert('현재 스케줄을 연장할 수 없습니다.');
       } else {
         await myInfoRefetch();
+        resetTenAlarm();
         toast.success('현재 스케줄을 연장했습니다.');
         close();
       }
@@ -1630,7 +1650,7 @@ export default ({
 
   // // 시작 알림 & 10분전 알림 관련
   const beepAlert = () => {
-    if (nowScheduleIndex !== -1 && autoRefresh) {
+    if (nowScheduleIndex !== -1 && autoRefresh && scheAlarm) {
       const beep_nowSche = scheduleList_selectDay[nowScheduleIndex];
       const beep_endDate = new Date(beep_nowSche.end);
       // 기존에 감지한 스케줄인지
@@ -1640,7 +1660,7 @@ export default ({
           // 현재 스케줄 끝 시간이 10분 이내인지
           if (beep_endDate.getTime() - nowDate_tmp.getTime() <= 600000) {
             beepPlay();
-            toast.info('현재 스케줄이 10분 이내로 남았습니다.');
+            toast.error('현재 스케줄이 10분 이내로 남았습니다.');
             beep_beforeTen = true;
             // if (
             //   beep_endDate.getHours() === 23 &&
@@ -1663,9 +1683,7 @@ export default ({
         }
       } else {
         beepPlay();
-        toast.info(
-          `[${beep_nowSche.subject.name}]${beep_nowSche.title}이 시작됐습니다.`,
-        );
+        toast.info('새로운 스케줄이 시작됐습니다.');
         beep_scheId = beep_nowSche.id;
         // 시작한 스케줄의 총 길이가 10분 보다 적으면 10분 알람 할필요 없으니 값 수정
         if (beep_nowSche.totalTime / 60 > 10) {
@@ -2452,14 +2470,25 @@ export default ({
                               onChange={autoSwitch}
                             />
                             <p>　</p>
-                            <RefreshInputWrap>
+                            {/* <RefreshInputWrap>
                               <Input_100
                                 placeholder={''}
                                 {...autoRefreshTerm}
                                 type={'number'}
                               />
                             </RefreshInputWrap>
-                            초
+                            초 */}
+                            {autoRefresh && (
+                              <>
+                                /<p>　</p>스케줄 알림 :　
+                                <Switch
+                                  on={true}
+                                  off={false}
+                                  value={scheAlarm}
+                                  onChange={alarmSwitch}
+                                />
+                              </>
+                            )}
                           </SetContentBox>
                           <SetContentBox>
                             스케줄 시작(생성) 기간 :　
@@ -2495,7 +2524,7 @@ export default ({
                                 close();
                               }
                             }}
-                            text={'적용'}
+                            text={'저장'}
                           />
                         </ButtonDiv>
                       </PBody>

@@ -18,6 +18,8 @@ import { MY_GROUP } from '../MyGroup/MyGroupQueries';
 import { studyOption_group } from '../../../../Components/LongArray';
 import useInput from '../../../../Hooks/useInput';
 import useSelect from '../../../../Hooks/useSelect';
+import WeekRange from '../../../../Components/Date/WeekRange';
+import axios from 'axios';
 
 const LoaderWrapper = styled.div`
   display: flex;
@@ -32,6 +34,9 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   const [selectDate, setSelectDate] = useState(new Date());
   const [viewTabs, setViewTabs] = useState(0);
   const [updateLoad, setUpdateLoad] = useState(false);
+  const [attendDate, setAttendDate] = useState(new Date());
+  const [selectFile, setSelectFile] = useState(null);
+
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
   const name = useInput('');
@@ -73,6 +78,7 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
     targetTime.setValue(1);
     password.setValue('');
     bio.setValue('');
+    setSelectFile(null);
   };
 
   const groupPush = () => {
@@ -170,7 +176,22 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
     }
 
     setUpdateLoad(true);
+    let upResult = null;
     try {
+      if (selectFile) {
+        const formData = new FormData();
+        formData.append('file', selectFile);
+        upResult = await axios.post(
+          process.env.REACT_APP_BACKEND_URI + '/api/upload/group',
+          formData,
+          {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          },
+        );
+      }
+
       const {
         data: { editGroup },
       } = await editGroupMutation({
@@ -182,6 +203,8 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
           targetTime: targetTime.value,
           password: password.value,
           bio: bio.value,
+          imgUrl: selectFile ? upResult.data.location : '',
+          imgKey: selectFile ? upResult.data.key : '',
         },
       });
       if (!editGroup) {
@@ -264,6 +287,9 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
         updateLoad={updateLoad}
         groupPush={groupPush}
         onOutMember={onOutMember}
+        attendDate={attendDate}
+        setAttendDate={setAttendDate}
+        setSelectFile={setSelectFile}
       />
     );
   }

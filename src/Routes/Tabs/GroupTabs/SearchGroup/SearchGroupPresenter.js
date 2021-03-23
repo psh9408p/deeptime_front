@@ -135,7 +135,7 @@ const GroupListWrap = styled.div`
 const GroupBox = styled.div`
   cursor: pointer;
   display: flex;
-  padding: 5px 5px;
+  padding: 10px;
   /* flex-direction: column; */
   width: 100%;
   border: ${(props) => props.theme.boxBorder};
@@ -155,13 +155,18 @@ const ImageWrap = styled.div`
 `;
 
 const ImageBox = styled.div`
-  width: 50px;
-  height: 50px;
-  background: dodgerblue;
-  border-radius: 50%;
+  width: 200px;
+  height: 112.5px;
+  background-image: url(${(props) => props.url});
+  background-size: cover;
+  background-position: center center;
+  border-radius: 4px;
 `;
 const MemberWrap = styled.div`
-  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;
 `;
 
 const MemberTitle = styled.div`
@@ -203,29 +208,23 @@ export default ({
   groupClear,
   groupData,
   makeLoad,
+  setSelectFile,
 }) => {
-  console.log('스터디', studyOption_group);
-
   const getAll = studyOption_group.slice();
   getAll.unshift('전체');
-  console.log('겟올', getAll);
 
   const group1 = useSelect(getAll, getAll, groupData.category);
 
   const [filData, setFilData] = useState(groupData);
 
-  console.log('hihi', filData);
-  console.log('op', group1.option);
-  console.log('fil', groupData[0].category);
   const getData = () => {
     if (group1.option === '전체') {
       setFilData(groupData);
     } else {
-      const filGroup = groupData.filter((ctr) => ctr.category === group1.option);
-      console.log('겟데이타', filGroup);
+      const filGroup = groupData.filter(
+        (ctr) => ctr.category === group1.option,
+      );
       setFilData(filGroup);
-            console.log('겟데이타2', filGroup);
-
     }
   };
 
@@ -255,7 +254,7 @@ export default ({
                 trigger={
                   <GroupBox>
                     <ImageWrap>
-                      <ImageBox></ImageBox>
+                      <ImageBox url={group.imgUrl} />
                     </ImageWrap>
                     <MemberWrap>
                       <MemberTitle>
@@ -265,9 +264,15 @@ export default ({
                         {!group.publicBool && <Lock marginLeft={'6px'} />}
                       </MemberTitle>
                       <MemberDiv>
-                        <p style={{ marginBottom: '3px' }}>{group.category}</p>
-                        <p style={{ marginBottom: '3px' }}>
-                          최소 학습 시간: {group.targetTime}시간
+                        <p style={{ marginBottom: '5px' }}>{group.category}</p>
+                        <p style={{ marginBottom: '5px' }}>
+                          목표 시간: {group.targetTime} 시간
+                        </p>
+                        <p style={{ marginBottom: '5px' }}>
+                          평균 학습 시간: {group.lastStudyTime.toFixed(0)} 시간
+                        </p>
+                        <p style={{ marginBottom: '5px' }}>
+                          평균 출석률: {group.lastAttendance.toFixed(0)} %
                         </p>
                         <MemberList>
                           <span style={{ marginRight: '10px' }}>
@@ -275,9 +280,6 @@ export default ({
                           </span>
                           <span style={{ marginRight: '10px' }}>
                             방장: {group.manager.username}
-                          </span>
-                          <span style={{ marginRight: '10px' }}>
-                            {group.publicBool ? '공개방' : '비공개방'}
                           </span>
                         </MemberList>
                       </MemberDiv>
@@ -346,6 +348,7 @@ export default ({
           onSubmit={onCreateGroup}
           groupClear={groupClear}
           loading={makeLoad}
+          setSelectFile={setSelectFile}
         />
       )}
     </>

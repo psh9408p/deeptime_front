@@ -17,7 +17,7 @@ const MyGroupsWrap = styled.div`
   justify-content: flex-start;
   align-items: center;
   height: 150px;
-  width: 800px;
+  width: 650px;
   padding: 10px 15px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -26,8 +26,11 @@ const MyGroupsWrap = styled.div`
 const IndiGroupWrap = styled.div``;
 const IndiGroup = styled.div`
   cursor: pointer;
-  width: 250px;
-  height: 100px;
+  width: 200px;
+  height: 112.5px;
+  background-image: url(${(props) => props.url});
+  background-size: cover;
+  background-position: center center;
   border: ${(props) =>
     props.selectBool ? '3px solid #0F4C82' : props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -57,8 +60,10 @@ const StarLock = styled.div`
 `;
 
 const MaxMember = styled.div`
-  margin-top: 75px;
+  margin-top: 85px;
   margin-left: 8px;
+  font-weight: 600;
+  color: white;
   position: absolute;
 `;
 const AddBox = styled(IndiGroup)`
@@ -100,6 +105,7 @@ export default ({ groupData, onBookmark, myTabs }) => {
             <IndiGroupWrap key={index}>
               <IndiGroup
                 selectBool={selectBool}
+                url={group.imgUrl}
                 onClick={() => {
                   setSelectId(group.id);
                 }}

@@ -6,6 +6,7 @@ import Input_100 from '../../../Components/Input_100';
 import Textarea from '../../../Components/Textarea';
 import Select from '../../../Components/Select';
 import Loader from '../../../Components/Loader';
+import imageResize from '../../../Components/imageResize';
 
 const LoaderWrapper = styled.div`
   position: absolute;
@@ -70,6 +71,36 @@ const InputWrap = styled.div`
   }
 `;
 
+const ImgWrap = styled(InputWrap)`
+  margin-top: 10px;
+  height: auto;
+  padding: 15px;
+  span {
+    margin-right: 35px;
+  }
+`;
+
+const PreviewImg = styled.canvas`
+  background-image: url(${(props) => props.url});
+  background-size: cover;
+  background-position: center center;
+  border-radius: 4px;
+  width: 200px;
+  height: 112.5px;
+  margin-bottom: 5px;
+`;
+
+const ImgSelectDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+`;
+
+const defaultImg =
+  'https://slog-iam.s3.ap-northeast-2.amazonaws.com/group/groupimg.png';
+
 export default ({
   CU_check,
   setViewTabs,
@@ -78,11 +109,17 @@ export default ({
   targetTime,
   password,
   bio,
+  imgUrl,
   name,
   onSubmit,
   groupClear,
   loading,
+  setSelectFile,
 }) => {
+  const handleFileInput = (e) => {
+    imageResize(e.target.files, 'pre-img-group', 640, setSelectFile, false);
+  };
+
   return (
     <ContentBody onSubmit={onSubmit}>
       {loading && (
@@ -151,6 +188,22 @@ export default ({
           {...bio}
           required={false}
         />
+        <ImgWrap>
+          <span>그룹 이미지 :</span>
+          <ImgSelectDiv>
+            <PreviewImg
+              id="pre-img-group"
+              url={CU_check === 'create' ? defaultImg : imgUrl}
+            ></PreviewImg>
+            <input
+              id="group-img-file"
+              type="file"
+              accept="image/*"
+              style={{ width: '200px' }}
+              onChange={(e) => handleFileInput(e)}
+            />
+          </ImgSelectDiv>
+        </ImgWrap>
       </ContentDiv>
       <ButtonDiv>
         <PopupButton text={CU_check === 'create' ? '만들기' : '수정'} />
@@ -166,3 +219,11 @@ export default ({
     </ContentBody>
   );
 };
+
+// 이미지 기본값 설정 후 다시 다른 이미지 넣으면 오류 떠서 포기
+// const canvas = document.getElementById('pre-img-group');
+// var img = new Image();
+// img.src = 'https://slog-iam.s3.ap-northeast-2.amazonaws.com/group/groupimg.png';
+// // imageResizeDraw(img, 'pre-img-group', 640, false);
+// canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+// document.getElementById('group-img-file').value = '';

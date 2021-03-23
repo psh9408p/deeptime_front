@@ -11,6 +11,7 @@ import {
   Information,
   Trash,
   Out,
+  Attendance,
 } from '../Icons';
 
 const Container = styled.button`
@@ -109,6 +110,14 @@ export const Button_info = forwardRef(
   ({ onClick, margin = '0 10px 0 0' }, ref) => (
     <Container ref={ref} onClick={onClick} margin={margin}>
       <Information />
+    </Container>
+  ),
+);
+
+export const Button_attend = forwardRef(
+  ({ onClick, margin = '0 10px 0 0' }, ref) => (
+    <Container ref={ref} onClick={onClick} margin={margin}>
+      <Attendance />
     </Container>
   ),
 );

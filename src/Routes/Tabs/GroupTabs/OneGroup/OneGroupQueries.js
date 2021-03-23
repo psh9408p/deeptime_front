@@ -10,6 +10,7 @@ export const SEEONE_GROUP = gql`
       targetTime
       publicBool
       bio
+      imgUrl
       manager {
         id
         username
@@ -28,6 +29,8 @@ export const SEEONE_GROUP = gql`
       }
       memberCount
       imManager
+      lastStudyTime
+      lastAttendance
       createdAt
     }
   }
@@ -66,6 +69,8 @@ export const EDIT_GROUP = gql`
     $targetTime: Int!
     $password: String!
     $bio: String!
+    $imgUrl: String!
+    $imgKey: String!
   ) {
     editGroup(
       groupId: $groupId
@@ -75,6 +80,8 @@ export const EDIT_GROUP = gql`
       targetTime: $targetTime
       password: $password
       bio: $bio
+      imgUrl: $imgUrl
+      imgKey: $imgKey
     )
   }
 `;

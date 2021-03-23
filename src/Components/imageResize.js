@@ -1,4 +1,4 @@
-export default (targetFiles, canvasId, max_size, setFileValue) => {
+export default (targetFiles, canvasId, max_size, setFileValue, square) => {
   const dataURLToBlob = (dataURL) => {
     const BASE64_MARKER = ';base64,';
 
@@ -47,25 +47,34 @@ export default (targetFiles, canvasId, max_size, setFileValue) => {
       }
     }
     //캔버스 비율을 사진과 맞춰주기
-    if (width < height) {
-      canvas.width = width;
-      canvas.height = width;
-    } else {
-      canvas.width = height;
-      canvas.height = height;
+    if (square) {
+      if (width < height) {
+        canvas.width = width;
+        canvas.height = width;
+      } else {
+        canvas.width = height;
+        canvas.height = height;
+      }
     }
-    canvas
-      .getContext('2d')
-      .drawImage(
-        image,
-        canvas.width / 2 - width / 2,
-        canvas.height / 2 - height / 2,
-        width,
-        height,
-      );
+    canvas.getContext('2d').drawImage(
+      image,
+      // canvas.width / 2 - width / 2,
+      // canvas.height / 2 - height / 2,
+      // width,
+      // height,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
     const dataUrl = canvas.toDataURL('image/jpeg');
     const finalBlobImg = dataURLToBlob(dataUrl);
     setFileValue(finalBlobImg);
+
+    // let link = document.createElement('a');
+    // link.href = dataUrl;
+    // link.download = 'ddd';
+    // link.click();
   };
 
   const files = targetFiles;

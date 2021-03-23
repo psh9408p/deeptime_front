@@ -51,7 +51,7 @@ export default withRouter(
     const [followMuation] = useMutation(FOLLOW);
 
     const handleFileInput = (e) => {
-      imageResize(e.target.files, 'preview-img', 640, setSelectFile);
+      imageResize(e.target.files, 'preview-img', 640, setSelectFile, true);
     };
 
     const onAvatar = async () => {

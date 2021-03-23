@@ -11,12 +11,15 @@ export const SEE_GROUP = gql`
       targetTime
       publicBool
       bio
+      imgUrl
       imManager
       manager {
         id
         username
       }
       memberCount
+      lastStudyTime
+      lastAttendance
       createdAt
     }
   }
@@ -30,6 +33,8 @@ export const CREATE_GROUP = gql`
     $targetTime: Int!
     $password: String!
     $bio: String!
+    $imgUrl: String!
+    $imgKey: String!
   ) {
     createGroup(
       name: $name
@@ -38,6 +43,8 @@ export const CREATE_GROUP = gql`
       targetTime: $targetTime
       password: $password
       bio: $bio
+      imgUrl: $imgUrl
+      imgKey: $imgKey
     )
   }
 `;

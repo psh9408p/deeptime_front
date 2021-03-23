@@ -90,6 +90,7 @@ export const EDIT_STUDYSET = gql`
     $nonScheduleRecord: Boolean
     $autoRefresh: Boolean
     $autoRefreshTerm: Int
+    $scheAlarm: Boolean
     $startScheduleTerm: Int
     $cutExtenTerm: Int
     $scheduleStart: Int
@@ -103,6 +104,7 @@ export const EDIT_STUDYSET = gql`
       nonScheduleRecord: $nonScheduleRecord
       autoRefresh: $autoRefresh
       autoRefreshTerm: $autoRefreshTerm
+      scheAlarm: $scheAlarm
       startScheduleTerm: $startScheduleTerm
       cutExtenTerm: $cutExtenTerm
       scheduleStart: $scheduleStart
@@ -169,6 +171,7 @@ export const ME = gql`
         nonScheduleRecord
         autoRefresh
         autoRefreshTerm
+        scheAlarm
         startScheduleTerm
         cutExtenTerm
         scheduleStart
