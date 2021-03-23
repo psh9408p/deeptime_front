@@ -104,10 +104,10 @@ const Notice = () => {
       <NoticeWrap>
         <NoticeSearch>
           <NoticeH3>공지사항</NoticeH3>
-          <NoticeBtnWrap style={{ marginLeft: 'auto', display: 'flex' }}>
+          {/* <NoticeBtnWrap style={{ marginLeft: 'auto', display: 'flex' }}>
             <NSBtn type="text" placeholder="검색어를 입력해주세요."></NSBtn>
             <SearchBtn>검색</SearchBtn>
-          </NoticeBtnWrap>
+          </NoticeBtnWrap> */}
         </NoticeSearch>
         <Border></Border>
         <NoticeHeader>
