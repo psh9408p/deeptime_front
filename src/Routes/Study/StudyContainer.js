@@ -56,7 +56,7 @@ let personDecision_size = decision_size;
 let cellphoneDecision_size = decision_size;
 let window_size = decision_size * 5;
 
-const personSizeThreshold = 29999;
+const personSizeThreshold = 70000;
 const normArrayThreshold_low = 2000;
 const normArrayThreshold_midle = 3000;
 const normArrayThreshold_high = 10000;
@@ -351,7 +351,7 @@ export default () => {
       (Decision) => Decision > personSizeThreshold,
     );
 
-    if (personDecisionArray_decision.length > 1) {
+    if (personDecisionArray_decision.length > 0) {
       finalDecisionPerson = true;
     } else {
       finalDecisionPerson = false;
@@ -360,18 +360,27 @@ export default () => {
     //norm data preprocessing
     let normArray_decision = normArray.slice(0, normDecision_size); //detect using the data for 2 min
 
-    let normArray_decision_sum = normArray_decision.reduce((a, b) => a + b);
-    let normArray_decision_Average =
-      normArray_decision_sum / normArray_decision.length;
+    // let normArray_decision_sum = normArray_decision.reduce((a, b) => a + b);
+    // let normArray_decision_Average =
+    //   normArray_decision_sum / normArray_decision.length;
     // console.log(normArray_decision_Average)
     let normArray_decision_high = normArray_decision.filter(
       (Decision) => Decision > normArrayThreshold_high,
     );
+    let normArray_decision_midle = normArray_decision.filter(
+      (Decision) => Decision > normArrayThreshold_midle,
+    );
 
-    if (
-      normArray_decision_Average > normArrayThreshold_midle ||
-      normArray_decision_high.length > 9
-    ) {
+    // if (
+    //   normArray_decision_Average > normArrayThreshold_midle ||
+    //   normArray_decision_high.length > 9
+    // ) {
+    //   finalDecisionNorm = true;
+    // } else {
+    //   finalDecisionNorm = false;
+    // }
+
+    if (normArray_decision_midle.length > 1) {
       finalDecisionNorm = true;
     } else {
       finalDecisionNorm = false;
@@ -447,7 +456,12 @@ export default () => {
       );
       // console.log(cellphoneDetections)
 
-      let img = tf.browser.fromPixels(webcamRef.current);
+      let img = tf.browser
+        .fromPixels(webcamRef.current)
+        .mean(2)
+        .toFloat()
+        .expandDims(-1)
+        .toInt();
 
       let sub = tf.sub(img, beforeImg);
       let temp = sub.norm(2).sum();
