@@ -13,10 +13,11 @@ const Container = styled.button`
   padding: 7px 0px;
   font-size: 14px;
   cursor: pointer;
+  margin: ${(props) => props.margin};
 `;
 
-const PopupButton = ({ type, text, onClick, width = '100px' }) => (
-  <Container type={type} onClick={onClick} width={width}>
+const PopupButton = ({ type, text, onClick, width = '100px', margin }) => (
+  <Container type={type} onClick={onClick} width={width} margin={margin}>
     {text}
   </Container>
 );

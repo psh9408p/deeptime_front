@@ -26,7 +26,13 @@ import useSelect from '../../../../Hooks/useSelect';
 import { FixedSizeList as BookmarkList, DaymarkList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import ObjectCopy from '../../../../Components/ObjectCopy';
-import { Delete, Flag, Next, Study_false } from '../../../../Components/Icons';
+import {
+  Delete,
+  Edit,
+  Flag,
+  Next,
+  Study_false,
+} from '../../../../Components/Icons';
 import {
   Button_refresh,
   Button_setting,
@@ -169,12 +175,17 @@ const PopupCustom4 = styled(PopupCustom)`
   }
 `;
 
-const PopupCustom6 = styled(PopupCustom)``;
+const PopupCustom6 = styled(PopupCustom)`
+  &-content {
+    width: 488px !important;
+    height: 473px !important;
+  }
+`;
 
 const PopupCustom7 = styled(PopupCustom)`
   &-content {
-    width: 300px !important;
-    height: 200px !important;
+    width: 288px !important;
+    height: 123px !important;
   }
 `;
 
@@ -196,6 +207,20 @@ const PopupCustom10 = styled(PopupCustom)`
   &-content {
     width: 410px !important;
     height: 170px !important;
+  }
+`;
+
+const PopupCustom11 = styled(PopupCustom)`
+  &-content {
+    width: 540px !important;
+    height: 413px !important;
+  }
+`;
+
+const PopupCustom12 = styled(PopupCustom)`
+  &-content {
+    width: 450px !important;
+    height: 70px !important;
   }
 `;
 
@@ -299,6 +324,10 @@ const ListWrap = styled.div`
   margin-bottom: 30px;
 `;
 
+const ListWrap2 = styled(ListWrap)`
+  margin-bottom: 0;
+`;
+
 const IndiviList = styled.div`
   display: flex;
   align-items: center;
@@ -314,7 +343,7 @@ const BookMarkTitle = styled.div`
   flex-direction: row;
   align-items: center;
   width: 372px;
-  height: 25px;
+  height: 30px;
   color: white;
   background-color: ${(props) => props.theme.classicBlue};
   border-top-right-radius: ${(props) => props.theme.borderRadius};
@@ -325,7 +354,7 @@ const TodolistTitle = styled(BookMarkTitle)`
   width: 452px;
 `;
 
-const TodolistTitle2 = styled(BookMarkTitle)`
+const TodolistTitle2 = styled(TodolistTitle)`
   width: 492px;
 `;
 
@@ -343,12 +372,18 @@ const BookLeft = styled.div`
 const BookRight = styled.div`
   display: flex;
   align-items: center;
-  width: 220px;
+  width: 250px;
   height: 100%;
   padding-left: 10px;
   font-weight: 600;
   font-size: 14px;
   border-right: 2px solid white;
+`;
+
+const BookLast = styled.div`
+  margin-left: 10px;
+  font-weight: 600;
+  font-size: 14px;
 `;
 
 const FinishDateDiv = styled.div`
@@ -381,15 +416,29 @@ const BookRight3 = styled(BookRight)`
 `;
 
 const ColorBox = styled.div`
+  cursor: pointer;
   height: ${(props) => props.size};
   width: ${(props) => props.size};
-  background-color: ${(props) => props.bgColor};
+  background-color: white;
   margin-right: 10px;
+  border: 1px solid black;
   border-radius: ${(props) => props.radius};
+  &:hover {
+    background-color: ${(props) => props.bgColor};
+  }
+`;
+
+const ColorBox3 = styled(ColorBox)`
+  cursor: default;
+  border: none;
+  background-color: ${(props) => props.bgColor};
 `;
 
 const ColorBox2 = styled(ColorBox)`
+  cursor: default;
   margin-left: 10px;
+  border: none;
+  background-color: ${(props) => props.bgColor};
 `;
 
 const CheckBoxWrap = styled.div`
@@ -440,17 +489,16 @@ const TodoNameDiv = styled.div`
   border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')};
 `;
 
+const TodoNameDiv2 = styled(TodoNameDiv)`
+  cursor: pointer;
+  width: 250px;
+`;
+
 const TodoIconDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-`;
-
-const TodoIconDiv2 = styled(TodoIconDiv)`
-  &:last-child {
-    justify-content: flex-start;
-  }
+  margin-left: 10px;
 `;
 
 const TodoFinishDiv = styled.div`
@@ -459,7 +507,6 @@ const TodoFinishDiv = styled.div`
   width: 80px;
   height: 100%;
   padding-left: 10px;
-  font-size: 16px;
   border-right: 2px solid #e6e6e6;
   border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')};
 `;
@@ -661,6 +708,13 @@ const TimeText = styled.span`
   color: ${(props) => (props.timeError ? 'red' : 'black')};
 `;
 
+const ModiWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
 let newScheduleArray = [];
 let schedules = [];
 let calendars = [];
@@ -743,6 +797,9 @@ export default ({
   setScheLoading,
   timeError,
   isSelf,
+  todoModi,
+  setTodoModi,
+  todoModiName,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -832,6 +889,8 @@ export default ({
   const listName_tmp = todoTask_tmp.map((List) => `${List.name}`);
   const listId_tmp = todoTask_tmp.map((List) => `${List.id}`);
   const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
+  // todoList 수정용
+  const mySubjectList3 = useSelect([...listName_tmp], [...listId_tmp]);
 
   const todolistClear = () => {
     todolistName.setValue('');
@@ -979,8 +1038,12 @@ export default ({
   };
 
   const onTodolistDelete = async (todolistId) => {
+    if (window.confirm('정말로 To Do List를 삭제하시겠습니까?') === false) {
+      return;
+    }
+
     try {
-      toast.info('To Do List를 제거 중...');
+      toast.info('To Do List를 삭제 중...');
       const {
         data: { deleteTodolist },
       } = await deleteTodolistMutation({
@@ -989,10 +1052,10 @@ export default ({
         },
       });
       if (!deleteTodolist) {
-        alert('To Do List를 제거할 수 없습니다.');
+        alert('To Do List를 삭제할 수 없습니다.');
       } else {
         await todolistRefetch();
-        toast.success('To DO List가 제거되었습니다.');
+        toast.success('To DO List가 삭제되었습니다.');
         return true;
       }
     } catch (e) {
@@ -1542,58 +1605,85 @@ export default ({
       <TaskNameDiv>{subjectList_book[index].name}</TaskNameDiv>
     </IndiviList>
   );
-  // const todolistRow_new = ({ index, style }) => (
-  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-  //     <ColorBox
-  //       size={'18px'}
-  //       radius={'9px'}
-  //       bgColor={todolistData_new[index].subject.bgColor}
-  //     />
-  //     <TaskName_todo isOdd={Boolean(index % 2)}>
-  //       {todolistData_new[index].subject.name}
-  //     </TaskName_todo>
-  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
-  //       {todolistData_new[index].name}
-  //     </TodoNameDiv>
-  //     <TodoIconDiv2>
-  //       <Flag
-  //         onClick={() => {
-  //           onTodolistFinish(todolistData_new[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv2>
-  //     <TodoIconDiv2>
-  //       <Delete
-  //         onClick={() => {
-  //           onTodolistDelete(todolistData_new[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv2>
-  //   </IndiviList>
-  // );
-  // const todolistRow_finish = ({ index, style }) => (
-  //   <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-  //     <ColorBox
-  //       size={'18px'}
-  //       radius={'9px'}
-  //       bgColor={todolistData_finish[index].subject.bgColor}
-  //     />
-  //     <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
-  //     <TodoNameDiv isOdd={Boolean(index % 2)}>
-  //       {todolistData_finish[index].name}
-  //     </TodoNameDiv>
-  //     <TodoFinishDiv isOdd={Boolean(index % 2)}>
-  //       {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
-  //     </TodoFinishDiv>
-  //     <TodoIconDiv>
-  //       <Delete
-  //         onClick={() => {
-  //           onTodolistDelete(todolistData_finish[index].id);
-  //         }}
-  //       />
-  //     </TodoIconDiv>
-  //   </IndiviList>
-  // );
+
+  const TodoModiView = ({ close }) => (
+    <PBody>
+      <PopupClose onClick={() => close()} />
+      <ModiWrap>
+        <SelectWrapper3>
+          <Select {...mySubjectList3} id={'mySubject3_id'} />
+        </SelectWrapper3>
+        <InputWrapper2>
+          <Input placeholder={'내용 (예: 1단원 암기)'} {...todoModiName} />
+        </InputWrapper2>
+        <TodoIconDiv>
+          <Edit size={'20'} />
+        </TodoIconDiv>
+        <TodoIconDiv>
+          <Delete
+          // onClick={() => {
+          //   onTodolistDelete(todolistData_new[index].id);
+          // }}
+          />
+        </TodoIconDiv>
+      </ModiWrap>
+    </PBody>
+  );
+
+  const todolistRow_new = ({ index, style }) => (
+    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
+      <ColorBox
+        size={'18px'}
+        radius={'9px'}
+        bgColor={todolistData_new[index].subject.bgColor}
+        onClick={() => {
+          onTodolistFinish(todolistData_new[index].id);
+        }}
+      />
+      <TaskName_todo isOdd={Boolean(index % 2)}>
+        {todolistData_new[index].subject.name}
+      </TaskName_todo>
+      <TodoNameDiv2
+        isOdd={Boolean(index % 2)}
+        onClick={() => {
+          console.log('ggg');
+          setTodoModi(true);
+        }}
+      >
+        {todolistData_new[index].name}
+      </TodoNameDiv2>
+      <TodoIconDiv>
+        <Delete
+          onClick={() => {
+            onTodolistDelete(todolistData_new[index].id);
+          }}
+        />
+      </TodoIconDiv>
+    </IndiviList>
+  );
+  const todolistRow_finish = ({ index, style }) => (
+    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
+      <ColorBox3
+        size={'18px'}
+        radius={'9px'}
+        bgColor={todolistData_finish[index].subject.bgColor}
+      />
+      <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
+      <TodoNameDiv isOdd={Boolean(index % 2)}>
+        {todolistData_finish[index].name}
+      </TodoNameDiv>
+      <TodoFinishDiv isOdd={Boolean(index % 2)}>
+        {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
+      </TodoFinishDiv>
+      <TodoIconDiv>
+        <Delete
+          onClick={() => {
+            onTodolistDelete(todolistData_finish[index].id);
+          }}
+        />
+      </TodoIconDiv>
+    </IndiviList>
+  );
 
   const CustomInput = forwardRef(
     ({ value, onClick, text, week = false, margin, width = '150px' }, ref) => {
@@ -1917,6 +2007,120 @@ export default ({
                 );
               }}
             </PopupCustom8>
+            <PopupCustom7
+              trigger={
+                <PopButton_custom
+                  width={'100px'}
+                  margin={'0 10px 0 0'}
+                  text={'To Do'}
+                />
+              }
+              closeOnDocumentClick={false}
+              modal
+            >
+              {(close) => (
+                <PBody>
+                  <PopupClose onClick={() => close()} />
+                  <PTitle text={'To Do List'} />
+                  <ThreeButtonWrap>
+                    <SubjectButtonDiv>
+                      <PopupCustom6
+                        trigger={<PopButton_100 text={'계획'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose onClick={() => close()} />
+                            <PTitle text={'To Do List 계획'} />
+                            <NewTodoDiv>
+                              <SelectWrapper3>
+                                <Select
+                                  {...mySubjectList2}
+                                  id={'mySubject2_id'}
+                                />
+                              </SelectWrapper3>
+                              <InputWrapper2>
+                                <Input
+                                  placeholder={'내용 (예: 1단원 암기)'}
+                                  {...todolistName}
+                                />
+                              </InputWrapper2>
+                              <Button_custom
+                                text={'추가'}
+                                width={'70px'}
+                                height={'35px'}
+                                bgColor={'#0F4C82'}
+                                color={'white'}
+                                onClick={() => {
+                                  onTodolistAdd();
+                                }}
+                              />
+                            </NewTodoDiv>
+                            <TodolistTitle>
+                              <BookLeft>과목</BookLeft>
+                              <BookRight>To Do List</BookRight>
+                              <BookLast>삭제</BookLast>
+                            </TodolistTitle>
+                            <ListWrap2>
+                              <BookmarkList
+                                height={300}
+                                itemCount={todolistData_new.length}
+                                itemSize={40}
+                                width={450}
+                              >
+                                {todolistRow_new}
+                              </BookmarkList>
+                            </ListWrap2>
+                            <PopupCustom12
+                              open={todoModi}
+                              closeOnDocumentClick={false}
+                              onClose={() => {
+                                setTodoModi(false);
+                              }}
+                              overlayStyle={{ background: 'rgba(0,0,0,0.05)' }}
+                              modal
+                            >
+                              {(close) => TodoModiView({ close })}
+                            </PopupCustom12>
+                          </PBody>
+                        )}
+                      </PopupCustom6>
+                    </SubjectButtonDiv>
+                    <SubjectButtonDiv>
+                      <PopupCustom11
+                        trigger={<PopButton_100 text={'완료'} />}
+                        closeOnDocumentClick={false}
+                        modal
+                      >
+                        {(close) => (
+                          <PBody>
+                            <PopupClose onClick={() => close()} />
+                            <PTitle text={'완료한 To Do List'} />
+                            <TodolistTitle2>
+                              <BookLeft>과목</BookLeft>
+                              <BookRight3>To Do List</BookRight3>
+                              <FinishDateDiv>Done</FinishDateDiv>
+                              <BookLast>삭제</BookLast>
+                            </TodolistTitle2>
+                            <ListWrap2>
+                              <BookmarkList
+                                height={300}
+                                itemCount={todolistData_finish.length}
+                                itemSize={40}
+                                width={490}
+                              >
+                                {todolistRow_finish}
+                              </BookmarkList>
+                            </ListWrap2>
+                          </PBody>
+                        )}
+                      </PopupCustom11>
+                    </SubjectButtonDiv>
+                  </ThreeButtonWrap>
+                </PBody>
+              )}
+            </PopupCustom7>
             <PopupCustom4
               trigger={
                 <PopButton_custom

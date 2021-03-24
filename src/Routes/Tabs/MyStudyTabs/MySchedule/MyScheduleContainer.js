@@ -43,6 +43,7 @@ export default ({ defaultSet, isSelf = true }) => {
 
   const stateList = useSelect(stateBox, stateBox);
 
+  const [todoModi, setTodoModi] = useState(false);
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
   const [timeError, setTimeError] = useState(false);
   const [scheLoading, setScheLoading] = useState(false);
@@ -87,6 +88,7 @@ export default ({ defaultSet, isSelf = true }) => {
   const scheLocation = useInput('');
   const subjectName = useInput('');
   const todolistName = useInput('');
+  const todoModiName = useInput('');
   const scheduleStart = useInput(
     defaultSet.scheduleStart,
     start_range,
@@ -304,6 +306,9 @@ export default ({ defaultSet, isSelf = true }) => {
         setScheLoading={setScheLoading}
         timeError={timeError}
         isSelf={isSelf}
+        todoModi={todoModi}
+        setTodoModi={setTodoModi}
+        todoModiName={todoModiName}
       />
     );
   } else {

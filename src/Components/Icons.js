@@ -462,11 +462,11 @@ export const Trash = ({ onClick }) => (
   </svg>
 );
 
-export const Edit = ({ onClick }) => (
+export const Edit = ({ onClick, size = '24' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     onClick={onClick}
     cursor="pointer"
