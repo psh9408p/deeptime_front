@@ -13,6 +13,7 @@ import {
   Delete,
   Add_12,
   Logo,
+  Edit,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -20,6 +21,7 @@ import Switch from 'react-input-switch';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import PopupClose from '../../Components/Buttons/PopupClose';
+import PopButton_custom from '../../Components/Buttons/PopButton_custom';
 import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Loader from '../../Components/Loader';
@@ -28,7 +30,6 @@ import {
   Button_refresh,
   Button_capture,
   Button_setting,
-  Button_control,
 } from '../../Components/Buttons/Button_click';
 import { FixedSizeList as FixedList } from 'react-window';
 import { hexToRgb, fontColor_dependBg } from '../../Components/ColorTool';
@@ -177,7 +178,8 @@ const ControlWrap = styled.div`
   height: 130px;
   margin: 10px;
   /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  border-radius: ${(props) =>
+    props.theme.borderRadius}; */
 `;
 
 const ControlTop = styled.div`
@@ -316,7 +318,7 @@ const TimeLogWrap = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 240px;
+  height: 210px;
   margin-bottom: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -372,7 +374,7 @@ const NowNextWrap = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 160px;
+  height: 190px;
   margin-bottom: 10px;
 `;
 
@@ -409,9 +411,15 @@ const NextTimeDiv = styled.div`
   flex-direction: column;
   align-items: center;
   width: 180px;
-  height: 100%;
+  height: 150px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+  margin-bottom: 10px;
+`;
+
+const NextAndTool = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const TimeIn = styled.div`
@@ -484,22 +492,47 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
-const PopupCustom2 = styled(Popup)`
+const PopupCustom2 = styled(PopupCustom)`
   &-content {
     width: 500px !important;
     height: 230px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const PopupCustom6 = styled(PopupCustom)`
+  &-content {
+    width: 488px !important;
+    height: 473px !important;
+  }
+`;
+
+const PopupCustom7 = styled(PopupCustom)`
+  &-content {
+    width: 488px !important;
+    height: 433px !important;
+  }
+`;
+
+const PopupCustom11 = styled(PopupCustom)`
+  &-content {
+    width: 540px !important;
+    height: 413px !important;
+  }
+`;
+
+const PopupCustom12 = styled(PopupCustom)`
+  &-content {
+    width: 450px !important;
+    height: 70px !important;
   }
 `;
 
 const PBody = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px;
-  padding: 20px 20px;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
 `;
 
 const PBody2 = styled(PBody)`
@@ -556,8 +589,6 @@ const IndiTodoWrap = styled.div`
   align-items: center;
   height: 100%;
   padding-left: ${(props) => (props.isOdd ? '12px' : '18px')};
-  /* border: ${(props) => props.theme.boxBorder};
-  border-color: black; */
 `;
 
 const RoundTodo = styled.div`
@@ -570,8 +601,6 @@ const RoundTodo = styled.div`
   padding: 0 5px 0 10px;
   background-color: ${(props) => props.bgColor};
   color: ${(props) => props.color};
-  /* border: ${(props) => props.theme.boxBorder};
-  border-color: black; */
 `;
 
 const RoundNameDiv = styled.div`
@@ -584,35 +613,13 @@ const RoundNameDiv = styled.div`
   font-weight: 600;
 `;
 
-const RoundNameDiv2 = styled(RoundNameDiv)`
-  width: 100%;
-`;
-
 const NewTodoDiv = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
   width: 450px;
   height: 40px;
-`;
-
-const NewTopDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   margin-bottom: 20px;
-`;
-
-const NewBottomDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const SelectWrapper = styled.div`
-  width: 123px;
-  height: 35px;
 `;
 
 const NewScheContent = styled.div`
@@ -626,19 +633,14 @@ const NewScheContent = styled.div`
 `;
 
 const SelectInL = styled.div`
-  width: 100px;
+  width: 90px;
   height: 25px;
   margin-right: 10px;
 `;
 
 const SelectInR = styled.div`
-  width: 50px;
+  width: 60px;
   height: 25px;
-`;
-
-const InputWrapper = styled.div`
-  margin-left: 10px;
-  width: 225px;
 `;
 
 const IndiWrap = styled.div`
@@ -717,10 +719,12 @@ const NonFollow = styled.div`
 `;
 
 const IndiviList = styled.div`
-  position: relative;
   display: flex;
   align-items: center;
+  padding-left: 15px;
+  font-size: 14px;
   height: 100%;
+  border-bottom: 1px solid #c7c7c7;
 `;
 
 const IndiviName = styled.div`
@@ -760,6 +764,152 @@ const DatePickButton = styled.button`
   padding: 7px 10px;
   font-size: 14px;
   cursor: pointer;
+`;
+
+const ModiWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const TodoTitleWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 450px;
+`;
+
+const SelectWrapper3 = styled.div`
+  width: 123px;
+  height: 35px;
+`;
+
+const InputWrapper2 = styled.div`
+  margin-left: 10px;
+  width: 225px;
+`;
+
+const TodoNameDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 220px;
+  height: 100%;
+  padding: 0 10px;
+  /* border-right: 2px solid #e6e6e6;
+  border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')}; */
+`;
+
+const TodoNameDiv2 = styled(TodoNameDiv)`
+  cursor: pointer;
+  width: auto;
+`;
+
+const TodoIconDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+`;
+
+const TodoFinishDiv = styled.div`
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 100%;
+  padding-left: 10px;
+`;
+
+const ColorBox = styled.div`
+  cursor: pointer;
+  height: ${(props) => props.size};
+  width: ${(props) => props.size};
+  background-color: white;
+  margin-right: 10px;
+  border: 1px solid black;
+  border-radius: ${(props) => props.radius};
+  &:hover {
+    background-color: ${(props) => props.bgColor};
+  }
+`;
+
+const ColorBox3 = styled(ColorBox)`
+  cursor: default;
+  border: none;
+  background-color: ${(props) => props.bgColor};
+`;
+
+const TaskName_todo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  width: 90px;
+  padding-right: 10px;
+`;
+
+const BookMarkTitle = styled.div`
+  border: ${(props) => props.theme.boxBorder};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 372px;
+  height: 30px;
+  color: white;
+  background-color: ${(props) => props.theme.classicBlue};
+  border-top-right-radius: ${(props) => props.theme.borderRadius};
+  border-top-left-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const TodolistTitle = styled(BookMarkTitle)`
+  padding-left: 15px;
+  width: 452px;
+`;
+
+const TodolistTitle2 = styled(TodolistTitle)`
+  width: 492px;
+`;
+
+const BookLeft = styled.div`
+  display: flex;
+  align-items: center;
+  width: 118px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 14px;
+  padding-left: 28px;
+`;
+
+const BookRight = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 10px;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const FinishDateDiv = styled.div`
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 100%;
+  padding-left: 10px;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const BookRight3 = styled(BookRight)`
+  width: 220px;
+  height: 100%;
+`;
+
+const ListWrap2 = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
 `;
 
 let scheduleList_selectDay = [];
@@ -807,6 +957,7 @@ export default ({
   subjectRefetch,
   deleteTodolistMutation,
   finishTodolistMutation,
+  editTodolistMutation,
   addTodolistMutation,
   startScheduleMutation,
   stopScheduleMutation,
@@ -842,6 +993,11 @@ export default ({
   camEmpty,
   setCamEmpty,
   videoDevices,
+  todoModi,
+  setTodoModi,
+  todoModiName,
+  todoModiId,
+  setTodoModiId,
 }) => {
   // 비프음
   const [startPlay] = useSound(startSound);
@@ -955,23 +1111,54 @@ export default ({
     }
   };
 
-  // todolist 미완료&북마크 된거 구분
-  let todolistData_new = [];
-  todolistData.map((todolist) => {
-    if (!todolist.finish && todolist.subject.bookMark) {
-      todolistData_new.push(todolist);
-    }
-  });
-  // todolistData_new 오름차순 정렬 (만든 순서대로는 백앤드에서 이미 반영)
-  todolistData_new.sort(function (a, b) {
+  // todolistData 오름차순 정렬
+  todolistData.sort(function (a, b) {
     return a.subject.name < b.subject.name
       ? -1
       : a.subject.name > b.subject.name
       ? 1
+      : // : a.name < b.name
+        // ? -1
+        // : a.name > b.name
+        // ? 1
+        0;
+  });
+  // todolistData 과목 없음이 위로오게
+  todolistData.sort(function (a, b) {
+    const word = '과목 없음';
+    return a.subject.name === word && b.subject.name !== word
+      ? -1
+      : a.subject.name !== word && b.subject.name === word
+      ? 1
       : 0;
   });
-  // todolistData_new Task 없음이 위로오게
-  todolistData_new.sort(function (a, b) {
+
+  //todolist 완료된거랑 아닌거 구분
+  let todolistData_new = [];
+  let todolistData_finish = [];
+  todolistData.map((todolist) => {
+    if (todolist.finish) {
+      todolistData_finish.push(todolist);
+    } else {
+      todolistData_new.push(todolist);
+    }
+  });
+  //todolist_finish 끝날 날짜 순으로 정렬(최근이 위로)
+  todolistData_finish.sort(function (a, b) {
+    const aDate = new Date(a.finishAt);
+    const bDate = new Date(b.finishAt);
+    return a.subject.name < b.subject.name
+      ? -1
+      : a.subject.name > b.subject.name
+      ? 1
+      : aDate > bDate
+      ? -1
+      : aDate < bDate
+      ? 1
+      : 0;
+  });
+  // todolistData_finish 과목 없음이 위로오게
+  todolistData_finish.sort(function (a, b) {
     const word = '과목 없음';
     return a.subject.name === word && b.subject.name !== word
       ? -1
@@ -1009,10 +1196,16 @@ export default ({
     videoDevices.map((a) => a.label),
     videoDevices.map((a) => a.deviceId),
   );
-  const mySubjectList = useSelect([...listName_tmp], [...listId_tmp]);
   const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
+  // todolist 수정용
+  const mySubjectList3 = useSelect([...listName_tmp], [...listId_tmp]);
   const stateBox = ['자습', '강의'];
   const stateList = useSelect(stateBox, stateBox);
+
+  const todolistClear = () => {
+    todolistName.setValue('');
+    mySubjectList2.setOption(mySubjectList2.valueList[0]);
+  };
 
   const LoadCamera = async () => {
     console.log('Load camera');
@@ -1360,7 +1553,7 @@ export default ({
     }
   };
 
-  const onPullSchedule = async () => {
+  const onPullSchedule = async ({ close }) => {
     if (window.confirm('다음 스케줄을 당기시겠습니까?') === false) {
       return;
     }
@@ -1403,6 +1596,7 @@ export default ({
       } else {
         await myInfoRefetch();
         toast.success('다음 스케줄을 당겼습니다.');
+        close();
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
@@ -1471,6 +1665,11 @@ export default ({
   };
 
   const onStartSchedule = async ({ close }) => {
+    if (mySubjectList2.option === '') {
+      alert('과목 선택은 필수 항목입니다.');
+      return;
+    }
+
     try {
       setOnLoading(true);
 
@@ -1495,7 +1694,7 @@ export default ({
       }
       // 사전 점검
       if (scheduleTitle.value === '') {
-        alert('To Do List를 입력하세요.');
+        alert('스케줄의 제목을 입력하세요.');
         return;
       }
       if (scheduleTitle.value.includes('/')) {
@@ -1512,12 +1711,6 @@ export default ({
         startScheduleTerm.setValue(maxTime);
         return;
       }
-      // todolist 중복 체크
-      const findTodo = (i) =>
-        i.subject.id === mySubjectList2.option &&
-        i.name === scheduleTitle.value;
-      const existIndex = todolistData_new.findIndex(findTodo);
-      const existTodo = existIndex === -1 ? false : true;
       // 입력 시간 계산
       const start = new Date();
       start.setTime(nowDate.getTime());
@@ -1537,7 +1730,6 @@ export default ({
           totalTime: (end.getTime() - start.getTime()) / 1000,
           calendarId: mySubjectList2.option,
           state: stateList.option,
-          existTodo,
         },
       });
       if (!startSchedule_study) {
@@ -1545,7 +1737,7 @@ export default ({
       } else {
         await myInfoRefetch();
         // await todolistRefetch();
-        mySubjectList2.setOption('');
+        mySubjectList2.setOption(mySubjectList2.valueList[0]);
         stateList.setOption('자습');
         scheduleTitle.setValue('');
         startScheduleTerm.setValue(30);
@@ -1561,61 +1753,101 @@ export default ({
   };
 
   const onTodolistAdd = async () => {
-    if (todolistName.value === '') {
+    if (mySubjectList2.option === '') {
+      alert('과목을 선택하세요.');
+      return;
+    } else if (todolistName.value === '') {
       alert('내용을 입력하세요.');
       return;
     }
+
     try {
-      toast.info('새로운 To Do List를 추가 중...');
+      toast.info('새로운 To Do를 추가 중...');
       const {
         data: { addTodolist },
       } = await addTodolistMutation({
         variables: {
           name: todolistName.value,
-          subjectId: mySubjectList.option,
+          subjectId: mySubjectList2.option,
         },
       });
       if (!addTodolist) {
-        alert('To Do List를 추가할 수 없습니다.');
+        alert('To Do를 추가할 수 없습니다.');
       } else {
         await todolistRefetch();
-        todolistName.setValue('');
-        mySubjectList.setOption('');
-        toast.success('새로운 To DO List가 추가되었습니다.');
+        await todolistClear();
+        toast.success('새로운 To Do가 추가되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
-    } finally {
-      setNewTodoView(false);
+      return false;
     }
   };
 
   const onTodolistDelete = async (todolistId) => {
+    if (window.confirm('정말로 To Do를 삭제하시겠습니까?') === false) {
+      return;
+    }
+
     try {
-      toast.info('To Do List를 제거 중...');
+      toast.info('To Do를 삭제 중...');
       const {
         data: { deleteTodolist },
       } = await deleteTodolistMutation({
         variables: {
-          todolistId,
+          todolistId: todolistId === '' ? todoModiId : todolistId,
         },
       });
       if (!deleteTodolist) {
-        alert('To Do List를 제거할 수 없습니다.');
+        alert('To Do를 삭제할 수 없습니다.');
       } else {
         await todolistRefetch();
-        toast.success('To DO List가 제거되었습니다.');
+        toast.success('To Do가 삭제되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
+    }
+  };
+
+  const onTodolistEdit = async () => {
+    if (mySubjectList3.option === '') {
+      alert('과목 선택은 필수 항목입니다.');
+      return;
+    }
+
+    try {
+      toast.info('To Do를 수정 중...');
+      const {
+        data: { editTodolist },
+      } = await editTodolistMutation({
+        variables: {
+          todolistId: todoModiId,
+          subjectId: mySubjectList3.option,
+          name: todoModiName.value,
+        },
+      });
+      if (!editTodolist) {
+        alert('To Do를 수정할 수 없습니다.');
+      } else {
+        await todolistRefetch();
+        toast.success('To Do가 수정되었습니다.');
+        return true;
+      }
+    } catch (e) {
+      const realText = e.message.split('GraphQL error: ');
+      alert(realText[1]);
+      return false;
     }
   };
 
   const onTodolistFinish = async (todolistId) => {
     try {
-      toast.info('To Do List를 완료 중...');
+      toast.info('To Do를 완료 중...');
       const {
         data: { finishTodolist },
       } = await finishTodolistMutation({
@@ -1624,15 +1856,24 @@ export default ({
         },
       });
       if (!finishTodolist) {
-        alert('To Do List를 완료할 수 없습니다.');
+        alert('To Do를 완료할 수 없습니다.');
       } else {
         await todolistRefetch();
-        toast.success('To DO List가 완료되었습니다.');
+        toast.success('To Do가 완료되었습니다.');
+        return true;
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+      return false;
     }
+  };
+
+  // To do list 수정값 넣어주기
+  const inputTodolist = (todo) => {
+    setTodoModiId(todo.id);
+    mySubjectList3.setOption(todo.subject.id);
+    todoModiName.setValue(todo.name);
   };
 
   const isFirstRun = useRef(true);
@@ -2189,6 +2430,291 @@ export default ({
     );
   });
 
+  const ScheToolView = ({ close }) => (
+    <PBody3>
+      <PopupClose onClick={() => close()} />
+      <PTitle text={'스케줄 조정'} />
+      <Wrapper_b>
+        <ScheStart>
+          <NewScheContent>
+            <SelectInL>
+              <Select {...mySubjectList2} id={'mySubject_id_study'} />
+            </SelectInL>
+            <SelectInR>
+              {/* <Select {...stateList} id={'mySubject_state_study'} /> */}
+
+              <PopupCustom7
+                trigger={
+                  <PopButton_custom
+                    text={'TO DO'}
+                    width={'100%'}
+                    fontSize={'12px'}
+                  />
+                }
+                closeOnDocumentClick={false}
+                modal
+              >
+                {(close) => (
+                  <PBody>
+                    <PopupClose onClick={() => close()} />
+                    <PTitle text={'To Do List'} />
+                    <TodolistTitle>
+                      <BookLeft>과목</BookLeft>
+                      <BookRight>To Do</BookRight>
+                    </TodolistTitle>
+                    <ListWrap2>
+                      <FixedList
+                        height={300}
+                        itemCount={todolistData_new.length}
+                        itemSize={40}
+                        width={450}
+                        itemData={{ close, view: 'sche' }}
+                      >
+                        {todolistRow_new}
+                      </FixedList>
+                    </ListWrap2>
+                  </PBody>
+                )}
+              </PopupCustom7>
+            </SelectInR>
+          </NewScheContent>
+          <NewScheContent>
+            <Input
+              placeholder={'(필수) 제목'}
+              height={'25px'}
+              bgColor={'white'}
+              {...scheduleTitle}
+            />
+          </NewScheContent>
+          <NewScheContent>
+            <Input_100
+              placeholder={''}
+              {...startScheduleTerm}
+              type={'number'}
+              step={5}
+              width={'80px'}
+              height={'25px'}
+              bgColor={'white'}
+            />
+            분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button_custom
+              text={'Max'}
+              margin={'0'}
+              width={'50px'}
+              height={'25px'}
+              onClick={() => {
+                const maxTime_tmp = maxTimeCal(new Date());
+                startScheduleTerm.setValue(maxTime_tmp);
+              }}
+            />
+          </NewScheContent>
+          <Button_custom
+            text={'스케줄 시작'}
+            width={'160px'}
+            height={'25px'}
+            margin={'0'}
+            bgColor={'#0F4C82'}
+            color={'white'}
+            padding={'0'}
+            onClick={() => {
+              if (!onLoading) {
+                onStartSchedule({ close });
+              }
+            }}
+          />
+        </ScheStart>
+        <ControlWrap>
+          <ControlTop>
+            <ControlTop1>
+              현재 스케줄을&nbsp;&nbsp;
+              <Input_100
+                placeholder={''}
+                {...extensionTerm}
+                type={'number'}
+                step={5}
+                width={'80px'}
+                height={'25px'}
+                bgColor={'white'}
+              />
+              분
+            </ControlTop1>
+            <ControlTop2>
+              <Button_custom
+                text={'단축'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0 10px 0 0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onCutSchedule({ close });
+                }}
+              />
+              <Button_custom
+                text={'연장'}
+                width={'120px'}
+                height={'25px'}
+                margin={'0'}
+                bgColor={'#0F4C82'}
+                color={'white'}
+                padding={'0'}
+                onClick={() => {
+                  onExtensionSchedule({ close });
+                }}
+              />
+            </ControlTop2>
+          </ControlTop>
+          <ControlBottom>
+            <Button_custom
+              text={'현재 스케줄 마침'}
+              width={'120px'}
+              height={'25px'}
+              margin={'0 10px 0 0'}
+              bgColor={'#DB4437'}
+              color={'black'}
+              padding={'0'}
+              onClick={() => {
+                onStopSchedule({ close });
+              }}
+            />
+            <Button_custom
+              text={'다음 스케줄 당김'}
+              width={'120px'}
+              height={'25px'}
+              margin={'0'}
+              bgColor={'#0F4C82'}
+              color={'white'}
+              padding={'0'}
+              onClick={() => {
+                onPullSchedule({ close });
+              }}
+            />
+          </ControlBottom>
+        </ControlWrap>
+      </Wrapper_b>
+    </PBody3>
+  );
+
+  const TodoModiView = ({ close }) => (
+    <PBody>
+      <PopupClose onClick={() => close()} />
+      <ModiWrap>
+        <SelectWrapper3>
+          <Select {...mySubjectList3} id={'mySubject3_id'} />
+        </SelectWrapper3>
+        <InputWrapper2>
+          <Input placeholder={'내용 (예: 1단원 암기)'} {...todoModiName} />
+        </InputWrapper2>
+        <TodoIconDiv>
+          <Edit
+            size={'20'}
+            onClick={async () => {
+              const result = await onTodolistEdit();
+              if (result) {
+                setTodoModi(false);
+              }
+            }}
+          />
+        </TodoIconDiv>
+        <TodoIconDiv>
+          <Delete
+            onClick={async () => {
+              const result = await onTodolistDelete('');
+              if (result) {
+                setTodoModi(false);
+              }
+            }}
+          />
+        </TodoIconDiv>
+      </ModiWrap>
+    </PBody>
+  );
+
+  const todolistRow_new = ({ data, index, style }) => {
+    const { close, view } = data;
+    // view가 sche면 스케줄에서 TODO 킨거, todo면 TO DO 에서 킨거
+    return (
+      <IndiviList key={index} style={style}>
+        {view === 'todo' ? (
+          <ColorBox
+            size={'18px'}
+            radius={'9px'}
+            bgColor={todolistData_new[index].subject.bgColor}
+            onClick={() => {
+              onTodolistFinish(todolistData_new[index].id);
+            }}
+          />
+        ) : (
+          <ColorBox3
+            size={'18px'}
+            radius={'9px'}
+            bgColor={todolistData_new[index].subject.bgColor}
+          />
+        )}
+        <TaskName_todo>{todolistData_new[index].subject.name}</TaskName_todo>
+        <TodoNameDiv2
+          onClick={() => {
+            if (view === 'todo') {
+              inputTodolist(todolistData_new[index]);
+              setTodoModi(true);
+            } else {
+              mySubjectList2.setOption(todolistData_new[index].subject.id);
+              scheduleTitle.setValue(todolistData_new[index].name);
+              close();
+            }
+          }}
+        >
+          {todolistData_new[index].name}
+        </TodoNameDiv2>
+      </IndiviList>
+    );
+  };
+
+  const todolistRow_finish = ({ index, style }) => (
+    <IndiviList key={index} style={style}>
+      <ColorBox3
+        size={'18px'}
+        radius={'9px'}
+        bgColor={todolistData_finish[index].subject.bgColor}
+      />
+      <TaskName_todo>{todolistData_finish[index].subject.name}</TaskName_todo>
+      <TodoNameDiv>{todolistData_finish[index].name}</TodoNameDiv>
+      <TodoFinishDiv>
+        {moment(todolistData_finish[index].finishAt).format('YY.MM.DD')}
+      </TodoFinishDiv>
+      <TodoIconDiv>
+        <Delete
+          onClick={() => {
+            onTodolistDelete(todolistData_finish[index].id);
+          }}
+        />
+      </TodoIconDiv>
+    </IndiviList>
+  );
+
+  const TodoDoneView = ({ close }) => (
+    <PBody>
+      <PopupClose onClick={() => close()} />
+      <PTitle text={'완료한 To Do List'} />
+      <TodolistTitle2>
+        <BookLeft>과목</BookLeft>
+        <BookRight3>To Do</BookRight3>
+        <FinishDateDiv>Done</FinishDateDiv>
+      </TodolistTitle2>
+      <ListWrap2>
+        <FixedList
+          height={300}
+          itemCount={todolistData_finish.length}
+          itemSize={40}
+          width={490}
+        >
+          {todolistRow_finish}
+        </FixedList>
+      </ListWrap2>
+    </PBody>
+  );
+
   return (
     <AllWrap>
       <TopWrap>
@@ -2248,6 +2774,96 @@ export default ({
                 )}
               </DDayDiv>
               <SetDiv>
+                <PopupCustom6
+                  trigger={
+                    <PopButton_custom
+                      width={'70px'}
+                      height={'30px'}
+                      margin={'0 10px 0 0'}
+                      text={'TO DO'}
+                    />
+                  }
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => (
+                    <PBody>
+                      <PopupClose onClick={() => close()} />
+                      <TodoTitleWrap>
+                        <PTitle text={'To Do List'} />
+                        <PopupCustom11
+                          trigger={
+                            <PopButton_custom
+                              text={
+                                <div>
+                                  <p>완료한</p>
+                                  <p>TO DO</p>
+                                </div>
+                              }
+                              fontSize={'12px'}
+                              width={'70px'}
+                              height={'35px'}
+                              margin={'0 2px 0 110px'}
+                              onClick={() => {
+                                onTodolistAdd();
+                              }}
+                            />
+                          }
+                          closeOnDocumentClick={false}
+                          modal
+                        >
+                          {(close) => <TodoDoneView close={close} />}
+                        </PopupCustom11>
+                      </TodoTitleWrap>
+                      <NewTodoDiv>
+                        <SelectWrapper3>
+                          <Select {...mySubjectList2} id={'mySubject2_id'} />
+                        </SelectWrapper3>
+                        <InputWrapper2>
+                          <Input
+                            placeholder={'내용 (예: 1단원 암기)'}
+                            {...todolistName}
+                          />
+                        </InputWrapper2>
+                        <Button_custom
+                          text={'추가'}
+                          width={'70px'}
+                          height={'35px'}
+                          bgColor={'#0F4C82'}
+                          color={'white'}
+                          onClick={() => {
+                            onTodolistAdd();
+                          }}
+                        />
+                      </NewTodoDiv>
+                      <TodolistTitle>
+                        <BookLeft>과목</BookLeft>
+                        <BookRight>To Do</BookRight>
+                      </TodolistTitle>
+                      <ListWrap2>
+                        <FixedList
+                          height={300}
+                          itemCount={todolistData_new.length}
+                          itemSize={40}
+                          width={450}
+                          itemData={{ close: () => {}, view: 'todo' }}
+                        >
+                          {todolistRow_new}
+                        </FixedList>
+                      </ListWrap2>
+                      <PopupCustom12
+                        open={todoModi}
+                        closeOnDocumentClick={false}
+                        onClose={() => {
+                          setTodoModi(false);
+                        }}
+                        modal
+                      >
+                        {(close) => TodoModiView({ close })}
+                      </PopupCustom12>
+                    </PBody>
+                  )}
+                </PopupCustom6>
                 <Button_capture
                   onClick={async () => {
                     await setCoverView(true);
@@ -2261,139 +2877,6 @@ export default ({
                     // todolistRefetch();
                   }}
                 />
-                <PopupCustom2
-                  trigger={<Button_control />}
-                  closeOnDocumentClick={false}
-                  modal
-                >
-                  {(close) => {
-                    return (
-                      <PBody3>
-                        <PopupClose onClick={() => close()} />
-                        <PTitle text={'컨트롤 패널'} />
-                        <Wrapper_b>
-                          <ScheStart>
-                            <NewScheContent>
-                              <SelectInL>
-                                <Select
-                                  {...mySubjectList2}
-                                  id={'mySubject_id_study'}
-                                />
-                              </SelectInL>
-                              <SelectInR>
-                                <Select
-                                  {...stateList}
-                                  id={'mySubject_state_study'}
-                                />
-                              </SelectInR>
-                            </NewScheContent>
-                            <NewScheContent>
-                              <Input
-                                placeholder={'(필수) 제목'}
-                                height={'25px'}
-                                bgColor={'white'}
-                                {...scheduleTitle}
-                              />
-                            </NewScheContent>
-                            <NewScheContent>
-                              <Input_100
-                                placeholder={''}
-                                {...startScheduleTerm}
-                                type={'number'}
-                                step={5}
-                                width={'80px'}
-                                height={'25px'}
-                                bgColor={'white'}
-                              />
-                              분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                              <Button_custom
-                                text={'Max'}
-                                margin={'0'}
-                                width={'50px'}
-                                height={'25px'}
-                                onClick={() => {
-                                  const maxTime_tmp = maxTimeCal(new Date());
-                                  startScheduleTerm.setValue(maxTime_tmp);
-                                }}
-                              />
-                            </NewScheContent>
-                            <Button_custom
-                              text={'스케줄 시작'}
-                              width={'160px'}
-                              height={'25px'}
-                              margin={'0'}
-                              bgColor={'#0F4C82'}
-                              color={'white'}
-                              padding={'0'}
-                              onClick={() => {
-                                if (!onLoading) {
-                                  onStartSchedule({ close });
-                                }
-                              }}
-                            />
-                          </ScheStart>
-                          <ControlWrap>
-                            <ControlTop>
-                              <ControlTop1>
-                                현재 스케줄을&nbsp;&nbsp;
-                                <Input_100
-                                  placeholder={''}
-                                  {...extensionTerm}
-                                  type={'number'}
-                                  step={5}
-                                  width={'80px'}
-                                  height={'25px'}
-                                  bgColor={'white'}
-                                />
-                                분
-                              </ControlTop1>
-                              <ControlTop2>
-                                <Button_custom
-                                  text={'단축'}
-                                  width={'120px'}
-                                  height={'25px'}
-                                  margin={'0 10px 0 0'}
-                                  bgColor={'#0F4C82'}
-                                  color={'white'}
-                                  padding={'0'}
-                                  onClick={() => {
-                                    onCutSchedule({ close });
-                                  }}
-                                />
-                                <Button_custom
-                                  text={'연장'}
-                                  width={'120px'}
-                                  height={'25px'}
-                                  margin={'0'}
-                                  bgColor={'#0F4C82'}
-                                  color={'white'}
-                                  padding={'0'}
-                                  onClick={() => {
-                                    onExtensionSchedule({ close });
-                                  }}
-                                />
-                              </ControlTop2>
-                            </ControlTop>
-                            <ControlBottom>
-                              <Button_custom
-                                text={'현재 스케줄 마침'}
-                                width={'120px'}
-                                height={'25px'}
-                                margin={'0 10px 0 0'}
-                                bgColor={'#DB4437'}
-                                color={'black'}
-                                padding={'0'}
-                                onClick={() => {
-                                  onStopSchedule({ close });
-                                }}
-                              />
-                            </ControlBottom>
-                          </ControlWrap>
-                        </Wrapper_b>
-                      </PBody3>
-                    );
-                  }}
-                </PopupCustom2>
                 <PopupCustom
                   trigger={<Button_setting margin={'0'} />}
                   closeOnDocumentClick={false}
@@ -2537,7 +3020,7 @@ export default ({
             </HeaderDiv>
             <TimeLogWrap>
               <DonutWrap>
-                <DonutChart_today
+                {/* <DonutChart_today
                   data={isAm ? donutData_am : donutData_pm}
                   color={isAm ? rgbBox_am : rgbBox_pm}
                   title={'Today           Time Log'}
@@ -2546,7 +3029,8 @@ export default ({
                   //   '부재 시간' + '　' + '　' + '　' + '　',
                   //   '나머지 시간',
                   // ]}
-                />
+                /> */}
+                서비스 업데이트 중...
               </DonutWrap>
               <TotalTimeWrap>
                 <TotalNumber>
@@ -2565,18 +3049,18 @@ export default ({
                   {target_min.length === 1 ? '0' + target_min : target_min}
                   {/* </span> */}
                 </TotalNumber>
-                <DonutLabel>
+                {/* <DonutLabel>
                   <span style={{ color: '#0F4C82' }}>■</span> 학습 시간
                 </DonutLabel>
-                {/* <DonutLabel>
+                <DonutLabel>
                   <span style={{ color: 'rgba(233, 236, 244, 1)' }}>■</span>부재
                   시간
-                </DonutLabel> */}
+                </DonutLabel>
                 <DonutLabel>
                   <span style={{ color: '#EAD6D4' }}>■</span> 나머지 시간
-                </DonutLabel>
+                </DonutLabel> */}
               </TotalTimeWrap>
-              <ClockBox>
+              {/* <ClockBox>
                 <Clock24 />
               </ClockBox>
               <TimeButton
@@ -2586,7 +3070,7 @@ export default ({
               >
                 {isAm ? 'AM' : 'PM'}
               </TimeButton>
-              <TodayPercent>{donutPercent}%</TodayPercent>
+              <TodayPercent>{donutPercent}%</TodayPercent> */}
             </TimeLogWrap>
             <NowNextWrap>
               <BarWrap>
@@ -2598,31 +3082,43 @@ export default ({
                   scheduleColor={nowScheduleColor}
                 />
               </BarWrap>
-              <NextTimeDiv>
-                <IconWrap>
-                  <NextSchedule
-                    onClick={() => onPullSchedule()}
-                    cursor={'pointer'}
-                  />
-                  <NextText>다음 스케줄</NextText>
-                </IconWrap>
-                <TimeIn>
-                  <p>{nextTitle1}</p>
-                  <p>{nextTitle2}</p>
-                  <p>{next_TimeText}</p>
-                  {break_boolean && (
-                    <Countdown
-                      date={Date.now() + break_countdown}
-                      renderer={({ hours, minutes }) => (
-                        <span style={{ color: 'red' }}>
-                          시작 {hours > 0 && <span>{hours}시간 </span>}
-                          {minutes}분 전
-                        </span>
-                      )}
+              <NextAndTool>
+                <NextTimeDiv>
+                  <IconWrap>
+                    <NextSchedule />
+                    <NextText>다음 스케줄</NextText>
+                  </IconWrap>
+                  <TimeIn>
+                    <p>{nextTitle1}</p>
+                    <p>{nextTitle2}</p>
+                    <p>{next_TimeText}</p>
+                    {break_boolean && (
+                      <Countdown
+                        date={Date.now() + break_countdown}
+                        renderer={({ hours, minutes }) => (
+                          <span style={{ color: 'red' }}>
+                            시작 {hours > 0 && <span>{hours}시간 </span>}
+                            {minutes}분 전
+                          </span>
+                        )}
+                      />
+                    )}
+                  </TimeIn>
+                </NextTimeDiv>
+                <PopupCustom2
+                  trigger={
+                    <PopButton_custom
+                      height={'30px'}
+                      width={'100%'}
+                      text={'스케줄 조정'}
                     />
-                  )}
-                </TimeIn>
-              </NextTimeDiv>
+                  }
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => ScheToolView({ close })}
+                </PopupCustom2>
+              </NextAndTool>
             </NowNextWrap>
           </GraphDiv>
         </Wrapper>
@@ -2654,65 +3150,3 @@ export default ({
     </AllWrap>
   );
 };
-
-// To Do List 코드 임시저장
-{
-  /* <TodoWrap>
-                            {newTodoView ? (
-                              <NewTodoDiv>
-                                <NewTopDiv>
-                                  <SelectWrapper>
-                                    <Select
-                                      {...mySubjectList}
-                                      id={'mySubject_id_study'}
-                                    />
-                                  </SelectWrapper>
-                                  <InputWrapper>
-                                    <Input
-                                      placeholder={'내용 (예: 1단원 암기)'}
-                                      bgColor={'white'}
-                                      {...todolistName}
-                                    />
-                                  </InputWrapper>
-                                </NewTopDiv>
-                                <NewBottomDiv>
-                                  <Button_custom
-                                    text={'추가'}
-                                    width={'100px'}
-                                    height={'35px'}
-                                    bgColor={'#0F4C82'}
-                                    color={'white'}
-                                    margin={'0 60px 0 0'}
-                                    onClick={() => {
-                                      onTodolistAdd();
-                                    }}
-                                  />
-                                  <Button_custom
-                                    text={'닫기'}
-                                    width={'100px'}
-                                    height={'35px'}
-                                    bgColor={'#0F4C82'}
-                                    color={'white'}
-                                    margin={'0'}
-                                    onClick={() => {
-                                      setNewTodoView(false);
-                                    }}
-                                  />
-                                </NewBottomDiv>
-                              </NewTodoDiv>
-                            ) : (
-                              <ListGrid
-                                height={130}
-                                width={470}
-                                columnWidth={225}
-                                rowHeight={44}
-                                rowCount={
-                                  Math.floor(todolistData_new.length / 2) + 1
-                                }
-                                columnCount={2}
-                              >
-                                {todolistRow}
-                              </ListGrid>
-                            )}
-                          </TodoWrap> */
-}

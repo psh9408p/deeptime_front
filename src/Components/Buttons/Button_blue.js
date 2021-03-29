@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const Container = styled.button`
-  width: 100%;
-  height: 100%;
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
   color: white;
@@ -15,8 +15,19 @@ const Container = styled.button`
   cursor: pointer;
 `;
 
-const Button = ({ text, onClick, fontSize = '14px' }) => (
-  <Container onClick={onClick} fontSize={fontSize}>
+const Button = ({
+  text,
+  onClick,
+  fontSize = '14px',
+  width = '100%',
+  height = '100%',
+}) => (
+  <Container
+    onClick={onClick}
+    fontSize={fontSize}
+    width={width}
+    height={height}
+  >
     {text}
   </Container>
 );

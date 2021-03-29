@@ -10,7 +10,7 @@ const Container = styled.button`
   color: ${(props) => props.color};
   font-weight: 600;
   text-align: center;
-  font-size: 14px;
+  font-size: ${(props) => props.fontSize};
   margin: ${(props) => props.margin};
   cursor: pointer;
 `;
@@ -26,6 +26,7 @@ const PopButton = forwardRef(
       width = '100px',
       height = '100%',
       margin,
+      fontSize = '14px',
     },
     ref,
   ) => {
@@ -39,6 +40,7 @@ const PopButton = forwardRef(
         margin={margin}
         bgColor={bgColor}
         color={color}
+        fontSize={fontSize}
       >
         {text}
       </Container>

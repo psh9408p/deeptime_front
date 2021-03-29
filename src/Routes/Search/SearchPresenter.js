@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import PropTypes from "prop-types";
-import FatText from "../../Components/FatText";
-import Loader from "../../Components/Loader";
-import UserCard from "../../Components/UserCard";
-import SquarePost from "../../Components/SquarePost";
+import React from 'react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import FatText from '../../Components/FatText';
+import Loader from '../../Components/Loader';
+import UserCard from '../../Components/UserCard';
+import SquarePost from '../../Components/SquarePost';
 
 const Wrapper = styled.div`
   height: 50vh;
@@ -45,7 +45,7 @@ const SearchPresenter = ({ searchTerm, loading, data }) => {
           {data.searchUser.length === 0 ? (
             <FatText text="No Users Found" />
           ) : (
-            data.searchUser.map(user => (
+            data.searchUser.map((user) => (
               <UserCard
                 key={user.id}
                 username={user.username}
@@ -61,7 +61,7 @@ const SearchPresenter = ({ searchTerm, loading, data }) => {
           {data.searchPost.length === 0 ? (
             <FatText text="No Posts Found" />
           ) : (
-            data.searchPost.map(post => (
+            data.searchPost.map((post) => (
               <SquarePost
                 key={post.id}
                 likeCount={post.likeCount}
@@ -78,7 +78,7 @@ const SearchPresenter = ({ searchTerm, loading, data }) => {
 
 SearchPresenter.propTypes = {
   searchTerm: PropTypes.string,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 };
 
 export default SearchPresenter;

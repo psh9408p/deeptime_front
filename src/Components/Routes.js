@@ -41,7 +41,7 @@ import Shop from '../Routes/Shop';
 import Refund from '../Routes/Refund';
 import Notice from '../Routes/Notice';
 import Chat from '../Routes/Chat';
-
+import TestGuide from '../Routes/TestGuide';
 export const MEPOSITION = gql`
   query me {
     me {
@@ -143,6 +143,7 @@ const LoggedOutRoutes = () => {
   return (
     <Switch>
       <Route exact path="/" component={Introduce} />
+      {/* <Route path="/testguide" component={TestGuide} /> */}
       <Route path="/userguide" component={UserGuide} />
       <Route path="/shopping" component={Shopping} />
       <Route path="/support" component={Support} />

@@ -227,15 +227,15 @@ export default ({ isIntro = false }) => {
             <li>
               <ul>
                 <FooterTop_Right_Item>공지사항</FooterTop_Right_Item>
-                <FooterTop_Right_Item>첼린지</FooterTop_Right_Item>
+                {/* <FooterTop_Right_Item>첼린지</FooterTop_Right_Item> */}
               </ul>
             </li>
             <li>
               <ul>
                 <FooterTop_Right_Item>사업 제휴문의</FooterTop_Right_Item>
-                <Link to="/refund">
+                {/* <Link to="/refund">
                   <FooterTop_Right_Item>취소 및 환불정책 </FooterTop_Right_Item>
-                </Link>
+                </Link> */}
               </ul>
             </li>
             <li>
@@ -248,20 +248,20 @@ export default ({ isIntro = false }) => {
             <li>
               <ul>
                 <FooterTop_Right_Item>회사소개</FooterTop_Right_Item>
-                <FooterTop_Right_Item>인재채용</FooterTop_Right_Item>
+                {/* <FooterTop_Right_Item>인재채용</FooterTop_Right_Item> */}
               </ul>
             </li>
           </FooterTop_Right>
           <li style={{ listStyle: 'none' }}>
             <HiddenFooterTop_Right>
               <HiddenFooterTop_Right_Item>공지사항</HiddenFooterTop_Right_Item>
-              <HiddenFooterTop_Right_Item>첼린지</HiddenFooterTop_Right_Item>
+              {/* <HiddenFooterTop_Right_Item>첼린지</HiddenFooterTop_Right_Item> */}
               <HiddenFooterTop_Right_Item>
                 사업 제휴문의
               </HiddenFooterTop_Right_Item>
-              <HiddenFooterTop_Right_Item>
+              {/* <HiddenFooterTop_Right_Item>
                 취소 및 환불정책
-              </HiddenFooterTop_Right_Item>
+              </HiddenFooterTop_Right_Item> */}
             </HiddenFooterTop_Right>
           </li>
           <li style={{ listStyle: 'none' }}>
@@ -284,7 +284,7 @@ export default ({ isIntro = false }) => {
                 {/* </a> */}
               </HiddenFooterTop_Right_Item>
               <HiddenFooterTop_Right_Item>회사소개</HiddenFooterTop_Right_Item>
-              <HiddenFooterTop_Right_Item>인재채용</HiddenFooterTop_Right_Item>
+              {/* <HiddenFooterTop_Right_Item>인재채용</HiddenFooterTop_Right_Item> */}
             </HiddenFooterTop_Right>
           </li>
         </FooterTop>

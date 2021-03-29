@@ -21,6 +21,7 @@ import {
   CREATE_SCHEDULE,
   DELETE_SCHEDULE,
   DRAG_SCHEDULE,
+  EDIT_TODOLIST,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
@@ -43,6 +44,8 @@ export default ({ defaultSet, isSelf = true }) => {
 
   const stateList = useSelect(stateBox, stateBox);
 
+  const [todoModiId, setTodoModiId] = useState('');
+  const [todoModi, setTodoModi] = useState(false);
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
   const [timeError, setTimeError] = useState(false);
   const [scheLoading, setScheLoading] = useState(false);
@@ -87,6 +90,7 @@ export default ({ defaultSet, isSelf = true }) => {
   const scheLocation = useInput('');
   const subjectName = useInput('');
   const todolistName = useInput('');
+  const todoModiName = useInput('');
   const scheduleStart = useInput(
     defaultSet.scheduleStart,
     start_range,
@@ -116,6 +120,7 @@ export default ({ defaultSet, isSelf = true }) => {
   const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
   const [addTodolistMutation] = useMutation(ADD_TODOLIST);
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
+  const [editTodolistMutation] = useMutation(EDIT_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const [createScheMutation] = useMutation(CREATE_SCHEDULE);
@@ -258,6 +263,7 @@ export default ({ defaultSet, isSelf = true }) => {
         addTodolistMutation={addTodolistMutation}
         todolistRefetch={todolistRefetch}
         deleteTodolistMutation={deleteTodolistMutation}
+        editTodolistMutation={editTodolistMutation}
         finishTodolistMutation={finishTodolistMutation}
         scheduleStart={scheduleStart}
         scheduleEnd={scheduleEnd}
@@ -304,6 +310,11 @@ export default ({ defaultSet, isSelf = true }) => {
         setScheLoading={setScheLoading}
         timeError={timeError}
         isSelf={isSelf}
+        todoModi={todoModi}
+        setTodoModi={setTodoModi}
+        todoModiName={todoModiName}
+        todoModiId={todoModiId}
+        setTodoModiId={setTodoModiId}
       />
     );
   } else {

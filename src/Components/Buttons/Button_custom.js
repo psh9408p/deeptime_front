@@ -15,7 +15,7 @@ const Container = styled.button`
   font-weight: 600;
   text-align: center;
   padding: ${(props) => props.padding};
-  font-size: 14px;
+  font-size: ${(props) => props.fontSize};
   cursor: pointer;
   margin: ${(props) => props.margin};
 `;
@@ -44,6 +44,7 @@ const Button = ({
   padding = '7px 0px',
   bgColor = '#efefef',
   color = 'black',
+  fontSize = '14px',
   loading = false,
 }) => (
   <Container
@@ -55,6 +56,7 @@ const Button = ({
     padding={padding}
     bgColor={bgColor}
     color={color}
+    fontSize={fontSize}
   >
     {loading ? <Loader /> : text}
   </Container>

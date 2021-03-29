@@ -16,6 +16,7 @@ import {
   DELETE_TODOLIST,
   MY_SUBJECT,
   ADD_TODOLIST,
+  EDIT_TODOLIST,
 } from '../Tabs/MyStudyTabs/MySchedule/MyScheduleQueries';
 import {
   START_SCHEDULE,
@@ -79,10 +80,13 @@ export default () => {
   const webcamRef = useRef();
 
   const todolistName = useInput('');
+  const todoModiName = useInput('');
   const scheduleTitle = useInput('');
 
   // const camSelect = useSelect();
 
+  const [todoModiId, setTodoModiId] = useState('');
+  const [todoModi, setTodoModi] = useState(false);
   const [studyBool, setStudyBool] = useState(true);
   const [aniBool, setAniBool] = useState(true);
   const [newTodoView, setNewTodoView] = useState(false);
@@ -99,6 +103,7 @@ export default () => {
 
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
+  const [editTodolistMutation] = useMutation(EDIT_TODOLIST);
   const [addTodolistMutation] = useMutation(ADD_TODOLIST);
   const [startScheduleMutation] = useMutation(START_SCHEDULE);
   const [stopScheduleMutation] = useMutation(STOP_SCHEDULE);
@@ -563,6 +568,7 @@ export default () => {
         subjectRefetch={subjectRefetch}
         deleteTodolistMutation={deleteTodolistMutation}
         finishTodolistMutation={finishTodolistMutation}
+        editTodolistMutation={editTodolistMutation}
         addTodolistMutation={addTodolistMutation}
         startScheduleMutation={startScheduleMutation}
         stopScheduleMutation={stopScheduleMutation}
@@ -598,6 +604,11 @@ export default () => {
         camEmpty={camEmpty}
         setCamEmpty={setCamEmpty}
         videoDevices={videoDevices}
+        todoModi={todoModi}
+        setTodoModi={setTodoModi}
+        todoModiName={todoModiName}
+        todoModiId={todoModiId}
+        setTodoModiId={setTodoModiId}
       />
     );
   }
