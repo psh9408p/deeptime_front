@@ -1,57 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Post from '../../../../Components/Post';
 import { Add, Lock } from '../../../../Components/Icons';
-import PopupButton from '../../../../Components/Buttons/PopupButton';
-import Button_custom from '../../../../Components/Buttons/Button_custom';
-import FatText from '../../../../Components/FatText';
-import Input_100 from '../../../../Components/Input_100';
-import Textarea from '../../../../Components/Textarea';
-import { FEED_ALL_QUERY } from './SearchGroupQueries';
 import Popup from 'reactjs-popup';
-
+import CheckBox from '../../../../Components/CheckBox';
 import Select from '../../../../Components/Select';
 import useSelect from '../../../../Hooks/useSelect';
-import useSelect_dynamic from '../../../../Hooks/useSelect_dynamic';
-import useSelect_dynamic2 from '../../../../Hooks/useSelect_dynamic2';
 import OneGroup from '../OneGroup/';
-import Loader from '../../../../Components/Loader';
 import CUGroup from '../CUGroup';
 
 import { studyOption_group } from '../../../../Components/LongArray';
 
 const FilterdSelect = styled.div`
-  width: 30%;
+  width: 100px;
   height: 100%;
 `;
 
-const SelectDiv = styled.div`
-  display: inline-flex;
-  border: 0;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.bgColor};
-  height: 35px;
-  margin-bottom: 7px;
-  font-size: 12px;
-  width: 100%;
-  span {
-    display: inline-flex;
-    width: 100px;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
+const FilterDiv = styled.div`
+  display: flex;
+  div:nth-child(1) {
+    margin-right: 10px;
   }
 `;
 
-const LoaderWrapper = styled.div`
-  position: absolute;
+const CheckedDiv = styled.div`
+  display: flex;
+
+  margin-right: 150px;
+`;
+
+const Check_Box = styled.div`
   display: flex;
   align-items: center;
+  text-align: center;
   justify-content: center;
-  z-index: 3;
-  height: 100%;
-  width: 100%;
 `;
 
 const HeaderDiv = styled.div`
@@ -71,61 +52,6 @@ const HeaderDiv = styled.div`
   z-index: 10; */
 `;
 
-const ContentBody = styled.form`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  padding: 20px 20px;
-`;
-
-const ContentTitle = styled(FatText)`
-  font-size: 18px;
-  text-align: center;
-  margin: 10px 0 30px 0;
-`;
-
-const ContentDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-`;
-
-const ButtonDiv = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const CaptionText = styled(Textarea)`
-  width: 376px;
-  height: 100px;
-  display: inline-block;
-`;
-
-const MoreDiv = styled.div`
-  width: 100%;
-  max-width: 600px;
-`;
-
-const InputWrap = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 376px;
-  height: 35px;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: #f1f0ef;
-  padding-left: 15px;
-  font-size: 12px;
-  margin-bottom: 10px;
-  span {
-    margin-right: 5px;
-  }
-`;
-
 const GroupListWrap = styled.div`
   margin-top: 10px;
   width: 100%;
@@ -136,7 +62,6 @@ const GroupBox = styled.div`
   cursor: pointer;
   display: flex;
   padding: 10px;
-  /* flex-direction: column; */
   width: 100%;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -193,7 +118,7 @@ const PopupCustom = styled(Popup)`
     border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
-let filtering = false;
+let group_tmp = [];
 
 export default ({
   viewTabs,
@@ -215,31 +140,110 @@ export default ({
 
   const group1 = useSelect(getAll, getAll, groupData.category);
 
+  const arr3 = ['높은 시간순', '낮은 시간순', '높은 출석률순', '낮은 출석률순'];
+  const sTime = useSelect(arr3, arr3);
+
   const [filData, setFilData] = useState(groupData);
+  const [publicBool, setPublicBool] = useState(false);
+  const [empty, setEmpty] = useState(false);
 
   const getData = () => {
     if (group1.option === '전체') {
-      setFilData(groupData);
+      group_tmp = groupData;
     } else {
       const filGroup = groupData.filter(
         (ctr) => ctr.category === group1.option,
       );
-      setFilData(filGroup);
+      group_tmp = filGroup;
     }
+  };
+
+  const timeSort = () => {
+    if (sTime.option === '높은 시간순') {
+      group_tmp.sort(function (a, b) {
+        return b.lastStudyTime - a.lastStudyTime;
+      });
+    } else if (sTime.option === '낮은 시간순') {
+      group_tmp.sort(function (a, b) {
+        return a.lastStudyTime - b.lastStudyTime;
+      });
+    } else if (sTime.option === '낮은 출석률순') {
+      group_tmp.sort(function (a, b) {
+        return a.lastAttendance - b.lastAttendance;
+      });
+    } else if (sTime.option === '높은 출석률순') {
+      group_tmp.sort(function (a, b) {
+        return b.lastAttendance - a.lastAttendance;
+      });
+    }
+  };
+  const publicHandler = () => {
+    if (publicBool) {
+      const filGroup = group_tmp.filter((ctr) => ctr.publicBool === true);
+      group_tmp = filGroup;
+    }
+  };
+
+  const emptyHandle = () => {
+    if (empty) {
+      const filGroup = group_tmp.filter(
+        (ctr) => ctr.maxMember > ctr.memberCount,
+      );
+      group_tmp = filGroup;
+    }
+  };
+
+  const publicBoolHandler = () => {
+    setPublicBool(!publicBool);
+  };
+
+  const emptyHandler = () => {
+    setEmpty(!empty);
   };
 
   useEffect(() => {
     getData();
-  }, [group1.option]);
+    timeSort();
+    publicHandler();
+    emptyHandle();
+    setFilData(group_tmp);
+  }, [group1.option, sTime.option, publicBool, empty]);
 
   return (
     <>
       {viewTabs === 0 ? (
         <>
           <HeaderDiv>
-            <FilterdSelect>
-              <Select {...group1} id={'testSelect'} />
-            </FilterdSelect>
+            <FilterDiv>
+              <FilterdSelect>
+                <Select {...group1} id={'testSelect'} />
+              </FilterdSelect>
+              <FilterdSelect>
+                <Select {...sTime} id={'testSelect2'} />
+              </FilterdSelect>
+            </FilterDiv>
+            <CheckedDiv>
+              <Check_Box>
+                <CheckBox
+                  id={'publicCheck'}
+                  boxSize={'30px'}
+                  margin={'0 5px'}
+                  checked={publicBool}
+                  onChange={publicBoolHandler}
+                />
+                <span style={{ marginRight: '10px' }}>공개</span>
+              </Check_Box>
+              <Check_Box>
+                <CheckBox
+                  id={'emptyCheck'}
+                  boxSize={'30px'}
+                  margin={' 0 5px'}
+                  checked={empty}
+                  onChange={emptyHandler}
+                />
+                <span>빈방</span>
+              </Check_Box>
+            </CheckedDiv>
             <Add
               fill={'#0F4C82'}
               onClick={() => {
@@ -297,43 +301,6 @@ export default ({
               </PopupCustom>
             ))}
           </GroupListWrap>
-          {/* <PostWrap>
-            {filtering &&
-              filterdData.map((post) => (
-                <div style={{ marginBottom: '25px' }} key={post.id}>
-                  <Post
-                    id={post.id}
-                    location={post.location}
-                    caption={post.caption}
-                    user={post.user}
-                    files={post.files}
-                    likeCount={post.likeCount}
-                    isLiked={post.isLiked}
-                    isSelf={post.isSelf}
-                    comments={post.comments}
-                    createdAt={post.createdAt}
-                    fileKey={post.files.map((file) => file.key)}
-                    setMyTabs={setMyTabs}
-                    setEditPostId={setEditPostId}
-                    locationInput={location}
-                    captionInput={caption}
-                    refetchQuerie={FEED_ALL_QUERY}
-                    variables={variables}
-                  />
-                </div>
-              ))}
-          </PostWrap> */}
-          {/* <MoreDiv>
-            <Button_custom
-              margin={'0'}
-              width={'100%'}
-              text={'게시물 20개 더보기'}
-              loading={networkStatus === 4 ? true : false}
-              onClick={() => {
-                setVariables({ first: variables.first + feedTerm });
-              }}
-            />
-          </MoreDiv> */}
         </>
       ) : (
         <CUGroup

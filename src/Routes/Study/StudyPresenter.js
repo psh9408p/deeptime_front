@@ -178,7 +178,8 @@ const ControlWrap = styled.div`
   height: 130px;
   margin: 10px;
   /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius}; */
+  border-radius: ${(props) =>
+    props.theme.borderRadius}; */
 `;
 
 const ControlTop = styled.div`
