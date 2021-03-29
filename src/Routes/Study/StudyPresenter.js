@@ -3019,7 +3019,7 @@ export default ({
             </HeaderDiv>
             <TimeLogWrap>
               <DonutWrap>
-                <DonutChart_today
+                {/* <DonutChart_today
                   data={isAm ? donutData_am : donutData_pm}
                   color={isAm ? rgbBox_am : rgbBox_pm}
                   title={'Today           Time Log'}
@@ -3028,7 +3028,8 @@ export default ({
                   //   '부재 시간' + '　' + '　' + '　' + '　',
                   //   '나머지 시간',
                   // ]}
-                />
+                /> */}
+                서비스 업데이트 중...
               </DonutWrap>
               <TotalTimeWrap>
                 <TotalNumber>
@@ -3047,18 +3048,18 @@ export default ({
                   {target_min.length === 1 ? '0' + target_min : target_min}
                   {/* </span> */}
                 </TotalNumber>
-                <DonutLabel>
+                {/* <DonutLabel>
                   <span style={{ color: '#0F4C82' }}>■</span> 학습 시간
                 </DonutLabel>
-                {/* <DonutLabel>
+                <DonutLabel>
                   <span style={{ color: 'rgba(233, 236, 244, 1)' }}>■</span>부재
                   시간
-                </DonutLabel> */}
+                </DonutLabel>
                 <DonutLabel>
                   <span style={{ color: '#EAD6D4' }}>■</span> 나머지 시간
-                </DonutLabel>
+                </DonutLabel> */}
               </TotalTimeWrap>
-              <ClockBox>
+              {/* <ClockBox>
                 <Clock24 />
               </ClockBox>
               <TimeButton
@@ -3068,7 +3069,7 @@ export default ({
               >
                 {isAm ? 'AM' : 'PM'}
               </TimeButton>
-              <TodayPercent>{donutPercent}%</TodayPercent>
+              <TodayPercent>{donutPercent}%</TodayPercent> */}
             </TimeLogWrap>
             <NowNextWrap>
               <BarWrap>
