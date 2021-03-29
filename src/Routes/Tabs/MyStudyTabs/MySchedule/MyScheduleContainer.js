@@ -21,6 +21,7 @@ import {
   CREATE_SCHEDULE,
   DELETE_SCHEDULE,
   DRAG_SCHEDULE,
+  EDIT_TODOLIST,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
@@ -43,6 +44,7 @@ export default ({ defaultSet, isSelf = true }) => {
 
   const stateList = useSelect(stateBox, stateBox);
 
+  const [todoModiId, setTodoModiId] = useState('');
   const [todoModi, setTodoModi] = useState(false);
   const [subjectColor, setSubjectColor] = useState(`#0F4C82`);
   const [timeError, setTimeError] = useState(false);
@@ -118,6 +120,7 @@ export default ({ defaultSet, isSelf = true }) => {
   const [bookMarkSubjectMutation] = useMutation(BOOKMARK_SUBJECT);
   const [addTodolistMutation] = useMutation(ADD_TODOLIST);
   const [deleteTodolistMutation] = useMutation(DELETE_TODOLIST);
+  const [editTodolistMutation] = useMutation(EDIT_TODOLIST);
   const [finishTodolistMutation] = useMutation(FINISH_TODOLIST);
   const [editStudySetMutation] = useMutation(EDIT_STUDYSET);
   const [createScheMutation] = useMutation(CREATE_SCHEDULE);
@@ -260,6 +263,7 @@ export default ({ defaultSet, isSelf = true }) => {
         addTodolistMutation={addTodolistMutation}
         todolistRefetch={todolistRefetch}
         deleteTodolistMutation={deleteTodolistMutation}
+        editTodolistMutation={editTodolistMutation}
         finishTodolistMutation={finishTodolistMutation}
         scheduleStart={scheduleStart}
         scheduleEnd={scheduleEnd}
@@ -309,6 +313,8 @@ export default ({ defaultSet, isSelf = true }) => {
         todoModi={todoModi}
         setTodoModi={setTodoModi}
         todoModiName={todoModiName}
+        todoModiId={todoModiId}
+        setTodoModiId={setTodoModiId}
       />
     );
   } else {

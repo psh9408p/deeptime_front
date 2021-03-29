@@ -8,7 +8,6 @@ export const START_SCHEDULE = gql`
     $totalTime: Int!
     $calendarId: String!
     $state: String!
-    $existTodo: Boolean!
   ) {
     startSchedule_study(
       title: $title
@@ -17,7 +16,6 @@ export const START_SCHEDULE = gql`
       totalTime: $totalTime
       calendarId: $calendarId
       state: $state
-      existTodo: $existTodo
     )
   }
 `;

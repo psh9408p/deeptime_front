@@ -54,6 +54,16 @@ export const FINISH_TODOLIST = gql`
   }
 `;
 
+export const EDIT_TODOLIST = gql`
+  mutation editTodolist(
+    $todolistId: String!
+    $subjectId: String!
+    $name: String!
+  ) {
+    editTodolist(todolistId: $todolistId, subjectId: $subjectId, name: $name)
+  }
+`;
+
 export const MY_SCHEDULE = gql`
   query mySchedule {
     mySchedule {
