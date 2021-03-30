@@ -2098,6 +2098,8 @@ export default ({
                     width={'78px'}
                     margin={'0 10px 0 0'}
                     text={'TO DO'}
+                    color={'#0F4C82'}
+                    fontWeight={'bold'}
                   />
                 }
                 closeOnDocumentClick={false}
@@ -2186,7 +2188,7 @@ export default ({
                   <PopButton_custom
                     width={'78px'}
                     margin={'0 10px 0 0'}
-                    text={'과목'}
+                    text={'과 목'}
                   />
                 }
                 closeOnDocumentClick={false}

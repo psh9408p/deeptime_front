@@ -8,7 +8,7 @@ const Container = styled.button`
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.bgColor};
   color: ${(props) => props.color};
-  font-weight: 600;
+  font-weight: ${(props) => props.fontWeight};
   text-align: center;
   font-size: ${(props) => props.fontSize};
   margin: ${(props) => props.margin};
@@ -27,6 +27,7 @@ const PopButton = forwardRef(
       height = '100%',
       margin,
       fontSize = '14px',
+      fontWeight = '600',
     },
     ref,
   ) => {
@@ -41,6 +42,7 @@ const PopButton = forwardRef(
         bgColor={bgColor}
         color={color}
         fontSize={fontSize}
+        fontWeight={fontWeight}
       >
         {text}
       </Container>

@@ -49,6 +49,7 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
 let detect_interval = 9900 * 1;
+// let detect_interval = 1000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;
@@ -65,7 +66,7 @@ const normArrayThreshold_high = 10000;
 let displayDetectResult = true;
 let camera_width = 640;
 let camera_height = 480;
-let detect_count = 5;
+let detect_count = 6;
 let doDrawResult = false;
 
 let ssd_model = null;
@@ -85,6 +86,7 @@ export default () => {
 
   // const camSelect = useSelect();
 
+  const [settingView, setSettingView] = useState(false);
   const [todoModiId, setTodoModiId] = useState('');
   const [todoModi, setTodoModi] = useState(false);
   const [studyBool, setStudyBool] = useState(true);
@@ -609,6 +611,8 @@ export default () => {
         todoModiName={todoModiName}
         todoModiId={todoModiId}
         setTodoModiId={setTodoModiId}
+        settingView={settingView}
+        setSettingView={setSettingView}
       />
     );
   }

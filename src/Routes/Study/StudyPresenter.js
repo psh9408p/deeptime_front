@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import DonutChart_today from '../../Components/Charts/DonutChart_today';
 import SumArray from '../../Components/Array/SumArray';
 import twoArraySum from '../../Components/twoArraySum';
@@ -8,12 +8,13 @@ import ObjectCopy from '../../Components/ObjectCopy';
 import RowBarChart_now from '../../Components/Charts/RowBarChart_now';
 import moment from 'moment';
 import {
-  NextSchedule,
   Flag,
   Delete,
   Add_12,
   Logo,
   Edit,
+  Studying,
+  Absence,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -178,8 +179,7 @@ const ControlWrap = styled.div`
   height: 130px;
   margin: 10px;
   /* border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) =>
-    props.theme.borderRadius}; */
+  border-radius: ${(props) => props.theme.borderRadius}; */
 `;
 
 const ControlTop = styled.div`
@@ -324,12 +324,36 @@ const TimeLogWrap = styled.div`
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
-const DonutWrap = styled.div`
+const StateWrap = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 230px;
-  height: 230px;
+  height: 100%;
+`;
+
+const Animation = keyframes`
+    0%{
+        color: black;
+    }
+    50%{
+        color: white;
+    }
+    100%{
+        color: black;
+    }
+`;
+
+const StateText = styled.p`
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 10px;
+`;
+
+const StateTextAni = styled(StateText)`
+  animation: ${Animation} 2s linear;
+  animation-iteration-count: infinite;
 `;
 
 const TotalTimeWrap = styled.div`
@@ -347,6 +371,7 @@ const TotalNumber = styled.div`
   text-align: center;
 
   &:first-child {
+    margin-bottom: 2px;
     line-height: 30px;
     span {
       font-size: 35px;
@@ -355,7 +380,6 @@ const TotalNumber = styled.div`
   }
 
   &:nth-child(2) {
-    margin-bottom: 20px;
     line-height: 25px;
     span {
       font-size: 25px;
@@ -449,7 +473,6 @@ const IconWrap = styled.div`
 const NextText = styled.p`
   font-size: 13px;
   font-weight: bold;
-  margin-left: 10px;
 `;
 
 const DDayDiv = styled.div`
@@ -468,8 +491,10 @@ const DName = styled.div`
 `;
 
 const DNumber = styled.div`
+  cursor: pointer;
   font-size: 24px;
   color: ${(props) => props.theme.classicBlue};
+  z-index: 99;
 `;
 
 const SetDiv = styled.div`
@@ -998,6 +1023,8 @@ export default ({
   todoModiName,
   todoModiId,
   setTodoModiId,
+  settingView,
+  setSettingView,
 }) => {
   // 비프음
   const [startPlay] = useSound(startSound);
@@ -1736,7 +1763,6 @@ export default ({
         alert('스케줄을 시작할 수 없습니다.');
       } else {
         await myInfoRefetch();
-        // await todolistRefetch();
         mySubjectList2.setOption(mySubjectList2.valueList[0]);
         stateList.setOption('자습');
         scheduleTitle.setValue('');
@@ -2080,8 +2106,8 @@ export default ({
         break_boolean = false;
       }
     } else {
-      nextTitle1 = '다음 스케줄';
-      nextTitle2 = '없음';
+      nextTitle1 = '스케줄 없음';
+      nextTitle2 = '';
       next_TimeText = '';
       break_boolean = false;
     }
@@ -2737,7 +2763,6 @@ export default ({
                 </span>
               </div>
             )}
-
             <AvatarBox display={coverView ? 'none' : 'flex'}>
               <FixedList
                 height={110}
@@ -2760,10 +2785,14 @@ export default ({
           <GraphDiv>
             <HeaderDiv>
               <DDayDiv>
-                {dDayOn && (
+                {dDayOn ? (
                   <>
                     <DName>{dDateName.value}</DName>
-                    <DNumber>
+                    <DNumber
+                      onClick={() => {
+                        setSettingView(true);
+                      }}
+                    >
                       {realDDay === 0
                         ? 'D-day'
                         : realDDay > 0
@@ -2771,6 +2800,14 @@ export default ({
                         : `D${realDDay}`}
                     </DNumber>
                   </>
+                ) : (
+                  <DNumber
+                    onClick={() => {
+                      setSettingView(true);
+                    }}
+                  >
+                    D-day
+                  </DNumber>
                 )}
               </DDayDiv>
               <SetDiv>
@@ -2781,6 +2818,8 @@ export default ({
                       height={'30px'}
                       margin={'0 10px 0 0'}
                       text={'TO DO'}
+                      color={'#0F4C82'}
+                      fontWeight={'bold'}
                     />
                   }
                   closeOnDocumentClick={false}
@@ -2874,11 +2913,20 @@ export default ({
                   onClick={() => {
                     myInfoRefetch();
                     subjectRefetch();
-                    // todolistRefetch();
+                    todolistRefetch();
                   }}
                 />
+                <Button_setting
+                  onClick={() => {
+                    setSettingView(true);
+                  }}
+                  margin={'0'}
+                />
                 <PopupCustom
-                  trigger={<Button_setting margin={'0'} />}
+                  open={settingView}
+                  onClose={() => {
+                    setSettingView(false);
+                  }}
                   closeOnDocumentClick={false}
                   modal
                 >
@@ -3019,58 +3067,38 @@ export default ({
               </SetDiv>
             </HeaderDiv>
             <TimeLogWrap>
-              <DonutWrap>
-                {/* <DonutChart_today
-                  data={isAm ? donutData_am : donutData_pm}
-                  color={isAm ? rgbBox_am : rgbBox_pm}
-                  title={'Today           Time Log'}
-                  // labels={[
-                  //   'Deep Time',
-                  //   '부재 시간' + '　' + '　' + '　' + '　',
-                  //   '나머지 시간',
-                  // ]}
-                /> */}
-                서비스 업데이트 중...
-              </DonutWrap>
+              {aniBool && (
+                <StateWrap>
+                  <Absence />
+                  <StateTextAni>AI 로딩중...</StateTextAni>
+                </StateWrap>
+              )}
+              {!aniBool && studyBool ? (
+                <StateWrap>
+                  <Studying />
+                  <StateText>학습중</StateText>
+                </StateWrap>
+              ) : (
+                !aniBool && (
+                  <StateWrap>
+                    <Absence />
+                    <StateText>부재중...</StateText>
+                  </StateWrap>
+                )
+              )}
               <TotalTimeWrap>
                 <TotalNumber>
-                  <p style={{ marginBottom: '5px' }}>학습 시간</p>
+                  <p style={{ marginBottom: '10px' }}>학습 시간</p>
                   <span>
                     {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
                     {total_min.length === 1 ? '0' + total_min : total_min}
                   </span>
                 </TotalNumber>
                 <TotalNumber>
-                  {/* 목표 시간 */}/ {/* <br />
-                  <span> */}
-                  {target_hour.length === 1
-                    ? '0' + target_hour
-                    : target_hour} :{' '}
-                  {target_min.length === 1 ? '0' + target_min : target_min}
-                  {/* </span> */}
+                  /{target_hour.length === 1 ? '0' + target_hour : target_hour}{' '}
+                  : {target_min.length === 1 ? '0' + target_min : target_min}
                 </TotalNumber>
-                {/* <DonutLabel>
-                  <span style={{ color: '#0F4C82' }}>■</span> 학습 시간
-                </DonutLabel>
-                <DonutLabel>
-                  <span style={{ color: 'rgba(233, 236, 244, 1)' }}>■</span>부재
-                  시간
-                </DonutLabel>
-                <DonutLabel>
-                  <span style={{ color: '#EAD6D4' }}>■</span> 나머지 시간
-                </DonutLabel> */}
               </TotalTimeWrap>
-              {/* <ClockBox>
-                <Clock24 />
-              </ClockBox>
-              <TimeButton
-                onClick={() => {
-                  setIsAm(!isAm);
-                }}
-              >
-                {isAm ? 'AM' : 'PM'}
-              </TimeButton>
-              <TodayPercent>{donutPercent}%</TodayPercent> */}
             </TimeLogWrap>
             <NowNextWrap>
               <BarWrap>
@@ -3085,7 +3113,6 @@ export default ({
               <NextAndTool>
                 <NextTimeDiv>
                   <IconWrap>
-                    <NextSchedule />
                     <NextText>다음 스케줄</NextText>
                   </IconWrap>
                   <TimeIn>
@@ -3110,6 +3137,8 @@ export default ({
                     <PopButton_custom
                       height={'30px'}
                       width={'100%'}
+                      bgColor={'#0F4C82'}
+                      color={'white'}
                       text={'스케줄 조정'}
                     />
                   }
