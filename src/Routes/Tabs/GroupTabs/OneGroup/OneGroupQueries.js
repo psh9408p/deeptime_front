@@ -8,6 +8,7 @@ export const SEEONE_GROUP = gql`
       maxMember
       category
       targetTime
+      password
       publicBool
       bio
       imgUrl

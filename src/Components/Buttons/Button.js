@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const Container = styled.button`
-  width: 100%;
+  width: ${(props) => props.width};
   border: 0;
   border-radius: ${(props) => props.theme.borderRadius};
   color: white;
@@ -15,8 +15,19 @@ const Container = styled.button`
   cursor: pointer;
 `;
 
-const Button = ({ text, onClick, bgColor = '#0F4C82', padding = '7px 0' }) => (
-  <Container onClick={onClick} bgColor={bgColor} padding={padding}>
+const Button = ({
+  text,
+  onClick,
+  bgColor = '#0F4C82',
+  padding = '7px 0',
+  width = '100%',
+}) => (
+  <Container
+    onClick={onClick}
+    bgColor={bgColor}
+    padding={padding}
+    width={width}
+  >
     {text}
   </Container>
 );

@@ -17,6 +17,7 @@ import WeekRange from '../../../../Components/Date/WeekRange';
 import ObjectCopy from '../../../../Components/ObjectCopy';
 import HourMinCal from '../../../../Components/HourMinCal';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
+import Button from '../../../../Components/Buttons/Button';
 import Popup from 'reactjs-popup';
 import { Link } from 'react-router-dom';
 import CUGroup from '../CUGroup';
@@ -26,6 +27,7 @@ import FatText from '../../../../Components/FatText';
 import { FixedSizeList as AttendanceList } from 'react-window';
 import CheckBox from '../../../../Components/CheckBox';
 import moment from 'moment';
+import Input from '../../../../Components/Input';
 
 const Wrapper = styled.div`
   position: relative;
@@ -267,6 +269,17 @@ const PBody = styled.div`
   padding: 20px;
 `;
 
+const PBody2 = styled.form`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
 const PTitle = styled(FatText)`
   font-size: 18px;
   text-align: center;
@@ -386,6 +399,9 @@ export default ({
   attendDate,
   setAttendDate,
   setSelectFile,
+  passView,
+  setPassView,
+  joinPassword,
 }) => {
   // 리랜더
   const [renderBool, setRenderBool] = useState(false);
@@ -846,17 +862,54 @@ export default ({
                 )}
               </RefreshDiv>
             ) : (
-              <JoinDiv>
-                <Button_custom
-                  width={'100px'}
-                  height={'33px'}
-                  bgColor={'#DB4437'}
-                  text={'가입하기'}
-                  onClick={() => {
-                    onJoin(groupData.id);
+              <>
+                <JoinDiv>
+                  <Button_custom
+                    width={'100px'}
+                    height={'33px'}
+                    bgColor={'#DB4437'}
+                    text={'가입하기'}
+                    onClick={() => {
+                      if (groupData.publicBool) {
+                        onJoin(groupData.id);
+                      } else {
+                        setPassView(true);
+                      }
+                    }}
+                  />
+                </JoinDiv>
+                <PopupCustom
+                  open={passView}
+                  closeOnDocumentClick={false}
+                  onClose={() => {
+                    setPassView(false);
                   }}
-                />
-              </JoinDiv>
+                  modal
+                >
+                  {(close) => (
+                    <PBody2
+                      onSubmit={() => {
+                        if (groupData.password === joinPassword.value) {
+                          onJoin(groupData.id);
+                        } else {
+                          alert('비밀번호가 일치하지 않습니다.');
+                        }
+                      }}
+                    >
+                      <PopupClose onClick={() => close()} />
+                      비밀번호 :&nbsp;&nbsp;
+                      <Input
+                        type="password"
+                        placeholder={'그룹 비밀번호'}
+                        margin={'0 10px 0 0'}
+                        width={'200px'}
+                        {...joinPassword}
+                      />
+                      <Button width={'100px'} text={'가입'} />
+                    </PBody2>
+                  )}
+                </PopupCustom>
+              </>
             )}
           </ContentRow>
           <ContentRow>
@@ -867,12 +920,10 @@ export default ({
               <RowBarChart_group
                 data_1={
                   isSearch
-                    ? [firstTime / 60, averageTime / 60]
-                    : [firstTime / 60, myTime / 60, averageTime / 60]
+                    ? [firstTime / 3600, averageTime / 3600]
+                    : [firstTime / 3600, myTime / 3600, averageTime / 3600]
                 }
-                data_2={new Array(isSearch ? 2 : 3).fill(
-                  groupData.targetTime * 60,
-                )}
+                data_2={new Array(isSearch ? 2 : 3).fill(groupData.targetTime)}
                 dateRange={'today'}
                 isSearch={isSearch}
               />

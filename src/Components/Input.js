@@ -7,10 +7,11 @@ const Container = styled.input`
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.bgColor};
-  width: 100%;
+  width: ${(props) => props.width};
   height: ${(props) => props.height};
   font-size: 12px;
   padding: 0px 15px;
+  margin: ${(props) => props.margin};
 `;
 
 const Input = ({
@@ -24,6 +25,8 @@ const Input = ({
   className,
   bgColor = '#FAFAFA',
   autoComplete = 'off',
+  margin,
+  width = '100%',
 }) => (
   <Container
     id={id}
@@ -36,6 +39,8 @@ const Input = ({
     type={type}
     height={height}
     bgColor={bgColor}
+    margin={margin}
+    width={width}
   />
 );
 

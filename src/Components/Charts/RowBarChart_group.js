@@ -54,16 +54,22 @@ export default ({ data_1, data_2, dateRange, isSearch = false }) => {
             let decimalTime = parseFloat(tooltipItem.value);
             let hours = 0;
             let minutes = 0;
-            if (dateRange === 'today') {
-              hours = Math.floor(decimalTime / 60);
-              decimalTime = decimalTime - hours * 60;
-              minutes = Math.round(decimalTime);
-            } else {
-              decimalTime = decimalTime * 60;
-              hours = Math.floor(decimalTime / 60);
-              decimalTime = decimalTime - hours * 60;
-              minutes = Math.round(decimalTime);
-            }
+            // if (dateRange === 'today') {
+            //   hours = Math.floor(decimalTime / 60);
+            //   decimalTime = decimalTime - hours * 60;
+            //   minutes = Math.round(decimalTime);
+            // } else {
+            //   decimalTime = decimalTime * 60;
+            //   hours = Math.floor(decimalTime / 60);
+            //   decimalTime = decimalTime - hours * 60;
+            //   minutes = Math.round(decimalTime);
+            // }
+
+            // 단위를 분&시간 분리 하려면 위에꺼 쓰면됨
+            decimalTime = decimalTime * 60;
+            hours = Math.floor(decimalTime / 60);
+            decimalTime = decimalTime - hours * 60;
+            minutes = Math.round(decimalTime);
             return (
               (tooltipItem.datasetIndex === 0
                 ? tooltipItem.label === 'Group'
@@ -89,12 +95,14 @@ export default ({ data_1, data_2, dateRange, isSearch = false }) => {
             // },
             scaleLabel: {
               display: true,
-              labelString: dateRange === 'today' ? '시간(분)' : '시간(시)',
+              // labelString: dateRange === 'today' ? '시간(분)' : '시간(시)',
+              labelString: '시간(시)',
             },
             ticks: {
               beginAtZero: true,
               // min: 0,
-              stepSize: dateRange === 'today' ? 10 : 1,
+              // stepSize: dateRange === 'today' ? 10 : 1,
+              stepSize: 1,
             },
           },
         ],

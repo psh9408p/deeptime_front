@@ -36,11 +36,13 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   const [updateLoad, setUpdateLoad] = useState(false);
   const [attendDate, setAttendDate] = useState(new Date());
   const [selectFile, setSelectFile] = useState(null);
+  const [passView, setPassView] = useState(false);
 
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
   const name = useInput('');
   const password = useInput('');
+  const joinPassword = useInput('');
   const bio = useInput('');
   const groupCategory = useSelect(studyOption_group, studyOption_group);
 
@@ -290,6 +292,9 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
         attendDate={attendDate}
         setAttendDate={setAttendDate}
         setSelectFile={setSelectFile}
+        passView={passView}
+        setPassView={setPassView}
+        joinPassword={joinPassword}
       />
     );
   }

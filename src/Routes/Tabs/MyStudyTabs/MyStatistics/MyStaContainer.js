@@ -59,15 +59,15 @@ export default ({ isSelf = true }) => {
         );
       },
     );
-    html2canvas(canvas_bottom, { width: canvas_bottom.clientWidth + 20 }).then(
-      (canvas) => {
-        // document.body.appendChild(canvas);
-        saveAs(
-          canvas.toDataURL('image/png'),
-          'deeptime_stats_' + file_tail + '_2.png',
-        );
-      },
-    );
+    // html2canvas(canvas_bottom, { width: canvas_bottom.clientWidth + 20 }).then(
+    //   (canvas) => {
+    //     // document.body.appendChild(canvas);
+    //     saveAs(
+    //       canvas.toDataURL('image/png'),
+    //       'deeptime_stats_' + file_tail + '_2.png',
+    //     );
+    //   },
+    // );
   };
 
   if (networkStatus === 1) {

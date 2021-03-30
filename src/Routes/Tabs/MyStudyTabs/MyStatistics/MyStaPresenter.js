@@ -46,7 +46,7 @@ const BigBox = styled.div`
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   width: 654.5px;
-  height: 1500px;
+  height: 1060px;
   padding-top: 10px;
   margin-bottom: 30px;
   position: relative;
@@ -81,7 +81,7 @@ const StatisRow = styled.div`
 `;
 
 const StatisRow2 = styled(StatisRow)`
-  &:nth-child(1) {
+  /* &:nth-child(1) {
     height: 290px;
   }
   &:nth-child(2) {
@@ -90,6 +90,9 @@ const StatisRow2 = styled(StatisRow)`
   &:last-child {
     height: 125px;
     margin-bottom: 10px;
+  } */
+  :first-child {
+    height: 290px;
   }
 `;
 
@@ -283,12 +286,14 @@ const ChangeButton = styled.button`
 
 const Capture = styled.div`
   width: 100%;
-  height: 740px;
+  /* height: 740px; */
+  height: 1040px;
   margin-bottom: 10px;
 `;
 
 const Capture2 = styled(Capture)`
-  height: 730px;
+  /* height: 730px; */
+  height: 300px;
 `;
 
 let taskArray = [];
@@ -1332,8 +1337,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </Capture>
-            <Capture2 id="staCapture_bottom">
+              {/* </Capture>
+            <Capture2 id="staCapture_bottom"> */}
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1354,7 +1359,7 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-              <StatisRow2>
+              {/* <StatisRow2>
                 <ChartWrap>
                   <PieChart
                     data={
@@ -1430,8 +1435,8 @@ export default ({
                     <Loader />
                   </LoaderWrapper>
                 )}
-              </StatisRow2>
-            </Capture2>
+              </StatisRow2> */}
+            </Capture>
           </>
         )}
         {StaTabs.currentIndex === 1 && (
@@ -1494,8 +1499,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </Capture>
-            <Capture2 id="staCapture_bottom">
+              {/* </Capture>
+            <Capture2 id="staCapture_bottom"> */}
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1516,7 +1521,7 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-              <StatisRow2>
+              {/* <StatisRow2>
                 <ChartWrap>
                   <PieChart
                     data={
@@ -1592,8 +1597,8 @@ export default ({
                     <Loader />
                   </LoaderWrapper>
                 )}
-              </StatisRow2>
-            </Capture2>
+              </StatisRow2> */}
+            </Capture>
           </>
         )}
         {StaTabs.currentIndex === 2 && (
@@ -1656,8 +1661,8 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow>
-            </Capture>
-            <Capture2 id="staCapture_bottom">
+              {/* </Capture>
+            <Capture2 id="staCapture_bottom"> */}
               <StatisRow2>
                 <ChartWrap>
                   <RowBarChart
@@ -1678,7 +1683,7 @@ export default ({
                   </LoaderWrapper>
                 )}
               </StatisRow2>
-              <StatisRow2>
+              {/* <StatisRow2>
                 <ChartWrap>
                   <PieChart
                     data={
@@ -1754,8 +1759,8 @@ export default ({
                     <Loader />
                   </LoaderWrapper>
                 )}
-              </StatisRow2>
-            </Capture2>
+              </StatisRow2> */}
+            </Capture>
           </>
         )}
       </BigBox>
