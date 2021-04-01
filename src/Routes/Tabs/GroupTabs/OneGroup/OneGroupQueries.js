@@ -12,6 +12,7 @@ export const SEEONE_GROUP = gql`
       publicBool
       bio
       imgUrl
+      activeDay
       manager {
         id
         username
@@ -72,6 +73,7 @@ export const EDIT_GROUP = gql`
     $bio: String!
     $imgUrl: String!
     $imgKey: String!
+    $activeDay: [Boolean!]!
   ) {
     editGroup(
       groupId: $groupId
@@ -83,6 +85,7 @@ export const EDIT_GROUP = gql`
       bio: $bio
       imgUrl: $imgUrl
       imgKey: $imgKey
+      activeDay: $activeDay
     )
   }
 `;

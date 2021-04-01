@@ -13,6 +13,7 @@ export const MY_GROUP = gql`
       publicBool
       bio
       imgUrl
+      activeDay
       imManager
       manager {
         id

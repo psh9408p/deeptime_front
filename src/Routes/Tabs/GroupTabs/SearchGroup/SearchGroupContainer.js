@@ -29,6 +29,7 @@ export default ({ myTabs }) => {
   const [viewTabs, setViewTabs] = useState(0);
   const [makeLoad, setMakeLoad] = useState(false);
   const [selectFile, setSelectFile] = useState(null);
+  const [dayBool, setDayBool] = useState(new Array(7).fill(true));
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
   const name = useInput('');
@@ -66,6 +67,9 @@ export default ({ myTabs }) => {
     } else if (targetTime.value < 1 || targetTime.value > 18) {
       alert('최소 학습 시간을 1~18시간 이내로 설정하세요.');
       return;
+    } else if (dayBool.every((a) => a === false)) {
+      alert('활동 요일을 하루 이상 설정하세요.');
+      return;
     }
 
     setMakeLoad(true);
@@ -97,6 +101,7 @@ export default ({ myTabs }) => {
           bio: bio.value,
           imgUrl: selectFile ? upResult.data.location : '',
           imgKey: selectFile ? upResult.data.key : '',
+          activeDay: dayBool,
         },
       });
       if (!createGroup) {
@@ -137,6 +142,8 @@ export default ({ myTabs }) => {
             groupData={groupData.seeGroup}
             makeLoad={makeLoad}
             setSelectFile={setSelectFile}
+            dayBool={dayBool}
+            setDayBool={setDayBool}
           />
         </>
       )}

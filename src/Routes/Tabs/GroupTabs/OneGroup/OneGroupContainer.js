@@ -37,6 +37,7 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   const [attendDate, setAttendDate] = useState(new Date());
   const [selectFile, setSelectFile] = useState(null);
   const [passView, setPassView] = useState(false);
+  const [dayBool, setDayBool] = useState(new Array(7).fill(true));
 
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
@@ -84,12 +85,13 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   };
 
   const groupPush = () => {
-    name.setValue(groupInfo.name);
-    maxMember.setValue(groupInfo.maxMember);
-    groupCategory.setOption(groupInfo.category);
-    targetTime.setValue(groupInfo.targetTime);
-    password.setValue(groupInfo.password);
-    bio.setValue(groupInfo.bio);
+    name.setValue(groupData.seeOneGroup.name);
+    maxMember.setValue(groupData.seeOneGroup.maxMember);
+    groupCategory.setOption(groupData.seeOneGroup.category);
+    targetTime.setValue(groupData.seeOneGroup.targetTime);
+    password.setValue(groupData.seeOneGroup.password);
+    bio.setValue(groupData.seeOneGroup.bio);
+    setDayBool(groupData.seeOneGroup.activeDay);
   };
 
   const onJoin = async (groupId) => {
@@ -172,8 +174,14 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
     if (maxMember.value < 2 || maxMember.value > 30) {
       alert('수용인원을 2~30명 이내로 설정하세요.');
       return;
+    } else if (groupData.seeOneGroup.memberCount > maxMember.value) {
+      alert('현재 참여 인원 이상의 수용인원을 설정하세요.');
+      return;
     } else if (targetTime.value < 1 || targetTime.value > 18) {
       alert('최소 학습 시간을 1~18시간 이내로 설정하세요.');
+      return;
+    } else if (dayBool.every((a) => a === false)) {
+      alert('활동 요일을 하루 이상 설정하세요.');
       return;
     }
 
@@ -207,6 +215,7 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
           bio: bio.value,
           imgUrl: selectFile ? upResult.data.location : '',
           imgKey: selectFile ? upResult.data.key : '',
+          activeDay: dayBool,
         },
       });
       if (!editGroup) {
@@ -295,6 +304,8 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
         passView={passView}
         setPassView={setPassView}
         joinPassword={joinPassword}
+        dayBool={dayBool}
+        setDayBool={setDayBool}
       />
     );
   }

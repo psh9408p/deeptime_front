@@ -234,6 +234,14 @@ const GroupInfoWrap = styled.div`
 const GroupInfo = styled.div`
   display: flex;
   width: 300px;
+  :not(:last-child) {
+    margin-bottom: 5px;
+  }
+  span {
+    font-weight: 600;
+    color: ${(props) => props.theme.darkGreyColor};
+    margin-right: 5px;
+  }
 `;
 
 const GroupIntro = styled.div`
@@ -402,6 +410,8 @@ export default ({
   passView,
   setPassView,
   joinPassword,
+  dayBool,
+  setDayBool,
 }) => {
   // 리랜더
   const [renderBool, setRenderBool] = useState(false);
@@ -742,6 +752,8 @@ export default ({
   };
 
   const InforDiv = ({ close }) => {
+    // 마지막 요일 검출
+    const lastDayIndex = groupData.activeDay.lastIndexOf(true);
     return (
       <InfoDiv>
         <PopupClose
@@ -768,35 +780,47 @@ export default ({
           <div>
             <GroupInfo>
               <div>
-                <span style={{ fontWeight: '600' }}>수용인원</span>
-                <span>
-                  {' '}
-                  : {groupData.memberCount} / {groupData.maxMember}
-                </span>
-              </div>
-            </GroupInfo>
-            <GroupInfo>
-              <div style={{ marginTop: '8px', marginBottom: '8px' }}>
-                <span style={{ fontWeight: '600' }}>카테고리</span>
-                <span> : {groupData.category}</span>
+                <span>카테고리</span> {groupData.category}
               </div>
             </GroupInfo>
             <GroupInfo>
               <div>
-                <span style={{ fontWeight: '600' }}>목표 시간</span>
-                <span> : {groupData.targetTime} 시간</span>
+                <span>활동 요일</span>{' '}
+                {groupData.activeDay.map((bool, index) => {
+                  if (bool) {
+                    if (index === lastDayIndex) {
+                      return dayArray[index];
+                    } else {
+                      return dayArray[index] + ', ';
+                    }
+                  }
+                })}
               </div>
             </GroupInfo>
             <GroupInfo>
               <div>
-                <span style={{ fontWeight: '600' }}>평균 학습 시간</span>
-                <span> : {groupData.lastStudyTime.toFixed(0)} 시간</span>
+                <span>하루 목표</span> {groupData.targetTime} 시간
               </div>
             </GroupInfo>
             <GroupInfo>
               <div>
-                <span style={{ fontWeight: '600' }}>평균 출석률</span>
-                <span> : {groupData.lastAttendance.toFixed(0)} %</span>
+                <span>평균 학습</span> {groupData.lastStudyTime.toFixed(0)} 시간
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span>평균 출석률</span> {groupData.lastAttendance.toFixed(0)} %
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span>인원</span> {groupData.memberCount} /{' '}
+                {groupData.maxMember}
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span>방장</span> {groupData.manager.username}
               </div>
             </GroupInfo>
           </div>
@@ -978,6 +1002,8 @@ export default ({
           groupClear={groupClear}
           loading={updateLoad}
           setSelectFile={setSelectFile}
+          dayBool={dayBool}
+          setDayBool={setDayBool}
         />
       )}
     </Wrapper>

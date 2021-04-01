@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Add, Lock } from '../../../../Components/Icons';
 import Popup from 'reactjs-popup';
@@ -11,15 +11,18 @@ import CUGroup from '../CUGroup';
 import { studyOption_group } from '../../../../Components/LongArray';
 
 const FilterdSelect = styled.div`
-  width: 100px;
+  width: 120px;
   height: 100%;
+  :first-child {
+    width: 80px;
+    margin-right: 10px;
+  }
 `;
 
 const FilterDiv = styled.div`
   display: flex;
-  div:nth-child(1) {
-    margin-right: 10px;
-  }
+  height: 28px;
+  margin-right: 10px;
 `;
 
 const CheckedDiv = styled.div`
@@ -102,10 +105,33 @@ const MemberDiv = styled.div`
   display: flex;
   margin-top: 8px;
   flex-direction: column;
+  p {
+    margin-bottom: 5px;
+    span {
+      font-weight: 600;
+      color: ${(props) => props.theme.lightGreyColor};
+    }
+  }
 `;
 
-const MemberList = styled.p`
-  display: flex;
+const CategoryDiv = styled.div`
+  font-weight: 600;
+  color: ${(props) => props.theme.classicBlue};
+  margin-bottom: 5px;
+`;
+
+const MemberList = styled.div`
+  span {
+    margin-right: 10px;
+    span {
+      margin: 0;
+      font-weight: 600;
+      color: ${(props) => props.theme.lightGreyColor};
+    }
+  }
+  :not(:last-child) {
+    margin-bottom: 5px;
+  }
 `;
 
 const PopupCustom = styled(Popup)`
@@ -118,7 +144,17 @@ const PopupCustom = styled(Popup)`
     border-radius: ${(props) => props.theme.borderRadius};
   }
 `;
+
+const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
 let group_tmp = [];
+const filterArray = [
+  '높은 학습 시간순',
+  '낮은 학습 시간순',
+  '높은 출석률순',
+  '낮은 출석률순',
+];
+const getAll = studyOption_group.slice();
+getAll.unshift('전체');
 
 export default ({
   viewTabs,
@@ -134,44 +170,42 @@ export default ({
   groupData,
   makeLoad,
   setSelectFile,
+  dayBool,
+  setDayBool,
 }) => {
-  const getAll = studyOption_group.slice();
-  getAll.unshift('전체');
+  const categroyFilter = useSelect(getAll, getAll, '전체');
+  const orderFilter = useSelect(filterArray, filterArray, '높은 학습 시간순');
 
-  const group1 = useSelect(getAll, getAll, groupData.category);
-
-  const arr3 = ['높은 시간순', '낮은 시간순', '높은 출석률순', '낮은 출석률순'];
-  const sTime = useSelect(arr3, arr3);
-
+  const [reRen, setReRen] = useState(false);
   const [filData, setFilData] = useState(groupData);
   const [publicBool, setPublicBool] = useState(false);
   const [empty, setEmpty] = useState(false);
 
   const getData = () => {
-    if (group1.option === '전체') {
+    if (categroyFilter.option === '전체') {
       group_tmp = groupData;
     } else {
       const filGroup = groupData.filter(
-        (ctr) => ctr.category === group1.option,
+        (ctr) => ctr.category === categroyFilter.option,
       );
       group_tmp = filGroup;
     }
   };
 
   const timeSort = () => {
-    if (sTime.option === '높은 시간순') {
+    if (orderFilter.option === '높은 학습 시간순') {
       group_tmp.sort(function (a, b) {
         return b.lastStudyTime - a.lastStudyTime;
       });
-    } else if (sTime.option === '낮은 시간순') {
+    } else if (orderFilter.option === '낮은 학습 시간순') {
       group_tmp.sort(function (a, b) {
         return a.lastStudyTime - b.lastStudyTime;
       });
-    } else if (sTime.option === '낮은 출석률순') {
+    } else if (orderFilter.option === '낮은 출석률순') {
       group_tmp.sort(function (a, b) {
         return a.lastAttendance - b.lastAttendance;
       });
-    } else if (sTime.option === '높은 출석률순') {
+    } else if (orderFilter.option === '높은 출석률순') {
       group_tmp.sort(function (a, b) {
         return b.lastAttendance - a.lastAttendance;
       });
@@ -201,13 +235,21 @@ export default ({
     setEmpty(!empty);
   };
 
+  // 그룹 피드 필터링
+  const isFirstRun = useRef(true);
   useEffect(() => {
     getData();
     timeSort();
     publicHandler();
     emptyHandle();
     setFilData(group_tmp);
-  }, [group1.option, sTime.option, publicBool, empty]);
+    // 맨처음 보여질 때 필터한게 적용 안되서 보여서 랜더 한번더
+    if (isFirstRun.current) {
+      setReRen(!reRen);
+      isFirstRun.current = false;
+      return;
+    }
+  }, [categroyFilter.option, orderFilter.option, publicBool, empty]);
 
   return (
     <>
@@ -216,10 +258,10 @@ export default ({
           <HeaderDiv>
             <FilterDiv>
               <FilterdSelect>
-                <Select {...group1} id={'testSelect'} />
+                <Select {...categroyFilter} id={'testSelect'} />
               </FilterdSelect>
               <FilterdSelect>
-                <Select {...sTime} id={'testSelect2'} />
+                <Select {...orderFilter} id={'testSelect2'} />
               </FilterdSelect>
             </FilterDiv>
             <CheckedDiv>
@@ -252,54 +294,79 @@ export default ({
             />
           </HeaderDiv>
           <GroupListWrap>
-            {filData.map((group) => (
-              <PopupCustom
-                key={group.id}
-                trigger={
-                  <GroupBox>
-                    <ImageWrap>
-                      <ImageBox url={group.imgUrl} />
-                    </ImageWrap>
-                    <MemberWrap>
-                      <MemberTitle>
-                        <p style={{ fontSize: '16px', fontWeight: '600' }}>
-                          {group.name}
-                        </p>
-                        {!group.publicBool && <Lock marginLeft={'6px'} />}
-                      </MemberTitle>
-                      <MemberDiv>
-                        <p style={{ marginBottom: '5px' }}>{group.category}</p>
-                        <p style={{ marginBottom: '5px' }}>
-                          목표 시간: {group.targetTime} 시간
-                        </p>
-                        <p style={{ marginBottom: '5px' }}>
-                          평균 학습 시간: {group.lastStudyTime.toFixed(0)} 시간
-                        </p>
-                        <p style={{ marginBottom: '5px' }}>
-                          평균 출석률: {group.lastAttendance.toFixed(0)} %
-                        </p>
-                        <MemberList>
-                          <span style={{ marginRight: '10px' }}>
-                            인원: {group.memberCount}/{group.maxMember}
-                          </span>
-                          <span style={{ marginRight: '10px' }}>
-                            방장: {group.manager.username}
-                          </span>
-                        </MemberList>
-                      </MemberDiv>
-                    </MemberWrap>
-                  </GroupBox>
-                }
-                closeOnDocumentClick={false}
-                modal
-              >
-                {(close) => {
-                  return (
-                    <OneGroup close={close} groupInfo={group} isSearch={true} />
-                  );
-                }}
-              </PopupCustom>
-            ))}
+            {filData.map((group) => {
+              // 마지막 요일 검출
+              const lastDayIndex = group.activeDay.lastIndexOf(true);
+              return (
+                <PopupCustom
+                  key={group.id}
+                  trigger={
+                    <GroupBox>
+                      <ImageWrap>
+                        <ImageBox url={group.imgUrl} />
+                      </ImageWrap>
+                      <MemberWrap>
+                        <MemberTitle>
+                          <p style={{ fontSize: '16px', fontWeight: '600' }}>
+                            {group.name}
+                          </p>
+                          {!group.publicBool && <Lock marginLeft={'6px'} />}
+                        </MemberTitle>
+                        <MemberDiv>
+                          <CategoryDiv>{group.category}</CategoryDiv>
+                          <p>
+                            <span>평균 학습량</span>{' '}
+                            {group.lastStudyTime.toFixed(0)} 시간
+                          </p>
+                          <p>
+                            <span>평균 출석률</span>{' '}
+                            {group.lastAttendance.toFixed(0)} %
+                          </p>
+                          <MemberList>
+                            <span>
+                              <span>하루 목표</span> {group.targetTime} 시간
+                            </span>
+                            <span>
+                              <span>활동 요일</span>{' '}
+                              {group.activeDay.map((bool, index) => {
+                                if (bool) {
+                                  if (index === lastDayIndex) {
+                                    return dayArray[index];
+                                  } else {
+                                    return dayArray[index] + ', ';
+                                  }
+                                }
+                              })}
+                            </span>
+                          </MemberList>
+                          <MemberList>
+                            <span>
+                              <span>인원</span> {group.memberCount}/
+                              {group.maxMember}
+                            </span>
+                            <span>
+                              <span>방장</span> {group.manager.username}
+                            </span>
+                          </MemberList>
+                        </MemberDiv>
+                      </MemberWrap>
+                    </GroupBox>
+                  }
+                  closeOnDocumentClick={false}
+                  modal
+                >
+                  {(close) => {
+                    return (
+                      <OneGroup
+                        close={close}
+                        groupInfo={group}
+                        isSearch={true}
+                      />
+                    );
+                  }}
+                </PopupCustom>
+              );
+            })}
           </GroupListWrap>
         </>
       ) : (
@@ -316,6 +383,8 @@ export default ({
           groupClear={groupClear}
           loading={makeLoad}
           setSelectFile={setSelectFile}
+          dayBool={dayBool}
+          setDayBool={setDayBool}
         />
       )}
     </>

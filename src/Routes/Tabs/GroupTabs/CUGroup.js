@@ -7,6 +7,7 @@ import Textarea from '../../../Components/Textarea';
 import Select from '../../../Components/Select';
 import Loader from '../../../Components/Loader';
 import imageResize from '../../../Components/imageResize';
+import CheckBox from '../../../Components/CheckBox';
 
 const LoaderWrapper = styled.div`
   position: absolute;
@@ -71,6 +72,20 @@ const InputWrap = styled.div`
   }
 `;
 
+const ActiveDateDiv = styled(InputWrap)`
+  padding: 0;
+  flex-direction: column;
+  justify-content: center;
+  width: 376px;
+  height: 100px;
+  font-size: 14px;
+`;
+
+const SubTDiv = styled.div`
+  font-size: 12px;
+  margin-top: 3px;
+`;
+
 const ImgWrap = styled(InputWrap)`
   margin-top: 10px;
   height: auto;
@@ -98,6 +113,27 @@ const ImgSelectDiv = styled.div`
   height: 100%;
 `;
 
+const DayWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+`;
+
+const DayIndiWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+`;
+
+const dayList = ['일', '월', '화', '수', '목', '금', '토'];
 const defaultImg =
   'https://slog-iam.s3.ap-northeast-2.amazonaws.com/group/groupimg.png';
 
@@ -115,9 +151,17 @@ export default ({
   groupClear,
   loading,
   setSelectFile,
+  dayBool,
+  setDayBool,
 }) => {
   const handleFileInput = (e) => {
     imageResize(e.target.files, 'pre-img-group', 640, setSelectFile, false);
+  };
+
+  const onCheckDay = (index) => (e) => {
+    let newArr = [...dayBool];
+    newArr[index] = e.target.checked;
+    setDayBool(newArr);
   };
 
   return (
@@ -161,7 +205,7 @@ export default ({
           />
         </InputWrap>
         <InputWrap>
-          <span>최소 학습 시간(1~18) :</span>
+          <span>하루 목표 학습 시간(1~18) :</span>
           <Input_100
             placeholder={''}
             {...targetTime}
@@ -172,6 +216,26 @@ export default ({
           />
           시간
         </InputWrap>
+        <ActiveDateDiv>
+          <div>활동 요일</div>
+          <SubTDiv>(출석 및 통계에 반영)</SubTDiv>
+          <DayWrap>
+            {dayList.map((day, index) => {
+              return (
+                <DayIndiWrap key={index}>
+                  {day}
+                  <br />
+                  <CheckBox
+                    checked={dayBool[index]}
+                    onChange={onCheckDay(index)}
+                    boxSize={'25px'}
+                    margin={'0'}
+                  />
+                </DayIndiWrap>
+              );
+            })}
+          </DayWrap>
+        </ActiveDateDiv>
         <Input_100
           placeholder={'(선택) 비밀번호'}
           width={'376px'}
