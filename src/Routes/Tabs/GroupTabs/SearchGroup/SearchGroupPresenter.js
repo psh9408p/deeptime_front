@@ -297,6 +297,7 @@ export default ({
             {filData.map((group) => {
               // 마지막 요일 검출
               const lastDayIndex = group.activeDay.lastIndexOf(true);
+              const everyDay = group.activeDay.filter(Boolean).length === 7;
               return (
                 <PopupCustom
                   key={group.id}
@@ -328,15 +329,17 @@ export default ({
                             </span>
                             <span>
                               <span>활동 요일</span>{' '}
-                              {group.activeDay.map((bool, index) => {
-                                if (bool) {
-                                  if (index === lastDayIndex) {
-                                    return dayArray[index];
-                                  } else {
-                                    return dayArray[index] + ', ';
-                                  }
-                                }
-                              })}
+                              {everyDay
+                                ? '매일'
+                                : group.activeDay.map((bool, index) => {
+                                    if (bool) {
+                                      if (index === lastDayIndex) {
+                                        return dayArray[index];
+                                      } else {
+                                        return dayArray[index] + ', ';
+                                      }
+                                    }
+                                  })}
                             </span>
                           </MemberList>
                           <MemberList>
