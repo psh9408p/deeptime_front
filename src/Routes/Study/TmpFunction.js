@@ -46,3 +46,24 @@
   </TimeButton>
   <TodayPercent>{donutPercent}%</TodayPercent>
 </>;
+
+
+  // Today 도넛 차트 am pm 자동 전환
+  // useEffect(() => {
+  //   const nowDate = new Date();
+  //   const { startDate, endDate } = todayDateRange(nowDate);
+  //   if (isAm) {
+  //     //43200000 12시간
+  //     const restTime = startDate.getTime() + 43200000 - nowDate.getTime();
+  //     const setTime = isFirstRun.current ? restTime : 43200000;
+  //     setTimeout(() => {
+  //       setIsAm(false);
+  //     }, setTime);
+  //   } else {
+  //     const restTime = endDate.getTime() - nowDate.getTime();
+  //     const setTime = isFirstRun.current ? restTime : 43200000;
+  //     setTimeout(() => {
+  //       setIsAm(true);
+  //     }, setTime);
+  //   }
+  // }, [isAm]);

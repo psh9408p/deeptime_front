@@ -25,6 +25,8 @@ const LoaderWrapper = styled.div`
   padding: 100px 0;
 `;
 
+const feedTerm = 20;
+
 export default () => {
   // 새로고침을 통해 로그인 시 seeFeed 에러 고치는 법
   // const count = localStorage.getItem("refresh_count") + 1
@@ -32,7 +34,6 @@ export default () => {
   // if (count === "01") {
   //   window.location.reload()
   // }
-  const feedTerm = 20;
 
   const [myTabs, setMyTabs] = useState(0);
   const [editPostId, setEditPostId] = useState('');
@@ -42,13 +43,10 @@ export default () => {
 
   const [createPostMutation] = useMutation(CREATE_POST);
   const [editPostMutation] = useMutation(EDIT_POST);
-  const { data: feedData, loading, refetch, networkStatus } = useQuery(
-    FEED_ALL_QUERY,
-    {
-      variables,
-      notifyOnNetworkStatusChange: true,
-    },
-  );
+  const { data: feedData, refetch, networkStatus } = useQuery(FEED_ALL_QUERY, {
+    variables,
+    notifyOnNetworkStatusChange: true,
+  });
   const { data: meData, loading: meLoading } = useQuery(ME_GROUP);
 
   const [files, setFiles] = useState([]);

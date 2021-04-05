@@ -146,6 +146,7 @@ export const ME = gql`
       times {
         existTime
         time_24
+        phoneTime
         createdAt
       }
       schedules {

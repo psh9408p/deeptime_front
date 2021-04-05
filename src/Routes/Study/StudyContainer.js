@@ -89,7 +89,9 @@ export default () => {
   const [settingView, setSettingView] = useState(false);
   const [todoModiId, setTodoModiId] = useState('');
   const [todoModi, setTodoModi] = useState(false);
-  const [studyBool, setStudyBool] = useState(true);
+  const [studyBool, setStudyBool] = useState(false);
+  const [phoneBool, setPhoneBool] = useState(false);
+  const [sleepBool, setSleepBool] = useState(false);
   const [aniBool, setAniBool] = useState(true);
   const [newTodoView, setNewTodoView] = useState(false);
   const [popupView, setPopupView] = useState(false);
@@ -328,7 +330,18 @@ export default () => {
         userStatus,
       },
     });
+    // 상태 불리언 값 넣어주기
     setStudyBool(existToggle);
+    if (userStatus === 'study') {
+      setPhoneBool(false);
+      // setSleepBool(false)
+    } else if (userStatus === 'phone') {
+      setPhoneBool(true);
+      // setSleepBool(false);
+    } else if (userStatus === 'sleep') {
+      setPhoneBool(false);
+      // setSleepBool(true)
+    }
     // 타임랩스용 이미지 저장
     if (timelapse) {
       await setCoverView(true);
@@ -521,26 +534,6 @@ export default () => {
     }
   }, detect_interval);
 
-  // Today 도넛 차트 am pm 자동 전환
-  useEffect(() => {
-    const nowDate = new Date();
-    const { startDate, endDate } = todayDateRange(nowDate);
-    if (isAm) {
-      //43200000 12시간
-      const restTime = startDate.getTime() + 43200000 - nowDate.getTime();
-      const setTime = isFirstRun.current ? restTime : 43200000;
-      setTimeout(() => {
-        setIsAm(false);
-      }, setTime);
-    } else {
-      const restTime = endDate.getTime() - nowDate.getTime();
-      const setTime = isFirstRun.current ? restTime : 43200000;
-      setTimeout(() => {
-        setIsAm(true);
-      }, setTime);
-    }
-  }, [isAm]);
-
   const isFirstRun2 = useRef(true);
   useEffect(() => {
     if (isFirstRun2.current) {
@@ -613,6 +606,7 @@ export default () => {
         setTodoModiId={setTodoModiId}
         settingView={settingView}
         setSettingView={setSettingView}
+        phoneBool={phoneBool}
       />
     );
   }

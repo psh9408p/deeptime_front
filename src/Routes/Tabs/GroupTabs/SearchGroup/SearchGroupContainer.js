@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useInput from '../../../../Hooks/useInput';
 import useSelect from '../../../../Hooks/useSelect';
@@ -23,30 +23,71 @@ const LoaderWrapper = styled.div`
   padding: 100px 0;
 `;
 
+// const filterArray = [
+//   '높은 학습 시간순',
+//   '낮은 학습 시간순',
+//   '높은 출석률순',
+//   '낮은 출석률순',
+// ];
+const getAll = studyOption_group.slice();
+getAll.unshift('전체');
+export const feedTerm = 1;
+
 export default ({ myTabs }) => {
+  const groupCategory = useSelect(studyOption_group, studyOption_group);
+  const categroyFilter = useSelect(getAll, getAll, '전체');
+  // const orderFilter = useSelect(filterArray, filterArray, '높은 학습 시간순');
+
   const preventFloat = (value) => value % 1 === 0;
 
+  const [first, setFirst] = useState(feedTerm);
+  const [publicBool, setPublicBool] = useState(false);
+  const [empty, setEmpty] = useState(false);
   const [viewTabs, setViewTabs] = useState(0);
   const [makeLoad, setMakeLoad] = useState(false);
   const [selectFile, setSelectFile] = useState(null);
   const [dayBool, setDayBool] = useState(new Array(7).fill(true));
+  const [variables, setVariables] = useState({
+    category: '전체',
+    publicBool,
+    empty,
+    first,
+  });
   const maxMember = useInput(2, preventFloat, undefined, true);
   const targetTime = useInput(1, preventFloat, undefined, true);
   const name = useInput('');
   const password = useInput('');
   const bio = useInput('');
 
-  const groupCategory = useSelect(studyOption_group, studyOption_group);
-
   const {
     data: groupData,
-    loading: groupLoading,
     refetch: groupRefetch,
-  } = useQuery(SEE_GROUP);
+    networkStatus: groupNetwork,
+  } = useQuery(SEE_GROUP, {
+    variables,
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [createGroupMutation] = useMutation(CREATE_GROUP, {
     refetchQueries: [{ query: MY_GROUP }],
   });
+
+  const publicBoolHandler = () => {
+    setPublicBool(!publicBool);
+  };
+
+  const emptyHandler = () => {
+    setEmpty(!empty);
+  };
+
+  const reFeed = () => {
+    setVariables({
+      category: categroyFilter.option,
+      publicBool,
+      empty,
+      first: variables.first,
+    });
+  };
 
   const groupClear = () => {
     name.setValue('');
@@ -120,9 +161,34 @@ export default ({ myTabs }) => {
     }
   };
 
+  useEffect(() => {
+    setVariables({
+      category: categroyFilter.option,
+      publicBool,
+      empty,
+      first: feedTerm,
+    });
+    // 피드 개수 초기화
+    setFirst(feedTerm);
+  }, [categroyFilter.option, publicBool, empty]);
+
+  // 더보기 할때만 개수 늘어나게 따로
+  useEffect(() => {
+    setVariables({
+      category: categroyFilter.option,
+      publicBool,
+      empty,
+      first,
+    });
+  }, [first]);
+
+  useEffect(() => {
+    groupRefetch(variables);
+  }, [variables]);
+
   return (
     <Wrapper>
-      {groupLoading ? (
+      {groupNetwork === 1 ? (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
@@ -144,6 +210,17 @@ export default ({ myTabs }) => {
             setSelectFile={setSelectFile}
             dayBool={dayBool}
             setDayBool={setDayBool}
+            categroyFilter={categroyFilter}
+            groupNetwork={groupNetwork}
+            publicBoolHandler={publicBoolHandler}
+            emptyHandler={emptyHandler}
+            reFeed={reFeed}
+            publicBool={publicBool}
+            empty={empty}
+            first={first}
+            setFirst={setFirst}
+            feedTerm={feedTerm}
+            variables={variables}
           />
         </>
       )}

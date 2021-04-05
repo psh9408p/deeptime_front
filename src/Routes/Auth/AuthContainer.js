@@ -17,6 +17,7 @@ import {
   C_PHONE_FINDEMAIL,
   S_EMAIL_FINDPASSWORD,
   C_EMAIL_FINDPASSWORD,
+  VERIFY_ACCOUNT,
 } from './AuthQueries';
 import { toast } from 'react-toastify';
 import {
@@ -33,6 +34,7 @@ export default () => {
   // const maxLen_nonHyphen = (value) =>
   //   value.length <= 11 && !value.includes('-');
 
+  // const [action, setAction] = useState('logIn');
   const [action, setAction] = useState('logIn');
   const [tos, setTos] = useState(false);
   const [top, setTop] = useState(false);
@@ -90,6 +92,15 @@ export default () => {
       studyGroup3: studyGroup3.option,
     },
   });
+
+  const [verifyAccountMutation] = useMutation(VERIFY_ACCOUNT, {
+    variables: {
+      username: username.value,
+      email: email.value,
+      phoneNumber: phoneNumber.value,
+    },
+  });
+
   const [localLogInMutation] = useMutation(LOCAL_LOG_IN);
   const [sPhoneVerificationMutation] = useMutation(S_PHONE_VERIFICATION, {
     variables: {
@@ -295,22 +306,21 @@ export default () => {
       if (tos === true && top === true) {
         if (password.errorChk === false && password2.errorChk === false) {
           try {
-            toast.info('새로운 계정 등록 중...');
+            toast.info('회원가입 정보 검증 중...');
             const {
-              data: { createAccount },
-            } = await createAccountMutation();
-            if (!createAccount) {
+              data: { verifyAccount },
+            } = await verifyAccountMutation();
+            if (!verifyAccount) {
               alert('계정을 만들 수 없습니다.');
             } else {
               toast.success(
                 <div>
-                  계정이 만들어졌습니다.
+                  회원정보 검증 완료.
                   <br />
-                  로그인을 시도하세요.
+                  다음 단계를 진행하세요.
                 </div>,
               );
-              password.setValue('');
-              setAction('logIn');
+              setAction('signUp2');
             }
           } catch (e) {
             const realText = e.message.split('GraphQL error: ');
@@ -321,6 +331,29 @@ export default () => {
         }
       } else {
         alert('필수 약관에 동의하세요.');
+      }
+    } else if (action === 'signUp2') {
+      try {
+        toast.info('새로운 계정 등록 중...');
+        const {
+          data: { createAccount },
+        } = await createAccountMutation();
+        if (!createAccount) {
+          alert('계정을 만들 수 없습니다.');
+        } else {
+          toast.success(
+            <div>
+              계정이 만들어졌습니다.
+              <br />
+              로그인을 시도하세요.
+            </div>,
+          );
+          password.setValue('');
+          setAction('logIn');
+        }
+      } catch (e) {
+        const realText = e.message.split('GraphQL error: ');
+        alert(realText[1]);
       }
     } else if (action === 'findEmail') {
       try {

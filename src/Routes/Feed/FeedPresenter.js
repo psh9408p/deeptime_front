@@ -149,7 +149,6 @@ export default ({
   getAll.unshift('전체');
 
   const group1 = useSelect(getAll, getAll, meData.studyGroup);
-  console.log('feed,', meData);
 
   const [filterdData, setFilterdData] = useState(feedData);
 
@@ -217,7 +216,7 @@ export default ({
           </PostWrap>
           <MoreDiv>
             <Button_custom
-              margin={'0'}
+              margin={'0 0 30px 0'}
               width={'100%'}
               text={'게시물 20개 더보기'}
               loading={networkStatus === 4 ? true : false}

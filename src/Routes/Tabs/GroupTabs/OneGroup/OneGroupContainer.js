@@ -20,6 +20,7 @@ import useInput from '../../../../Hooks/useInput';
 import useSelect from '../../../../Hooks/useSelect';
 import WeekRange from '../../../../Components/Date/WeekRange';
 import axios from 'axios';
+import { feedTerm } from '../SearchGroup/SearchGroupContainer';
 
 const LoaderWrapper = styled.div`
   display: flex;
@@ -28,7 +29,18 @@ const LoaderWrapper = styled.div`
   height: 300px;
 `;
 
-export default ({ close, groupInfo, selectId, isSearch = false }) => {
+export default ({
+  close,
+  groupInfo,
+  selectId,
+  isSearch = false,
+  variables = {
+    category: '전체',
+    publicBool: false,
+    empty: false,
+    first: feedTerm,
+  },
+}) => {
   const preventFloat = (value) => value % 1 === 0;
 
   const [selectDate, setSelectDate] = useState(new Date());
@@ -59,19 +71,19 @@ export default ({ close, groupInfo, selectId, isSearch = false }) => {
   );
 
   const [joinGroupMutation] = useMutation(JOIN_GROUP, {
-    refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
+    refetchQueries: [{ query: SEE_GROUP, variables }, { query: MY_GROUP }],
   });
   const [deleteGroupMutation] = useMutation(DELETE_GROUP, {
-    refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
+    refetchQueries: [{ query: SEE_GROUP, variables }, { query: MY_GROUP }],
   });
   const [outGroupMutation] = useMutation(OUT_GROUP, {
-    refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
+    refetchQueries: [{ query: SEE_GROUP, variables }, { query: MY_GROUP }],
   });
   const [editGroupMutation] = useMutation(EDIT_GROUP, {
-    refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
+    refetchQueries: [{ query: SEE_GROUP, variables }, { query: MY_GROUP }],
   });
   const [outMemberMutation] = useMutation(OUT_MEMBER, {
-    refetchQueries: [{ query: SEE_GROUP }, { query: MY_GROUP }],
+    refetchQueries: [{ query: SEE_GROUP, variables }, { query: MY_GROUP }],
   });
 
   const groupClear = () => {

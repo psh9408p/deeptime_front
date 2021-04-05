@@ -34,6 +34,16 @@ export const CREATE_ACCOUNT = gql`
   }
 `;
 
+export const VERIFY_ACCOUNT = gql`
+  mutation verifyAccount(
+    $username: String!
+    $email: String!
+    $phoneNumber: String!
+  ) {
+    verifyAccount(username: $username, email: $email, phoneNumber: $phoneNumber)
+  }
+`;
+
 export const REQUEST_LOGIN = gql`
   mutation requestLogin($email: String!, $password: String!) {
     requestLogin(email: $email, password: $password)

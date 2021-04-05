@@ -4,31 +4,24 @@ import { Add, Lock } from '../../../../Components/Icons';
 import Popup from 'reactjs-popup';
 import CheckBox from '../../../../Components/CheckBox';
 import Select from '../../../../Components/Select';
-import useSelect from '../../../../Hooks/useSelect';
+import Button_custom from '../../../../Components/Buttons/Button_custom';
 import OneGroup from '../OneGroup/';
 import CUGroup from '../CUGroup';
-
-import { studyOption_group } from '../../../../Components/LongArray';
 
 const FilterdSelect = styled.div`
   width: 120px;
   height: 100%;
-  :first-child {
+  margin-right: 10px;
+  /* :first-child {
     width: 80px;
     margin-right: 10px;
-  }
+  } */
 `;
 
 const FilterDiv = styled.div`
   display: flex;
   height: 28px;
   margin-right: 10px;
-`;
-
-const CheckedDiv = styled.div`
-  display: flex;
-
-  margin-right: 150px;
 `;
 
 const Check_Box = styled.div`
@@ -56,7 +49,7 @@ const HeaderDiv = styled.div`
 `;
 
 const GroupListWrap = styled.div`
-  margin-top: 10px;
+  margin: 10px 0 25px 0;
   width: 100%;
   max-width: 600px;
 `;
@@ -145,16 +138,13 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
+const MoreDiv = styled.div`
+  width: 100%;
+  max-width: 600px;
+`;
+
 const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
 let group_tmp = [];
-const filterArray = [
-  '높은 학습 시간순',
-  '낮은 학습 시간순',
-  '높은 출석률순',
-  '낮은 출석률순',
-];
-const getAll = studyOption_group.slice();
-getAll.unshift('전체');
 
 export default ({
   viewTabs,
@@ -172,84 +162,21 @@ export default ({
   setSelectFile,
   dayBool,
   setDayBool,
+  categroyFilter,
+  groupNetwork,
+  publicBoolHandler,
+  emptyHandler,
+  publicBool,
+  empty,
+  first,
+  setFirst,
+  feedTerm,
+  variables,
 }) => {
-  const categroyFilter = useSelect(getAll, getAll, '전체');
-  const orderFilter = useSelect(filterArray, filterArray, '높은 학습 시간순');
-
-  const [reRen, setReRen] = useState(false);
-  const [filData, setFilData] = useState(groupData);
-  const [publicBool, setPublicBool] = useState(false);
-  const [empty, setEmpty] = useState(false);
-
-  const getData = () => {
-    if (categroyFilter.option === '전체') {
-      group_tmp = groupData;
-    } else {
-      const filGroup = groupData.filter(
-        (ctr) => ctr.category === categroyFilter.option,
-      );
-      group_tmp = filGroup;
-    }
-  };
-
-  const timeSort = () => {
-    if (orderFilter.option === '높은 학습 시간순') {
-      group_tmp.sort(function (a, b) {
-        return b.lastStudyTime - a.lastStudyTime;
-      });
-    } else if (orderFilter.option === '낮은 학습 시간순') {
-      group_tmp.sort(function (a, b) {
-        return a.lastStudyTime - b.lastStudyTime;
-      });
-    } else if (orderFilter.option === '낮은 출석률순') {
-      group_tmp.sort(function (a, b) {
-        return a.lastAttendance - b.lastAttendance;
-      });
-    } else if (orderFilter.option === '높은 출석률순') {
-      group_tmp.sort(function (a, b) {
-        return b.lastAttendance - a.lastAttendance;
-      });
-    }
-  };
-  const publicHandler = () => {
-    if (publicBool) {
-      const filGroup = group_tmp.filter((ctr) => ctr.publicBool === true);
-      group_tmp = filGroup;
-    }
-  };
-
-  const emptyHandle = () => {
-    if (empty) {
-      const filGroup = group_tmp.filter(
-        (ctr) => ctr.maxMember > ctr.memberCount,
-      );
-      group_tmp = filGroup;
-    }
-  };
-
-  const publicBoolHandler = () => {
-    setPublicBool(!publicBool);
-  };
-
-  const emptyHandler = () => {
-    setEmpty(!empty);
-  };
-
-  // 그룹 피드 필터링
-  const isFirstRun = useRef(true);
-  useEffect(() => {
-    getData();
-    timeSort();
-    publicHandler();
-    emptyHandle();
-    setFilData(group_tmp);
-    // 맨처음 보여질 때 필터한게 적용 안되서 보여서 랜더 한번더
-    if (isFirstRun.current) {
-      setReRen(!reRen);
-      isFirstRun.current = false;
-      return;
-    }
-  }, [categroyFilter.option, orderFilter.option, publicBool, empty]);
+  // 출석률 높은 순으로
+  groupData.sort(function (a, b) {
+    return b.lastAttendance - a.lastAttendance;
+  });
 
   return (
     <>
@@ -260,11 +187,9 @@ export default ({
               <FilterdSelect>
                 <Select {...categroyFilter} id={'testSelect'} />
               </FilterdSelect>
-              <FilterdSelect>
-                <Select {...orderFilter} id={'testSelect2'} />
-              </FilterdSelect>
-            </FilterDiv>
-            <CheckedDiv>
+              {/* <FilterdSelect>
+                  <Select {...orderFilter} id={'testSelect2'} />
+                </FilterdSelect> */}
               <Check_Box>
                 <CheckBox
                   id={'publicCheck'}
@@ -285,7 +210,7 @@ export default ({
                 />
                 <span>빈방</span>
               </Check_Box>
-            </CheckedDiv>
+            </FilterDiv>
             <Add
               fill={'#0F4C82'}
               onClick={() => {
@@ -294,7 +219,7 @@ export default ({
             />
           </HeaderDiv>
           <GroupListWrap>
-            {filData.map((group) => {
+            {groupData.map((group) => {
               // 마지막 요일 검출
               const lastDayIndex = group.activeDay.lastIndexOf(true);
               const everyDay = group.activeDay.filter(Boolean).length === 7;
@@ -364,6 +289,7 @@ export default ({
                         close={close}
                         groupInfo={group}
                         isSearch={true}
+                        variables={variables}
                       />
                     );
                   }}
@@ -371,6 +297,17 @@ export default ({
               );
             })}
           </GroupListWrap>
+          <MoreDiv>
+            <Button_custom
+              margin={'0 0 30px 0'}
+              width={'100%'}
+              text={'그룹 더보기'}
+              loading={groupNetwork === 4 ? true : false}
+              onClick={() => {
+                setFirst(first + feedTerm);
+              }}
+            />
+          </MoreDiv>
         </>
       ) : (
         <CUGroup
@@ -393,3 +330,73 @@ export default ({
     </>
   );
 };
+
+// 필터링 쓰던거
+// const getData = () => {
+//   if (categroyFilter.option === '전체') {
+//     group_tmp = groupData;
+//   } else {
+//     const filGroup = groupData.filter(
+//       (ctr) => ctr.category === categroyFilter.option,
+//     );
+//     group_tmp = filGroup;
+//   }
+// };
+
+// const timeSort = () => {
+//   if (orderFilter.option === '높은 학습 시간순') {
+//     group_tmp.sort(function (a, b) {
+//       return b.lastStudyTime - a.lastStudyTime;
+//     });
+//   } else if (orderFilter.option === '낮은 학습 시간순') {
+//     group_tmp.sort(function (a, b) {
+//       return a.lastStudyTime - b.lastStudyTime;
+//     });
+//   } else if (orderFilter.option === '낮은 출석률순') {
+//     group_tmp.sort(function (a, b) {
+//       return a.lastAttendance - b.lastAttendance;
+//     });
+//   } else if (orderFilter.option === '높은 출석률순') {
+//     group_tmp.sort(function (a, b) {
+//       return b.lastAttendance - a.lastAttendance;
+//     });
+//   }
+// };
+// const publicHandler = () => {
+//   if (publicBool) {
+//     const filGroup = group_tmp.filter((ctr) => ctr.publicBool === true);
+//     group_tmp = filGroup;
+//   }
+// };
+
+// const emptyHandle = () => {
+//   if (empty) {
+//     const filGroup = group_tmp.filter(
+//       (ctr) => ctr.maxMember > ctr.memberCount,
+//     );
+//     group_tmp = filGroup;
+//   }
+// };
+
+// const isFirstRun = useRef(true);
+// useEffect(() => {
+//   if (groupNetwork === 7) {
+//     getData();
+//     timeSort();
+//     publicHandler();
+//     emptyHandle();
+//     setFilData(group_tmp);
+//   }
+//   // 맨처음 보여질 때 필터한게 적용 안되서 보여서 랜더 한번더
+//   if (isFirstRun.current) {
+//     setReRen(!reRen);
+//     isFirstRun.current = false;
+//     return;
+//   }
+// }, [
+//   categroyFilter.option,
+//   orderFilter.option,
+//   publicBool,
+//   empty,
+//   groupNetwork,
+// ]);

@@ -436,8 +436,6 @@ const CheckBoxWrap = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
-  border-right: 2px solid #e6e6e6;
-  border-color: ${(props) => (props.isOdd ? '#c7c7c7' : '#FAFAFA')};
 `;
 
 const TaskNameDiv = styled.div`
@@ -1692,8 +1690,8 @@ export default ({
   }, []);
 
   const subjectRow = ({ index, style }) => (
-    <IndiviList key={index} style={style} isOdd={Boolean(index % 2)}>
-      <CheckBoxWrap isOdd={Boolean(index % 2)}>
+    <IndiviList key={index} style={style}>
+      <CheckBoxWrap>
         <CheckBox
           checked={bookMarkCh[index] !== undefined ? bookMarkCh[index] : true}
           onChange={onChangeCheck(index)}

@@ -1,8 +1,18 @@
 import { gql } from 'apollo-boost';
 
 export const SEE_GROUP = gql`
-  {
-    seeGroup {
+  query seeGroup(
+    $category: String!
+    $publicBool: Boolean!
+    $empty: Boolean!
+    $first: Int!
+  ) {
+    seeGroup(
+      category: $category
+      publicBool: $publicBool
+      empty: $empty
+      first: $first
+    ) {
       id
       name
       maxMember

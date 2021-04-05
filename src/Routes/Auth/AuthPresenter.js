@@ -75,6 +75,10 @@ const JoinButtonDiv = styled.div`
   margin-bottom: 30px;
 `;
 
+const JoinButtonDiv2 = styled.div`
+  margin-top: 10px;
+`;
+
 const LogoBox = styled.div`
   max-width: 100%;
   padding: 0px 85px 30px;
@@ -287,6 +291,19 @@ const PurposeContent = styled.div`
   }
 `;
 
+const SignupText = styled.div`
+  text-align: center;
+  font-size: 40px;
+  font-weight: 600;
+  :not(:last-child) {
+    margin-bottom: 10px;
+  }
+`;
+
+const MainTitle = styled.div`
+  margin-bottom: 30px;
+`;
+
 export default ({
   setAction,
   action,
@@ -351,6 +368,12 @@ export default ({
 
   return (
     <Wrapper>
+      {action === 'signUp2' && (
+        <MainTitle>
+          <SignupText>정확한 학습 분석이 필요하세요?</SignupText>
+          <SignupText>올바른 사용 범주를 선택해주세요!</SignupText>
+        </MainTitle>
+      )}
       <Form>
         {action === 'logIn' && (
           <>
@@ -493,23 +516,6 @@ export default ({
                   )}
                 </PopupCustom>
               </VerficationInputDiv>
-              <SelectDiv>
-                <span>사용 범주 1</span>
-                <Select {...studyGroup} id={'studyGroup_id'} />
-              </SelectDiv>
-              <SelectDiv>
-                <span>사용 범주 2</span>
-                <Select {...studyGroup2} id={'studyGroup2_id'} />
-              </SelectDiv>
-              <SelectDiv>
-                <span>사용 범주 3</span>
-                <Select {...studyGroup3} id={'studyGroup3_id'} />
-              </SelectDiv>
-              <SelectDiv>
-                <span>주소</span>
-                <Select {...myAddress1} id={'myAddress1_id'} />
-                <Select {...myAddress2} id={'myAddress2_id'} />
-              </SelectDiv>
               <Input
                 placeholder={'비밀번호 (예: ABCD1234)'}
                 type="password"
@@ -643,6 +649,35 @@ export default ({
                 </FacebookLoginButton>
               )}
             />
+          </>
+        )}
+        {action === 'signUp2' && (
+          <>
+            <Helmet>
+              <title>회원가입 | DEEPTIME</title>
+            </Helmet>
+            <form onSubmit={onSubmit}>
+              <SelectDiv>
+                <span>사용 범주 1</span>
+                <Select {...studyGroup} id={'studyGroup_id'} />
+              </SelectDiv>
+              <SelectDiv>
+                <span>사용 범주 2</span>
+                <Select {...studyGroup2} id={'studyGroup2_id'} />
+              </SelectDiv>
+              <SelectDiv>
+                <span>사용 범주 3</span>
+                <Select {...studyGroup3} id={'studyGroup3_id'} />
+              </SelectDiv>
+              {/* <SelectDiv>
+                <span>주소</span>
+                <Select {...myAddress1} id={'myAddress1_id'} />
+                <Select {...myAddress2} id={'myAddress2_id'} />
+              </SelectDiv> */}
+              <JoinButtonDiv2>
+                <Button text={'완료'} />
+              </JoinButtonDiv2>
+            </form>
           </>
         )}
         {action === 'findEmail' && (

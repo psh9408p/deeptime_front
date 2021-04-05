@@ -15,6 +15,8 @@ import {
   Edit,
   Studying,
   Absence,
+  PhoneUser,
+  Phone,
 } from '../../Components/Icons';
 import { Clock24 } from '../../Components/Image';
 import Countdown from 'react-countdown';
@@ -324,6 +326,19 @@ const TimeLogWrap = styled.div`
   border-radius: ${(props) => props.theme.borderRadius};
 `;
 
+const StatusWrap = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100px;
+  padding-left: 1px;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  span {
+    margin-left: 5px;
+  }
+`;
+
 const StateWrap = styled.div`
   display: flex;
   flex-direction: column;
@@ -380,7 +395,10 @@ const TotalNumber = styled.div`
   }
 
   &:nth-child(2) {
+    text-align: left;
+    width: 100px;
     line-height: 25px;
+    padding-left: 1px;
     span {
       font-size: 25px;
       color: ${(props) => props.theme.lightGreyColor};
@@ -966,6 +984,8 @@ let target_min = 0;
 let target_hour = 0;
 let total_min = 0;
 let total_hour = 0;
+let phone_hour = 0;
+let phone_min = 0;
 // 스케줄 알람용
 let beep_scheId = '';
 let beep_beforeTen = true; // true가 10분전 알림을 이미 준거
@@ -1025,6 +1045,7 @@ export default ({
   setTodoModiId,
   settingView,
   setSettingView,
+  phoneBool,
 }) => {
   // 비프음
   const [startPlay] = useSound(startSound);
@@ -2018,18 +2039,18 @@ export default ({
         new Date(i.createdAt).getDate() === nextDate.getDate(),
     );
     // today Time 없을 경우 값이 0인 Time 추가해주기
+    const zeroTime = {
+      existTime: 0,
+      phoneTime: 0,
+      sleepTime: 0,
+      time_24: new Array(288).fill(0),
+    };
     if (indexOfToday === -1) {
-      myInfoData.times.push({
-        existTime: 0,
-        time_24: new Array(288).fill(0),
-      });
+      myInfoData.times.push(zeroTime);
       indexOfToday = myInfoData.times.length - 1;
     }
     if (indexOfNextday === -1) {
-      myInfoData.times.push({
-        existTime: 0,
-        time_24: new Array(288).fill(0),
-      });
+      myInfoData.times.push(zeroTime);
       indexOfNextday = myInfoData.times.length - 1;
     }
 
@@ -2193,115 +2214,119 @@ export default ({
     );
 
     // 도넛차트 계산
-    let slicedTimeBox = [];
-    // console.log(todayTime.time_24);
-    let slicedTimes = ObjectCopy(todayTime.time_24);
-    while (true) {
-      const index_tmp = slicedTimes.findIndex((i) => i > 0);
-      if (index_tmp === -1) {
-        slicedTimeBox.push(slicedTimes);
-        const nowDateMin_count =
-          Math.floor(
-            (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
-          ) + 1;
-        if (nowDateMin_count === 288) {
-          // 지금이 23시 55분 이상이라는 뜻
-          rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-          break; // 빈시간으로 끝남
-        } else {
-          const lastIndex = 288 - nowDateMin_count; // 아직 지나지 않은 시간이 몇칸인지 알려주는 변수
-          const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
-          if (lastZeroTime.length - lastIndex === 0) {
-            // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
-            rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
-            break; // 현재 이전시간으로 끝남
-          } else {
-            const grayTime = lastZeroTime.slice(
-              0,
-              lastZeroTime.length - lastIndex,
-            );
-            const blueTime = lastZeroTime.slice(
-              lastZeroTime.length - lastIndex,
-            );
-            slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
-            slicedTimeBox.push(blueTime);
-            rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-            rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
-            break; // 현재 이전시간으로 끝남
-          }
-        }
-      } else {
-        if (index_tmp !== 0) {
-          // 0인 시간이 하나라도 있어야 빈시간을 넣지
-          slicedTimeBox.push(slicedTimes.slice(0, index_tmp));
-          rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
-          slicedTimes = slicedTimes.slice(index_tmp);
-        }
-        const index_tmp2 = slicedTimes.findIndex((i) => i === 0);
-        if (index_tmp2 === -1) {
-          slicedTimeBox.push(slicedTimes);
-          rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
-          break; // 학습시간으로 끝남
-        } else {
-          const studyTime = slicedTimes.slice(0, index_tmp2);
-          slicedTimeBox.push(studyTime);
-          rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
-          slicedTimes = slicedTimes.slice(index_tmp2);
-        }
-      }
-    }
-    donutData = slicedTimeBox.map((a) => a.length * 5);
+    // let slicedTimeBox = [];
+    // let slicedTimes = ObjectCopy(todayTime.time_24);
+    // while (true) {
+    //   const index_tmp = slicedTimes.findIndex((i) => i > 0);
+    //   if (index_tmp === -1) {
+    //     slicedTimeBox.push(slicedTimes);
+    //     const nowDateMin_count =
+    //       Math.floor(
+    //         (new Date().getHours() * 60 + new Date().getMinutes()) / 5,
+    //       ) + 1;
+    //     if (nowDateMin_count === 288) {
+    //       // 지금이 23시 55분 이상이라는 뜻
+    //       rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+    //       break; // 빈시간으로 끝남
+    //     } else {
+    //       const lastIndex = 288 - nowDateMin_count; // 아직 지나지 않은 시간이 몇칸인지 알려주는 변수
+    //       const lastZeroTime = slicedTimeBox[slicedTimeBox.length - 1];
+    //       if (lastZeroTime.length - lastIndex === 0) {
+    //         // 현재 학습중이므로 지금 뒤에 시간은 다 이전시간으로 처리
+    //         rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
+    //         break; // 현재 이전시간으로 끝남
+    //       } else {
+    //         const grayTime = lastZeroTime.slice(
+    //           0,
+    //           lastZeroTime.length - lastIndex,
+    //         );
+    //         const blueTime = lastZeroTime.slice(
+    //           lastZeroTime.length - lastIndex,
+    //         );
+    //         slicedTimeBox[slicedTimeBox.length - 1] = grayTime;
+    //         slicedTimeBox.push(blueTime);
+    //         rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+    //         rgbBox.push('#EAD6D4'); // 분홍색 지금 이전 시간
+    //         break; // 현재 이전시간으로 끝남
+    //       }
+    //     }
+    //   } else {
+    //     if (index_tmp !== 0) {
+    //       // 0인 시간이 하나라도 있어야 빈시간을 넣지
+    //       slicedTimeBox.push(slicedTimes.slice(0, index_tmp));
+    //       rgbBox.push('rgba(233, 236, 244, 1)'); // 회색
+    //       slicedTimes = slicedTimes.slice(index_tmp);
+    //     }
+    //     const index_tmp2 = slicedTimes.findIndex((i) => i === 0);
+    //     if (index_tmp2 === -1) {
+    //       slicedTimeBox.push(slicedTimes);
+    //       rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
+    //       break; // 학습시간으로 끝남
+    //     } else {
+    //       const studyTime = slicedTimes.slice(0, index_tmp2);
+    //       slicedTimeBox.push(studyTime);
+    //       rgbBox.push('#0F4C82'); // 클래식 블루 학습시간
+    //       slicedTimes = slicedTimes.slice(index_tmp2);
+    //     }
+    //   }
+    // }
+    // donutData = slicedTimeBox.map((a) => a.length * 5);
 
     // 도넛 데이터 am pm 구분하여넣기
-    let timeSum = 0;
-    let midCheck = false; // 중간 넘는 값이 처음나온건지 체크
-    for (let z = 0; z < donutData.length; z++) {
-      const time = donutData[z];
-      const rgb = rgbBox[z];
-      const preSum = ObjectCopy(timeSum);
-      timeSum = preSum + time;
+    // let timeSum = 0;
+    // let midCheck = false; // 중간 넘는 값이 처음나온건지 체크
+    // for (let z = 0; z < donutData.length; z++) {
+    //   const time = donutData[z];
+    //   const rgb = rgbBox[z];
+    //   const preSum = ObjectCopy(timeSum);
+    //   timeSum = preSum + time;
 
-      // 24시간이 1440분 절반이 720분
-      if (timeSum < 720) {
-        donutData_am.push(time);
-        rgbBox_am.push(rgb);
-      } else if (timeSum === 720) {
-        donutData_am.push(time);
-        rgbBox_am.push(rgb);
-        midCheck = true;
-      } else {
-        // timeSum > 720
-        if (midCheck) {
-          donutData_pm.push(time);
-          rgbBox_pm.push(rgb);
-        } else {
-          const pmTime = preSum + time - 720;
-          const amTime = time - pmTime;
-          donutData_am.push(amTime);
-          donutData_pm.push(pmTime);
-          rgbBox_am.push(rgb);
-          rgbBox_pm.push(rgb);
-          midCheck = true;
-        }
-      }
-    }
+    //   // 24시간이 1440분 절반이 720분
+    //   if (timeSum < 720) {
+    //     donutData_am.push(time);
+    //     rgbBox_am.push(rgb);
+    //   } else if (timeSum === 720) {
+    //     donutData_am.push(time);
+    //     rgbBox_am.push(rgb);
+    //     midCheck = true;
+    //   } else {
+    //     // timeSum > 720
+    //     if (midCheck) {
+    //       donutData_pm.push(time);
+    //       rgbBox_pm.push(rgb);
+    //     } else {
+    //       const pmTime = preSum + time - 720;
+    //       const amTime = time - pmTime;
+    //       donutData_am.push(amTime);
+    //       donutData_pm.push(pmTime);
+    //       rgbBox_am.push(rgb);
+    //       rgbBox_pm.push(rgb);
+    //       midCheck = true;
+    //     }
+    //   }
+    // }
 
-    // 도넛
+    // 스케줄 기준으로 목표시간 환산
     const targetTime = SumArray(taskArray_scheduleT) * 60;
-    if (targetTime === 0) {
-      donutPercent = 0;
-    } else {
-      donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(0);
-    }
-    //도넛 안 시간 계산
+    // if (targetTime === 0) {
+    //   donutPercent = 0;
+    // } else {
+    //   donutPercent = ((todayTime.existTime / targetTime) * 100).toFixed(0);
+    // }
+
+    // 총 시간, 목표 시간 단위 환산
     let targetTime_min = targetTime / 60;
-    let existTime_min = todayTime.existTime / 60;
     target_hour = String(Math.floor(targetTime_min / 60));
     targetTime_min = targetTime_min - target_hour * 60;
     target_min = String(Math.floor(targetTime_min));
+    let existTime_min = todayTime.existTime / 60;
     total_hour = String(Math.floor(existTime_min / 60));
     existTime_min = existTime_min - total_hour * 60;
     total_min = String(Math.floor(existTime_min));
+    let phoneTime_min = todayTime.phoneTime / 60;
+    phone_hour = String(Math.floor(phoneTime_min / 60));
+    phoneTime_min = phoneTime_min - phone_hour * 60;
+    phone_min = String(Math.floor(phoneTime_min));
   };
 
   if (7 === networkStatus) {
@@ -3067,37 +3092,46 @@ export default ({
               </SetDiv>
             </HeaderDiv>
             <TimeLogWrap>
-              {aniBool && (
+              {aniBool ? (
                 <StateWrap>
                   <Absence />
                   <StateTextAni>AI 로딩중...</StateTextAni>
                 </StateWrap>
-              )}
-              {!aniBool && studyBool ? (
+              ) : phoneBool ? (
+                <StateWrap>
+                  <PhoneUser />
+                  <StateText>스마트기기 사용</StateText>
+                </StateWrap>
+              ) : studyBool ? (
                 <StateWrap>
                   <Studying />
                   <StateText>학습중</StateText>
                 </StateWrap>
               ) : (
-                !aniBool && (
-                  <StateWrap>
-                    <Absence />
-                    <StateText>부재중...</StateText>
-                  </StateWrap>
-                )
+                <StateWrap>
+                  <Absence />
+                  <StateText>부재중...</StateText>
+                </StateWrap>
               )}
               <TotalTimeWrap>
                 <TotalNumber>
-                  <p style={{ marginBottom: '10px' }}>학습 시간</p>
+                  <p style={{ marginBottom: '5px' }}>학습 시간</p>
                   <span>
                     {total_hour.length === 1 ? '0' + total_hour : total_hour} :{' '}
                     {total_min.length === 1 ? '0' + total_min : total_min}
                   </span>
                 </TotalNumber>
                 <TotalNumber>
-                  /{target_hour.length === 1 ? '0' + target_hour : target_hour}{' '}
+                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}{' '}
                   : {target_min.length === 1 ? '0' + target_min : target_min}
                 </TotalNumber>
+                <StatusWrap>
+                  <Phone size={'20'} />
+                  <span>
+                    {phone_hour.length === 1 ? '0' + phone_hour : phone_hour} :{' '}
+                    {phone_min.length === 1 ? '0' + phone_min : phone_min}
+                  </span>
+                </StatusWrap>
               </TotalTimeWrap>
             </TimeLogWrap>
             <NowNextWrap>
