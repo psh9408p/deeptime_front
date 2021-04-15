@@ -22,6 +22,7 @@ const PostContainer = ({
   comments,
   createdAt,
   caption,
+  category,
   location,
   fileKey,
   setMyTabs,
@@ -32,6 +33,7 @@ const PostContainer = ({
   variables_deletePost,
   refetchQuerie,
   variables,
+  feedCategory,
   close,
 }) => {
   const checkLineBreak = /\r|\n/;
@@ -181,6 +183,7 @@ const PostContainer = ({
       files={files}
       likeCount={likeCountS}
       location={location}
+      category={category}
       caption={caption}
       shortCatption={shortCatption}
       isLiked={isLikedS}
@@ -205,6 +208,7 @@ const PostContainer = ({
       setMoreComment={setMoreComment}
       onDeleteComment={onDeleteComment}
       commentLoad={commentLoad}
+      feedCategory={feedCategory}
     />
   );
 };

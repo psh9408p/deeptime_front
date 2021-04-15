@@ -10,7 +10,7 @@ const Header = styled.header`
   position: fixed;
   top: 0;
   left: 0;
-  background-color: white;
+  background-color: none;
   /* border-bottom: ${(props) => props.theme.boxBorder}; */
   border-radius: 0px;
   display: flex;

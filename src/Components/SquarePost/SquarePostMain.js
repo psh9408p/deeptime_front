@@ -15,7 +15,14 @@ const LoaderWrapper = styled.div`
   height: 300px;
 `;
 
-export default ({ postId, setViewTab, location, caption, close }) => {
+export default ({
+  postId,
+  setViewTab,
+  location,
+  caption,
+  feedCategory,
+  close,
+}) => {
   const routeLocation = useLocation();
   const pageName = routeLocation.pathname.split('/')[1];
 
@@ -38,6 +45,7 @@ export default ({ postId, setViewTab, location, caption, close }) => {
         key={post.id}
         id={post.id}
         location={post.location}
+        category={post.category}
         caption={post.caption}
         user={post.user}
         files={post.files}
@@ -55,6 +63,7 @@ export default ({ postId, setViewTab, location, caption, close }) => {
         variables_deletePost={variables_deletePost}
         refetchQuerie={FEED_ONE_QUERY}
         variables={variables}
+        feedCategory={feedCategory}
         close={close}
       />
     );

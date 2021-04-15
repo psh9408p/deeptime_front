@@ -12,6 +12,9 @@ import Input_100 from '../Input_100';
 import Textarea from '../../Components/Textarea';
 import { toast } from 'react-toastify';
 import { FEED_ONE_QUERY } from './SquarePostQueries';
+import useSelect from '../../Hooks/useSelect';
+import { studyOption_group } from '../LongArray';
+import Select from '../Select';
 
 const Overlay = styled.div`
   cursor: pointer;
@@ -95,15 +98,35 @@ const CaptionText = styled(Textarea)`
   display: inline-block;
 `;
 
+const InputWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 376px;
+  height: 35px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: #f1f0ef;
+  padding-left: 15px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  span {
+    margin-right: 5px;
+  }
+`;
+
 export default ({ postId, likeCount, commentCount, file }) => {
   const height = window.screen.height * 0.75;
   const [viewTab, setViewTab] = useState(0);
   const location = useInput('');
   const caption = useInput('');
 
+  const feedCategory = useSelect(studyOption_group, studyOption_group);
+
   const allClear = () => {
     location.setValue('');
     caption.setValue('');
+    feedCategory.setOption(feedCategory.valueList[0]);
   };
 
   const [editPostMutation] = useMutation(EDIT_POST, {
@@ -120,6 +143,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
         variables: {
           postId: postId,
           location: location.value,
+          category: feedCategory.option,
           caption: caption.value,
         },
       });
@@ -162,6 +186,7 @@ export default ({ postId, likeCount, commentCount, file }) => {
               setViewTab={setViewTab}
               location={location}
               caption={caption}
+              feedCategory={feedCategory}
               close={close}
             />
           ) : (
@@ -177,6 +202,15 @@ export default ({ postId, likeCount, commentCount, file }) => {
                   {...location}
                   required={false}
                 />
+                <InputWrap>
+                  <span>카테고리 :</span>
+                  <Select
+                    {...feedCategory}
+                    id={'groupCategory_id'}
+                    width={'100px'}
+                    height={'25px'}
+                  />
+                </InputWrap>
                 <CaptionText
                   placeholder={'(필수 항목) 내용'}
                   bgColor={'#f1f0ef'}

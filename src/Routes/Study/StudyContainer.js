@@ -48,8 +48,8 @@ let cellphoneDecisionArray = [0, 0, 0, 0, 0, 0]; // 1.true 2.false
 
 // let finalDecisionArray = []; // 1.study 2.none 3.cell phone 4.sleep
 
-let detect_interval = 9900 * 1;
-// let detect_interval = 1000 * 1;
+// let detect_interval = 9900 * 1;
+let detect_interval = 1000 * 1;
 let mutation_interval = 6;
 
 let decision_size = 6;

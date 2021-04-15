@@ -786,6 +786,16 @@ export default ({
             </GroupInfo>
             <GroupInfo>
               <div>
+                <span>평균 출석률</span> {groupData.lastAttendance.toFixed(0)} %
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
+                <span>하루 목표</span> {groupData.targetTime} 시간
+              </div>
+            </GroupInfo>
+            <GroupInfo>
+              <div>
                 <span>활동 요일</span>{' '}
                 {everyDay
                   ? '매일'
@@ -798,21 +808,6 @@ export default ({
                         }
                       }
                     })}
-              </div>
-            </GroupInfo>
-            <GroupInfo>
-              <div>
-                <span>하루 목표</span> {groupData.targetTime} 시간
-              </div>
-            </GroupInfo>
-            <GroupInfo>
-              <div>
-                <span>평균 학습</span> {groupData.lastStudyTime.toFixed(0)} 시간
-              </div>
-            </GroupInfo>
-            <GroupInfo>
-              <div>
-                <span>평균 출석률</span> {groupData.lastAttendance.toFixed(0)} %
               </div>
             </GroupInfo>
             <GroupInfo>

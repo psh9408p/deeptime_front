@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Post from '../../Components/Post';
 import { Add } from '../../Components/Icons';
@@ -8,11 +8,7 @@ import FatText from '../../Components/FatText';
 import Input_100 from '../../Components/Input_100';
 import Textarea from '../../Components/Textarea';
 import { FEED_ALL_QUERY } from './FeedQueries';
-// import useSelect from '../../../Hooks/useSelect';
-
-import { studyOption_group } from '../../Components/LongArray';
 import Select from '../../Components/Select';
-import useSelect from '../../Hooks/useSelect';
 // 이미지 업로드 관련
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
@@ -20,8 +16,6 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-import useSelect_dynamic from '../../Hooks/useSelect_dynamic';
-import useSelect_dynamic2 from '../../Hooks/useSelect_dynamic2';
 registerPlugin(
   FilePondPluginImageExifOrientation,
   FilePondPluginFileValidateSize,
@@ -31,25 +25,6 @@ registerPlugin(
 const FilterdSelect = styled.div`
   width: 30%;
   height: 100%;
-`;
-
-const SelectDiv = styled.div`
-  display: inline-flex;
-  border: 0;
-  border: ${(props) => props.theme.boxBorder};
-  border-radius: ${(props) => props.theme.borderRadius};
-  background-color: ${(props) => props.theme.bgColor};
-  height: 35px;
-  margin-bottom: 7px;
-  font-size: 12px;
-  width: 100%;
-  span {
-    display: inline-flex;
-    width: 100px;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-  }
 `;
 
 const HeaderDiv = styled.div`
@@ -123,7 +98,22 @@ const MoreDiv = styled.div`
   max-width: 600px;
 `;
 
-let filtering = false;
+const InputWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 376px;
+  height: 35px;
+  border: ${(props) => props.theme.boxBorder};
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: #f1f0ef;
+  padding-left: 15px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  span {
+    margin-right: 5px;
+  }
+`;
 
 export default ({
   feedData,
@@ -138,48 +128,20 @@ export default ({
   setEditPostId,
   onEdit,
   variables,
-  setVariables,
   feedTerm,
   networkStatus,
-  meData,
+  feedCategory,
+  feedCategory2,
+  first,
+  setFirst,
 }) => {
-  // const getAll = studyOption_group.push('전체');
-
-  const getAll = studyOption_group.slice();
-  getAll.unshift('전체');
-
-  const group1 = useSelect(getAll, getAll, meData.studyGroup);
-
-  const [filterdData, setFilterdData] = useState(feedData);
-
-  const getData = () => {
-    if (group1.option === '전체') {
-      setFilterdData(feedData);
-    } else {
-      const fildata = feedData.filter(
-        (ctr) => ctr.user.studyGroup === group1.option,
-      );
-      setFilterdData(fildata);
-    }
-    filtering = true;
-  };
-
-  // let value = (e) => {
-  //   console.log(e.target.options[e.target.selectedIndex].text);
-  // };
-  // let category1 = feedData.filter(
-  //   (ctr) => ctr.user.studyGroup === group1.option,
-  useEffect(() => {
-    getData();
-  }, [group1.option]);
-
   return (
     <>
       {myTabs === 0 ? (
         <>
           <HeaderDiv>
             <FilterdSelect>
-              <Select {...group1} id={'testSelect'} />
+              <Select {...feedCategory2} id={'testSelect'} />
             </FilterdSelect>
             <Add
               fill={'#0F4C82'}
@@ -189,39 +151,40 @@ export default ({
             />
           </HeaderDiv>
           <PostWrap>
-            {filtering &&
-              filterdData.map((post) => (
-                <div style={{ marginBottom: '25px' }} key={post.id}>
-                  <Post
-                    id={post.id}
-                    location={post.location}
-                    caption={post.caption}
-                    user={post.user}
-                    files={post.files}
-                    likeCount={post.likeCount}
-                    isLiked={post.isLiked}
-                    isSelf={post.isSelf}
-                    comments={post.comments}
-                    createdAt={post.createdAt}
-                    fileKey={post.files.map((file) => file.key)}
-                    setMyTabs={setMyTabs}
-                    setEditPostId={setEditPostId}
-                    locationInput={location}
-                    captionInput={caption}
-                    refetchQuerie={FEED_ALL_QUERY}
-                    variables={variables}
-                  />
-                </div>
-              ))}
+            {feedData.map((post) => (
+              <div style={{ marginBottom: '25px' }} key={post.id}>
+                <Post
+                  id={post.id}
+                  location={post.location}
+                  category={post.category}
+                  caption={post.caption}
+                  user={post.user}
+                  files={post.files}
+                  likeCount={post.likeCount}
+                  isLiked={post.isLiked}
+                  isSelf={post.isSelf}
+                  comments={post.comments}
+                  createdAt={post.createdAt}
+                  fileKey={post.files.map((file) => file.key)}
+                  setMyTabs={setMyTabs}
+                  setEditPostId={setEditPostId}
+                  locationInput={location}
+                  captionInput={caption}
+                  refetchQuerie={FEED_ALL_QUERY}
+                  variables={variables}
+                  feedCategory={feedCategory}
+                />
+              </div>
+            ))}
           </PostWrap>
           <MoreDiv>
             <Button_custom
               margin={'0 0 30px 0'}
               width={'100%'}
-              text={'게시물 20개 더보기'}
-              loading={networkStatus === 4 ? true : false}
+              text={'게시물 더보기'}
+              loading={networkStatus === 2 ? true : false}
               onClick={() => {
-                setVariables({ first: variables.first + feedTerm });
+                setFirst(first + feedTerm);
               }}
             />
           </MoreDiv>
@@ -260,6 +223,15 @@ export default ({
               {...location}
               required={false}
             />
+            <InputWrap>
+              <span>카테고리 :</span>
+              <Select
+                {...feedCategory}
+                id={'groupCategory_id'}
+                width={'100px'}
+                height={'25px'}
+              />
+            </InputWrap>
             <CaptionText
               placeholder={'(필수 항목) 내용'}
               bgColor={'#f1f0ef'}
@@ -291,6 +263,15 @@ export default ({
               {...location}
               required={false}
             />
+            <InputWrap>
+              <span>카테고리 :</span>
+              <Select
+                {...feedCategory}
+                id={'groupCategory_id'}
+                width={'100px'}
+                height={'25px'}
+              />
+            </InputWrap>
             <CaptionText
               placeholder={'(필수 항목) 내용'}
               bgColor={'#f1f0ef'}

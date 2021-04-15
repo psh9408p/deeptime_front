@@ -9,7 +9,7 @@ const TopStick = styled.span`
   content: '|';
   z-index: 999;
   top: -0.5px;
-  color: #525a61;
+  color: white;
   margin: 0 5.5px;
   margin-top: 1.5px;
 `;
@@ -81,8 +81,9 @@ const FooterTop_Left = styled.ul`
     margin-right: -60px;
   }
 `;
-const FooterTop_Left_Item = styled.li`
+const FooterTop_Left_Item = styled(Link)`
   /* margin-right: 8px; */
+  color: white;
   width: 60px;
   &:hover {
     color: #908991;
@@ -219,7 +220,9 @@ export default ({ isIntro = false }) => {
       <Footer>
         <FooterTop>
           <FooterTop_Left>
-            <FooterTop_Left_Item>사용법</FooterTop_Left_Item>
+            <FooterTop_Left_Item to="/userguide/play">
+              사용법
+            </FooterTop_Left_Item>
             <TopStick>|</TopStick>
             <FooterTop_Left_Item>FAQ</FooterTop_Left_Item>
           </FooterTop_Left>

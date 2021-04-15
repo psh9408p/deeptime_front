@@ -31,7 +31,6 @@ export const SEEONE_GROUP = gql`
       }
       memberCount
       imManager
-      lastStudyTime
       lastAttendance
       createdAt
     }

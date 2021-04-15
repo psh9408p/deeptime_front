@@ -191,7 +191,7 @@ export default () => {
 
       document.getElementById('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
       document.getElementById('download').style.display = '';
-      document.getElementById('submission').style.display = '';
+      // document.getElementById('submission').style.display = '';
       document.getElementById('download').href = url;
       document.getElementById('download').download =
         'deeptime_timelapse_' + file_tail + '.mp4';
@@ -325,7 +325,7 @@ export default () => {
           타임랩스 다운로드
         </a>
       </ButtonWrap>
-      <ButtonWrap>
+      {/* <ButtonWrap>
         <a
           style={{
             display: 'none',
@@ -341,7 +341,7 @@ export default () => {
         >
           타임랩스 제출
         </a>
-      </ButtonWrap>
+      </ButtonWrap> */}
     </Wrapper>
   );
 };

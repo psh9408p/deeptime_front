@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  FEED_ALL_QUERY,
-  CREATE_POST,
-  EDIT_POST,
-  ME_GROUP,
-} from './FeedQueries';
+import { FEED_ALL_QUERY, CREATE_POST, EDIT_POST } from './FeedQueries';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import Loader from '../../Components/Loader';
 import useInput from '../../Hooks/useInput';
 import FeedPresenter from './FeedPresenter';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useSelect from '../../Hooks/useSelect';
+import { studyOption_group } from '../../Components/LongArray';
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,8 +23,10 @@ const LoaderWrapper = styled.div`
 `;
 
 const feedTerm = 20;
+const getAll = studyOption_group.slice();
+getAll.unshift('전체');
 
-export default () => {
+export default ({ meData }) => {
   // 새로고침을 통해 로그인 시 seeFeed 에러 고치는 법
   // const count = localStorage.getItem("refresh_count") + 1
   // localStorage.setItem("refresh_count", count)
@@ -35,11 +34,22 @@ export default () => {
   //   window.location.reload()
   // }
 
+  const [first, setFirst] = useState(feedTerm);
   const [myTabs, setMyTabs] = useState(0);
   const [editPostId, setEditPostId] = useState('');
-  const [variables, setVariables] = useState({ first: feedTerm });
+  const [variables, setVariables] = useState({ category: '전체', first });
+
   const location = useInput('');
   const caption = useInput('');
+
+  // 게시물 작성&수정 용
+  const feedCategory = useSelect(
+    studyOption_group,
+    studyOption_group,
+    meData.studyGroup,
+  );
+  // 게시물 검색용
+  const feedCategory2 = useSelect(getAll, getAll);
 
   const [createPostMutation] = useMutation(CREATE_POST);
   const [editPostMutation] = useMutation(EDIT_POST);
@@ -47,7 +57,6 @@ export default () => {
     variables,
     notifyOnNetworkStatusChange: true,
   });
-  const { data: meData, loading: meLoading } = useQuery(ME_GROUP);
 
   const [files, setFiles] = useState([]);
 
@@ -56,6 +65,7 @@ export default () => {
     location.setValue('');
     caption.setValue('');
     setFiles([]);
+    feedCategory.setOption(meData.studyGroup);
   };
 
   const onSubmit = async (e) => {
@@ -104,6 +114,7 @@ export default () => {
         variables: {
           location: location.value,
           caption: caption.value,
+          category: feedCategory.option,
           fileUrl,
           fileKey,
         },
@@ -133,6 +144,7 @@ export default () => {
           postId: editPostId,
           location: location.value,
           caption: caption.value,
+          category: feedCategory.option,
         },
       });
       if (!editPost) {
@@ -150,17 +162,30 @@ export default () => {
   };
 
   useEffect(() => {
-    refetch(variables);
-  }, [variables]);
+    setVariables({
+      category: feedCategory2.option,
+      first: feedTerm,
+    });
+    // 피드 개수 초기화
+    setFirst(feedTerm);
+  }, [feedCategory2.option]);
+
+  // 더보기 할때만 개수 늘어나게 따로
+  useEffect(() => {
+    setVariables({
+      category: feedCategory2.option,
+      first,
+    });
+  }, [first]);
 
   return (
     <Wrapper>
-      {networkStatus === 1 && meLoading && (
+      {networkStatus === 1 && (
         <LoaderWrapper>
           <Loader />
         </LoaderWrapper>
       )}
-      {networkStatus !== 1 && feedData && feedData.seeAllFeed && !meLoading && (
+      {networkStatus !== 1 && feedData && feedData.seeAllFeed && (
         <FeedPresenter
           feedData={feedData.seeAllFeed}
           myTabs={myTabs}
@@ -174,10 +199,12 @@ export default () => {
           setEditPostId={setEditPostId}
           onEdit={onEdit}
           variables={variables}
-          setVariables={setVariables}
           feedTerm={feedTerm}
           networkStatus={networkStatus}
-          meData={meData.me}
+          feedCategory={feedCategory}
+          feedCategory2={feedCategory2}
+          first={first}
+          setFirst={setFirst}
         />
       )}
     </Wrapper>

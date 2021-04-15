@@ -23,20 +23,16 @@ const LoaderWrapper = styled.div`
   padding: 100px 0;
 `;
 
-// const filterArray = [
-//   '높은 학습 시간순',
-//   '낮은 학습 시간순',
-//   '높은 출석률순',
-//   '낮은 출석률순',
-// ];
+const filterArray = ['최신순', '높은 출석률순'];
+const filterArray_value = ['createdAt_DESC', 'lastAttendance_DESC'];
 const getAll = studyOption_group.slice();
 getAll.unshift('전체');
-export const feedTerm = 1;
+export const feedTerm = 20;
 
 export default ({ myTabs }) => {
   const groupCategory = useSelect(studyOption_group, studyOption_group);
-  const categroyFilter = useSelect(getAll, getAll, '전체');
-  // const orderFilter = useSelect(filterArray, filterArray, '높은 학습 시간순');
+  const categroyFilter = useSelect(getAll, getAll);
+  const orderFilter = useSelect(filterArray, filterArray_value);
 
   const preventFloat = (value) => value % 1 === 0;
 
@@ -48,7 +44,8 @@ export default ({ myTabs }) => {
   const [selectFile, setSelectFile] = useState(null);
   const [dayBool, setDayBool] = useState(new Array(7).fill(true));
   const [variables, setVariables] = useState({
-    category: '전체',
+    category: getAll[0],
+    orderBy: filterArray_value[0],
     publicBool,
     empty,
     first,
@@ -78,15 +75,6 @@ export default ({ myTabs }) => {
 
   const emptyHandler = () => {
     setEmpty(!empty);
-  };
-
-  const reFeed = () => {
-    setVariables({
-      category: categroyFilter.option,
-      publicBool,
-      empty,
-      first: variables.first,
-    });
   };
 
   const groupClear = () => {
@@ -164,27 +152,25 @@ export default ({ myTabs }) => {
   useEffect(() => {
     setVariables({
       category: categroyFilter.option,
+      orderBy: orderFilter.option,
       publicBool,
       empty,
       first: feedTerm,
     });
     // 피드 개수 초기화
     setFirst(feedTerm);
-  }, [categroyFilter.option, publicBool, empty]);
+  }, [categroyFilter.option, orderFilter.option, publicBool, empty]);
 
   // 더보기 할때만 개수 늘어나게 따로
   useEffect(() => {
     setVariables({
       category: categroyFilter.option,
+      orderBy: orderFilter.option,
       publicBool,
       empty,
       first,
     });
   }, [first]);
-
-  useEffect(() => {
-    groupRefetch(variables);
-  }, [variables]);
 
   return (
     <Wrapper>
@@ -214,13 +200,13 @@ export default ({ myTabs }) => {
             groupNetwork={groupNetwork}
             publicBoolHandler={publicBoolHandler}
             emptyHandler={emptyHandler}
-            reFeed={reFeed}
             publicBool={publicBool}
             empty={empty}
             first={first}
             setFirst={setFirst}
             feedTerm={feedTerm}
             variables={variables}
+            orderFilter={orderFilter}
           />
         </>
       )}

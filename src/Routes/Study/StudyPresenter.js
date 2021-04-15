@@ -339,6 +339,10 @@ const StatusWrap = styled.div`
   }
 `;
 
+const PhoneText = styled.span`
+  color: ${(props) => (props.phoneBool ? props.theme.redColor : 'black')};
+`;
+
 const StateWrap = styled.div`
   display: flex;
   flex-direction: column;
@@ -386,7 +390,7 @@ const TotalNumber = styled.div`
   text-align: center;
 
   &:first-child {
-    margin-bottom: 2px;
+    margin-bottom: 10px;
     line-height: 30px;
     span {
       font-size: 35px;
@@ -395,10 +399,7 @@ const TotalNumber = styled.div`
   }
 
   &:nth-child(2) {
-    text-align: left;
-    width: 100px;
     line-height: 25px;
-    padding-left: 1px;
     span {
       font-size: 25px;
       color: ${(props) => props.theme.lightGreyColor};
@@ -422,6 +423,7 @@ const NowNextWrap = styled.div`
 
 const BarWrap = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 270px;
@@ -429,6 +431,21 @@ const BarWrap = styled.div`
   margin-right: 10px;
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
+`;
+
+const LastTime = styled.div`
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  span {
+    margin-left: 5px;
+    /* color: ${(props) => props.theme.lightGreyColor}; */
+  }
+`;
+
+const RowWrap = styled.div`
+  width: 100%;
+  margin-bottom: 15px;
 `;
 
 const BreakNextWrap = styled.div`
@@ -740,7 +757,7 @@ const BlackBack = styled.div`
 
 const CustomPopup = styled.div`
   position: absolute;
-  z-index: 14;
+  z-index: 999;
   width: 420px;
   height: 410px;
   display: flex;
@@ -974,6 +991,8 @@ let nowScheduleTimeT = 0;
 let nowScheduleColor = 'rgba(123, 169, 235, 1)';
 let nowTitle1 = '';
 let nowTitle2 = '';
+let lastNow_Hour = 0;
+let lastNow_Min = 0;
 let nextScheduleIndex = -1;
 let nextTitle1 = '';
 let nextTitle2 = '';
@@ -2096,6 +2115,12 @@ export default ({
         moment(startPoint).format('hh:mma') +
         ' ~ ' +
         moment(endPoint).format('hh:mma');
+      // 현재스케줄 나머지 시간 계산
+      const nowDate = new Date();
+      let lastMin = Math.ceil((endPoint.getTime() - nowDate.getTime()) / 60000);
+      lastNow_Hour = String(Math.floor(lastMin / 60));
+      lastMin = lastMin - lastNow_Hour * 60;
+      lastNow_Min = String(lastMin);
     } else {
       nowScheduleTime = 0;
       nowScheduleTimeT = 0;
@@ -3097,12 +3122,13 @@ export default ({
                   <Absence />
                   <StateTextAni>AI 로딩중...</StateTextAni>
                 </StateWrap>
-              ) : phoneBool ? (
-                <StateWrap>
-                  <PhoneUser />
-                  <StateText>스마트기기 사용</StateText>
-                </StateWrap>
-              ) : studyBool ? (
+              ) : // phoneBool ? (
+              //   <StateWrap>
+              //     <PhoneUser />
+              //     <StateText>스마트기기 사용</StateText>
+              //   </StateWrap>
+              // ) :
+              studyBool ? (
                 <StateWrap>
                   <Studying />
                   <StateText>학습중</StateText>
@@ -3122,27 +3148,41 @@ export default ({
                   </span>
                 </TotalNumber>
                 <TotalNumber>
-                  / {target_hour.length === 1 ? '0' + target_hour : target_hour}{' '}
-                  : {target_min.length === 1 ? '0' + target_min : target_min}
+                  <p style={{ marginBottom: '5px' }}>목표 시간</p>
+                  <span>
+                    {target_hour.length === 1 ? '0' + target_hour : target_hour}{' '}
+                    : {target_min.length === 1 ? '0' + target_min : target_min}
+                  </span>
                 </TotalNumber>
                 <StatusWrap>
                   <Phone size={'20'} />
-                  <span>
+                  <PhoneText phoneBool={phoneBool}>
                     {phone_hour.length === 1 ? '0' + phone_hour : phone_hour} :{' '}
                     {phone_min.length === 1 ? '0' + phone_min : phone_min}
-                  </span>
+                  </PhoneText>
                 </StatusWrap>
               </TotalTimeWrap>
             </TimeLogWrap>
             <NowNextWrap>
               <BarWrap>
-                <RowBarChart_now
-                  title1={nowTitle1}
-                  title2={nowTitle2}
-                  data_1={nowScheduleTime}
-                  data_2={nowScheduleTimeT}
-                  scheduleColor={nowScheduleColor}
-                />
+                <RowWrap>
+                  <RowBarChart_now
+                    title1={nowTitle1}
+                    title2={nowTitle2}
+                    data_1={nowScheduleTime}
+                    data_2={nowScheduleTimeT}
+                    scheduleColor={nowScheduleColor}
+                  />
+                </RowWrap>
+                {nowTitle2 !== '' && (
+                  <LastTime>
+                    남은 시간 :
+                    <span>
+                      {lastNow_Hour !== '0' && `${lastNow_Hour}시간`}{' '}
+                      {lastNow_Min}분
+                    </span>
+                  </LastTime>
+                )}
               </BarWrap>
               <NextAndTool>
                 <NextTimeDiv>

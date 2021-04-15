@@ -36,6 +36,7 @@ export default ({
   isSearch = false,
   variables = {
     category: '전체',
+    orderBy: 'createdAt_DESC',
     publicBool: false,
     empty: false,
     first: feedTerm,

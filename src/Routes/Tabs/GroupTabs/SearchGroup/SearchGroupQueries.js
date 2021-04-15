@@ -3,12 +3,14 @@ import { gql } from 'apollo-boost';
 export const SEE_GROUP = gql`
   query seeGroup(
     $category: String!
+    $orderBy: String!
     $publicBool: Boolean!
     $empty: Boolean!
     $first: Int!
   ) {
     seeGroup(
       category: $category
+      orderBy: $orderBy
       publicBool: $publicBool
       empty: $empty
       first: $first
@@ -29,7 +31,6 @@ export const SEE_GROUP = gql`
         username
       }
       memberCount
-      lastStudyTime
       lastAttendance
       createdAt
     }

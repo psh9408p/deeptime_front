@@ -369,11 +369,11 @@ export default ({
                   <span>사용 범주 3</span>
                   <Select {...studyGroup3} id={'studyGroup3_id'} />
                 </SelectDiv>
-                <SelectDiv>
+                {/* <SelectDiv>
                   <span>주소</span>
                   <Select {...myAddress1} id={'myAddress1_id'} />
                   <Select {...myAddress2} id={'myAddress2_id'} />
-                </SelectDiv>
+                </SelectDiv> */}
                 <BioArea
                   {...bio}
                   placeholder={'자기소개 (150자 이내)'}

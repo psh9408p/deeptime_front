@@ -121,13 +121,13 @@ export default () => {
   const [visible, setVisible] = useState(false);
   return (
     <div>
-      <Header>
+      {/* <Header>
         <TopHeader>
           <Logo />
           <RigtNav />
           <Burger />
         </TopHeader>
-      </Header>
+      </Header> */}
       <Fullpage />
     </div>
   );

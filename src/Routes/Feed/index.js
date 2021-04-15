@@ -1,2 +1,2 @@
-import FeedContainer from './FeedContainer';
-export default FeedContainer;
+import FeedBefore from './FeedBefore';
+export default FeedBefore;

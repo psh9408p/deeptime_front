@@ -5,6 +5,7 @@ export const FEED_ONE_QUERY = gql`
     seeOneFeed(postId: $postId) {
       id
       location
+      category
       caption
       user {
         id

@@ -157,6 +157,7 @@ export default ({
   id,
   user: { username, avatar },
   location,
+  category,
   files,
   isLiked,
   isSelf,
@@ -181,6 +182,7 @@ export default ({
   setMoreComment,
   onDeleteComment,
   commentLoad,
+  feedCategory,
 }) => {
   const nowDate = new Date();
   const createTime = new Date(createdAt);
@@ -254,6 +256,7 @@ export default ({
                 setEditPostId(id);
                 locationInput.setValue(location);
                 captionInput.setValue(caption);
+                feedCategory.setOption(category);
                 setMyTabs(2);
               }}
             />

@@ -144,7 +144,6 @@ const MoreDiv = styled.div`
 `;
 
 const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
-let group_tmp = [];
 
 export default ({
   viewTabs,
@@ -172,11 +171,12 @@ export default ({
   setFirst,
   feedTerm,
   variables,
+  orderFilter,
 }) => {
   // 출석률 높은 순으로
-  groupData.sort(function (a, b) {
-    return b.lastAttendance - a.lastAttendance;
-  });
+  // groupData.sort(function (a, b) {
+  //   return b.lastAttendance - a.lastAttendance;
+  // });
 
   return (
     <>
@@ -187,9 +187,9 @@ export default ({
               <FilterdSelect>
                 <Select {...categroyFilter} id={'testSelect'} />
               </FilterdSelect>
-              {/* <FilterdSelect>
-                  <Select {...orderFilter} id={'testSelect2'} />
-                </FilterdSelect> */}
+              <FilterdSelect>
+                <Select {...orderFilter} id={'testSelect2'} />
+              </FilterdSelect>
               <Check_Box>
                 <CheckBox
                   id={'publicCheck'}
@@ -240,33 +240,31 @@ export default ({
                         </MemberTitle>
                         <MemberDiv>
                           <CategoryDiv>{group.category}</CategoryDiv>
-                          <p>
+                          {/* <p>
                             <span>평균 학습량</span>{' '}
                             {group.lastStudyTime.toFixed(0)} 시간
-                          </p>
+                          </p> */}
                           <p>
                             <span>평균 출석률</span>{' '}
                             {group.lastAttendance.toFixed(0)} %
                           </p>
-                          <MemberList>
-                            <span>
-                              <span>하루 목표</span> {group.targetTime} 시간
-                            </span>
-                            <span>
-                              <span>활동 요일</span>{' '}
-                              {everyDay
-                                ? '매일'
-                                : group.activeDay.map((bool, index) => {
-                                    if (bool) {
-                                      if (index === lastDayIndex) {
-                                        return dayArray[index];
-                                      } else {
-                                        return dayArray[index] + ', ';
-                                      }
+                          <p>
+                            <span>하루 목표</span> {group.targetTime} 시간
+                          </p>
+                          <p>
+                            <span>활동 요일</span>{' '}
+                            {everyDay
+                              ? '매일'
+                              : group.activeDay.map((bool, index) => {
+                                  if (bool) {
+                                    if (index === lastDayIndex) {
+                                      return dayArray[index];
+                                    } else {
+                                      return dayArray[index] + ', ';
                                     }
-                                  })}
-                            </span>
-                          </MemberList>
+                                  }
+                                })}
+                          </p>
                           <MemberList>
                             <span>
                               <span>인원</span> {group.memberCount}/
@@ -302,7 +300,7 @@ export default ({
               margin={'0 0 30px 0'}
               width={'100%'}
               text={'그룹 더보기'}
-              loading={groupNetwork === 4 ? true : false}
+              loading={groupNetwork === 2 ? true : false}
               onClick={() => {
                 setFirst(first + feedTerm);
               }}
