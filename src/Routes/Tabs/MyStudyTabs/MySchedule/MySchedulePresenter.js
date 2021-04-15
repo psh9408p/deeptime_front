@@ -1428,6 +1428,16 @@ export default ({
 
   const onBeforeUpdateSchedule = useCallback(
     async (res) => {
+      // 하루의 마지막으로 드레그하면 모듈이 12시에 1초를 빼버리기 때문에 1초를 다시 더해줌
+      if (res.end._date.getMinutes() === 59) {
+        res.end._date.setSeconds(60);
+      }
+      // 드래그 시 스케줄 24시간 넘지 않게 검증
+      const timeDiff = res.end._date.getTime() - res.start._date.getTime();
+      if (timeDiff > 86400000) {
+        alert('스케줄 기간은 24시간 이내로 가능합니다.');
+        return;
+      }
       setScheLoading(true);
       try {
         const {
