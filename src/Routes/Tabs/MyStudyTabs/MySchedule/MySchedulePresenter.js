@@ -1603,7 +1603,9 @@ export default ({
         },
       });
       if (!createSchedule) {
-        alert('스케줄을 만들 수 없습니다.');
+        alert(
+          `스케줄을 ${option === 'create' ? '만들' : '수정할'} 수 없습니다.`,
+        );
       } else {
         await scheduleRefetch();
         clearSchedule();
