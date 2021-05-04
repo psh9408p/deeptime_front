@@ -18,7 +18,7 @@ const LoaderWrapper = styled.div`
 `;
 
 export default () => {
-  const myTabContents = ['나의 스케줄', '나의 통계'];
+  const myTabContents = ['나의 스케줄', '나의 통계', '교재 분석'];
   const myTabs = useTabs(0, myTabContents);
 
   const { data: defaultSet, loading: defaultSetLoading } = useQuery(
