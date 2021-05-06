@@ -18,11 +18,10 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 150px;
+  margin-top: 20px;
 `;
 const BookWrap = styled.div`
   display: flex;
-  margin-top: 300px;
   /* border: 1px solid black; */
   align-items: center;
   width: 500px;
@@ -32,18 +31,16 @@ const BookWrap = styled.div`
 `;
 
 const Image = styled.div`
-  background-image: url('https://blog.kakaocdn.net/dn/8UEm7/btq1dy9Tqwe/GuWkStKkrNFNZaoFp4rSSk/img.jpg');
+  background-image: url(${(props) => props.image});
   background-size: cover;
   width: 100px;
   position: relative;
-  top: -50px;
   height: 120px;
   margin: 1em 1em;
   box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25),
     0 18px 36px -18px rgba(0, 0, 0, 0.3), 0 -12px 36px -8px rgba(0, 0, 0, 0.025);
 `;
-
-export default ({ searchContent, onSearch }) => {
+export default ({ searchContent, onSearch, bookList }) => {
   return (
     <>
       <SearchForm onSubmit={onSearch}>
@@ -54,59 +51,46 @@ export default ({ searchContent, onSearch }) => {
         />
         <SearchBtn type="submit">검색</SearchBtn>
       </SearchForm>
-      <Container>
-        <BookWrap>
-          <div>
-            <a
-              target="_blank"
-              href="https://ridibooks.com/books/371002341?_s=category_best&_s_id=754027238"
-            >
-              <Image></Image>
-            </a>
-          </div>
-          <div>
-            <div>
-              <a
-                style={{
-                  outline: 'none',
-                  textDecoration: 'none',
-                  color: 'black',
-                }}
-                target="_blank"
-                href="https://ridibooks.com/books/371002341?_s=category_best&_s_id=754027238"
-              >
-                <h3>제목</h3>
-              </a>
-              <p>
-                <span>저자</span>
-              </p>
-              <p>
-                <span>출판사</span>
-              </p>
-            </div>
-          </div>
-        </BookWrap>
-      </Container>
-      <Container>
-        <BookWrap>
-          <div>
-            <Image a="true" href="https://www.facebook.com/"></Image>
-          </div>
-          <div>
-            <div>
-              <h3 a="true" href="https://www.facebook.com/">
-                제목
-              </h3>
-              <p>
-                <span>저자</span>
-              </p>
-              <p>
-                <span>출판사</span>
-              </p>
-            </div>
-          </div>
-        </BookWrap>
-      </Container>
+      {bookList.map((book) => {
+        return (
+          <Container>
+            <BookWrap>
+              <div>
+                <a
+                  target="_blank"
+                  href="https://ridibooks.com/books/371002341?_s=category_best&_s_id=754027238"
+                >
+                  <Image image={book.image}></Image>
+                </a>
+              </div>
+              <div>
+                <div>
+                  <a
+                    style={{
+                      outline: 'none',
+                      textDecoration: 'none',
+                      color: 'black',
+                    }}
+                    target="_blank"
+                    href="https://ridibooks.com/books/371002341?_s=category_best&_s_id=754027238"
+                  >
+                    <h3>{book.title}</h3>
+                  </a>
+                  <p>
+                    <span>{book.author}</span>
+                  </p>
+                  <p>
+                    <span>{book.publisher}</span>
+                  </p>
+                  <p>
+                    <span>{book.isbn}</span>
+                  </p>
+                </div>
+              </div>
+            </BookWrap>
+          </Container>
+        );
+      })}
     </>
   );
 };

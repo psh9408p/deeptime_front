@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks';
-import React from 'react';
+import React, { useState } from 'react';
 import useInput from '../../../../Hooks/useInput';
 import BookAnalysisPresenter from './BookAnalysisPresenter';
 import { SEARCH_BOOK } from './BookAnalysisQueries';
@@ -8,9 +8,9 @@ export default () => {
   const searchContent = useInput('');
 
   const [searchBookMutation] = useMutation(SEARCH_BOOK);
-
+  const [bookList, setBookList] = useState([]);
   const onSearch = async (e) => {
-    e.preventDefault();
+    e.preventDefault([]);
 
     try {
       const {
@@ -24,15 +24,18 @@ export default () => {
       if (!searchBook) {
         alert('교재를 검색할 수 없습니다.');
       } else {
-        console.log(searchBook);
+        setBookList([...searchBook]);
       }
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
     }
   };
-
   return (
-    <BookAnalysisPresenter searchContent={searchContent} onSearch={onSearch} />
+    <BookAnalysisPresenter
+      searchContent={searchContent}
+      onSearch={onSearch}
+      bookList={bookList}
+    />
   );
 };
