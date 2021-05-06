@@ -4,21 +4,30 @@ import useInput from '../../../../Hooks/useInput';
 import BookAnalysisPresenter from './BookAnalysisPresenter';
 import { SEARCH_BOOK } from './BookAnalysisQueries';
 
+const feedCount = 2;
+
 export default () => {
+  const [bookLoad, setBookLoad] = useState(false);
+  const [bookList, setBookList] = useState([]);
+  const [display, setDisplay] = useState(feedCount);
+
   const searchContent = useInput('');
 
   const [searchBookMutation] = useMutation(SEARCH_BOOK);
-  const [bookList, setBookList] = useState([]);
-  const onSearch = async (e) => {
-    e.preventDefault([]);
+
+  const onSearchFuc = async (display) => {
+    if (display === '') {
+      alert('검색어를 입력하세요.');
+    }
 
     try {
+      setBookLoad(true);
       const {
         data: { searchBook },
       } = await searchBookMutation({
         variables: {
           word: searchContent.value,
-          display: 10,
+          display,
         },
       });
       if (!searchBook) {
@@ -29,13 +38,28 @@ export default () => {
     } catch (e) {
       const realText = e.message.split('GraphQL error: ');
       alert(realText[1]);
+    } finally {
+      setBookLoad(false);
     }
   };
+
+  const onSearch = (e) => {
+    e.preventDefault();
+
+    onSearchFuc(feedCount);
+    setDisplay(feedCount);
+  };
+
   return (
     <BookAnalysisPresenter
       searchContent={searchContent}
       onSearch={onSearch}
       bookList={bookList}
+      bookLoad={bookLoad}
+      display={display}
+      setDisplay={setDisplay}
+      onSearchFuc={onSearchFuc}
+      feedCount={feedCount}
     />
   );
 };
