@@ -4,7 +4,7 @@ import useInput from '../../../../Hooks/useInput';
 import BookAnalysisPresenter from './BookAnalysisPresenter';
 import { SEARCH_BOOK } from './BookAnalysisQueries';
 
-const feedCount = 2;
+const feedCount = 10;
 
 export default () => {
   const [bookLoad, setBookLoad] = useState(false);
