@@ -22,6 +22,7 @@ import {
   DELETE_SCHEDULE,
   DRAG_SCHEDULE,
   EDIT_TODOLIST,
+  SEE_USERBOOK,
 } from './MyScheduleQueries';
 import { toast } from 'react-toastify';
 import useSelect from '../../../../Hooks/useSelect';
@@ -143,6 +144,11 @@ export default ({ defaultSet, isSelf = true }) => {
     loading: todolistLoading,
     refetch: todolistRefetch,
   } = useQuery(MY_TODOLIST);
+  const {
+    data: userbookData,
+    loading: userbookLoading,
+    refetch: userbookRefetch,
+  } = useQuery(SEE_USERBOOK);
 
   const handleChangeComplete = (color, event) => {
     setSubjectColor(color.hex);
@@ -215,9 +221,8 @@ export default ({ defaultSet, isSelf = true }) => {
     const { real_weekStart: copyS, real_weekEnd: copyE } = WeekRange(copyDate);
     setCopyStart(copyS);
     setCopyEnd(copyE);
-    const { real_weekStart: pasteS, real_weekEnd: pasteE } = WeekRange(
-      pasteDate,
-    );
+    const { real_weekStart: pasteS, real_weekEnd: pasteE } =
+      WeekRange(pasteDate);
     setPasteStart(pasteS);
     setPasteEnd(pasteE);
   }, [copyDate, pasteDate]);
@@ -234,7 +239,8 @@ export default ({ defaultSet, isSelf = true }) => {
   if (
     (schedulenetwork === 4 || schedulenetwork === 7) &&
     (subjectnetwork === 4 || subjectnetwork === 7) &&
-    !todolistLoading
+    !todolistLoading &&
+    !userbookLoading
   ) {
     return (
       <MySchedulePresenter
@@ -315,6 +321,7 @@ export default ({ defaultSet, isSelf = true }) => {
         todoModiName={todoModiName}
         todoModiId={todoModiId}
         setTodoModiId={setTodoModiId}
+        userbooks={userbookData.seeUserBook}
       />
     );
   } else {

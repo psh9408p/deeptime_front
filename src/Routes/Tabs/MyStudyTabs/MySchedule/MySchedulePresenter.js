@@ -36,6 +36,8 @@ import DatePicker from 'react-datepicker';
 import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 import Loader from '../../../../Components/Loader';
+import useSelect_dynamic from '../../../../Hooks/useSelect_dynamic';
+import selectChange from '../../../../Components/SelectChange';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -623,6 +625,10 @@ const SelectWrap = styled(NewScheContent)`
   margin-top: 20px;
 `;
 
+const SelectWrap2 = styled(NewScheContent)`
+  margin-top: 10px;
+`;
+
 const BlackBack = styled.div`
   position: fixed;
   left: 0;
@@ -792,6 +798,7 @@ export default ({
   todoModiName,
   todoModiId,
   setTodoModiId,
+  userbooks,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -883,6 +890,33 @@ export default ({
   const mySubjectList2 = useSelect([...listName_tmp], [...listId_tmp]);
   // todoList 수정용
   const mySubjectList3 = useSelect([...listName_tmp], [...listId_tmp]);
+
+  // 사용자 사용 책데이터 추출
+  const bookTitles = listId_tmp.map((subjectId) => {
+    // 해당 과목과 같은 책 배열로 추출
+    const userbooks_tmp = userbooks.filter(
+      (userbook) => userbook.subject.id === subjectId,
+    );
+    // 제목만 추출
+    const titleArray = userbooks_tmp.map((book) => book.title);
+    return ['(선택 사항)교재 선택', ...titleArray];
+  });
+  const bookIds = listId_tmp.map((subjectId) => {
+    // 해당 과목과 같은 책 배열로 추출
+    const userbooks_tmp = userbooks.filter(
+      (userbook) => userbook.subject.id === subjectId,
+    );
+    // id만 추출
+    const idArray = userbooks_tmp.map((book) => book.id);
+    return ['', ...idArray];
+  });
+  // 과목 선택에 따른 교재 가변Select
+  const userBookList = useSelect_dynamic(
+    bookTitles,
+    bookIds,
+    mySubjectList2.optionList,
+    mySubjectList2.optionList[mySubjectList2.optionIndex],
+  );
 
   const todolistClear = () => {
     todolistName.setValue('');
@@ -1131,6 +1165,7 @@ export default ({
       }),
     );
     mySubjectList2.setOption(mySubjectList2.valueList[0]);
+    userBookList.setOption(userBookList.valueList[0]);
     stateList.setOption('자습');
     scheTitle.setValue('');
     scheLocation.setValue('');
@@ -1142,6 +1177,7 @@ export default ({
 
   // 스케줄 수정 시 값 넣어주기
   const inputSchedule = (Sche) => {
+    // 값들 넣어주기
     setDayBool(
       dayList.map((_, index) => {
         return Sche.start._date.getDay() === index ? true : false;
@@ -2510,6 +2546,9 @@ export default ({
                 </PopupCustom7>
               </SelectInR>
             </SelectWrap>
+            <SelectWrap2>
+              <Select {...userBookList} id={'userBookList_id_sche'} />
+            </SelectWrap2>
             <NewScheContent>
               <Input
                 placeholder={'(필수) 제목'}
@@ -2636,6 +2675,15 @@ export default ({
                     setModiView(true);
                     setInfoView(false);
                     inputSchedule(infoSche);
+
+                    //교재 넣기 위해 해당 스케줄 찾기
+                    const scheIndex = scheduleList.findIndex(
+                      (a) => a.id === infoSche.id,
+                    );
+                    const thisSche = scheduleList[scheIndex];
+                    userBookList.setOption(
+                      thisSche.bookOfUser ? thisSche.bookOfUser.id : '',
+                    );
                   }}
                   text={'수정'}
                 />

@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 export default (options, values, initValue) => {
   const [option, setOption] = useState(initValue ? initValue : values[0]);
   const [optionIndex, setOptionIndex] = useState(0);
-  const optionList = options;
-  const valueList = values;
+  let optionList = options;
+  let valueList = values;
 
   const onChange = (e) => {
     const {

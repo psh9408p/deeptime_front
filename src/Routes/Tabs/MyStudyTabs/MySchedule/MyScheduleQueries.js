@@ -81,6 +81,9 @@ export const MY_SCHEDULE = gql`
         name
         bgColor
       }
+      bookOfUser {
+        id
+      }
     }
   }
 `;
@@ -185,5 +188,18 @@ export const DRAG_SCHEDULE = gql`
       start: $start
       end: $end
     )
+  }
+`;
+
+export const SEE_USERBOOK = gql`
+  query seeUserBook {
+    seeUserBook {
+      id
+      title
+      subject {
+        id
+        name
+      }
+    }
   }
 `;
