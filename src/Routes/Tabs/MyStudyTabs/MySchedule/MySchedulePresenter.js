@@ -651,7 +651,7 @@ const CustomPopup = styled.div`
   align-items: center;
   margin: auto;
   width: 310px;
-  height: 410px;
+  height: 430px;
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: white;
 `;
@@ -799,6 +799,7 @@ export default ({
   todoModiId,
   setTodoModiId,
   userbooks,
+  userbookRefetch,
 }) => {
   // subjectlist 오름차순 정렬
   subjectList.sort(function (a, b) {
@@ -1177,6 +1178,14 @@ export default ({
 
   // 스케줄 수정 시 값 넣어주기
   const inputSchedule = (Sche) => {
+    //랜더링 이슈 때문에 값을 지연해서 바꿔줘야 정상적으로 Select값이 바뀌어서 setTimeout사용
+    setTimeout(() => {
+      //교재 넣기 위해 해당 스케줄 찾기
+      const scheIndex = scheduleList.findIndex((a) => a.id === Sche.id);
+      const thisSche = scheduleList[scheIndex];
+      userBookList.setOption(thisSche.bookOfUser ? thisSche.bookOfUser.id : '');
+    }, 100);
+
     // 값들 넣어주기
     setDayBool(
       dayList.map((_, index) => {
@@ -1474,6 +1483,10 @@ export default ({
         alert('스케줄 기간은 24시간 이내로 가능합니다.');
         return;
       }
+      // 스케줄과 연동된 교재 데이터 가져오기
+      const thisSche = scheduleList.filter(
+        (sche) => sche.id === res.schedule.id,
+      );
       setScheLoading(true);
       try {
         const {
@@ -1488,6 +1501,7 @@ export default ({
             location: res.schedule.location,
             start: res.start._date,
             end: res.end._date,
+            userBookId: thisSche[0].bookOfUser ? thisSche[0].bookOfUser.id : '',
           },
         });
         if (!dragSchedule) {
@@ -1507,7 +1521,7 @@ export default ({
         setScheLoading(false);
       }
     },
-    [copyBool],
+    [copyBool, scheduleList],
   );
 
   function _getFormattedTime(time) {
@@ -1620,7 +1634,6 @@ export default ({
       alert('스케줄 기간은 24시간 이내로만 가능합니다.');
       return;
     }
-
     try {
       setScheLoading(true);
       const {
@@ -1636,6 +1649,7 @@ export default ({
           location: scheLocation.value,
           start: sTime,
           end: eTime,
+          userBookId: userBookList.option,
         },
       });
       if (!createSchedule) {
@@ -1912,6 +1926,7 @@ export default ({
                   scheduleRefetch();
                   subjectRefetch();
                   // todolistRefetch();
+                  userbookRefetch();
                 }}
               />
               <PopupCustom4
@@ -2677,13 +2692,13 @@ export default ({
                     inputSchedule(infoSche);
 
                     //교재 넣기 위해 해당 스케줄 찾기
-                    const scheIndex = scheduleList.findIndex(
-                      (a) => a.id === infoSche.id,
-                    );
-                    const thisSche = scheduleList[scheIndex];
-                    userBookList.setOption(
-                      thisSche.bookOfUser ? thisSche.bookOfUser.id : '',
-                    );
+                    // const scheIndex = scheduleList.findIndex(
+                    //   (a) => a.id === infoSche.id,
+                    // );
+                    // const thisSche = scheduleList[scheIndex];
+                    // userBookList.setOption(
+                    //   thisSche.bookOfUser ? thisSche.bookOfUser.id : '',
+                    // );
                   }}
                   text={'수정'}
                 />

@@ -152,6 +152,7 @@ export const CREATE_SCHEDULE = gql`
     $location: String!
     $start: String!
     $end: String!
+    $userBookId: String!
   ) {
     createSchedule(
       option: $option
@@ -163,6 +164,7 @@ export const CREATE_SCHEDULE = gql`
       location: $location
       start: $start
       end: $end
+      userBookId: $userBookId
     )
   }
 `;
@@ -177,6 +179,7 @@ export const DRAG_SCHEDULE = gql`
     $location: String!
     $start: String!
     $end: String!
+    $userBookId: String!
   ) {
     dragSchedule(
       option: $option
@@ -187,6 +190,7 @@ export const DRAG_SCHEDULE = gql`
       location: $location
       start: $start
       end: $end
+      userBookId: $userBookId
     )
   }
 `;
