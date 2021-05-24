@@ -9,7 +9,7 @@
     "@babel/runtime": "7.10.5",
     "@fullpage/react-fullpage": "^0.1.18",
     "@tensorflow-models/coco-ssd": "2.2.1",
-    "@tensorflow/tfjs": "2.8.6",
+    "@tensorflow/tfjs": "^3.6.0",
     "@toast-ui/react-calendar": "1.0.5",
     "@trendmicro/react-sidenav": "^0.5.0",
     "add": "2.0.6",
