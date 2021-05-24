@@ -3,6 +3,7 @@ import MyStatistics from '../Tabs/MyStudyTabs/MyStatistics';
 import MySchedule from '../Tabs/MyStudyTabs/MySchedule';
 import BookAnalysis from '../Tabs/MyStudyTabs/BookAnalysis';
 import ProgressAnalysis from '../Tabs/MyStudyTabs/ProgressAnalysis';
+import ProgressAnalysis_tmp from '../Tabs/MyStudyTabs/ProgressAnalysis_tmp';
 
 export default ({ pageIndex, defaultSet }) => {
   if (pageIndex === 0) {
@@ -13,5 +14,7 @@ export default ({ pageIndex, defaultSet }) => {
     return <ProgressAnalysis />;
   } else if (pageIndex === 3) {
     return <BookAnalysis />;
+  } else if (pageIndex === 4) {
+    return <ProgressAnalysis_tmp />;
   }
 };
