@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { Add, TopArrow, BotArrow } from '../../../../Components/Icons';
 import StackChart from '../../../../Components/Charts/StackChart';
 import Popover from './Popover';
+import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
+import Popup from 'reactjs-popup';
+
 const HeaderDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -24,6 +27,7 @@ const Container = styled.div`
   justify-content: center;
   margin-top: 70px;
 `;
+
 const ProgressWrap = styled.div`
   display: flex;
   /* border: 1px solid black; */
@@ -36,7 +40,7 @@ const ProgressWrap = styled.div`
 `;
 
 const Image = styled.div`
-  /* background-image: url(${(props) => props.image}); */
+  background-image: url(${(props) => props.image});
   background-size: cover;
   width: 100px;
   position: relative;
@@ -53,26 +57,6 @@ const Title = styled.span`
   display: flex;
 `;
 
-const Btn = styled.button`
-  margin-left: auto;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  height: auto;
-  width: 100px;
-  border-radius: 20px;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  background-color: #104881;
-  border: none;
-  color: white;
-  padding: 15px 22px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-`;
 const MoreBtn = styled.span`
   cursor: pointer;
   margin-bottom: 5px;
@@ -83,37 +67,52 @@ const MoreDiv = styled.div`
   margin-top: 5px;
 `;
 
-export default () => {
-  const [isVisible, setIsVisible] = useState(false);
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 300px !important;
+    /* height: 240px !important; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+export default ({
+  userbooks,
+  startPage,
+  endPage,
+  finishDate,
+  setFinishDate,
+  onCreateRecord,
+  setViewForm,
+}) => {
   const [More, setMore] = useState(false);
 
   const moreHandler = () => {
     setMore(!More);
   };
 
-  const onSetIsVisible = (active) => {
-    console.log('hihi');
-    setIsVisible(active);
-  };
   return (
     <div style={{ marginTop: '20px' }}>
-      <div>
-        <HeaderDiv>
-          <Add />
-        </HeaderDiv>
-      </div>
-      <div>
-        <Container>
+      <HeaderDiv>
+        <Add
+          onClick={() => {
+            setViewForm('search');
+          }}
+        />
+      </HeaderDiv>
+      {userbooks.map((userbook, index) => (
+        <Container key={index}>
           <ProgressWrap>
             <div>
               <div>
-                <Title>타이틀</Title>
+                <Title>{userbook.title}</Title>
               </div>
-              <Image></Image>
+              <Image image={userbook.image} />
             </div>
             <div style={{ width: '100%' }}>
               <div style={{ display: 'flex' }}>
-                {' '}
                 <div
                   onClick={() => {
                     moreHandler();
@@ -128,24 +127,39 @@ export default () => {
                     <div>- 함수의극한</div>
                   </MoreDiv>
                 </div>
-                <Btn
-                  onClick={() => {
-                    onSetIsVisible(true);
-                  }}
+                <PopupCustom
+                  trigger={
+                    <PopButton_custom
+                      width={'100px'}
+                      height={'35px'}
+                      margin={'0 20px 20px auto'}
+                      text={'진도 입력'}
+                      bgColor={'#0F4C82'}
+                      color={'white'}
+                    />
+                  }
+                  closeOnDocumentClick={false}
+                  modal
                 >
-                  진도 입력
-                  <Popover
-                    isVisible={isVisible}
-                    // onSetIsVisible={onSetIsVisible}
-                  />
-                </Btn>
+                  {(close) => (
+                    <Popover
+                      close={close}
+                      startPage={startPage}
+                      endPage={endPage}
+                      finishDate={finishDate}
+                      setFinishDate={setFinishDate}
+                      onCreateRecord={onCreateRecord}
+                      userbook={userbook}
+                    />
+                  )}
+                </PopupCustom>
               </div>
               <StackChart />
               <div style={{ marginTop: '20px' }}>Clear Day</div>
             </div>
           </ProgressWrap>
         </Container>
-      </div>
+      ))}
     </div>
   );
 };

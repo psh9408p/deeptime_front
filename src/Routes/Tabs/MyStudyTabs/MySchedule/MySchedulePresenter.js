@@ -1624,9 +1624,6 @@ export default ({
     } else if (mySubjectList2.option === '') {
       alert('과목 선택은 필수 항목입니다.');
       return;
-    } else if (scheTitle.value === '') {
-      alert('제목을 입력하세요.');
-      return;
     } else if (sTime >= eTime) {
       alert('끝 시간이 시작 시간과 같거나 빠를 수 없습니다.');
       return;
@@ -2566,18 +2563,18 @@ export default ({
             </SelectWrap2>
             <NewScheContent>
               <Input
-                placeholder={'(필수) 제목'}
+                placeholder={'(선택) 제목'}
                 height={'28px'}
                 {...scheTitle}
               />
             </NewScheContent>
-            <NewScheContent>
+            {/* <NewScheContent>
               <Input
                 placeholder={'(선택) 위치'}
                 height={'28px'}
                 {...scheLocation}
               />
-            </NewScheContent>
+            </NewScheContent> */}
             <DateTotalDiv>
               <DateWrap>
                 <DateContent>

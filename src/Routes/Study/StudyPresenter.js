@@ -1760,10 +1760,6 @@ export default ({
         return;
       }
       // 사전 점검
-      if (scheduleTitle.value === '') {
-        alert('스케줄의 제목을 입력하세요.');
-        return;
-      }
       if (scheduleTitle.value.includes('/')) {
         alert(
           "To Do List는 1개만 입력 가능합니다.\n즉, '/'는 입력이 불가능합니다.",
@@ -2556,7 +2552,7 @@ export default ({
           </NewScheContent>
           <NewScheContent>
             <Input
-              placeholder={'(필수) 제목'}
+              placeholder={'(선택) 제목'}
               height={'25px'}
               bgColor={'white'}
               {...scheduleTitle}

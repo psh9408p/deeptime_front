@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import PopupClose from '../../../../Components/Buttons/PopupClose';
 import Input_100 from '../../../../Components/Input_100';
+import Select from '../../../../Components/Select';
 
 const DatePickDiv = styled.div`
   width: 50%;
@@ -50,7 +51,12 @@ const PBody = styled.div`
   padding: 20px;
 `;
 
-const TestNum = 3;
+const DateWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const CustomInput = forwardRef(({ value, onClick }, ref) => {
   return (
     <DatePickButton ref={ref} onClick={onClick}>
@@ -61,38 +67,51 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => {
 
 const Popover = ({
   close,
+  mySubjectList,
+  onCreateUserBook,
+  book,
   startPage,
   endPage,
-  finishDate,
-  setFinishDate,
-  onCreateRecord,
-  userbook,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
 }) => {
   return (
-    // <PBody onSubmit={(e) => onCreateRecord(e, userbook, close)}>
+    // <PBody onSubmit={(e) => onCreateUserBook(e, book, close)}>
     <PBody>
       <PopupClose onClick={() => close()} />
-      <div style={{ marginBottom: '30px' }}>
+      <InputWrap>
+        시작 페이지 :
+        <Input_100 type={'number'} height={'35px'} {...startPage} />
+        끝 페이지 :
+        <Input_100
+          type={'number'}
+          height={'35px'}
+          margin={'0 0 0 15px'}
+          {...endPage}
+        />
+      </InputWrap>
+      과목: <Select {...mySubjectList} id={'subject_makeBook'} />
+      <DateWrap style={{ marginBottom: '30px' }}>
+        1독 시작 :
         <DatePickDiv>
           <DatePicker
-            selected={finishDate}
-            onChange={(date) => setFinishDate(date)}
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
             customInput={<CustomInput />}
           />
         </DatePickDiv>
-      </div>
-      <InputWrap>
-        <Input_100 type={'number'} {...startPage} height={'35px'} />
-        <Input_100
-          type={'number'}
-          {...endPage}
-          height={'35px'}
-          margin={'0 0 0 15px'}
-        />
-        <CircleBtn onClick={() => onCreateRecord(userbook, close)}>
-          OK
-        </CircleBtn>
-      </InputWrap>
+        1독 끝 :
+        <DatePickDiv>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            customInput={<CustomInput />}
+          />
+        </DatePickDiv>
+        <CircleBtn onClick={() => onCreateUserBook(book, close)}>OK</CircleBtn>
+      </DateWrap>
     </PBody>
   );
 };

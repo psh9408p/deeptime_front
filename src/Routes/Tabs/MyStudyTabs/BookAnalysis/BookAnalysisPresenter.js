@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import Input from '../../../../Components/Input';
 import Button_custom from '../../../../Components/Buttons/Button_custom';
+import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
+import Popup from 'reactjs-popup';
+import Popover from './Popover';
 
 const SearchForm = styled.form`
   margin: 20px 0 0 0;
@@ -52,6 +55,23 @@ const MoreDiv = styled.div`
   max-width: 500px;
 `;
 
+const PopupCustom = styled(Popup)`
+  &-content {
+    width: 450px !important;
+    /* height: 240px !important; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
+`;
+
+const BackWrap = styled.div`
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px;
+`;
+
 export default ({
   searchContent,
   onSearch,
@@ -61,9 +81,28 @@ export default ({
   setDisplay,
   onSearchFuc,
   feedCount,
+  setViewForm,
+  mySubjectList,
+  onCreateUserBook,
+  startPage,
+  endPage,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
 }) => {
   return (
     <>
+      <BackWrap>
+        <Button_custom
+          width={'100%'}
+          bgColor={'#0F4C82'}
+          color={'white'}
+          text={'진도 관리로 돌아가기'}
+          onClick={() => setViewForm('default')}
+          margin={'0'}
+        />
+      </BackWrap>
       <SearchForm onSubmit={onSearch}>
         <Input
           {...searchContent}
@@ -103,6 +142,35 @@ export default ({
                   <p>
                     <span>ISBN : {book.isbn}</span>
                   </p>
+                  <PopupCustom
+                    trigger={
+                      <PopButton_custom
+                        width={'100px'}
+                        height={'30px'}
+                        margin={'10px 20px 20px auto'}
+                        text={'교재 등록'}
+                        bgColor={'#0F4C82'}
+                        color={'white'}
+                      />
+                    }
+                    closeOnDocumentClick={false}
+                    modal
+                  >
+                    {(close) => (
+                      <Popover
+                        close={close}
+                        mySubjectList={mySubjectList}
+                        onCreateUserBook={onCreateUserBook}
+                        book={book}
+                        startPage={startPage}
+                        endPage={endPage}
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                      />
+                    )}
+                  </PopupCustom>
                 </div>
               </div>
             </BookWrap>
