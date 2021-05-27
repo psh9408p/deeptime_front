@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Add, TopArrow, BotArrow } from '../../../../Components/Icons';
+import { TopArrow, BotArrow } from '../../../../Components/Icons';
 import StackChart from '../../../../Components/Charts/StackChart';
 import Popover from './Popover';
 import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
