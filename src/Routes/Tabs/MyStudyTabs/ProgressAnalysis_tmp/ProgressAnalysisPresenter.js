@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Add, TopArrow, BotArrow } from '../../../../Components/Icons';
 import StackChart from '../../../../Components/Charts/StackChart';
 import Popover from './Popover';
+import Contents from './Contents';
 const HeaderDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -146,6 +147,7 @@ export default () => {
           </ProgressWrap>
         </Container>
       </div>
+      <Contents />
     </div>
   );
 };

@@ -5,7 +5,7 @@ import PopupClose from '../../../../Components/Buttons/PopupClose';
 import Input_100 from '../../../../Components/Input_100';
 
 const DatePickDiv = styled.div`
-  width: 50%;
+  /* width: 50%; */
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -30,15 +30,19 @@ const InputWrap = styled.div`
 `;
 
 const CircleBtn = styled.button`
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 3px;
-  box-shadow: 2px 2px 2px 2px #dee1e7;
-  background-color: #fff;
-  outline: none;
-  border: red;
-  margin-left: 10px;
+  border: 0;
+  outline-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  margin-left: 24px;
 `;
 
 const PBody = styled.div`

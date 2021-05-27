@@ -9,7 +9,7 @@ import Popup from 'reactjs-popup';
 const HeaderDiv = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   width: 100%;
   max-width: 600px;
@@ -18,14 +18,14 @@ const HeaderDiv = styled.div`
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: white;
-  position: fixed !important;
+  /* position: fixed !important; */
 `;
 
 const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 70px;
+  margin-top: 30px;
 `;
 
 const ProgressWrap = styled.div`
@@ -50,11 +50,12 @@ const Image = styled.div`
     0 18px 36px -18px rgba(0, 0, 0, 0.3), 0 -12px 36px -8px rgba(0, 0, 0, 0.025);
 `;
 const Title = styled.span`
-  margin-top: 10px;
+  margin: 1em 1em;
   text-align: center;
   align-items: center;
   justify-content: center;
   display: flex;
+  max-width: 150px;
 `;
 
 const MoreBtn = styled.span`
@@ -78,6 +79,29 @@ const PopupCustom = styled(Popup)`
   }
 `;
 
+const ClearDay = styled.div`
+  justify-content: flex-end;
+  display: flex;
+  margin-right: 20px;
+  margin-top: 20px;
+`;
+
+const AddBtn = styled.button`
+  border: 0;
+  outline-color: black;
+  border-radius: ${(props) => props.theme.borderRadius};
+  background-color: ${(props) => props.theme.classicBlue};
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  width: 90px;
+  height: auto;
+  margin: 0 10px 0 10px;
+`;
+
 export default ({
   userbooks,
   startPage,
@@ -96,16 +120,24 @@ export default ({
   return (
     <div style={{ marginTop: '20px' }}>
       <HeaderDiv>
-        <Add
+        {/* <Add
           onClick={() => {
             setViewForm('search');
           }}
-        />
+        /> */}
+        <AddBtn
+          onClick={() => {
+            setViewForm('search');
+          }}
+        >
+          책 추가
+        </AddBtn>
+        <AddBtn>과 목</AddBtn>
       </HeaderDiv>
       {userbooks.map((userbook, index) => (
         <Container key={index}>
           <ProgressWrap>
-            <div>
+            <div style={{ marginRight: '20px' }}>
               <div>
                 <Title>{userbook.title}</Title>
               </div>
@@ -155,7 +187,9 @@ export default ({
                 </PopupCustom>
               </div>
               <StackChart />
-              <div style={{ marginTop: '20px' }}>Clear Day</div>
+              <div>
+                <ClearDay>Clear Day</ClearDay>
+              </div>
             </div>
           </ProgressWrap>
         </Container>
