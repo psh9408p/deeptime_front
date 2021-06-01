@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const Container = styled.input`
   border: 0;
+  border-color: ${(props) => props.theme.borderColor};
   border: ${(props) => props.theme.boxBorder};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: ${(props) => props.bgColor};
@@ -12,6 +13,8 @@ const Container = styled.input`
   margin: ${(props) => props.margin};
   font-size: 12px;
   padding: 0px 15px;
+  color: ${(props) => props.color};
+  font-weight: ${(props) => props.fontWeight};
 `;
 
 const Input = ({
@@ -26,8 +29,13 @@ const Input = ({
   step,
   bgColor = '#fafafa',
   margin,
+  color,
+  fontWeight,
+  boxBorder,
+  borderColor,
 }) => (
   <Container
+    boxBorder={boxBorder}
     className={className}
     placeholder={placeholder}
     required={required}
@@ -39,6 +47,9 @@ const Input = ({
     height={height}
     bgColor={bgColor}
     margin={margin}
+    color={color}
+    borderColor={borderColor}
+    fontWeight={fontWeight}
   />
 );
 
