@@ -81,8 +81,12 @@ const Popover = ({
   );
 
   useEffect(() => {
-    startPage.setValue(records[lastIndex].endPage);
-    endPage.setValue(records[lastIndex].endPage);
+    startPage.setValue(
+      lastIndex === -1 ? userbook.startPage_target : records[lastIndex].endPage,
+    );
+    endPage.setValue(
+      lastIndex === -1 ? userbook.startPage_target : records[lastIndex].endPage,
+    );
   }, []);
 
   return (
