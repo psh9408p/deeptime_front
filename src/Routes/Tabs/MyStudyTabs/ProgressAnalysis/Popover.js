@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import PopupClose from '../../../../Components/Buttons/PopupClose';
@@ -72,6 +72,19 @@ const Popover = ({
   onCreateRecord,
   userbook,
 }) => {
+  const records = userbook.clearRecords;
+  // 가장 최근에 학습한 기록 찾기
+  const lastDate = Math.max(...records.map((data) => new Date(data.clearDate)));
+  // records에서 최근 학습 기록 인덱스 찾기
+  const lastIndex = records.findIndex(
+    (data) => new Date(data.clearDate).getTime() === lastDate,
+  );
+
+  useEffect(() => {
+    startPage.setValue(records[lastIndex].endPage);
+    endPage.setValue(records[lastIndex].endPage);
+  }, []);
+
   return (
     // <PBody onSubmit={(e) => onCreateRecord(e, userbook, close)}>
     <PBody>

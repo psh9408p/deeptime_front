@@ -12,9 +12,18 @@ export const SEE_USERBOOK = gql`
       endPage_target
       startDate_target
       endDate_target
+      pageOfDay
       subject {
         id
         name
+      }
+      clearRecords {
+        id
+        startPage
+        endPage
+        totalPage
+        pageOfHour
+        clearDate
       }
     }
   }

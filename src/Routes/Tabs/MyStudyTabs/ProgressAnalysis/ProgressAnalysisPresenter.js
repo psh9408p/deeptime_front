@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TopArrow, BotArrow } from '../../../../Components/Icons';
-import StackChart from '../../../../Components/Charts/StackChart';
 import Popover from './Popover';
 import PopButton_custom from '../../../../Components/Buttons/PopButton_custom';
 import Popup from 'reactjs-popup';
+import ChartCall from './ChartCall';
+import WeekRange from '../../../../Components/Date/WeekRange';
+import SumArray from '../../../../Components/Array/SumArray';
 
 const HeaderDiv = styled.div`
   display: flex;
@@ -117,14 +119,35 @@ export default ({
     setMore(!More);
   };
 
+  const nowDate = new Date();
+  const calRemainDay = (userbook) => {
+    const { real_weekEnd: target_weekEnd } = WeekRange(
+      new Date(userbook.startDate_target),
+    ); // 목표 시작일 주의 끝지점
+    const { real_weekStart } = WeekRange(nowDate);
+    // 지금이 계획 시작 주에 포함되거나 그 이전이면 계획일정에 대한 평가가 불가능함으로 0 반환
+    if (nowDate < target_weekEnd) {
+      return 0;
+    }
+    const records = userbook.clearRecords;
+    const preRecords = records.filter(
+      (record) => new Date(record.clearDate) < real_weekStart,
+    );
+    //저번주 까지 완료한 학습량
+    const clearPage = SumArray(preRecords.map((record) => record.totalPage));
+    // 원래 저번주 까지 했어야 하는 학습량
+    const startDate = new Date(userbook.startDate_target);
+    startDate.setHours(0, 0, 0, 0);
+    const targetDay =
+      (real_weekStart.getTime() - startDate.getTime()) / 86400000;
+    const tartgetPage = targetDay * userbook.pageOfDay; //했어야 하는 학습량
+    const delayDay = Math.ceil((tartgetPage - clearPage) / userbook.pageOfDay);
+    return delayDay;
+  };
+
   return (
     <div style={{ marginTop: '20px' }}>
       <HeaderDiv>
-        {/* <Add
-          onClick={() => {
-            setViewForm('search');
-          }}
-        /> */}
         <AddBtn
           onClick={() => {
             setViewForm('search');
@@ -134,66 +157,78 @@ export default ({
         </AddBtn>
         <AddBtn>과 목</AddBtn>
       </HeaderDiv>
-      {userbooks.map((userbook, index) => (
-        <Container key={index}>
-          <ProgressWrap>
-            <div style={{ marginRight: '20px' }}>
-              <div>
-                <Title>{userbook.title}</Title>
-              </div>
-              <Image image={userbook.image} />
-            </div>
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'flex' }}>
-                <div
-                  onClick={() => {
-                    moreHandler();
-                  }}
-                >
-                  <MoreBtn More={More}>
-                    <span style={{ marginRight: '5px' }}>주간목표</span>
-                    {More ? <BotArrow /> : <TopArrow />}
-                  </MoreBtn>
-                  <MoreDiv More={More}>
-                    <div style={{ marginBottom: '10px' }}>- 삼각함수</div>
-                    <div>- 함수의극한</div>
-                  </MoreDiv>
+      {userbooks.map((userbook, index) => {
+        const { real_weekEnd } = WeekRange(new Date(userbook.endDate_target)); // 계획 끝주의 마지막 날짜 추출
+        const delayDay = calRemainDay(userbook);
+        return (
+          <Container key={index}>
+            <ProgressWrap>
+              <div style={{ marginRight: '20px' }}>
+                <div>
+                  <Title>{userbook.title}</Title>
                 </div>
-                <PopupCustom
-                  trigger={
-                    <PopButton_custom
-                      width={'100px'}
-                      height={'35px'}
-                      margin={'0 20px 20px auto'}
-                      text={'진도 입력'}
-                      bgColor={'#0F4C82'}
-                      color={'white'}
-                    />
-                  }
-                  closeOnDocumentClick={false}
-                  modal
-                >
-                  {(close) => (
-                    <Popover
-                      close={close}
-                      startPage={startPage}
-                      endPage={endPage}
-                      finishDate={finishDate}
-                      setFinishDate={setFinishDate}
-                      onCreateRecord={onCreateRecord}
-                      userbook={userbook}
-                    />
+                <Image image={userbook.image} />
+              </div>
+              <div style={{ width: '100%' }}>
+                <div style={{ display: 'flex' }}>
+                  <div
+                    onClick={() => {
+                      moreHandler();
+                    }}
+                  >
+                    <MoreBtn More={More}>
+                      <span style={{ marginRight: '5px' }}>주간목표</span>
+                      {More ? <BotArrow /> : <TopArrow />}
+                    </MoreBtn>
+                    <MoreDiv More={More}>
+                      <div style={{ marginBottom: '10px' }}>- 삼각함수</div>
+                      <div>- 함수의극한</div>
+                    </MoreDiv>
+                  </div>
+                  <PopupCustom
+                    trigger={
+                      <PopButton_custom
+                        width={'100px'}
+                        height={'35px'}
+                        margin={'0 20px 20px auto'}
+                        text={'진도 입력'}
+                        bgColor={'#0F4C82'}
+                        color={'white'}
+                      />
+                    }
+                    closeOnDocumentClick={false}
+                    modal
+                  >
+                    {(close) => (
+                      <Popover
+                        close={close}
+                        startPage={startPage}
+                        endPage={endPage}
+                        finishDate={finishDate}
+                        setFinishDate={setFinishDate}
+                        onCreateRecord={onCreateRecord}
+                        userbook={userbook}
+                      />
+                    )}
+                  </PopupCustom>
+                </div>
+                <ChartCall userbook={userbook} />
+                <div>
+                  <ClearDay>Clear Day</ClearDay>
+                  {nowDate >= real_weekEnd ? (
+                    <ClearDay>(목표 주 초과)</ClearDay>
+                  ) : (
+                    <ClearDay>
+                      ({delayDay > 0 && '+'}
+                      {delayDay})
+                    </ClearDay>
                   )}
-                </PopupCustom>
+                </div>
               </div>
-              <StackChart />
-              <div>
-                <ClearDay>Clear Day</ClearDay>
-              </div>
-            </div>
-          </ProgressWrap>
-        </Container>
-      ))}
+            </ProgressWrap>
+          </Container>
+        );
+      })}
     </div>
   );
 };

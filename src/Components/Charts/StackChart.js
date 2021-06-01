@@ -1,67 +1,28 @@
 import React, { useRef, useEffect } from 'react';
 import Chart from 'chart.js';
 
-const StackChart = () => {
+const StackChart = ({ inputData, start, end }) => {
   const canvasDom = useRef(null);
-
-  const dataBox = [15, 20];
-  const colorBox = ['green', 'blue'];
 
   const data = {
     labels: ['진도'],
     datasets: [
       {
-        label: 'dd',
+        label: '학습 완료',
+        backgroundColor: '#008EFC',
+        data: [0],
+      },
+      {
+        label: '이번주 완료',
         backgroundColor: '#7AC6FC',
         data: [0],
       },
       {
-        label: 'dd',
+        label: '이번주 목표',
         backgroundColor: '#D6EEFF',
         data: [0],
       },
-      {
-        label: 'dd',
-        backgroundColor: 'green',
-        data: [10],
-      },
-      {
-        label: 'sss',
-        backgroundColor: 'blue',
-        data: [20],
-      },
-      {
-        // label: 'sss',
-        backgroundColor: 'blue',
-        data: [20],
-      },
-      // {
-      //   stack: 'stack1',
-      //   backgroundColor: '#7AC6FC',
-      //   borderColor: '#A8C6F5',
-      //   borderWidth: 1,
-      //   hoverBackgroundColor: '#7AC6FC',
-      //   hoverBorderColor: '#A8C6F5',
-      //   data: [34],
-      // },
-      // {
-      //   stack: 'stack1',
-      //   backgroundColor: '#D6EEFF',
-      //   borderColor: '#A8C6F5',
-      //   borderWidth: 1,
-      //   hoverBackgroundColor: '#D6EEFF',
-      //   hoverBorderColor: '#A8C6F5',
-      //   data: [31],
-      // },
-      // {
-      //   stack: 'stack1',
-      //   backgroundColor: 'white',
-      //   borderColor: '#04A9F5',
-      //   borderWidth: 1,
-      //   hoverBackgroundColor: 'white',
-      //   hoverBorderColor: '#04A9F5',
-      //   data: [25],
-      // },
+      ...inputData,
     ],
   };
   const options = {
@@ -72,7 +33,7 @@ const StackChart = () => {
       display: true,
       labels: {
         filter: function (legendItem, chartData) {
-          const viewCount = 1;
+          const viewCount = 2;
           // return true or false based on legendItem's datasetIndex (legendItem.datasetIndex)
           // 앞에 viewCount 순서 만큼 Legend가 나오게 설정
           return legendItem.datasetIndex > viewCount ? false : true;
@@ -84,8 +45,8 @@ const StackChart = () => {
         {
           stacked: true,
           ticks: {
-            min: 0,
-            max: 40,
+            min: start - 1,
+            max: end,
           },
         },
       ],

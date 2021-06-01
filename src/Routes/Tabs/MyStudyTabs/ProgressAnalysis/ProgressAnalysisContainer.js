@@ -63,6 +63,7 @@ export default () => {
         alert('교재 진도를 입력할 수 없습니다.');
       } else {
         close();
+        uesrbookRefetch();
         toast.success('교재 진도 입력이 완료됐습니다.');
       }
     } catch (e) {
