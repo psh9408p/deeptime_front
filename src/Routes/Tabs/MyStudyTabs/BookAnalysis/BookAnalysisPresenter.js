@@ -25,6 +25,7 @@ const Container = styled.div`
   margin-top: 20px;
 `;
 const BookWrap = styled.div`
+  padding-top: 10px;
   display: flex;
   /* border: 1px solid black; */
   align-items: center;
@@ -168,6 +169,8 @@ export default ({
                         setStartDate={setStartDate}
                         endDate={endDate}
                         setEndDate={setEndDate}
+                        BookTitle={book.title}
+                        image={book.image}
                       />
                     )}
                   </PopupCustom>
